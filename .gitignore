@@ -5,8 +5,8 @@ out/
 */*.iml/
 */.idea/
 */*.mvn/
-*/*.cmd/
-*/*.xml/
+*/mvnw.cmd/
+*/pom.xml/
 */.gitignore
 */mvnw
 
