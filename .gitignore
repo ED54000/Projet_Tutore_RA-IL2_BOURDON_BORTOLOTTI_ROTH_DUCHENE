@@ -2,11 +2,12 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-*/.iml
+*/*.iml/
 */.idea/
-*/.mvn/
-*/.cmd
-*/.xml
+*/*.mvn/
+*/*.cmd/
+*/*.xml/
+*/.gitignore
 
 
 ### Eclipse ###
