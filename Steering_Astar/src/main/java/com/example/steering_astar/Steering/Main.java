@@ -64,8 +64,9 @@ public class Main extends Application {
         Astar app = new Astar();
         ArrayList<Vector2D> pointList = app.aStarSearch(grid, grid.length , grid[0].length, start, dest);
         System.out.println(pointList);
+        ArrayList<Vector2D> listBezier = BezierCurveFromAStarPoints.getBezierCurve(pointList);
 
-        behavior = new PathfollowingBehavior(pointList);
+        behavior = new PathfollowingBehavior(listBezier);
 
         agent.setBehavior(behavior);
 
