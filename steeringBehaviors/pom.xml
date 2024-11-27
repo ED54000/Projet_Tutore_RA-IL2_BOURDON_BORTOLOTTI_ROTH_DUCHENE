@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.example</groupId>
-  <artifactId>proto_test</artifactId>
+  <artifactId>steeringBehaviors</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>proto_test</name>
+  <name>steeringBehaviors</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -58,7 +58,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>com.example.proto_test/com.example.proto_test.HelloApplication</mainClass>
+              <mainClass>com.example.steeringbehaviors/com.example.steeringbehaviors.HelloApplication</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>

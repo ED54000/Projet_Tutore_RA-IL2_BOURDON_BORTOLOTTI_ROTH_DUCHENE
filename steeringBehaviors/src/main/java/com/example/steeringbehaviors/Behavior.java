@@ -1,4 +1,4 @@
-package com.example.proto_test;
+package com.example.steeringbehaviors;
 
 public abstract class Behavior {
 

@@ -1,4 +1,4 @@
-package com.example.proto_test;
+package com.example.steeringbehaviors;
 
 public class Agent {
     private Vector2D position;

@@ -1,4 +1,4 @@
-package com.example.proto_test;
+package com.example.steeringbehaviors;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -23,7 +23,7 @@ public class Main extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         agent = new Agent(new Vector2D(width / 2.0, height / 2.0), 3.0);
-        target = new Vector2D(width / 2.0, height / 2.0); // Position initiale de la cible
+        target = new Vector2D(width / 2.0, height / 2.0);
         behavior = new SeekBehavior(target);
 //        behavior = new ArrivalBehavior(target, 50);
 
@@ -44,7 +44,7 @@ public class Main extends Application {
         timer.start();
 
         stage.setScene(new Scene(new javafx.scene.layout.Pane(canvas)));
-        stage.setTitle("Steering Behavior - Seek");
+        stage.setTitle("Steering Behavior");
         stage.show();
     }
 

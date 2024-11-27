@@ -1,8 +1,8 @@
-module com.example.proto_test {
+module com.example.steeringbehaviors {
     requires javafx.controls;
     requires javafx.fxml;
 
 
-    opens com.example.proto_test to javafx.fxml;
-    exports com.example.proto_test;
+    opens com.example.steeringbehaviors to javafx.fxml;
+    exports com.example.steeringbehaviors;
 }
