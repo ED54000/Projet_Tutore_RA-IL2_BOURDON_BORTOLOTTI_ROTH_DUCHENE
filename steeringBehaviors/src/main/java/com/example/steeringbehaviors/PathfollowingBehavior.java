@@ -22,7 +22,7 @@ public class PathfollowingBehavior extends Behavior {
         if (agent.getPosition().distanceTo(currentCheckpoint) < 10) {
             if (currentCheckpointIndex != checkpoints.size()-1) {
                 currentCheckpointIndex++;
-            } else { //enlever le else une fois fusionné
+            } else { //enlever le else une fois fusionné 
                 currentCheckpointIndex = 0;
             }
             currentCheckpoint = checkpoints.get(currentCheckpointIndex);
