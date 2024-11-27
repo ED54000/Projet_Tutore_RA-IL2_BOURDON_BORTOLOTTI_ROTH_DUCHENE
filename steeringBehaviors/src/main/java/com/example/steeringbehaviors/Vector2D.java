@@ -28,5 +28,11 @@ public class Vector2D {
         double mag = magnitude();
         return mag == 0 ? new Vector2D(0, 0) : scale(1 / mag);
     }
+
+    public double distanceTo(Vector2D other) {
+        double dx = other.x - this.x;
+        double dy = other.y - this.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
 }
 
