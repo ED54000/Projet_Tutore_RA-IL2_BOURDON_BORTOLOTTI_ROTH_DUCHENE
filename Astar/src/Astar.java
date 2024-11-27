@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
@@ -15,7 +16,7 @@ public class Astar {
     boolean isUnBlocked(char[][] grid, int rows, int cols,
                         Pair point) {
         return isValid(grid, rows, cols, point)
-                && grid[point.first][point.second] == '.'|| grid[point.first][point.second] == 'E' || grid[point.first][point.second] == 'S' ;
+                && grid[point.first][point.second] == '.' || grid[point.first][point.second] == 'E' || grid[point.first][point.second] == 'S';
     }
 
 
@@ -29,11 +30,8 @@ public class Astar {
     }
 
 
-    void tracePath(
-            Cell[][] cellDetails,
-            int cols,
-            int rows,
-            Pair dest) {
+    private ArrayList<Pair> tracePath(Cell[][] cellDetails, int cols, int rows, Pair dest) {
+        ArrayList<Pair> pathArray = new ArrayList<Pair>();
         System.out.println("The Path:  ");
 
         Stack<Pair> path = new Stack<>();
@@ -41,9 +39,10 @@ public class Astar {
         int row = dest.first;
         int col = dest.second;
 
-        Pair nextNode = cellDetails[row][col].parent;
+        Pair nextNode;
         do {
             path.push(new Pair(row, col));
+            pathArray.add(new Pair(row, col));
             nextNode = cellDetails[row][col].parent;
             row = nextNode.first;
             col = nextNode.second;
@@ -55,37 +54,28 @@ public class Astar {
             path.pop();
             System.out.println("-> (" + p.first + "," + p.second + ") ");
         }
+        return pathArray;
     }
 
 
-    void aStarSearch(char[][] grid,
-                     int rows,
-                     int cols,
-                     Pair src,
-                     Pair dest) {
+    public ArrayList<Pair> aStarSearch(char[][] grid, int rows, int cols, Pair src, Pair dest) {
 
         if (!isValid(grid, rows, cols, src)) {
             System.err.println("Source is invalid...");
-            return;
+            return null;
         }
-
-
         if (!isValid(grid, rows, cols, dest)) {
             System.err.println("Destination is invalid...");
-            return;
+            return null;
         }
-
-
         if (!isUnBlocked(grid, rows, cols, src)
                 || !isUnBlocked(grid, rows, cols, dest)) {
             System.err.println("Source or destination is blocked...");
-            return;
+            return null;
         }
-
-
         if (isDestination(src, dest)) {
             System.err.println("We're already (t)here...");
-            return;
+            return null;
         }
 
 
@@ -115,7 +105,6 @@ public class Astar {
             i = p.i;
             j = p.j;
 
-
             openList.poll();
             closedList[i][j] = true;
 
@@ -134,8 +123,8 @@ public class Astar {
                         if (isDestination(neighbour, dest)) {
                             cellDetails[neighbour.first][neighbour.second].parent = new Pair(i, j);
                             System.out.println("The destination cell is found");
-                            tracePath(cellDetails, rows, cols, dest);
-                            return;
+                            ArrayList<Pair> path = tracePath(cellDetails, rows, cols, dest);
+                            return path;
                         } else if (!closedList[neighbour.first][neighbour.second]
                                 && isUnBlocked(grid, rows, cols, neighbour)) {
                             double gNew, hNew, fNew;
@@ -147,10 +136,7 @@ public class Astar {
                                     || cellDetails[neighbour.first][neighbour.second].f > fNew) {
 
                                 openList.add(new Details(fNew, neighbour.first, neighbour.second));
-
-
                                 cellDetails[neighbour.first][neighbour.second].g = gNew;
-
                                 cellDetails[neighbour.first][neighbour.second].f = fNew;
                                 cellDetails[neighbour.first][neighbour.second].parent = new Pair(i, j);
                             }
@@ -159,8 +145,8 @@ public class Astar {
                 }
             }
         }
-
         System.err.println("Failed to find the Destination Cell");
+        return null;
     }
 
 
