@@ -113,39 +113,38 @@ public class Astar {
             closedList[i][j] = true;
 
 
-            for (int addX = -1; addX <= 1; addX++) {
-                for (int addY = -1; addY <= 1; addY++) {
-                    Vector2D neighbour = new Vector2D(i + addX, j + addY);
-                    int intNeighbourX = (int) neighbour.x;
-                    int intNeighbourY = (int) neighbour.y;
-                    if (isValid(grid, rows, cols, neighbour)) {
-                        if (cellDetails[intNeighbourX] == null) {
-                            cellDetails[intNeighbourX] = new Cell[cols];
-                        }
-                        if (cellDetails[intNeighbourX][intNeighbourY] == null) {
-                            cellDetails[intNeighbourX][intNeighbourY] = new Cell();
-                        }
+            int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+            for (int[] dir : directions) {
+                Vector2D neighbour = new Vector2D(i + dir[0], j + dir[1]);
+                int intNeighbourX = (int) neighbour.x;
+                int intNeighbourY = (int) neighbour.y;
+                if (isValid(grid, rows, cols, neighbour)) {
+                    if (cellDetails[intNeighbourX] == null) {
+                        cellDetails[intNeighbourX] = new Cell[cols];
+                    }
+                    if (cellDetails[intNeighbourX][intNeighbourY] == null) {
+                        cellDetails[intNeighbourX][intNeighbourY] = new Cell();
+                    }
 
-                        if (isDestination(neighbour, dest)) {
+                    if (isDestination(neighbour, dest)) {
+                        cellDetails[intNeighbourX][intNeighbourY].parent = new Vector2D(i, j);
+                        System.out.println("The destination cell is found");
+                        ArrayList<Vector2D> path = tracePath(cellDetails, rows, cols, dest);
+                        return path;
+                    } else if (!closedList[intNeighbourX][intNeighbourY]
+                            && isUnBlocked(grid, rows, cols, neighbour)) {
+                        double gNew, hNew, fNew;
+                        gNew = cellDetails[i][j].g + 1.0;
+                        hNew = calculateHValue(neighbour, dest);
+                        fNew = gNew + hNew;
+
+                        if (cellDetails[intNeighbourX][intNeighbourY].f == -1
+                                || cellDetails[intNeighbourX][intNeighbourY].f > fNew) {
+
+                            openList.add(new Details(fNew, intNeighbourX, intNeighbourY));
+                            cellDetails[intNeighbourX][intNeighbourY].g = gNew;
+                            cellDetails[intNeighbourX][intNeighbourY].f = fNew;
                             cellDetails[intNeighbourX][intNeighbourY].parent = new Vector2D(i, j);
-                            System.out.println("The destination cell is found");
-                            ArrayList<Vector2D> path = tracePath(cellDetails, rows, cols, dest);
-                            return path;
-                        } else if (!closedList[intNeighbourX][intNeighbourY]
-                                && isUnBlocked(grid, rows, cols, neighbour)) {
-                            double gNew, hNew, fNew;
-                            gNew = cellDetails[i][j].g + 1.0;
-                            hNew = calculateHValue(neighbour, dest);
-                            fNew = gNew + hNew;
-
-                            if (cellDetails[intNeighbourX][intNeighbourY].f == -1
-                                    || cellDetails[intNeighbourX][intNeighbourY].f > fNew) {
-
-                                openList.add(new Details(fNew, intNeighbourX, intNeighbourY));
-                                cellDetails[intNeighbourX][intNeighbourY].g = gNew;
-                                cellDetails[intNeighbourX][intNeighbourY].f = fNew;
-                                cellDetails[intNeighbourX][intNeighbourY].parent = new Vector2D(i, j);
-                            }
                         }
                     }
                 }
