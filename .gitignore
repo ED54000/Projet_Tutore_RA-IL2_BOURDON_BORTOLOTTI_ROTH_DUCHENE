@@ -8,7 +8,8 @@ out/
 */mvnw.cmd/
 */pom.xml/
 */.gitignore
-*/mvnw
+*/mvn
+*/target/*
 
 
 ### Eclipse ###
