@@ -26,7 +26,6 @@ public class Main extends Application {
 
         target = new Vector2D(width / 2.0, height / 2.0);
 //        behavior = new SeekBehavior(target);
-//        behavior = new ArrivalBehavior(target, 50);
 
       /*  ArrayList<Vector2D> pointList = new ArrayList<>(Arrays.asList(
                 new Vector2D(50, 50),
