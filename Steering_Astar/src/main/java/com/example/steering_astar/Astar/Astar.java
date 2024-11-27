@@ -3,64 +3,66 @@ package com.example.steering_astar.Astar;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
+import com.example.steering_astar.Steering.Vector2D;
 
 public class Astar {
-    boolean isValid(char[][] grid, int rows, int cols, Pair point) {
+    boolean isValid(char[][] grid, int rows, int cols, Vector2D point) {
         if (rows > 0 && cols > 0)
-            return (point.first >= 0) && (point.first < rows)
-                    && (point.second >= 0)
-                    && (point.second < cols);
+            return (point.x >= 0) && (point.x < rows)
+                    && (point.y >= 0)
+                    && (point.y < cols);
 
         return false;
     }
 
 
-    boolean isUnBlocked(char[][] grid, int rows, int cols,
-                        Pair point) {
+    boolean isUnBlocked(char[][] grid, int rows, int cols,Vector2D point) {
+        int intX = (int)point.x;
+        int intY = (int)point.y;
         return isValid(grid, rows, cols, point)
-                && grid[point.first][point.second] == '.' || grid[point.first][point.second] == 'E' || grid[point.first][point.second] == 'S';
+                && grid[intX][intY] == '.' || grid[intX][intY] == 'E' || grid[intX][intY] == 'S';
     }
 
 
-    boolean isDestination(Pair position, Pair dest) {
+    boolean isDestination(Vector2D position, Vector2D dest) {
         return position == dest || position.equals(dest);
     }
 
 
-    double calculateHValue(Pair src, Pair dest) {
-        return Math.sqrt(Math.pow((src.first - dest.first), 2.0) + Math.pow((src.second - dest.second), 2.0));
+    double calculateHValue(Vector2D src, Vector2D dest) {
+        return Math.sqrt(Math.pow((src.x - dest.x), 2.0) + Math.pow((src.y - dest.y), 2.0));
     }
 
 
-    private ArrayList<Pair> tracePath(Cell[][] cellDetails, int cols, int rows, Pair dest) {
-        ArrayList<Pair> pathArray = new ArrayList<Pair>();
+    private ArrayList<Vector2D> tracePath(Cell[][] cellDetails, int cols, int rows, Vector2D dest) {
+        ArrayList<Vector2D> pathArray = new ArrayList<>();
         System.out.println("The Path:  ");
 
-        Stack<Pair> path = new Stack<>();
+        Stack<Vector2D> path = new Stack<>();
 
-        int row = dest.first;
-        int col = dest.second;
+        int row =  (int) dest.x;
+        int col =  (int) dest.y;
 
-        Pair nextNode;
+        Vector2D nextNode;
         do {
-            path.push(new Pair(row, col));
-            pathArray.add(new Pair(row, col));
+            path.push(new Vector2D(col, row));
+            pathArray.addFirst(new Vector2D(col*100, row*100));
             nextNode = cellDetails[row][col].parent;
-            row = nextNode.first;
-            col = nextNode.second;
+            row = (int) nextNode.x;
+            col = (int) nextNode.y;
         } while (cellDetails[row][col].parent != nextNode);
 
 
         while (!path.empty()) {
-            Pair p = path.peek();
+            Vector2D p = path.peek();
             path.pop();
-            System.out.println("-> (" + p.first + "," + p.second + ") ");
+            System.out.println(p.x + " " + p.y);
         }
         return pathArray;
     }
 
 
-    public ArrayList<Pair> aStarSearch(char[][] grid, int rows, int cols, Pair src, Pair dest) {
+    public ArrayList<Vector2D> aStarSearch(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest) {
 
         if (!isValid(grid, rows, cols, src)) {
             System.err.println("Source is invalid...");
@@ -87,13 +89,13 @@ public class Astar {
 
         int i, j;
 
-        i = src.first;
-        j = src.second;
+        i = (int)src.x;
+        j = (int) src.y;
         cellDetails[i][j] = new Cell();
         cellDetails[i][j].f = 0.0;
         cellDetails[i][j].g = 0.0;
         cellDetails[i][j].h = 0.0;
-        cellDetails[i][j].parent = new Pair(i, j);
+        cellDetails[i][j].parent = new Vector2D(i, j);
 
 
         PriorityQueue<Details> openList = new PriorityQueue<>((o1, o2) -> (int) Math.round(o1.value - o2.value));
@@ -104,8 +106,8 @@ public class Astar {
         while (!openList.isEmpty()) {
             Details p = openList.peek();
 
-            i = p.i;
-            j = p.j;
+            i = (int) p.i;
+            j = (int) p.j;
 
             openList.poll();
             closedList[i][j] = true;
@@ -113,34 +115,36 @@ public class Astar {
 
             for (int addX = -1; addX <= 1; addX++) {
                 for (int addY = -1; addY <= 1; addY++) {
-                    Pair neighbour = new Pair(i + addX, j + addY);
+                    Vector2D neighbour = new Vector2D(i + addX, j + addY);
+                    int intNeighbourX = (int) neighbour.x;
+                    int intNeighbourY = (int) neighbour.y;
                     if (isValid(grid, rows, cols, neighbour)) {
-                        if (cellDetails[neighbour.first] == null) {
-                            cellDetails[neighbour.first] = new Cell[cols];
+                        if (cellDetails[intNeighbourX] == null) {
+                            cellDetails[intNeighbourX] = new Cell[cols];
                         }
-                        if (cellDetails[neighbour.first][neighbour.second] == null) {
-                            cellDetails[neighbour.first][neighbour.second] = new Cell();
+                        if (cellDetails[intNeighbourX][intNeighbourY] == null) {
+                            cellDetails[intNeighbourX][intNeighbourY] = new Cell();
                         }
 
                         if (isDestination(neighbour, dest)) {
-                            cellDetails[neighbour.first][neighbour.second].parent = new Pair(i, j);
+                            cellDetails[intNeighbourX][intNeighbourY].parent = new Vector2D(i, j);
                             System.out.println("The destination cell is found");
-                            ArrayList<Pair> path = tracePath(cellDetails, rows, cols, dest);
+                            ArrayList<Vector2D> path = tracePath(cellDetails, rows, cols, dest);
                             return path;
-                        } else if (!closedList[neighbour.first][neighbour.second]
+                        } else if (!closedList[intNeighbourX][intNeighbourY]
                                 && isUnBlocked(grid, rows, cols, neighbour)) {
                             double gNew, hNew, fNew;
                             gNew = cellDetails[i][j].g + 1.0;
                             hNew = calculateHValue(neighbour, dest);
                             fNew = gNew + hNew;
 
-                            if (cellDetails[neighbour.first][neighbour.second].f == -1
-                                    || cellDetails[neighbour.first][neighbour.second].f > fNew) {
+                            if (cellDetails[intNeighbourX][intNeighbourY].f == -1
+                                    || cellDetails[intNeighbourX][intNeighbourY].f > fNew) {
 
-                                openList.add(new Details(fNew, neighbour.first, neighbour.second));
-                                cellDetails[neighbour.first][neighbour.second].g = gNew;
-                                cellDetails[neighbour.first][neighbour.second].f = fNew;
-                                cellDetails[neighbour.first][neighbour.second].parent = new Pair(i, j);
+                                openList.add(new Details(fNew, intNeighbourX, intNeighbourY));
+                                cellDetails[intNeighbourX][intNeighbourY].g = gNew;
+                                cellDetails[intNeighbourX][intNeighbourY].f = fNew;
+                                cellDetails[intNeighbourX][intNeighbourY].parent = new Vector2D(i, j);
                             }
                         }
                     }

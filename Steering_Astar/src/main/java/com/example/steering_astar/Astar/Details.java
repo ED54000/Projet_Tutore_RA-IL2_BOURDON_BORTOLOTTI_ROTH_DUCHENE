@@ -2,8 +2,8 @@ package com.example.steering_astar.Astar;
 
 public  class Details {
     double value;
-    int i;
-    int j;
+    double i;
+    double j;
 
     public Details(double value, int i, int j) {
         this.value = value;

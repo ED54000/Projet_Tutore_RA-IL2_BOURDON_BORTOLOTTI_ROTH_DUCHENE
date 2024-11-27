@@ -1,18 +1,20 @@
 package com.example.steering_astar.Astar;
 
+import com.example.steering_astar.Steering.Vector2D;
+
 public class Cell {
-    public Pair parent;
+    public Vector2D parent;
 
     public double f, g, h;
     Cell()
     {
-        parent = new Pair(-1, -1);
+        parent = new Vector2D(-1, -1);
         f = -1;
         g = -1;
         h = -1;
     }
 
-    public Cell(Pair parent, double f, double g, double h) {
+    public Cell(Vector2D parent, double f, double g, double h) {
         this.parent = parent;
         this.f = f;
         this.g = g;
