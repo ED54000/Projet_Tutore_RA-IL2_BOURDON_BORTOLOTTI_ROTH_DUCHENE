@@ -5,45 +5,32 @@ import entites.defenses.Defense;
 
 public abstract class Ennemy extends Entity {
 
-    private double health;
     private double speed;
-    private int damage;
     private double attackSpeed;
-    private double range;
     private double distanceToArrival;
     private String killerType;
+    private double health;
 
-    public Ennemy(double x, double y, int health, double speed, int damage, double attackSpeed, double range, double distanceToArrival) {
-        super(x, y);
-        this.health = health;
+    public Ennemy(double x, double y, double health,double speed, int damage, double attackSpeed, double range, double distanceToArrival) {
+        super(x, y, damage, range);
         this.speed = speed;
-        this.damage = damage;
         this.attackSpeed = attackSpeed;
-        this.range = range;
         this.distanceToArrival = distanceToArrival;
         this.killerType = null;
+        this.health = health;
     }
 
-    public void move() {
+    public void move(double[] next) {
         // TODO
     }
-
-    public abstract void attack(Defense target);
 
     public void takeDamage(double damage) {
         health -= damage;
     }
 
-    public double getHealth() {
-        return health;
-    }
+    public abstract void attack(Defense target);
 
-    public double getSpeed() {
-        return speed;
+    public void update(double secondes) {
+        this.setX(this.getX() + this.speed);
     }
-
-    public int getDamage() {
-        return damage;
-    }
-
 }

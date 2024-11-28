@@ -6,12 +6,16 @@ public abstract class ActiveDefense extends Defense {
 
     private double attackSpeed;
 
+    private double health;
+
     public ActiveDefense(double x, double y, int health, int damage, double range, double attackSpeed) {
-        super(x, y, health, damage, range);
+        super(x, y, damage, range);
         this.attackSpeed = attackSpeed;
+        this.health = health;
     }
 
-    @Override
-    public abstract void attack(Ennemy target);
+    public void takeDamage(double damage) {
+        health -= damage;
+    }
 
 }

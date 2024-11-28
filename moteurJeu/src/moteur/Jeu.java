@@ -1,6 +1,8 @@
 package moteur;
 
 
+import javafx.scene.canvas.Canvas;
+
 /**
  * modele de jeu
  */
@@ -16,7 +18,7 @@ public interface Jeu {
     /**
      * initialisation du jeu
      */
-    void init();
+    void init(Canvas canvas);
 
     /**
      * verifie si le jeu est fini

@@ -1,6 +1,6 @@
 package mains;
 
-import laby.Labyrinth;
+import laby.ModeleLabyrinth;
 
 import java.io.IOException;
 
@@ -10,9 +10,9 @@ import java.io.IOException;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
-
+        /*
         // charge le labyrinthe
-        Labyrinth laby = new Labyrinth("Ressources/Labyrinthe1.txt");
+        ModeleLabyrinth laby = new ModeleLabyrinth("Ressources/Labyrinthe1.txt");
 
         //affiche le labyrinthe charge
         for (int y = 0; y < laby.getLengthY(); y++) {
@@ -27,5 +27,7 @@ public class Main {
             // saut de ligne
             System.out.println();
         }
+
+         */
     }
 }

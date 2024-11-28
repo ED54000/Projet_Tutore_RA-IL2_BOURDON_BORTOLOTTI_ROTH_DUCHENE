@@ -2,15 +2,19 @@ package entites;
 
 import java.util.Random;
 
-public class Entity {
+public abstract class Entity {
 
     private double x;
     private double y;
     private String type;
+    private int damage;
+    private double range;
 
-    public Entity(double x, double y) {
+    public Entity(double x, double y, int damage, double range) {
         this.x = x;
         this.y = y;
+        this.damage = damage;
+        this.range = range;
 
         //génère un type aléatoire
         int randomNumber = (int) (Math.random() * 3)+1;
@@ -58,16 +62,10 @@ public class Entity {
         return 1;
     }
 
+    public abstract void takeDamage(double damage);
+
     public String getType() {
         return type;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
     }
 
     public double getX() {
@@ -76,5 +74,17 @@ public class Entity {
 
     public double getY() {
         return y;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getRange() {
+        return range;
     }
 }
