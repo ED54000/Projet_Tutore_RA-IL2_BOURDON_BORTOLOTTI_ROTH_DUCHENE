@@ -46,7 +46,7 @@ public class Astar {
         Vector2D nextNode;
         do {
             path.push(new Vector2D(col, row));
-            pathArray.addFirst(new Vector2D(col*100, row*100));
+            pathArray.addFirst(new Vector2D(col*50, row*50));
             nextNode = cellDetails[row][col].parent;
             row = (int) nextNode.x;
             col = (int) nextNode.y;

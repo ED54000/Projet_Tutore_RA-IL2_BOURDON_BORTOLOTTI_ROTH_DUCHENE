@@ -15,16 +15,18 @@ public class Main extends Application {
     private Agent agent;
     private Behavior behavior;
     private Vector2D target;
+    private ArrayList<Vector2D> checkpoints;
 
     @Override
     public void start(Stage stage) throws Exception {
         final int width = 1500;
-        final int height = 1000;
+        final int height = 800;
 
         Canvas canvas = new Canvas(width, height);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        target = new Vector2D(width / 2.0, height / 2.0);
+        //pour seekbehavior
+//        target = new Vector2D(width / 2.0, height / 2.0);
 //        behavior = new SeekBehavior(target);
 
       /*  ArrayList<Vector2D> pointList = new ArrayList<>(Arrays.asList(
@@ -57,22 +59,24 @@ public class Main extends Application {
         };
         int[] startIndex = Vector2D.getPairIndex(grid, 'S');
         Vector2D start = new Vector2D(startIndex[0], startIndex[1]);
-        agent = new Agent(start, 3.0);
+        System.out.println(start);
         int [] endIndex = Vector2D.getPairIndex(grid, 'E');
         Vector2D dest = new Vector2D(endIndex[0], endIndex[1]);
+        System.out.println(dest);
         Astar app = new Astar();
-        ArrayList<Vector2D> pointList = app.aStarSearch(grid, grid.length , grid[0].length, start, dest);
-        System.out.println(pointList);
-        ArrayList<Vector2D> listBezier = BezierCurveFromAStarPoints.getBezierCurve(pointList);
-
+        checkpoints = app.aStarSearch(grid, grid.length , grid[0].length, start, dest);
+        System.out.println(checkpoints);
+        agent = new Agent(checkpoints.getFirst(), 2.0);
+        ArrayList<Vector2D> listBezier = BezierCurveFromAStarPoints.getBezierCurve(checkpoints);
         behavior = new PathfollowingBehavior(listBezier);
 
         agent.setBehavior(behavior);
 
-        canvas.setOnMouseMoved((MouseEvent e) -> {
-            target = new Vector2D(e.getX(), e.getY());
-            behavior.setTarget(target);
-        });
+        //pour seekbehavior
+//        canvas.setOnMouseMoved((MouseEvent e) -> {
+//            target = new Vector2D(e.getX(), e.getY());
+//            behavior.setTarget(target);
+//        });
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -93,14 +97,19 @@ public class Main extends Application {
     }
 
     private void render(GraphicsContext gc) {
-        gc.clearRect(0, 0, 1500, 1000);
+        gc.clearRect(0, 0, 1500, 800);
+
+        gc.setFill(Color.BLACK);
+        checkpoints.forEach((n) ->
+                gc.fillOval(n.x - 10, n.y - 10, 20, 20)
+                );
 
         Vector2D position = agent.getPosition();
         gc.setFill(Color.BLUE);
         gc.fillOval(position.x - 10, position.y - 10, 20, 20);
 
         gc.setFill(Color.RED);
-        gc.fillOval(target.x - 5, target.y - 5, 10, 10);
+        gc.fillOval(position.x + agent.getVelocity().x*20, position.y + agent.getVelocity().y*20, 10, 10);
     }
 
     public static void main(String[] args) {

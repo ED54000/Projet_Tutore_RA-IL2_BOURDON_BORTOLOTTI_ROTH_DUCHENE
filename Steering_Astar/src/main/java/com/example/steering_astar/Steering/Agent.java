@@ -13,10 +13,6 @@ public class Agent {
         this.behavior = null;
     }
 
-    public void setBehavior(Behavior behavior) {
-        this.behavior = behavior;
-    }
-
     public void update() {
         if (behavior != null) {
             Vector2D steeringForce = behavior.calculateForce(this);
@@ -25,8 +21,13 @@ public class Agent {
         }
     }
 
+    public void setBehavior(Behavior behavior) {
+        this.behavior = behavior;
+    }
+
     public Vector2D getPosition() { return position; }
     public Vector2D getVelocity() { return velocity; }
     public double getMaxSpeed() { return maxSpeed; }
+    public Behavior getBehavior() { return behavior; }
 }
 
