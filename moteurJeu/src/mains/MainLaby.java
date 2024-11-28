@@ -1,6 +1,7 @@
 package mains;
 
-import laby.Labyrinth;
+import javafx.stage.Stage;
+import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
 
 import java.io.IOException;
@@ -8,12 +9,13 @@ import java.io.IOException;
 
 public class MainLaby {
     public static void main(String[] args) throws IOException {
-        double width = 1000;
+        double width = 1500;
         double height = 1000;
-        int pFPS = 10;
+        int pFPS = 100;
 
         // creation des objets
-        Labyrinth laby = new Labyrinth("Ressources/Labyrinthe2.txt");
+        //ModeleLabyrinth laby = new ModeleLabyrinth("Ressources/Labyrinthe2.txt");
+        ModeleLabyrinth laby = new ModeleLabyrinth();
 
         // parametrage du moteur de jeu
         MoteurJeu.setTaille(width, height);

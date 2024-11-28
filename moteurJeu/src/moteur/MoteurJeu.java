@@ -7,22 +7,21 @@ import javafx.application.Application;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import laby.Labyrinth;
-import laby.Observer;
+import javafx.util.Pair;
+import laby.ModeleLabyrinth;
 import laby.views.ViewLabyrinth;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 // copied from: https://gist.github.com/james-d/8327842
@@ -51,7 +50,7 @@ public class MoteurJeu extends Application {
      * jeu en Cours et renderer du jeu
      */
     private static Jeu jeu = null;
-    Labyrinth laby = (Labyrinth) MoteurJeu.jeu;
+    ModeleLabyrinth laby = (ModeleLabyrinth) MoteurJeu.jeu;
     //Labyrinthe laby = labyJeu.getLabyrinthe();
     //private static DessinJeu dessin = null;
 
@@ -85,7 +84,7 @@ public class MoteurJeu extends Application {
         HEIGHT = height;
     }
 
-    public static void setLaby(Labyrinth laby) {
+    public static void setLaby(ModeleLabyrinth laby) {
         MoteurJeu.jeu = laby;
     }
 
@@ -97,18 +96,92 @@ public class MoteurJeu extends Application {
      * creation de l'application avec juste un canvas et des statistiques
      */
     public void start(Stage primaryStage) throws IOException {
-        System.out.println("yeaeh");
+        // Crée une nouvelle fenêtre (Stage)
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Labyrinthe");
+        // Conteneur principal
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(20));
+        Map<String, String> labyrinthMap = new HashMap<>();
+        labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
+        labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
+        labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
+        // Initialisation de la ComboBox avec les noms lisibles
+        ComboBox<String> labyrinthComboBox = new ComboBox<>();
+        labyrinthComboBox.getItems().addAll(labyrinthMap.keySet());
+        labyrinthComboBox.setValue("Large");
+
+        // Définit "Petit" comme valeur par défaut
+        HBox labyrinthBox = new HBox(10, new Label("Choisir le labyrinthe :"), labyrinthComboBox);
+        // Champ pour le nombre d'ennemis
+        TextField enemiesField = new TextField();
+        enemiesField.setPromptText("Nombre d'ennemis");
+        enemiesField.setText("5");
+
+        HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
+        // Champ pour le nombre de manches
+        TextField roundsField = new TextField();
+        roundsField.setPromptText("Nombre de manches");
+        roundsField.setText("10");
+
+        HBox roundsBox = new HBox(10, new Label("Nombre de manches :"), roundsField);
+        // Bouton Start
+        Button startButton = new Button("Start");
+        startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent MouseEvent) {
+                dialogStage.close();
+                try {
+                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                startJeu(primaryStage);
+            }
+        });
+
+        /*startButton.setOnAction(event -> {
+            String labyrinth = labyrinthComboBox.getValue();
+            String enemiesInput = enemiesField.getText();
+            String roundsInput = roundsField.getText();
+
+            try {
+                // Validation des entrées
+                int enemies = Integer.parseInt(enemiesInput);
+                int rounds = Integer.parseInt(roundsInput);
+                // Affiche les données dans la console
+                System.out.println("Labyrinthe : " + labyrinth);
+                System.out.println("Nombre d'ennemis : " + enemies);
+                System.out.println("Nombre de manches : " + rounds);
+                // Ferme la fenêtre de configuration
+                dialogStage.close();
+
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Veuillez entrer des nombres valides pour les ennemis et les manches.", ButtonType.OK);
+                alert.showAndWait();
+            }
+        });
+
+         */
+        // Ajout des composants au conteneur principal
+        root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, startButton);
+        // Configure la scène de la fenêtre
+        Scene dialogScene = new Scene(root, 400, 200);
+        dialogStage.setScene(dialogScene);
+        // Configure la fenêtre en tant que modale
+        dialogStage.initOwner(primaryStage);
+        dialogStage.initModality(Modality.APPLICATION_MODAL);
+        // Affiche la fenêtre
+        dialogStage.showAndWait();
+    }
+
+    public void startJeu(Stage primaryStage) {
         // initialisation du canvas de dessin et du container
         final Canvas canvas = new Canvas();
         final Pane canvasContainer = new Pane(canvas);
         canvas.widthProperty().bind(canvasContainer.widthProperty());
         canvas.heightProperty().bind(canvasContainer.heightProperty());
-
-        // TODO :création des controleurs
-        // création des vues
-        ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
-
-        this.laby.registerObserver(viewLabyrinth);
 
         // affichage des stats
         final Label stats = new Label();
@@ -126,9 +199,7 @@ public class MoteurJeu extends Application {
 
         // lance la boucle de jeu
         startAnimation(canvas);
-
-        this.laby.notifyObserver();
-
+        jeu.init(canvas);
     }
 
     /**
@@ -162,11 +233,12 @@ public class MoteurJeu extends Application {
 
                 // si le temps ecoule depasse le necessaire pour FPS souhaite
                 if (dureeEnMilliSecondes > dureeFPS) {
-                    // met a jour le jeu en passant les touches appuyees
+                    // met a jour le jeu
                     jeu.update(dureeEnMilliSecondes / 1_000.);
 
                     // dessine le jeu
                     //ViewLabyrinth.dessinerJeu(jeu, canvas);
+                    //notifier observateurs
 
                     // ajoute la duree dans les statistiques
                     frameStats.addFrame(elapsedTime);
@@ -180,4 +252,9 @@ public class MoteurJeu extends Application {
         // lance l'animation
         timer.start();
     }
+
+    private void createDialog(Stage primaryStage) {
+
+    }
+
 }
