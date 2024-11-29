@@ -109,7 +109,11 @@ public class Main extends Application {
         gc.fillOval(position.x - 10, position.y - 10, 20, 20);
 
         gc.setFill(Color.RED);
-        gc.fillOval(position.x + agent.getVelocity().x*20, position.y + agent.getVelocity().y*20, 10, 10);
+        gc.setStroke(Color.RED);
+        double xCoord = position.x + agent.getVelocity().x*20;
+        double yCoord = position.y + agent.getVelocity().y*20;
+        gc.strokeLine(position.x, position.y, xCoord, yCoord);
+        gc.fillOval(xCoord -5, yCoord -5, 10, 10);
     }
 
     public static void main(String[] args) {
