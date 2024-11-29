@@ -231,11 +231,9 @@ public class Astar {
                 }
             }
         }
-
         // Si on ne peut pas atteindre la destination
         return true; // Aucun chemin trouvé, donc le chemin est bloqué
     }
-
 
     /***
      * Algorithme de choix de chemin A*

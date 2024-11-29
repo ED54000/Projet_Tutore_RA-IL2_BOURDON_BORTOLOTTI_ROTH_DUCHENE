@@ -1,6 +1,25 @@
+/***
+ * Classe représentant un élément avec une valeur et ses coordonnées.
+ *
+ * Cette classe stocke une valeur numérique associée à des coordonnées
+ * dans un espace bidimensionnel (i, j).
+ */
 public  class Details {
+
+    /***
+     * La valeur numérique associée à cet élément.
+     * Peut représenter un poids, un coût, ou toute autre mesure quantitative.
+     */
     double value;
+
+    /***
+     * Coordonnée de ligne/rangée pour cet élément.
+     */
     int i;
+
+    /***
+     * Coordonnée de colonne pour cet élément.
+     */
     int j;
 
      /***
