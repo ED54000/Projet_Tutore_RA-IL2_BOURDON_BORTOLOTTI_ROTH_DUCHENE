@@ -27,15 +27,15 @@ public class Main extends Application {
 
         agent = new Agent(new Vector2D(width / 2.0, height / 2.0), 3.0);
         target = new Vector2D(width / 2.0, height / 2.0);
-//        behavior = new SeekBehavior(target);
+        behavior = new SeekBehavior(target);
 //        behavior = new ArrivalBehavior(target, 50);
 
-        ArrayList<Vector2D> pointList = new ArrayList<>(Arrays.asList(
-                new Vector2D(50, 50),
-                new Vector2D(200, 200),
-                new Vector2D(150, 300)
-        ));
-        behavior = new PathfollowingBehavior(pointList);
+//        ArrayList<Vector2D> pointList = new ArrayList<>(Arrays.asList(
+//                new Vector2D(50, 50),
+//                new Vector2D(200, 200),
+//                new Vector2D(150, 300)
+//        ));
+//        behavior = new PathfollowingBehavior(pointList);
 
         agent.setBehavior(behavior);
 
