@@ -1,7 +1,6 @@
 package com.example.steering_astar.Steering;
 
 import java.util.ArrayList;
-;
 
 public class BezierCurveFromAStarPoints {
     public static ArrayList<Vector2D> getBezierCurve(ArrayList<Vector2D> inputPoints) {
