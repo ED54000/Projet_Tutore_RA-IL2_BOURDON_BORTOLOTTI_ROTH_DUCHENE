@@ -3,7 +3,7 @@ public  class Details {
     int i;
     int j;
 
-        /***
+     /***
      * Constructeur pour créer un nouvel objet Details.
      *
      * @param value La valeur numérique à associer aux coordonnées
