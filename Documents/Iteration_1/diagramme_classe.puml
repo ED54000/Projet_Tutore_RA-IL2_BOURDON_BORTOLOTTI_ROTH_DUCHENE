@@ -1,0 +1,155 @@
+@startuml
+
+'CLASSES
+class Labyrinth {
+    + {static} START: char
+    + {static} END: char
+    + {static} ROAD: char
+    + {static} TREE: char
+    + {static} CANON: char
+    + {static} BOMB: char
+    - cases: char[][]
+
+    + Labyrinth(String fichier)
+}
+
+class ViewLabyrinth {
+    - boxSize: int
+    - canvas: Canvas
+
+    + ViewLabyrinth(Labyrinth laby, Canvas canvas)
+    + update(Subject s)
+}
+
+abstract class Entity {
+    - x: double
+    - y: double
+    - type: String
+    - damage: double
+    - range: double
+
+    + Entity(double x, double y, int damage,int range, double damages)
+    + getBonus(String attackerType, String defenderType) : double
+    + takeDamage(double damages)
+}
+
+class Ennemy {
+    - health: double
+    - speed: double
+    - attackSpeed: double
+    - distanceToArrival: double
+    - killerType: String
+
+    + Ennemy(...)
+    + move(double[] next)
+    + {abstract} attack(Defense target)
+}
+
+abstract class Defense {
+    + Defense(...)
+    + {abstract} attack(Ennemy target)
+}
+
+abstract class ActiveDefense {
+    - health: double
+    + attackSpeed: double
+}
+
+abstract class PassiveDefense {
+}
+
+class Canon {
+    + attack(Ennemy target)
+}
+
+class Bomb {
+    + attack(Ennemy target)
+}
+
+class Ninja {
+    + attack(Defense target)
+}
+
+class Giant {
+    + attack(Defense target)
+}
+
+class Behavior {
+}
+
+class ControllerLearning {
+    + handle(event: Event)
+}
+
+class ControllerStart {
+    + handle(event: Event)
+}
+
+class ViewLogs {
+    + ViewLogs(Labyrinth laby)
+    + update(Subject s)
+}
+
+interface Observer {
+    + update(Subject s)
+}
+
+class Main {
+}
+
+class MoteurJeu {
+}
+
+class Application {
+}
+
+interface Jeu {
+}
+
+class FrameStats {
+}
+
+interface Subject {
+    + registerObserver(Observer o)
+    + removeObserver(Observer o)
+    + notifyObservers()
+}
+
+'RELATIONS ENTRE LES CLASSES
+Labyrinth "1" <-- "1" ViewLabyrinth
+Entity <|-- Ennemy
+Entity <|-- Defense
+Defense <|-- ActiveDefense
+Defense <|-- PassiveDefense
+ActiveDefense <|-- Canon
+PassiveDefense <|-- Bomb
+Ennemy <|-- Giant
+Ennemy <|-- Ninja
+Behavior "1" <-- "1" Ennemy
+ControllerLearning "1" --> "1" Labyrinth: laby
+ControllerStart "1" --> "1" Labyrinth: laby
+Labyrinth "1" --> "*" Ennemy: ennemies
+Labyrinth "1" --> "*" Defense: defenses
+ViewLogs "1" --> "1" Labyrinth: laby
+ViewLabyrinth ..> Observer: implements
+ViewLogs ..> Observer: implements
+Labyrinth --> Observer: observers
+Main --> MoteurJeu: use
+MoteurJeu --|> Application
+Labyrinth ..> Jeu: implements
+Labyrinth ..> Subject: implements
+
+'NOTES
+note left of ViewLabyrinth::boxSize
+    Taille d'une case
+end note
+note left of Giant
+    Exemple d'un ennemi
+end note
+note left of Canon
+    Exemple d'une défense active
+end note
+note left of MoteurJeu
+    Crée/enregistre les observers
+end note
+@enduml
