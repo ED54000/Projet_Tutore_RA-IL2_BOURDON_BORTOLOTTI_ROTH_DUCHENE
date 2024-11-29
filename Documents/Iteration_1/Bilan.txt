@@ -1,0 +1,12 @@
+Bilan :
+
+Le(s) bug(s) restant :
+    - Aucun à notre connaissance 
+
+Tests validés : 
+  - Le choix de chemin est fonctionnel avec les comportements choisis
+  - Les tours non obligatoires ne sont pas prises par les ennemis "Fugitive"
+  - Le cartes comportent un départ et une arrivée 
+
+Le choix de chemin des fugitives peut être encore amélioré en prenant le chemin qui possède le moins de tours 
+Cela à été compliqué de tester le chemin pour ce dernier.
