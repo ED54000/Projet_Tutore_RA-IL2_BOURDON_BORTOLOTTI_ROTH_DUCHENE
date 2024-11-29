@@ -44,14 +44,18 @@ public class Main {
         );
 
         Ennemy[][] bestCouples = EnnemyEvolution.getBestCouples(ennemies);
+        /* ==================================*/
+        /* ======= MEILLEURS COUPLES ========*/
         System.out.println("Meilleurs couples : \n" + bestCouples[0][0].toString() + bestCouples[0][1].toString() + bestCouples[1][0].toString() + bestCouples[1][1].toString() + bestCouples[2][0].toString() + bestCouples[2][1].toString() + bestCouples[3][0].toString() + bestCouples[3][1].toString());
 
-        System.out.println("\nMeilleur couple Fugitifs : \n" + bestCouples[0][0].toString() + bestCouples[0][1].toString());
-        System.out.println("Tous les ennemis fugitifs : \n" + ennemies.get(0).toString() + ennemies.get(1).toString() + ennemies.get(2).toString()+ ennemies.get(3).toString()+ ennemies.get(4).toString()+ ennemies.get(5).toString()+ ennemies.get(6).toString()+ ennemies.get(7).toString()+ ennemies.get(8).toString());
-        System.out.println("\nMeilleur couple Healers : \n" + bestCouples[1][0].toString() + bestCouples[1][1].toString());
-        System.out.println("Tous les ennemis Healers : \n" + ennemies.get(9).toString() + ennemies.get(10).toString() + ennemies.get(11).toString()+ ennemies.get(12).toString()+ ennemies.get(13).toString()+ ennemies.get(14).toString()+ ennemies.get(15).toString()+ ennemies.get(16).toString()+ ennemies.get(17).toString());
+        //System.out.println("\nMeilleur couple Fugitifs : \n" + bestCouples[0][0].toString() + bestCouples[0][1].toString());
+        //System.out.println("Tous les ennemis fugitifs : \n" + ennemies.get(0).toString() + ennemies.get(1).toString() + ennemies.get(2).toString()+ ennemies.get(3).toString()+ ennemies.get(4).toString()+ ennemies.get(5).toString()+ ennemies.get(6).toString()+ ennemies.get(7).toString()+ ennemies.get(8).toString());
+        //System.out.println("\nMeilleur couple Healers : \n" + bestCouples[1][0].toString() + bestCouples[1][1].toString());
+        //System.out.println("Tous les ennemis Healers : \n" + ennemies.get(9).toString() + ennemies.get(10).toString() + ennemies.get(11).toString()+ ennemies.get(12).toString()+ ennemies.get(13).toString()+ ennemies.get(14).toString()+ ennemies.get(15).toString()+ ennemies.get(16).toString()+ ennemies.get(17).toString());
         //System.out.println("Ennemis morts : " + EnnemyEvolution.getDeadEnnemies(ennemies));
 
+        /* ==================================*/
+        /* ======= MOYENNES DES STATS =======*/
         double[][] averageStats = EnnemyEvolution.getAverageStats(ennemies);
         for(int i = 0; i < averageStats.length; i++) {
             System.out.println("Moyenne des statistiques du couple " + i + " : ");
