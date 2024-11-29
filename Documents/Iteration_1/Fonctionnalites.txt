@@ -1,6 +1,7 @@
 Marin :
 
 	Prototype algorithme évolutionnaire
+	Passage du diagramme de classe général de draw.io vers un fichier PlantUML
 
 Tristan : 
 
