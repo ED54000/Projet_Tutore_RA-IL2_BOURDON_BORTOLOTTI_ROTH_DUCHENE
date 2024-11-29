@@ -1,5 +1,8 @@
 import java.util.*;
 
+/***
+ * Classe Astar qui choisi le chemin le plus court avec l'algorithme A*
+ */
 public class Astar {
 
     /***
@@ -65,10 +68,12 @@ public class Astar {
     }
 
     /***
-     *
-     * @param cellDetails
-     * @param dest
-     * @return
+     * Retrace et construit le chemin le plus court à partir des détails de cellules.
+     * @param cellDetails Un tableau 2D de cellules contenant les informations
+     *                    de parcours pour chaque cellule du chemin
+     * @param dest Le point de destination final, représenté par ses coordonnées de ligne et de colonne
+     * @return Une liste des coordonnées (Pair) représentant le chemin le plus court,
+     *         de la destination à la source
      */
     private ArrayList<Pair> tracePath(Cell[][] cellDetails, Pair dest) {
         ArrayList<Pair> pathArray = new ArrayList<>();
@@ -104,7 +109,7 @@ public class Astar {
      * @param cols Nombre de colonnes dans la grille
      * @param src Le point de départ du chemin
      * @param dest Le point d'arrivée du chemin
-     * @return
+     * @return La nouvelle grille avec les tours non obligatoire et leurs environs remplacés des murs
      */
     public char[][] gridWithTower(char[][] grid, int rows, int cols, Pair src, Pair dest) {
         // Crée une copie de la grille
