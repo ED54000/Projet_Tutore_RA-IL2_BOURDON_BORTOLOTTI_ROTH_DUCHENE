@@ -31,9 +31,9 @@ public class Main {
         Pair dest = new Pair(endIndex[0], endIndex[1]);
         Astar app = new Astar();
         //System.out.println("Kamikaze : ");
-        //app.aStarSearch(grid, grid.length , grid[0].length, start, dest,"Kamikaze");
+        app.aStarSearch(grid, grid.length , grid[0].length, start, dest,"Kamikaze");
         //System.out.println("Normal : " );
         //app.aStarSearch(grid, grid.length , grid[0].length, start, dest,"Normal");
-        app.aStarSearch(grid, grid.length , grid[0].length, start, dest,"Fuyard");
+        app.aStarSearch(grid, grid.length , grid[0].length, start, dest,"Fugitive");
     }
 }

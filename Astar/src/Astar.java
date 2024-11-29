@@ -29,7 +29,7 @@ public class Astar {
      * @param grid La grille bidimensionnelle à parcourir
      * @param point Le point à vérifier
      * @param src Le point de départ du chemin
-     * @param dest Le point de destination du chemin
+     * @param dest Le point d'arrivée du chemin
      * @return true si le point peut être traversé, false sinon
      */
     boolean isUnblocked(char[][] grid, Pair point, Pair src, Pair dest) {
@@ -40,10 +40,6 @@ public class Astar {
 
         return false;
     }
-
-
-
-
 
 
     /***
@@ -57,12 +53,11 @@ public class Astar {
     }
 
 
-
     /***
      * Calcule la distance heuristique (distance euclidienne) entre deux points.
      * La formule utilisée est : √((x1 - x2)² + (y1 - y2)²)
-     * @param src Le point source (coordonnées de départ)
-     * @param dest Le point de destination (coordonnées d'arrivée)
+     * @param src Le point de départ du chemin
+     * @param dest Le point d'arrivée du chemin
      * @return La distance euclidienne entre les deux points
      */
     double calculateHValue(Pair src, Pair dest) {
@@ -102,6 +97,15 @@ public class Astar {
         return pathArray;
     }
 
+    /***
+     *
+     * @param grid La grille bidimensionnelle à parcourir
+     * @param rows Nombre de lignes dans la grille
+     * @param cols Nombre de colonnes dans la grille
+     * @param src Le point de départ du chemin
+     * @param dest Le point d'arrivée du chemin
+     * @return
+     */
     public char[][] gridWithTower(char[][] grid, int rows, int cols, Pair src, Pair dest) {
         // Crée une copie de la grille
         char[][] newGrid = new char[rows][cols];
@@ -142,8 +146,14 @@ public class Astar {
     }
 
 
-
-
+    /***
+     * Teste si la tour est obligatoire (si un ennemi est obligé de passer à côté)
+     * @param grid La grille bidimensionnelle à parcourir
+     * @param tower La tour à tester
+     * @param src Le point de départ du chemin
+     * @param dest Le point d'arrivée du chemin
+     * @return true si la tour bloque le chemin, false sinon
+     */
     boolean isTowerObligatory(char[][] grid, Pair tower, Pair src, Pair dest) {
         // Crée une copie de la grille pour modifier les alentours de la tour
         char[][] gridCopy = new char[grid.length][grid[0].length];
@@ -168,6 +178,13 @@ public class Astar {
         return isPathBlocked(gridCopy, src, dest); // Si le chemin est bloqué, la tour est obligatoire
     }
 
+    /***
+     * Teste si le chemin est bloqué
+     * @param grid La grille bidimensionnelle à parcourir
+     * @param src Le point de départ du chemin
+     * @param dest Le point d'arrivée du chemin
+     * @return true si le chemin est bloqué, false sinon
+     */
     public boolean isPathBlocked(char[][] grid, Pair src, Pair dest) {
         // Si la source ou la destination ne sont pas valides ou sont bloquées
         if (!isValid(grid, src) || !isValid(grid, dest) || grid[src.first][src.second] == '#' || grid[dest.first][dest.second] == '#') {
@@ -180,7 +197,7 @@ public class Astar {
 
         // Tableau pour suivre les cellules visitées
         boolean[][] visited = new boolean[rows][cols];
-        
+
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
         // File pour la recherche en largeur
@@ -188,7 +205,6 @@ public class Astar {
         queue.add(src);
         visited[src.first][src.second] = true;
 
-        // Recherche en largeur
         while (!queue.isEmpty()) {
             Pair current = queue.poll();
 
@@ -217,25 +233,29 @@ public class Astar {
 
 
     /***
-     *
-     * @param grid
-     * @param rows
-     * @param cols
-     * @param src
-     * @param dest
-     * @return
+     * Algorithme de choix de chemin A*
+     * @param grid La grille bidimensionnelle à parcourir
+     * @param rows Nombre de lignes dans la grille
+     * @param cols Nombre de colonnes dans la grille
+     * @param src Le point de départ du chemin
+     * @param dest Le point d'arrivée du chemin
+     * @param comp Le comportement choisi qui influe sur le choix du chemin
+     *     - Par défaut le chemin choisi est le plus court entre le départ et l'arrivé
+     *     - Le comportement "Fugitive" fuit les tours et prend le chemin le plus sécurisé
+     *     - Le comportement "Kamikaze" considère la tour la plus proche comme son arrivée
+     * @return Le chemin le plus court
      */
     public ArrayList<Pair> aStarSearch(char[][] grid, int rows, int cols, Pair src, Pair dest, String comp) {
 
-        if (comp.equals("Fuyard")){
+        if (comp.equals("Fugitive")) {
             grid = gridWithTower(grid, rows, cols, src, dest);
         }
-        if (comp.equals("Kamikaze")){
+        if (comp.equals("Kamikaze")) {
             try {
                 int[] newEnd = Pair.getCloserPairIndex(grid, 'T');
                 dest = new Pair(newEnd[0], newEnd[1]);
                 grid[dest.first][dest.second] = 'E';
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
         }
@@ -259,7 +279,6 @@ public class Astar {
 
 
         boolean[][] closedList = new boolean[rows][cols];
-
         Cell[][] cellDetails = new Cell[rows][cols];
 
         int i, j;
@@ -272,22 +291,16 @@ public class Astar {
         cellDetails[i][j].h = 0.0;
         cellDetails[i][j].parent = new Pair(i, j);
 
-
         PriorityQueue<Details> openList = new PriorityQueue<>((o1, o2) -> (int) Math.round(o1.value - o2.value));
-
 
         openList.add(new Details(0.0, i, j));
 
         while (!openList.isEmpty()) {
             Details p = openList.peek();
-
             i = p.i;
             j = p.j;
-
             openList.poll();
             closedList[i][j] = true;
-
-
             int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
             for (int[] dir : directions) {
                 Pair neighbour = new Pair(i + dir[0], j + dir[1]);
