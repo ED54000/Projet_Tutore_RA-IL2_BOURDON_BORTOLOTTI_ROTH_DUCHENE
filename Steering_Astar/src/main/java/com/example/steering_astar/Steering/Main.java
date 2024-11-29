@@ -66,7 +66,7 @@ public class Main extends Application {
         Astar app = new Astar();
         checkpoints = app.aStarSearch(grid, grid.length , grid[0].length, start, dest);
         System.out.println(checkpoints);
-        agent = new Agent(checkpoints.getFirst(), 2.0);
+        agent = new Agent(checkpoints.getFirst(), 2);
         ArrayList<Vector2D> listBezier = BezierCurveFromAStarPoints.getBezierCurve(checkpoints);
         behavior = new PathfollowingBehavior(listBezier);
 
