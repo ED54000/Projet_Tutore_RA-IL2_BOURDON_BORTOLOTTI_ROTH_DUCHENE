@@ -87,7 +87,7 @@ public class Astar {
         Pair nextNode;
         do {
             path.push(new Pair(row, col));
-            pathArray.add(new Pair(row, col));
+            pathArray.addFirst(new Pair(col,row ));
             nextNode = cellDetails[row][col].parent;
             row = nextNode.first;
             col = nextNode.second;
@@ -111,7 +111,7 @@ public class Astar {
      * @param dest Le point d'arrivée du chemin
      * @return La nouvelle grille avec les tours non obligatoire et leurs environs remplacés des murs
      */
-    public char[][] gridWithTower(char[][] grid, int rows, int cols, Pair src, Pair dest) {
+    public char[][] gridWithTower(char[][] grid, int rows, int cols, Pair src, Pair dest) throws Exception {
         // Crée une copie de la grille
         char[][] newGrid = new char[rows][cols];
         for (int i = 0; i < rows; i++) {
@@ -159,28 +159,34 @@ public class Astar {
      * @param dest Le point d'arrivée du chemin
      * @return true si la tour bloque le chemin, false sinon
      */
-    boolean isTowerObligatory(char[][] grid, Pair tower, Pair src, Pair dest) {
-        // Crée une copie de la grille pour modifier les alentours de la tour
-        char[][] gridCopy = new char[grid.length][grid[0].length];
-        for (int i = 0; i < grid.length; i++) {
-            System.arraycopy(grid[i], 0, gridCopy[i], 0, grid[i].length);
-        }
+    boolean isTowerObligatory(char[][] grid, Pair tower, Pair src, Pair dest) throws Exception {
+        // Teste si le caractère est bien une tour
+        if (grid[tower.first][tower.second] == 'T') {
+            // Crée une copie de la grille pour modifier les alentours de la tour
+            char[][] gridCopy = new char[grid.length][grid[0].length];
+            for (int i = 0; i < grid.length; i++) {
+                System.arraycopy(grid[i], 0, gridCopy[i], 0, grid[i].length);
+            }
 
-        // Définir une zone autour de la tour pour être transformée en mur
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                int newRow = tower.first + i;
-                int newCol = tower.second + j;
+            // Définir une zone autour de la tour pour être transformée en mur
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
+                    int newRow = tower.first + i;
+                    int newCol = tower.second + j;
 
-                // Vérifier la validité des indices et ne pas affecter la tour elle-même
-                if (isValid(gridCopy, new Pair(newRow, newCol)) && !(i == 0 && j == 0)) {
-                    gridCopy[newRow][newCol] = '#'; // Transforme les alentours de la tour en mur
+                    // Vérifier la validité des indices et ne pas affecter la tour elle-même
+                    if (isValid(gridCopy, new Pair(newRow, newCol)) && !(i == 0 && j == 0)) {
+                        gridCopy[newRow][newCol] = '#'; // Transforme les alentours de la tour en mur
+                    }
                 }
             }
-        }
 
-        // Vérifier si le chemin est bloqué avec ces murs autour de la tour
-        return isPathBlocked(gridCopy, src, dest); // Si le chemin est bloqué, la tour est obligatoire
+            // Vérifier si le chemin est bloqué avec ces murs autour de la tour
+            return isPathBlocked(gridCopy, src, dest); // Si le chemin est bloqué, la tour est obligatoire
+        }
+        else {
+            throw new Exception("Le caractère : "+ grid[tower.first][tower.second] +" n'est pas une tour");
+        }
     }
 
     /***
@@ -251,7 +257,12 @@ public class Astar {
     public ArrayList<Pair> aStarSearch(char[][] grid, int rows, int cols, Pair src, Pair dest, String comp) {
 
         if (comp.equals("Fugitive")) {
-            grid = gridWithTower(grid, rows, cols, src, dest);
+            try {
+                grid = gridWithTower(grid, rows, cols, src, dest);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+
         }
         if (comp.equals("Kamikaze")) {
             try {
@@ -318,8 +329,7 @@ public class Astar {
                     if (isDestination(neighbour, dest)) {
                         cellDetails[neighbour.first][neighbour.second].parent = new Pair(i, j);
                         System.out.println("The destination cell is found");
-                        ArrayList<Pair> path = tracePath(cellDetails, dest);
-                        return path;
+                        return tracePath(cellDetails, dest);
                     } else if (!closedList[neighbour.first][neighbour.second]
                             && isUnblocked(grid, neighbour, src, dest)) {
                         double gNew, hNew, fNew;

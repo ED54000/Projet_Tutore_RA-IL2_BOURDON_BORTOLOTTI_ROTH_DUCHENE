@@ -37,20 +37,4 @@ public class Cell {
         g = -1;
         h = -1;
     }
-
-    /**
-     * Constructeur personnalisé permettant de définir tous les attributs de la cellule.
-     *
-     * @param parent Coordonnées du nœud parent dans le chemin
-     * @param f      Coût total estimé du chemin
-     * @param g      Coût réel du chemin depuis le point de départ
-     * @param h      Estimation heuristique du coût restant jusqu'à la destination
-     */
-    public Cell(Pair parent, double f, double g, double h) {
-        this.parent = parent;
-        this.f = f;
-        this.g = g;
-        this.h = h;
-    }
-
 }
