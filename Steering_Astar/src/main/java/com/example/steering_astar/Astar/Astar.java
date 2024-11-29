@@ -38,11 +38,9 @@ public class Astar {
      * - Le point est près d'une tour "obligatoire"
      * @param grid La grille bidimensionnelle à parcourir
      * @param point Le point à vérifier
-     * @param src Le point de départ du chemin
-     * @param dest Le point d'arrivée du chemin
      * @return true si le point peut être traversé, false sinon
      */
-    boolean isUnblocked(char[][] grid, Vector2D point, Vector2D src, Vector2D dest) {
+    boolean isUnblocked(char[][] grid, Vector2D point) {
         if (isValid(grid, point)) {
             char cell = grid[(int) point.x][(int) point.y];
             return cell == '.' || cell == 'E' || cell == 'S';
@@ -293,8 +291,8 @@ public class Astar {
             System.err.println("Destination is invalid...");
             return null;
         }
-        if (!isUnblocked(grid, src, src, dest)
-                || !isUnblocked(grid, dest, src, dest)) {
+        if (!isUnblocked(grid, src)
+                || !isUnblocked(grid, dest)) {
             System.err.println("Source or destination is blocked...");
             return null;
         }
@@ -343,7 +341,7 @@ public class Astar {
                         System.out.println("The destination cell is found");
                         return tracePath(cellDetails, dest);
                     } else if (!closedList[(int) neighbour.x][(int) neighbour.y]
-                            && isUnblocked(grid, neighbour, src, dest)) {
+                            && isUnblocked(grid, neighbour)) {
                         double gNew, hNew, fNew;
                         gNew = cellDetails[(int) i][(int) j].g + 1.0;
                         hNew = calculateHValue(neighbour, dest);
