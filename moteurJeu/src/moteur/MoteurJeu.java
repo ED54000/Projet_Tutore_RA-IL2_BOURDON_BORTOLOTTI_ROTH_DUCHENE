@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import laby.ModeleLabyrinth;
+import laby.controllers.ControllerStart;
 import laby.views.ViewLabyrinth;
 
 import java.io.IOException;
@@ -53,6 +54,10 @@ public class MoteurJeu extends Application {
     ModeleLabyrinth laby = (ModeleLabyrinth) MoteurJeu.jeu;
     //Labyrinthe laby = labyJeu.getLabyrinthe();
     //private static DessinJeu dessin = null;
+
+    // initialisation du canvas de dessin et du container
+    final Canvas canvas = new Canvas();
+    final Pane canvasContainer = new Pane(canvas);
 
 
     /**
@@ -96,19 +101,28 @@ public class MoteurJeu extends Application {
      * creation de l'application avec juste un canvas et des statistiques
      */
     public void start(Stage primaryStage) throws IOException {
+        //TODO : création des controleurs
+        //ControllerStart controllerStart = new ControllerStart(laby);
+        // création des vues
+        ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
+        //enregistrement des observateurs
+        laby.registerObserver(viewLabyrinth);
+
         // Crée une nouvelle fenêtre (Stage)
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Labyrinthe");
         // Conteneur principal
         VBox root = new VBox(10);
         root.setPadding(new Insets(20));
+        // Map des labyrinthes
         Map<String, String> labyrinthMap = new HashMap<>();
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
+
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll(labyrinthMap.keySet());
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large");
         labyrinthComboBox.setValue("Large");
 
         // Définit "Petit" comme valeur par défaut
@@ -123,6 +137,13 @@ public class MoteurJeu extends Application {
         TextField roundsField = new TextField();
         roundsField.setPromptText("Nombre de manches");
         roundsField.setText("10");
+        labyrinthComboBox.setId("labyrinthComboBox");
+        enemiesField.setId("enemiesField");
+        roundsField.setId("roundsField");
+
+        // Création du contrôleur avec les références des champs
+        ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField);
+
 
         HBox roundsBox = new HBox(10, new Label("Nombre de manches :"), roundsField);
         // Bouton Start
@@ -130,42 +151,21 @@ public class MoteurJeu extends Application {
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent MouseEvent) {
+                System.out.println(labyrinthMap.get(labyrinthComboBox.getValue()));
                 dialogStage.close();
                 try {
                     laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-
                 startJeu(primaryStage);
             }
         });
-
-        /*startButton.setOnAction(event -> {
-            String labyrinth = labyrinthComboBox.getValue();
-            String enemiesInput = enemiesField.getText();
-            String roundsInput = roundsField.getText();
-
-            try {
-                // Validation des entrées
-                int enemies = Integer.parseInt(enemiesInput);
-                int rounds = Integer.parseInt(roundsInput);
-                // Affiche les données dans la console
-                System.out.println("Labyrinthe : " + labyrinth);
-                System.out.println("Nombre d'ennemis : " + enemies);
-                System.out.println("Nombre de manches : " + rounds);
-                // Ferme la fenêtre de configuration
-                dialogStage.close();
-
-            } catch (NumberFormatException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Veuillez entrer des nombres valides pour les ennemis et les manches.", ButtonType.OK);
-                alert.showAndWait();
-            }
-        });
-
-         */
         // Ajout des composants au conteneur principal
         root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, startButton);
+
+        //startButton.setOnMouseClicked(controllerStart);
+
         // Configure la scène de la fenêtre
         Scene dialogScene = new Scene(root, 400, 200);
         dialogStage.setScene(dialogScene);
@@ -177,9 +177,6 @@ public class MoteurJeu extends Application {
     }
 
     public void startJeu(Stage primaryStage) {
-        // initialisation du canvas de dessin et du container
-        final Canvas canvas = new Canvas();
-        final Pane canvasContainer = new Pane(canvas);
         canvas.widthProperty().bind(canvasContainer.widthProperty());
         canvas.heightProperty().bind(canvasContainer.heightProperty());
 
@@ -198,8 +195,8 @@ public class MoteurJeu extends Application {
         primaryStage.show();
 
         // lance la boucle de jeu
-        startAnimation(canvas);
         jeu.init(canvas);
+        startAnimation(canvas);
     }
 
     /**

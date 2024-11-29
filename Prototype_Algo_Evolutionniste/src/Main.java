@@ -55,7 +55,7 @@ public class Main {
         //System.out.println("Ennemis morts : " + EnnemyEvolution.getDeadEnnemies(ennemies));
 
         /* ==================================*/
-        /* ======= MOYENNES DES STATS =======*/
+        /* ======= MOYENNES DES STATS =======
         double[][] averageStats = EnnemyEvolution.getAverageStats(ennemies);
         for(int i = 0; i < averageStats.length; i++) {
             System.out.println("Moyenne des statistiques du couple " + i + " : ");
@@ -65,5 +65,7 @@ public class Main {
             System.out.println("Vitesse d'attaque : " + averageStats[i][3]);
             System.out.println("Portée : " + averageStats[i][4]);
         }
+
+         */
     }
 }

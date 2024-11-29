@@ -5,6 +5,7 @@ import entites.defenses.Canon;
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
 import entites.enemies.Giant;
+import entites.enemies.Ninja;
 import javafx.scene.canvas.Canvas;
 import laby.controllers.ControllerStart;
 import laby.views.ViewLabyrinth;
@@ -27,6 +28,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     //labyrinthe
     private char[][] cases;
+    private double Xstart, Ystart;
 
     private ArrayList<Observer> observateurs;
 
@@ -36,7 +38,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches) throws IOException {
-        this.observateurs = new ArrayList<>();
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
@@ -70,6 +71,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case START:
                         //ajouter le point de départ
                         this.cases[numLigne][colonne] = START;
+                        this.Xstart = colonne;
+                        this.Ystart = numLigne;
                         createEnnemies(nbEnnemies, colonne, numLigne);
                         break;
                     case END:
@@ -91,7 +94,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
             numLigne++;
             ligne = br.readLine();
         }
-        System.out.println(enemies.size());
         br.close();
     }
 
@@ -101,98 +103,36 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 2);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(colonne, numLigne);
+                    Giant giant = new Giant(colonne+Math.random(), numLigne+Math.random());
                     this.enemies.add(giant);
                     break;
                 case 1:
-                    Giant giant1 = new Giant(colonne, numLigne);
-                    this.enemies.add(giant1);
+                    Ninja ninja = new Ninja(colonne+Math.random(), numLigne+Math.random());
+                    this.enemies.add(ninja);
                     break;
             }
         }
     }
-
-    /*public ModeleLabyrinth(String fichier) throws IOException {
-        this.observateurs = new ArrayList<>();
-        //ouvrire le fichier
-        FileReader fr = new FileReader(fichier);
-        BufferedReader br = new BufferedReader(fr);
-
-        int nbLignes, nbColonnes;
-        nbLignes = Integer.parseInt(br.readLine());
-        nbColonnes = Integer.parseInt(br.readLine());
-
-        //création du labyrinthe vide
-        this.cases = new char[nbLignes][nbColonnes];
-
-        //lecture des cases
-        String ligne = br.readLine();
-
-        //stocke les indices
-        int numLigne = 0;
-
-        //parcours le fichier
-        while (ligne != null) {
-            for (int colonne = 0; colonne < ligne.length(); colonne++) {
-                char c = ligne.charAt(colonne);
-                switch (c){
-                    case TREE:
-                        //ajouter un mur
-                        this.cases[numLigne][colonne] = TREE;
-                        break;
-                    case ROAD:
-                        // ajouter une route
-                        this.cases[numLigne][colonne] = ROAD;
-                        break;
-                    case START:
-                        //ajouter le point de départ
-                        this.cases[numLigne][colonne] = START;
-                        Giant giant = new Giant(colonne, numLigne);
-                        this.enemies.add(giant);
-                        break;
-                    case END:
-                        //ajouter le point d'arrivée
-                        this.cases[numLigne][colonne] = END;
-                        break;
-                    case CANON:
-                        //ajouter un canon
-                        this.cases[numLigne][colonne] = CANON;
-                        //this.defenses.add(new Canon(colonne, numLigne));
-                        break;
-                    case BOMB:
-                        //ajouter une bombe
-                        this.cases[numLigne][colonne] = BOMB;
-                        //this.defenses.add(new Bombe(colonne, numLigne));
-                        break;
-                }
-            }
-            numLigne++;
-            ligne = br.readLine();
-        }
-        br.close();
-    }
-
-     */
 
     @Override
     public void update(double secondes) {
         for (Ennemy ennemy : this.enemies) {
-            ennemy.update(secondes);
+            //si l'ennemi est sur la case de départ
+            if (ennemy.getDistanceToArrival() == ennemy.getDistanceStartToArrival()) {
+                System.out.println("test");
+                //
+            }
+            while (ennemy.getTimeSpawn() != 0) {
+                ennemy.setTimeSpawn(ennemy.getTimeSpawn() - 1);
+            }
+            ennemy.move(secondes);
+            notifyObserver();
         }
-        notifyObserver();
     }
 
     @Override
     public void init(Canvas canvas) {
-        //création des controleurs*
-        ControllerStart controllerStart = new ControllerStart(this);
-        // création des vues
-        ViewLabyrinth viewLabyrinth = new ViewLabyrinth(this, canvas);
-
-        registerObserver(viewLabyrinth);
-
-        notifyObserver();
-        System.out.println("init");
+        notifyObserver(); //utilité ?
     }
 
     @Override
