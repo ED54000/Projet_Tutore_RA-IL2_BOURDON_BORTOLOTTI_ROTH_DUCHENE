@@ -142,23 +142,22 @@ public class Main extends Application {
 
     private void renderAgent(GraphicsContext gc, Agent agent, ArrayList<Vector2D> checkpoint, Color pathColor, Color agentColor) {
 
-        if (agent.getPosition() != checkpoint.getLast()){
-            gc.setFill(pathColor);
-            checkpoint.forEach((n) ->
-                    gc.fillOval(n.x - 10, n.y - 10, 20, 20)
-            );
+        gc.setFill(pathColor);
+        checkpoint.forEach((n) ->
+                gc.fillOval(n.x - 10, n.y - 10, 20, 20)
+        );
 
-            Vector2D position = agent.getPosition();
-            gc.setFill(agentColor);
-            gc.fillOval(position.x - 10, position.y - 10, 20, 20);
+        Vector2D position = agent.getPosition();
+        gc.setFill(agentColor);
+        gc.fillOval(position.x - 10, position.y - 10, 20, 20);
 
-            gc.setFill(Color.RED);
-            gc.setStroke(Color.RED);
-            double xCoord = position.x + agent.getVelocity().x*20;
-            double yCoord = position.y + agent.getVelocity().y*20;
-            gc.strokeLine(position.x, position.y, xCoord, yCoord);
-            gc.fillOval(xCoord -5, yCoord -5, 10, 10);
-        }
+        gc.setFill(Color.RED);
+        gc.setStroke(Color.RED);
+        double xCoord = position.x + agent.getVelocity().x*20;
+        double yCoord = position.y + agent.getVelocity().y*20;
+        gc.strokeLine(position.x, position.y, xCoord, yCoord);
+        gc.fillOval(xCoord -5, yCoord -5, 10, 10);
+
     }
 
     public static void main(String[] args) {
