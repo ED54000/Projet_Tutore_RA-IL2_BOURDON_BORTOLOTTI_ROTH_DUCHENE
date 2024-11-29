@@ -1,0 +1,24 @@
+Marin :
+
+	Prototype algorithme évolutionnaire
+	Passage du diagramme de classe général de draw.io vers un fichier PlantUML
+
+Tristan : 
+
+	Interface graphique
+	Création des classes Ennemis, Défenses et les autres classes associées
+	Création de la pop-up de début de partie
+
+Florian : 
+
+	Prototype de Steering behaviours avec la Javadoc associée 
+	Fusion de A* et de Steering behaviours
+	Courbe de Bézier
+	Tests de A* 
+
+Éloi : 
+
+	Prototype de l'algorithme de A* avec la Javadoc associée
+	Tests du package A* 
+	Fusion de A* et de Steering behaviours
+	Courbe de Bézier

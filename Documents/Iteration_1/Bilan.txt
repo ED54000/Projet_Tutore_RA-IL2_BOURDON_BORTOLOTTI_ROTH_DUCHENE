@@ -1,0 +1,24 @@
+Bilan :
+
+Le(s) bug(s) restant :
+    - Aucun à notre connaissance 
+
+Conformité à l'étude préalable : 
+
+Nous avons réalisé toutes les fonctionnalités prévues pour l'itération 1.
+Nous avons également pu faire des choses prévues dans l'itération 2, notammment la fusion de Steering behaviors et de A*.
+
+Eloi :
+Tests validés : 
+  - Le choix de chemin est fonctionnel avec les comportements choisis
+  - Les tours non obligatoires ne sont pas prises par les ennemis "Fugitive"
+  - Le cartes comportent un départ et une arrivée 
+
+Problèmes rencontrés :
+Le choix de chemin des fugitives peut être encore amélioré en prenant le chemin qui possède le moins de tours 
+Cela à été compliqué de tester le chemin pour ce dernier.
+
+Tristan :
+Problèmes rencontrés :
+- Le ControleurStart permettant de créer le labyrinthe et lancé le jeu une fois le bouton start pressé est à moitié fonctionnelle, il a besoin de rappeler une méthode du moteur de jeu ce qui est impossible.
+- Spawn des ennemies chacun leur tour
