@@ -5,7 +5,7 @@ public  class Details {
     double i;
     double j;
 
-    public Details(double value, int i, int j) {
+    public Details(double value, double i, double j) {
         this.value = value;
         this.i = i;
         this.j = j;
