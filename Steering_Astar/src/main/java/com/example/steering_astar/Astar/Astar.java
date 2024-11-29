@@ -117,6 +117,7 @@ public class Astar {
      * @param src Le point de départ du chemin
      * @param dest Le point d'arrivée du chemin
      * @return La nouvelle grille avec les tours non obligatoire et leurs environs remplacés des murs
+     *  si les tours non obligatoires combinées ne bloquent pas le chemin
      */
     public char[][] gridWithTower(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest) throws Exception {
         // Crée une copie de la grille
@@ -153,8 +154,12 @@ public class Astar {
             }
         }
 
-        // Retourner la grille mise à jour avec les tours non obligatoires transformées en murs
-        return newGrid;
+        // Si le chemin est bloque
+        if (isPathBlocked(newGrid,src,dest)){
+            return grid;
+        }else{
+            return newGrid;
+        }
     }
 
 
