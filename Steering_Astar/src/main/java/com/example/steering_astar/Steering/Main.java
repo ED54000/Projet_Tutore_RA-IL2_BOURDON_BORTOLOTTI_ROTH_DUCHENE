@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import com.example.steering_astar.Astar.Astar;
 
 public class Main extends Application {
-    private Agent agent,agent2, agent3;
+    private ArrayList<Agent> agents;
     private Behavior behavior, behavior2, behavior3;
     private ArrayList<Vector2D> checkpoints, checkpoints2, checkpoints3;
     int windowWidth = 0;
@@ -94,14 +94,15 @@ public class Main extends Application {
         behavior3 = new PathfollowingBehavior(listBezier3);
 
         // AGENTS
-        agent = new Agent(checkpoints.getFirst(), 3);
-        agent2 = new Agent(checkpoints.getFirst(), 2);
-        agent3 = new Agent(checkpoints.getFirst(), 1);
+        agents = new ArrayList<>();
+        agents.add(new Agent(checkpoints.getFirst(), 3));
+        agents.add(new Agent(checkpoints.getFirst(), 2));
+        agents.add(new Agent(checkpoints.getFirst(), 1));
 
         // BEHAVIORS AGENTS
-        agent.setBehavior(behavior);
-        agent2.setBehavior(behavior2);
-        agent3.setBehavior(behavior3);
+        agents.get(0).setBehavior(behavior);
+        agents.get(1).setBehavior(behavior2);
+        agents.get(2).setBehavior(behavior3);
 
         // PARAMETRES FENETRE
         windowWidth = grid.length * 50;
@@ -125,37 +126,39 @@ public class Main extends Application {
     }
 
     private void update() {
-        agent.update();
-        agent2.update();
-        agent3.update();
+        for (Agent agent : agents){
+            agent.update();
+        }
     }
 
     private void render(GraphicsContext gc) {
         gc.clearRect(0, 0, windowWidth, windowHeight);
 
-        renderAgent(gc,agent,checkpoints,Color.BLACK,Color.BLUE);
-        renderAgent(gc,agent2,checkpoints2,Color.GREEN,Color.PINK);
-        renderAgent(gc,agent3,checkpoints3,Color.ORANGE,Color.PURPLE);
+        renderAgent(gc,agents.get(0),checkpoints,Color.BLACK,Color.BLUE);
+        renderAgent(gc,agents.get(1),checkpoints2,Color.GREEN,Color.PINK);
+        renderAgent(gc,agents.get(2),checkpoints3,Color.ORANGE,Color.PURPLE);
 
     }
 
     private void renderAgent(GraphicsContext gc, Agent agent, ArrayList<Vector2D> checkpoint, Color pathColor, Color agentColor) {
-        gc.setFill(pathColor);
-        checkpoint.forEach((n) ->
-                gc.fillOval(n.x - 10, n.y - 10, 20, 20)
-        );
 
-        Vector2D position = agent.getPosition();
-        gc.setFill(agentColor);
-        gc.fillOval(position.x - 10, position.y - 10, 20, 20);
+        if (agent.getPosition() != checkpoint.getLast()){
+            gc.setFill(pathColor);
+            checkpoint.forEach((n) ->
+                    gc.fillOval(n.x - 10, n.y - 10, 20, 20)
+            );
 
-        gc.setFill(Color.RED);
-        gc.setStroke(Color.RED);
-        double xCoord = position.x + agent.getVelocity().x*20;
-        double yCoord = position.y + agent.getVelocity().y*20;
-        gc.strokeLine(position.x, position.y, xCoord, yCoord);
-        gc.fillOval(xCoord -5, yCoord -5, 10, 10);
+            Vector2D position = agent.getPosition();
+            gc.setFill(agentColor);
+            gc.fillOval(position.x - 10, position.y - 10, 20, 20);
 
+            gc.setFill(Color.RED);
+            gc.setStroke(Color.RED);
+            double xCoord = position.x + agent.getVelocity().x*20;
+            double yCoord = position.y + agent.getVelocity().y*20;
+            gc.strokeLine(position.x, position.y, xCoord, yCoord);
+            gc.fillOval(xCoord -5, yCoord -5, 10, 10);
+        }
     }
 
     public static void main(String[] args) {
