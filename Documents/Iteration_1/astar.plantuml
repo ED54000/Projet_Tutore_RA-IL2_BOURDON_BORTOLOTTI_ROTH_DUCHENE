@@ -1,0 +1,32 @@
+@startuml
+
+
+
+class Astar {
+  ~ isTowerObligatory(char[][], Pair, Pair, Pair): boolean
+  ~ calculateHValue(Pair, Pair): double
+  + aStarSearch(char[][], int, int, Pair, Pair, String): ArrayList<Pair>
+  ~ isDestination(Pair, Pair): boolean
+  - tracePath(Cell[][], Pair): ArrayList<Pair>
+  ~ isValid(char[][], Pair): boolean
+  ~ isUnblocked(char[][], Pair, Pair, Pair): boolean
+  + gridWithTower(char[][], int, int, Pair, Pair): char[][]
+  + isPathBlocked(char[][], Pair, Pair): boolean
+}
+class Cell
+class Details
+class Pair {
+  + validateGrid(char[][]): boolean
+  + getPairIndex(char[][], char): int[]
+  + toString(): String
+  - getCloser(Pair, Pair): Pair
+  + equals(Object): boolean
+  + getCloserPairIndex(char[][], char): int[]
+}
+
+Astar    -[#595959,dashed]->  Cell    : "«create»"
+Astar    -[#595959,dashed]->  Details : "«create»"
+Astar    -[#595959,dashed]->  Pair    : "«create»"
+Cell     -[#595959,dashed]->  Pair    : "«create»"
+Cell    "1" *-[#595959,plain]-> "parent\n1" Pair    
+@enduml

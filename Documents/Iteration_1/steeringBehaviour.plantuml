@@ -1,0 +1,60 @@
+@startuml
+
+
+class Agent {
+  + Agent(Vector2D, double): 
+  - velocity: Vector2D
+  - position: Vector2D
+  - maxSpeed: double
+  - behavior: Behavior
+  + getVelocity(): Vector2D
+  + getMaxSpeed(): double
+  + setBehavior(Behavior): void
+  + getPosition(): Vector2D
+  + update(): void
+}
+class ArrivalBehavior {
+  + ArrivalBehavior(Vector2D, double): 
+  - slowingRadius: double
+  + calculateForce(Agent): Vector2D
+}
+class Behavior {
+  + Behavior(): 
+  - target: Vector2D
+  ~ calculateForce(Agent): Vector2D
+  + setTarget(Vector2D): void
+  + getTarget(): Vector2D
+}
+class PathfollowingBehavior {
+  + PathfollowingBehavior(ArrayList<Vector2D>): 
+  - currentCheckpointIndex: int
+  - currentCheckpoint: Vector2D
+  - checkpoints: ArrayList<Vector2D>
+  + calculateForce(Agent): Vector2D
+}
+class SeekBehavior {
+  + SeekBehavior(Vector2D): 
+  + calculateForce(Agent): Vector2D
+}
+class Vector2D {
+  + Vector2D(double, double): 
+  + x: double
+  + y: double
+  + normalize(): Vector2D
+  + subtract(Vector2D): Vector2D
+  + add(Vector2D): Vector2D
+  + magnitude(): double
+  + scale(double): Vector2D
+  + distanceTo(Vector2D): double
+}
+
+Agent                 "1" *-[#595959,plain]-> "behavior\n1" Behavior              
+Agent                 "1" *-[#595959,plain]-> "position\n1" Vector2D              
+Agent                  -[#595959,dashed]->  Vector2D              : "«create»"
+ArrivalBehavior        -[#000082,plain]-^  Behavior              
+Behavior              "1" *-[#595959,plain]-> "target\n1" Vector2D              
+PathfollowingBehavior  -[#000082,plain]-^  Behavior              
+PathfollowingBehavior  -[#595959,dashed]->  SeekBehavior          : "«create»"
+PathfollowingBehavior "1" *-[#595959,plain]-> "checkpoints\n*" Vector2D              
+SeekBehavior           -[#000082,plain]-^  Behavior              
+@enduml
