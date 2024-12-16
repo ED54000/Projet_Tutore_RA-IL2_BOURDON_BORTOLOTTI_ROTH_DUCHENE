@@ -1,24 +1,33 @@
 Marin :
 
-	Prototype algorithme évolutionnaire
-	Passage du diagramme de classe général de draw.io vers un fichier PlantUML
+	Prototype algorithme évolutionnaire : 
+		Affichage dans le terminal : 
+		- les meilleurs couples au sein d'une population
+		- les résultats des ennemis morts
+		- les évolutions de statistiques des ennemis pour la prochaine vague
 
 Tristan : 
 
-	Interface graphique
-	Création des classes Ennemis, Défenses et les autres classes associées
-	Création de la pop-up de début de partie
+	Interface graphique : 
+		- pop up servant à choisir le labyrinthe utilisé, le nombre d'ennemis et le nombre de vagues. Le nombre d'ennemi et de vagues
+		  n'est pas utile pour l'instant, mais sera utilisé dans les itérations futures.
+		- affichage graphique du labyrinthe choisi, et les ennemis se déplacent en ligne droite en ignorant les collisions.
+		  Le déplacement ne suit ici aucune logique, et sera implémenté dans les itérations futures.
 
 Florian : 
 
-	Prototype de Steering behaviours avec la Javadoc associée 
-	Fusion de A* et de Steering behaviours
-	Courbe de Bézier
-	Tests de A* 
+	Prototype de Steering behaviours :
+		- interface graphique avec un agent qui se dirige vers une cible dynamiquement. (comportement Seek)
 
 Éloi : 
 
-	Prototype de l'algorithme de A* avec la Javadoc associée
-	Tests du package A* 
-	Fusion de A* et de Steering behaviours
-	Courbe de Bézier
+	Prototype de l'algorithme de A* :
+		- affichage dans le terminal du chemin optimal (le plus court) trouvé à partir d'une grille composée de chemins et de murs.
+
+Éloi & Florian : 
+	
+	Fusion de A* et de Steering behaviours : 
+		- interface graphique affichant les points de passages (le chemin optimal) trouvé par A* pour chaque agent. Les agents parcours 
+		  leur chemin de point en point, jusqu'à l'arrivée. (dernier point) 
+		- implémentation d'une courbe de Bézier sur les points de passage, pour que le rendu graphique du déplacement soit plus 
+		  fluide. (léger arrondi dans les virages)
