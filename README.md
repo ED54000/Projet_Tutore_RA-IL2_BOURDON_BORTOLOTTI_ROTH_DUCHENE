@@ -3,7 +3,7 @@
 Florian BORTOLOTTI florian.bortolotti1@etu.univ-lorraine.fr \
 Tristan ROTH tristan.roth3@etu.univ-lorraine.fr \
 Marin BOURDON marin.bourdon2@etu.univ-lorraine.fr \
-Eloi DUCHÊNE eloi.duchene8@etu.univ-lorraine.fr \
+Eloi DUCHÊNE eloi.duchene8@etu.univ-lorraine.fr 
 ## Liens utiles
 https://trello.com/b/qyPhaAyy/ra-il2-2024-bortolotti-bourdon-roth-duchene
 
