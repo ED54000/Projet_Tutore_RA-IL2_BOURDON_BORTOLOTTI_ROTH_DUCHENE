@@ -22,3 +22,17 @@ Tristan :
 Problèmes rencontrés :
 - Le ControleurStart permettant de créer le labyrinthe et lancé le jeu une fois le bouton start pressé est à moitié fonctionnelle, il a besoin de rappeler une méthode du moteur de jeu ce qui est impossible.
 - Spawn des ennemies chacun leur tour
+
+
+Pour lancer chaque prototype : 
+ - Pour le protoype A*, il faut lancer le Main.java dans le dossier Astar\Main.java
+- Pour le protoype steering behaviour, il faut lancer le Main.java dans le dossier steeringBehaviors\src\main\java\com\example\steeringbehaviors\Main.java
+- Pour le protoype de l'interface graphique, il faut lancer le MainLaby.java dans le dossier moteurJeu\src\mains\MainLaby.java
+- Pour le protoype de l'algorithme évolutionnaire, il faut lancer le Main.java dans le dossier Prototype_Algo_Evolutionniste\src\Main.java
+- Pour la fusion de A* et steering behaviours, il faut lancer le Main.java dans le dossier Steering_Astar\src\main\java\com\example\steering_astar\Steering\Main.java
+
+
+Steering behaviours : Un agent (point bleu) suit un objectif fixé (ici la souris) symbolisé par un point rouge. Le prototype est validé.
+A* : Affiche la suite des coordonnées pour le chemin le plus court en fonction de chaque comportement. Le prototype est validé.
+Interface graphique : Affiche une pop-up pour choisir un labyrinthe prédéfini, le nombre de vagues ainsi le nombre d'ennemi. Les ennemis sont ensuite affichés et bougent en ligne droite en ignorant les obstacles. Le prototype est validé.
+Algorithme évolutionnaire: Choisit le meilleur couple de chaque type. Pour tout les ennemis morts ont leur mets les moyennes du couple du même type puis on met une mutation en ajoutant ou en enlevant quelques points. Le prototype n'est pas terminé.
