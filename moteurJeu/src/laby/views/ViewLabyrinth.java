@@ -1,5 +1,6 @@
 package laby.views;
 
+import entites.enemies.Ennemy;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -69,12 +70,17 @@ public class ViewLabyrinth implements Observer {
 
         //dessiner les ennemis
         for (int i = 0; i < laby.enemies.size(); i++) {
-            if (laby.enemies.get(i).isDead()) {
-                laby.updateLogs();
+            laby.enemies.get(0).takeDamage(3000);
+
+            Ennemy ennemy = laby.enemies.get(i);
+            if (ennemy.isDead() && !laby.deadEnemies.contains(ennemy)) {
+                System.out.println("ennemy dead");
+                laby.deadEnemies.add(ennemy);
+                laby.setLogs(true);
                 continue;
             }
             gc.setFill(Color.RED);
-            gc.fillOval(laby.enemies.get(i).getX() * tailleCase, laby.enemies.get(i).getY() * tailleCase, tailleCase/3, tailleCase/3);
+            gc.fillOval(ennemy.getX() * tailleCase, ennemy.getY() * tailleCase, tailleCase/3, tailleCase/3);
         }
 
         //dessiner la range des defenses
