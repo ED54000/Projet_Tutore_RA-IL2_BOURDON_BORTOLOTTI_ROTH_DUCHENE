@@ -73,6 +73,10 @@ public class ViewLabyrinth implements Observer {
 
         //dessiner les ennemis
         for (int i = 0; i < laby.enemies.size(); i++) {
+            laby.enemies.get(0).takeDamage(3000);
+
+            Ennemy ennemy = laby.enemies.get(i);
+
             gc.setFill(Color.RED);
             gc.fillOval(ennemy.getX() * tailleCase, ennemy.getY() * tailleCase, tailleCase/3, tailleCase/3);
         }

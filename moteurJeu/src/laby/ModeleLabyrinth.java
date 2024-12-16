@@ -126,6 +126,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 setLogs(true);
                 continue;
             }
+            ennemy.move(secondes);
             notifyObserver();
         }
     }
