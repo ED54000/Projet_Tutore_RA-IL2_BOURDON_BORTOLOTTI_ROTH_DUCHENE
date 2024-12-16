@@ -7,13 +7,13 @@ public abstract class Entity {
     private double x;
     private double y;
     private String type;
-    private int damage;
+    private double damages;
     private double range;
 
-    public Entity(double x, double y, int damage, double range) {
+    public Entity(double x, double y, double damages, double range) {
         this.x = x;
         this.y = y;
-        this.damage = damage;
+        this.damages = damages;
         this.range = range;
 
         //génère un type aléatoire
@@ -76,8 +76,8 @@ public abstract class Entity {
         return y;
     }
 
-    public int getDamage() {
-        return damage;
+    public double getDamages() {
+        return damages;
     }
 
     public void setX(double x) {
@@ -86,5 +86,17 @@ public abstract class Entity {
 
     public double getRange() {
         return range;
+    }
+
+    protected void setDamages(double damages) {
+        this.damages = damages;
+    }
+
+    public void setRange(double range) {
+        this.range = range;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
