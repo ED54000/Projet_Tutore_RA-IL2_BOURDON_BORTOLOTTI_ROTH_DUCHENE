@@ -128,7 +128,7 @@ public class Main extends Application {
         };
         timer.start();
 
-        stage.setX(0);
+        stage.setX(-7);
         stage.setY(0);
         stage.setAlwaysOnTop(true);
         stage.setScene(new Scene(new javafx.scene.layout.Pane(canvas)));
