@@ -37,7 +37,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private ArrayList<Observer> observateurs;
 
-    private boolean logs = false;
+    private String logs = "";
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -129,7 +129,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
             if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                 deadEnemies.add(ennemy);
-                setLogs(true);
+                setLogs("Ennemy " + ennemy + " is dead");
                 continue;
             }
             ennemy.move(secondes);
@@ -176,11 +176,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return this.cases[x][y];
     }
 
-    public void setLogs(boolean val){
+    public void setLogs(String val){
         logs = val;
     }
 
-    public boolean getLogs(){
+    public String getLogs(){
         return logs;
     }
 }

@@ -18,15 +18,12 @@ public class ViewLogs implements Observer {
 
     @Override
     public void update(Subject s) {
-        if (laby.getLogs()==true){
-            logs.getChildren().clear();
+        if (laby.getLogs()!=""){
 
-            for (Ennemy e : laby.deadEnemies){
-                Label l = new Label("Ennemy " + e + " is dead");
-                logs.getChildren().add(l);
-            }
+            Label label = new Label(laby.getLogs());
+            logs.getChildren().add(label);
 
-            laby.setLogs(false);
+            laby.setLogs("");
         }
     }
 }

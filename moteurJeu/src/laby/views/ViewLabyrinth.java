@@ -46,9 +46,8 @@ public class ViewLabyrinth implements Observer {
                         gc.fillRect(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
                         gc.setFill(Color.GREY);
                         gc.fillOval(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-
                          */
-                        gc.drawImage(archer, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
+                        gc.drawImage(archer, j * tailleCase, i * tailleCase, tailleCase, tailleCase); //a chnager
                         break;
                     case ModeleLabyrinth.BOMB:
                         gc.drawImage(road, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
@@ -76,8 +75,6 @@ public class ViewLabyrinth implements Observer {
 
         //dessiner les ennemis
         for (int i = 0; i < laby.enemies.size(); i++) {
-            laby.enemies.get(0).takeDamage(3000);
-
             Ennemy ennemy = laby.enemies.get(i);
 
             gc.setFill(Color.RED);
