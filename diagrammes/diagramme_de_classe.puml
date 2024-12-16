@@ -1,0 +1,242 @@
+@startuml
+
+'CLASSES
+class Labyrinth {
+    + {static} START: char
+    + {static} END: char
+    + {static} ROAD: char
+    + {static} TREE: char
+    + {static} CANON: char
+    + {static} BOMB: char
+    - cases: char[][]
+
+    + Labyrinth(String fichier)
+}
+
+class ViewLabyrinth {
+    - boxSize: int
+    - canvas: Canvas
+
+    + ViewLabyrinth(Labyrinth laby, Canvas canvas)
+    + update(Subject s)
+}
+
+abstract class Entity {
+    - x: double
+    - y: double
+    - type: String
+    - damage: double
+    - range: double
+    - survivalTime: int
+
+    + Entity(double x, double y, int damage,int range, double damages)
+    + getBonus(String attackerType, String defenderType) : double
+    + takeDamage(double damages)
+}
+
+class Ennemy {
+    - health: double
+    - speed: double
+    - attackSpeed: double
+    - distanceToArrival: double
+    - isArrived: boolean
+    - killerType: String
+
+    + Ennemy(...)
+    + move(double[] next)
+    + {abstract} attack(Defense target)
+}
+
+abstract class Defense {
+    + Defense(...)
+    + {abstract} attack(Ennemy target)
+}
+
+abstract class ActiveDefense {
+    - health: double
+    + attackSpeed: double
+}
+
+abstract class PassiveDefense {
+}
+
+class Canon {
+    + attack(Ennemy target)
+}
+
+class Bomb {
+    + attack(Ennemy target)
+}
+
+class Ninja {
+    + attack(Defense target)
+}
+
+class Giant {
+    + attack(Defense target)
+}
+
+class Behavior {
+}
+
+class ControllerLearning {
+    + handle(event: Event)
+}
+
+class ControllerStart {
+    + handle(event: Event)
+}
+
+class ViewLogs {
+    + ViewLogs(Labyrinth laby)
+    + update(Subject s)
+}
+
+interface Observer {
+    + update(Subject s)
+}
+
+class Main {
+}
+
+class MoteurJeu {
+}
+
+class Application {
+}
+
+interface Jeu {
+}
+
+class FrameStats {
+}
+
+interface Subject {
+    + registerObserver(Observer o)
+    + removeObserver(Observer o)
+    + notifyObservers()
+}
+
+'ALGOS STEERING ET A*
+class Agent {
+  + Agent(Vector2D, double):
+  - behavior: Behavior
+  - velocity: Vector2D
+  - maxSpeed: double
+  - position: Vector2D
+  + update(): void
+   behavior: Behavior
+   velocity: Vector2D
+   maxSpeed: double
+   position: Vector2D
+}
+class Astar {
+  + Astar():
+  + gridWithTower(char[][], int, int, Vector2D, Vector2D): char[][]
+  - tracePath(Cell[][], Vector2D): ArrayList<Vector2D>
+  ~ isValid(char[][], Vector2D): boolean
+  ~ isDestination(Vector2D, Vector2D): boolean
+  ~ calculateHValue(Vector2D, Vector2D): double
+  ~ isUnblocked(char[][], Vector2D): boolean
+  ~ isTowerObligatory(char[][], Vector2D, Vector2D, Vector2D): boolean
+  + aStarSearch(char[][], int, int, Vector2D, Vector2D, String): ArrayList<Vector2D>
+  + isPathBlocked(char[][], Vector2D, Vector2D): boolean
+}
+class Behavior {
+  + Behavior():
+  - target: Vector2D
+  ~ calculateForce(Agent): Vector2D
+   target: Vector2D
+}
+class BezierCurveFromAStarPoints {
+  + BezierCurveFromAStarPoints():
+  - generateControlPoints(ArrayList<Vector2D>): ArrayList<Vector2D>
+  - generateBezierSegment(Vector2D, Vector2D, Vector2D, Vector2D): ArrayList<Vector2D>
+  + getBezierCurve(ArrayList<Vector2D>): ArrayList<Vector2D>
+}
+class Cell {
+  ~ Cell():
+  + Cell(Vector2D, double, double, double):
+}
+class Details {
+  + Details(double, double, double):
+}
+class PathfollowingBehavior {
+  + PathfollowingBehavior(ArrayList<Vector2D>):
+  + calculateForce(Agent): Vector2D
+}
+class SeekBehavior {
+  + SeekBehavior(Vector2D):
+  + calculateForce(Agent): Vector2D
+}
+class Vector2D {
+  + Vector2D(double, double):
+  + equals(Object): boolean
+  + scale(double): Vector2D
+  + subtract(Vector2D): Vector2D
+  + normalize(): Vector2D
+  + magnitude(): double
+  + distanceTo(Vector2D): double
+  - getCloser(Vector2D, Vector2D): Vector2D
+  + getCloserPairIndex(char[][], char): double[]
+  + toString(): String
+  + add(Vector2D): Vector2D
+  + getPairIndex(char[][], char): int[]
+}
+
+'RELATIONS ENTRE LES CLASSES
+Labyrinth "1" <-- "1" ViewLabyrinth
+Entity <|-- Ennemy
+Entity <|-- Defense
+Defense <|-- ActiveDefense
+Defense <|-- PassiveDefense
+ActiveDefense <|-- Canon
+PassiveDefense <|-- Bomb
+Ennemy <|-- Giant
+Ennemy <|-- Ninja
+Behavior "1" <-- "1" Ennemy
+ControllerLearning "1" --> "1" Labyrinth: laby
+ControllerStart "1" --> "1" Labyrinth: laby
+Labyrinth "1" --> "*" Ennemy: ennemies
+Labyrinth "1" --> "*" Defense: defenses
+ViewLogs "1" --> "1" Labyrinth: laby
+ViewLabyrinth ..> Observer: implements
+ViewLogs ..> Observer: implements
+Labyrinth --> Observer: observers
+Main --> MoteurJeu: use
+MoteurJeu --|> Application
+Labyrinth ..> Jeu: implements
+Labyrinth ..> Subject: implements
+Main --> Labyrinth: use
+Ennemy --> Vector2D: use
+
+'RELATIONS ALGOS STEERING ET A*
+Agent                      "1" *-[#595959,plain]-> "behavior\n1" Behavior
+Agent                       -[#595959,dashed]->  Vector2D                   : "«create»"
+Agent                      "1" *-[#595959,plain]-> "position\n1" Vector2D
+Astar                       -[#595959,dashed]->  Cell                       : "«create»"
+Astar                       -[#595959,dashed]->  Details                    : "«create»"
+Astar                       -[#595959,dashed]->  Vector2D                   : "«create»"
+Behavior                   "1" *-[#595959,plain]-> "target\n1" Vector2D
+BezierCurveFromAStarPoints  -[#595959,dashed]->  Vector2D                   : "«create»"
+Cell                       "1" *-[#595959,plain]-> "parent\n1" Vector2D
+Cell                        -[#595959,dashed]->  Vector2D                   : "«create»"
+PathfollowingBehavior       -[#000082,plain]-^  Behavior
+PathfollowingBehavior       -[#595959,dashed]->  SeekBehavior               : "«create»"
+PathfollowingBehavior      "1" *-[#595959,plain]-> "checkpoints\n*" Vector2D
+SeekBehavior                -[#000082,plain]-^  Behavior
+
+'NOTES
+note left of ViewLabyrinth::boxSize
+    Taille d'une case
+end note
+note left of Giant
+    Exemple d'un ennemi
+end note
+note left of Canon
+    Exemple d'une défense active
+end note
+note left of MoteurJeu
+    Crée/enregistre les observers
+end note
+@enduml
