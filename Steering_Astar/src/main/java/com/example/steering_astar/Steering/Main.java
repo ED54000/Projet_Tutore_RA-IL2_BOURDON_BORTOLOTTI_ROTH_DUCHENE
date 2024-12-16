@@ -2,11 +2,15 @@ package com.example.steering_astar.Steering;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import java.awt.*;
 import java.util.ArrayList;
 import com.example.steering_astar.Astar.Astar;
 
@@ -14,8 +18,7 @@ public class Main extends Application {
     private ArrayList<Agent> agents;
     private Behavior behavior, behavior2, behavior3;
     private ArrayList<Vector2D> checkpoints, checkpoints2, checkpoints3;
-    int windowWidth = 0;
-    int windowHeight = 0;
+    double windowWidth, windowHeight = 0;
     char[][] grid;
 
     @Override
@@ -105,8 +108,13 @@ public class Main extends Application {
         agents.get(2).setBehavior(behavior3);
 
         // PARAMETRES FENETRE
-        windowWidth = grid.length * 50;
-        windowHeight = grid[0].length * 50 + 100;
+        Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        Rectangle2D fullBounds = Screen.getPrimary().getBounds();
+        Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
+        double taskbarHeight = fullBounds.getHeight() - visualBounds.getHeight();
+
+        windowWidth = screenSize.getWidth();
+        windowHeight = screenSize.getHeight()-taskbarHeight/2;
 
         Canvas canvas = new Canvas(windowWidth, windowHeight);
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -120,6 +128,9 @@ public class Main extends Application {
         };
         timer.start();
 
+        stage.setX(0);
+        stage.setY(0);
+        stage.setAlwaysOnTop(true);
         stage.setScene(new Scene(new javafx.scene.layout.Pane(canvas)));
         stage.setTitle("Steering Behavior + Astar");
         stage.show();
