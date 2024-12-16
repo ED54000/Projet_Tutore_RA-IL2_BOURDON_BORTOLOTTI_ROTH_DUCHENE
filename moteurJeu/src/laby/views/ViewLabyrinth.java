@@ -74,7 +74,6 @@ public class ViewLabyrinth implements Observer {
 
             Ennemy ennemy = laby.enemies.get(i);
             if (ennemy.isDead() && !laby.deadEnemies.contains(ennemy)) {
-                System.out.println("ennemy dead");
                 laby.deadEnemies.add(ennemy);
                 laby.setLogs(true);
                 continue;

@@ -18,7 +18,7 @@ public class MainLaby {
         ModeleLabyrinth laby = new ModeleLabyrinth();
 
         // parametrage du moteur de jeu
-        MoteurJeu.setTaille(width, height);
+        //MoteurJeu.setTaille(width, height);
         MoteurJeu.setFPS(pFPS);
         MoteurJeu.setLaby(laby);
 

@@ -1,5 +1,6 @@
 package laby.views;
 
+import entites.enemies.Ennemy;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
@@ -18,8 +19,13 @@ public class ViewLogs implements Observer {
     @Override
     public void update(Subject s) {
         if (laby.getLogs()==true){
-            logs.getChildren().add(new Label("Labyrinth updated"));
-            System.out.println("Labyrinth updated");
+            logs.getChildren().clear();
+
+            for (Ennemy e : laby.deadEnemies){
+                Label l = new Label("Ennemy " + e.get + " is dead");
+                logs.getChildren().add(l);
+            }
+
             laby.setLogs(false);
         }
     }

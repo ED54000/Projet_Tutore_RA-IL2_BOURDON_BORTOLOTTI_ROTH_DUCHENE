@@ -146,7 +146,18 @@ public class MoteurJeu extends Application {
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent MouseEvent) {
-                System.out.println(labyrinthMap.get(labyrinthComboBox.getValue()));
+                switch (labyrinthComboBox.getValue()) {
+                    case "Petit":
+                        System.out.println("Petit");
+                        MoteurJeu.setTaille(1000, 550);
+                        break;
+                    case "Grand":
+                        MoteurJeu.setTaille(1200, 950);
+                        break;
+                    case "Large":
+                        MoteurJeu.setTaille(1700, 950);
+                        break;
+                }
                 dialogStage.close();
                 try {
                     laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()));
@@ -194,17 +205,10 @@ public class MoteurJeu extends Application {
         laby.registerObserver(viewLabyrinth);
         laby.registerObserver(viewLogs);
 
-        // affichage des stats
-        final Label stats = new Label();
-        stats.textProperty().bind(frameStats.textProperty());
-
-        //ajout des statistiques en bas de la fenetre
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);
-        root.setBottom(stats);
         //ajout des logs
         root.setRight(logs);
-
 
         // creation de la scene
         final Scene scene = new Scene(root, WIDTH, HEIGHT);
