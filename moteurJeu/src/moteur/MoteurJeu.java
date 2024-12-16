@@ -198,17 +198,13 @@ public class MoteurJeu extends Application {
         final Label stats = new Label();
         stats.textProperty().bind(frameStats.textProperty());
 
-        /* ajout des statistiques en bas de la fenetre
+        //ajout des statistiques en bas de la fenetre
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);
         root.setBottom(stats);
         //ajout des logs
         root.setRight(logs);
 
-         */
-
-        final HBox root = new HBox();
-        root.getChildren().addAll(canvasContainer, logs);
 
         // creation de la scene
         final Scene scene = new Scene(root, WIDTH, HEIGHT);
