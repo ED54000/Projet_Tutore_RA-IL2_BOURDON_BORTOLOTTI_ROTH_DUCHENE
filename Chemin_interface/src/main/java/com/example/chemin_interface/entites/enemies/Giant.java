@@ -1,8 +1,10 @@
 package com.example.chemin_interface.entites.enemies;
 
+import com.example.chemin_interface.steering_astar.Steering.Vector2D;
+
 public class Giant extends Ennemy {
 
-    public Giant(double x, double y) {
-        super(x, y, 150, 0.025, 10, 1, 1, 10);
+    public Giant(Vector2D position) {
+        super(position, 10, 0.025, 150, 1, 1, 10);
     }
 }

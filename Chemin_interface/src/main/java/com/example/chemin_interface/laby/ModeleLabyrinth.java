@@ -6,6 +6,7 @@ import com.example.chemin_interface.entites.defenses.Defense;
 import com.example.chemin_interface.entites.enemies.Ennemy;
 import com.example.chemin_interface.entites.enemies.Giant;
 import com.example.chemin_interface.entites.enemies.Ninja;
+import com.example.chemin_interface.steering_astar.Steering.Vector2D;
 import javafx.scene.canvas.Canvas;
 import com.example.chemin_interface.laby.controllers.ControllerStart;
 import com.example.chemin_interface.laby.views.ViewLabyrinth;
@@ -82,12 +83,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case CANON:
                         //ajouter un canon
                         this.cases[numLigne][colonne] = CANON;
-                        this.defenses.add(new Canon(colonne, numLigne));
+                        this.defenses.add(new Canon(new Vector2D(colonne,numLigne)));
                         break;
                     case BOMB:
                         //ajouter une bombe
                         this.cases[numLigne][colonne] = BOMB;
-                        this.defenses.add(new Bomb(colonne, numLigne));
+                        this.defenses.add(new Bomb(new Vector2D(colonne,numLigne)));
                         break;
                 }
             }
@@ -103,11 +104,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 2);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(colonne+Math.random(), numLigne+Math.random());
+                    Giant giant = new Giant(new Vector2D(colonne+Math.random(),numLigne+Math.random()));
                     this.enemies.add(giant);
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(colonne+Math.random(), numLigne+Math.random());
+                    Ninja ninja = new Ninja(new Vector2D(colonne+Math.random(),numLigne+Math.random()));
                     this.enemies.add(ninja);
                     break;
             }
@@ -120,12 +121,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
             //si l'ennemi est sur la case de départ
             if (ennemy.getDistanceToArrival() == ennemy.getDistanceStartToArrival()) {
                 System.out.println("test");
-                //
             }
             while (ennemy.getTimeSpawn() != 0) {
                 ennemy.setTimeSpawn(ennemy.getTimeSpawn() - 1);
             }
-            ennemy.move(secondes);
+//            ennemy.move(secondes);
+            ennemy.update();
             notifyObserver();
         }
     }
