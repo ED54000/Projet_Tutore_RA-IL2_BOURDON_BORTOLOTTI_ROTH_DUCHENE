@@ -1,5 +1,7 @@
 package com.example.chemin_interface.steering_astar.Steering;
 
+import com.example.chemin_interface.entites.enemies.Ennemy;
+
 public class SeekBehavior extends Behavior {
 
     /***
@@ -12,13 +14,13 @@ public class SeekBehavior extends Behavior {
 
     /***
      * implementation du comportement seek, qui tend a atteindre une cible
-     * @param agent l'agent sur lequel va etre applique la force
-     * @return les coordonnees sur lesquelles va se baser le calcul de la velocite de l'agent
+     * @param ennemy l'ennemi sur lequel va etre applique la force
+     * @return les coordonnees sur lesquelles va se baser le calcul de la velocite de l'ennemi
      */
     @Override
-    public Vector2D calculateForce(Agent agent) {
-        Vector2D desired = this.getTarget().subtract(agent.getPosition()).normalize().scale(agent.getMaxSpeed());
-        return desired.subtract(agent.getVelocity());
+    public Vector2D calculateForce(Ennemy ennemy) {
+        Vector2D desired = this.getTarget().subtract(ennemy.getPosition()).normalize().scale(ennemy.getMaxSpeed());
+        return desired.subtract(ennemy.getVelocity());
     }
 }
 

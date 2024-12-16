@@ -3,7 +3,8 @@ package com.example.chemin_interface.steering_astar.Astar;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
-import com.example.chemin_interface.steering_astar.Steering.*;
+
+import com.example.chemin_interface.steering_astar.Steering.Vector2D;
 
 import java.util.*;
 
@@ -21,9 +22,9 @@ public class Astar {
      */
     boolean isValid(char[][] grid, Vector2D point) {
         if (grid.length > 0 && grid[0].length > 0)
-            return (point.x >= 0) && (point.x < grid.length)
-                    && (point.y >= 0)
-                    && (point.y < grid[0].length);
+            return (point.getX() >= 0) && (point.getX() < grid.length)
+                    && (point.getY() >= 0)
+                    && (point.getY() < grid[0].length);
 
         return false;
     }
@@ -42,7 +43,7 @@ public class Astar {
      */
     boolean isUnblocked(char[][] grid, Vector2D point) {
         if (isValid(grid, point)) {
-            char cell = grid[(int) point.x][(int) point.y];
+            char cell = grid[(int) point.getX()][(int) point.getY()];
             return cell == '.' || cell == 'E' || cell == 'S';
         }
 
@@ -69,7 +70,7 @@ public class Astar {
      * @return La distance euclidienne entre les deux points
      */
     double calculateHValue(Vector2D src, Vector2D dest) {
-        return Math.sqrt(Math.pow((src.x - dest.x), 2.0) + Math.pow((src.y - dest.y), 2.0));
+        return Math.sqrt(Math.pow((src.getX() - dest.getX()), 2.0) + Math.pow((src.getY() - dest.getY()), 2.0));
     }
 
     /***
@@ -86,170 +87,27 @@ public class Astar {
 
         Stack<Vector2D> path = new Stack<>();
 
-        double row = dest.x;
-        double col = dest.y;
+        double row = dest.getX();
+        double col = dest.getY();
 
         Vector2D nextNode;
         do {
             path.push(new Vector2D(row, col));
-            pathArray.addFirst(new Vector2D(col*50,row*50));
+            pathArray.addFirst(new Vector2D(col * 50, row * 50));
             nextNode = cellDetails[(int) row][(int) col].parent;
-            row = nextNode.x;
-            col = nextNode.y;
+            row = nextNode.getX();
+            col = nextNode.getY();
         } while (cellDetails[(int) row][(int) col].parent != nextNode);
 
 
         while (!path.empty()) {
             Vector2D p = path.peek();
             path.pop();
-            System.out.println("-> (" + p.x + "," + p.y + ") ");
+            //  System.out.println("-> (" + p.getX() + "," + p.getY() + ") ");
         }
         return pathArray;
     }
 
-    /***
-     *
-     * @param grid La grille bidimensionnelle à parcourir
-     * @param rows Nombre de lignes dans la grille
-     * @param cols Nombre de colonnes dans la grille
-     * @param src Le point de départ du chemin
-     * @param dest Le point d'arrivée du chemin
-     * @return La nouvelle grille avec les tours non obligatoire et leurs environs remplacés des murs
-     *  si les tours non obligatoires combinées ne bloquent pas le chemin
-     */
-    public char[][] gridWithTower(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest) throws Exception {
-        // Crée une copie de la grille
-        char[][] newGrid = new char[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            System.arraycopy(grid[i], 0, newGrid[i], 0, cols);
-        }
-
-        // Parcours chaque cellule pour vérifier les tours
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (grid[i][j] == 'T') {
-                    Vector2D currentTower = new Vector2D(i, j);
-
-                    // Si la tour n'est pas obligatoire, on la transforme en mur et aussi ses alentours
-                    if (!isTowerObligatory(grid, currentTower, src, dest)) {
-                        // Transforme la tour elle-même en mur
-                        newGrid[i][j] = '#';
-
-                        // Transforme les alentours de la tour en murs
-                        for (int di = -1; di <= 1; di++) {
-                            for (int dj = -1; dj <= 1; dj++) {
-                                int newRow = i + di;
-                                int newCol = j + dj;
-
-                                // Vérifie que les indices sont valides et n'affecte pas la tour elle-même
-                                if (isValid(grid, new Vector2D(newRow, newCol)) && !(di == 0 && dj == 0)) {
-                                    newGrid[newRow][newCol] = '#'; // Transforme en mur
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Si le chemin est bloque
-        if (isPathBlocked(newGrid,src,dest)){
-            return grid;
-        }else{
-            return newGrid;
-        }
-    }
-
-
-    /***
-     * Teste si la tour est obligatoire (si un ennemi est obligé de passer à côté)
-     * @param grid La grille bidimensionnelle à parcourir
-     * @param tower La tour à tester
-     * @param src Le point de départ du chemin
-     * @param dest Le point d'arrivée du chemin
-     * @return true si la tour bloque le chemin, false sinon
-     */
-    boolean isTowerObligatory(char[][] grid, Vector2D tower, Vector2D src, Vector2D dest) throws Exception {
-        // Teste si le caractère est bien une tour
-        if (grid[(int) tower.x][(int) tower.y] == 'T') {
-            // Crée une copie de la grille pour modifier les alentours de la tour
-            char[][] gridCopy = new char[grid.length][grid[0].length];
-            for (int i = 0; i < grid.length; i++) {
-                System.arraycopy(grid[i], 0, gridCopy[i], 0, grid[i].length);
-            }
-
-            // Définir une zone autour de la tour pour être transformée en mur
-            for (int i = -1; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    int newRow =(int) tower.x + i;
-                    int newCol =(int) tower.y + j;
-
-                    // Vérifier la validité des indices et ne pas affecter la tour elle-même
-                    if (isValid(gridCopy, new Vector2D(newRow, newCol)) && !(i == 0 && j == 0)) {
-                        gridCopy[newRow][newCol] = '#'; // Transforme les alentours de la tour en mur
-                    }
-                }
-            }
-
-            // Vérifier si le chemin est bloqué avec ces murs autour de la tour
-            return isPathBlocked(gridCopy, src, dest); // Si le chemin est bloqué, la tour est obligatoire
-        }
-        else {
-            throw new Exception("Le caractère : "+ grid[(int) tower.x][(int) tower.y] +" n'est pas une tour");
-        }
-    }
-
-    /***
-     * Teste si le chemin est bloqué
-     * @param grid La grille bidimensionnelle à parcourir
-     * @param src Le point de départ du chemin
-     * @param dest Le point d'arrivée du chemin
-     * @return true si le chemin est bloqué, false sinon
-     */
-    public boolean isPathBlocked(char[][] grid, Vector2D src, Vector2D dest) {
-        // Si la source ou la destination ne sont pas valides ou sont bloquées
-        if (!isValid(grid, src) || !isValid(grid, dest) || grid[(int) src.x][(int) src.y] == '#' || grid[(int) dest.x][(int) dest.y] == '#') {
-            return true;
-        }
-
-        // Dimensions de la grille
-        int rows = grid.length;
-        int cols = grid[0].length;
-
-        // Tableau pour suivre les cellules visitées
-        boolean[][] visited = new boolean[rows][cols];
-
-        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-
-        // File pour la recherche en largeur
-        Queue<Vector2D> queue = new LinkedList<>();
-        queue.add(src);
-        visited[(int) src.x][(int) src.y] = true;
-
-        while (!queue.isEmpty()) {
-            Vector2D current = queue.poll();
-
-            // Si on atteint la destination
-            if (current.equals(dest)) {
-                return false; // Un chemin existe, donc il n'est pas bloqué
-            }
-
-            // Explorer les voisins
-            for (int[] dir : directions) {
-                int newRow = (int) current.x + dir[0];
-                int newCol = (int) current.y + dir[1];
-                Vector2D neighbor = new Vector2D(newRow, newCol);
-
-                // Vérifier si le voisin est valide et non visité
-                if (isValid(grid, neighbor) && !visited[newRow][newCol] && grid[newRow][newCol] != '#') {
-                    queue.add(neighbor);
-                    visited[newRow][newCol] = true;
-                }
-            }
-        }
-        // Si on ne peut pas atteindre la destination
-        return true; // Aucun chemin trouvé, donc le chemin est bloqué
-    }
 
     /***
      * Algorithme de choix de chemin A*
@@ -265,20 +123,13 @@ public class Astar {
      * @return Le chemin le plus court
      */
     public ArrayList<Vector2D> aStarSearch(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest, String comp) {
+        double[][] costGrid = createTowerAvoidanceCostGrid(grid, comp);
 
-        if (comp.equals("Fugitive")) {
-            try {
-                grid = gridWithTower(grid, rows, cols, src, dest);
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
-            }
-
-        }
         if (comp.equals("Kamikaze")) {
             try {
                 double[] newEnd = Vector2D.getCloserPairIndex(grid, 'T');
                 dest = new Vector2D(newEnd[0], newEnd[1]);
-                grid[(int) dest.x][(int) dest.y] = 'E';
+                grid[(int) dest.getX()][(int) dest.getY()] = 'E';
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
@@ -305,10 +156,10 @@ public class Astar {
         boolean[][] closedList = new boolean[rows][cols];
         Cell[][] cellDetails = new Cell[rows][cols];
 
-        double i , j;
+        double i, j;
 
-        i =  src.x;
-        j =  src.y;
+        i = src.getX();
+        j = src.getY();
         cellDetails[(int) i][(int) j] = new Cell();
         cellDetails[(int) i][(int) j].f = 0.0;
         cellDetails[(int) i][(int) j].g = 0.0;
@@ -322,50 +173,136 @@ public class Astar {
         while (!openList.isEmpty()) {
             Details p = openList.peek();
             i = (int) p.i;
-            j =  (int) p.j;
+            j = (int) p.j;
             openList.poll();
             closedList[(int) i][(int) j] = true;
             int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
             for (int[] dir : directions) {
                 Vector2D neighbour = new Vector2D(i + dir[0], j + dir[1]);
                 if (isValid(grid, neighbour)) {
-                    if (cellDetails[(int) neighbour.x] == null) {
-                        cellDetails[(int) neighbour.x] = new Cell[cols];
+                    if (cellDetails[(int) neighbour.getX()] == null) {
+                        cellDetails[(int) neighbour.getX()] = new Cell[cols];
                     }
-                    if (cellDetails[(int) neighbour.x][(int) neighbour.y] == null) {
-                        cellDetails[(int) neighbour.x][(int) neighbour.y] = new Cell();
+                    if (cellDetails[(int) neighbour.getX()][(int) neighbour.getY()] == null) {
+                        cellDetails[(int) neighbour.getX()][(int) neighbour.getY()] = new Cell();
                     }
 
                     if (isDestination(neighbour, dest)) {
-                        cellDetails[(int) neighbour.x][(int) neighbour.y].parent = new Vector2D(i, j);
+                        cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].parent = new Vector2D(i, j);
                         System.out.println("The destination cell is found");
                         return tracePath(cellDetails, dest);
-                    } else if (!closedList[(int) neighbour.x][(int) neighbour.y]
+                    } else if (!closedList[(int) neighbour.getX()][(int) neighbour.getY()]
                             && isUnblocked(grid, neighbour)) {
                         double gNew, hNew, fNew;
                         gNew = cellDetails[(int) i][(int) j].g + 1.0;
-                        hNew = calculateHValue(neighbour, dest);
+                        hNew = calculateHValue(neighbour, dest) + getTowerPenalty(costGrid, neighbour);
                         fNew = gNew + hNew;
 
-                        if (cellDetails[(int) neighbour.x][(int) neighbour.y].f == -1
-                                || cellDetails[(int) neighbour.x][(int) neighbour.y].f > fNew) {
+                        if (cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f == -1
+                                || cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f > fNew) {
 
-                            openList.add(new Details(fNew,  neighbour.x, neighbour.y));
-                            cellDetails[(int) neighbour.x][(int) neighbour.y].g = gNew;
-                            cellDetails[(int) neighbour.x][(int) neighbour.y].f = fNew;
-                            cellDetails[(int) neighbour.x][(int) neighbour.y].parent = new Vector2D(i, j);
+                            openList.add(new Details(fNew, neighbour.getX(), neighbour.getY()));
+                            cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].g = gNew;
+                            cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f = fNew;
+                            cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].parent = new Vector2D(i, j);
                         }
                     }
                 }
             }
         }
-
-
         System.err.println("Failed to find the Destination Cell");
         return null;
     }
 
+    /***
+     * Créé une carte des poids des élements
+     * @param grid la grille à tester
+     * @param comp le comportement de l'élément
+     * @return la grille avec les poids
+     */
+    private double[][] createTowerAvoidanceCostGrid(char[][] grid, String comp) {
+        double[][] costGrid = new double[grid.length][grid[0].length];
+        Queue<Vector2D> queue = new LinkedList<>();
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+
+        // Initialiser les coûts de base
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (comp.equals("Fugitive") && grid[i][j] == 'T') {
+                    queue.add(new Vector2D(i, j));
+                    visited[i][j] = true;
+                    costGrid[i][j] = 1000.0; // Coût initial très élevé pour les tours
+                } else {
+                    costGrid[i][j] = 1.0; // Coût minimal pour les chemins traversables
+                }
+            }
+        }
+
+        // Directions pour la propagation BFS
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+        // Propager la pénalité depuis les tours
+        while (!queue.isEmpty()) {
+            Vector2D current = queue.poll();
+
+            for (int[] dir : directions) {
+                int newRow = (int) current.getX() + dir[0];
+                int newCol = (int) current.getY() + dir[1];
+                Vector2D newPosition = new Vector2D(newRow, newCol);
+
+                // Vérifier la validité de la position
+                if (isValid(grid, newPosition) && !visited[newRow][newCol]) {
+                    visited[newRow][newCol] = true;
+
+                    // Ajouter un coût progressif autour des tours
+                    costGrid[newRow][newCol] = costGrid[(int) current.getX()][(int) current.getY()] / 2;
+
+                    // Si la zone est entourée de tours, ajouter une forte pénalité
+                    if (countNearbyTowers(grid, newPosition) >= 3) { // Seuil ajustable
+                        costGrid[newRow][newCol] += 50.0;
+                    }
+
+                    // Ajouter cette cellule à la file pour une propagation continue
+                    queue.add(newPosition);
+                }
+            }
+        }
+
+        // Ajouter une pénalité extrême pour les zones sans issue
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (costGrid[i][j] > 1000.0) {
+                    costGrid[i][j] = 100000.0; // Zone pratiquement infranchissable
+                }
+            }
+        }
+        return costGrid;
+    }
+
+    /**
+     * Comptabilise le nombre de tours autour d'une cellule.
+     * @param grid La grille à vérifier
+     * @param position La position de la cellule à examiner
+     * @return Le nombre de tours dans les cellules voisines
+     */
+    private int countNearbyTowers(char[][] grid, Vector2D position) {
+        int towerCount = 0;
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+        for (int[] dir : directions) {
+            int newRow = (int) position.getX() + dir[0];
+            int newCol = (int) position.getY() + dir[1];
+            Vector2D newPosition = new Vector2D(newRow, newCol);
+
+            if (isValid(grid, newPosition) && grid[newRow][newCol] == 'T') {
+                towerCount++;
+            }
+        }
+        return towerCount;
+    }
+
+    private double getTowerPenalty(double[][] costGrid, Vector2D point) {
+        return costGrid[(int) point.getX()][(int) point.getY()];
+    }
 
 }
-
-

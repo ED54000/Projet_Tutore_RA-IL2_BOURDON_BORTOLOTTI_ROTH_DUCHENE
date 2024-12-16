@@ -1,18 +1,17 @@
 package com.example.chemin_interface.entites;
 
 import java.util.Random;
+import com.example.chemin_interface.steering_astar.Steering.Vector2D;
 
 public abstract class Entity {
 
-    private double x;
-    private double y;
+    protected Vector2D position;
     private String type;
     private int damage;
     private double range;
 
-    public Entity(double x, double y, int damage, double range) {
-        this.x = x;
-        this.y = y;
+    public Entity(Vector2D position, int damage, double range) {
+        this.position = position;
         this.damage = damage;
         this.range = range;
 
@@ -64,24 +63,20 @@ public abstract class Entity {
 
     public abstract void takeDamage(double damage);
 
+    public Vector2D getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector2D position) {
+        this.position = position;
+    }
+
     public String getType() {
         return type;
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
     public int getDamage() {
         return damage;
-    }
-
-    public void setX(double x) {
-        this.x = x;
     }
 
     public double getRange() {

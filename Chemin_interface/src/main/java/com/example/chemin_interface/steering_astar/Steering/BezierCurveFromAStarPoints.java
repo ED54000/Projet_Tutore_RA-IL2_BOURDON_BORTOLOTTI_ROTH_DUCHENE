@@ -64,15 +64,15 @@ public class BezierCurveFromAStarPoints {
         // Étape fixe pour un déplacement uniforme
         final double step = 0.05; // Ajustez pour plus ou moins de détails
         for (double t = 0.0; t <= 1.0; t += step) {
-            double x = Math.pow(1 - t, 3) * p0.x
-                    + 3 * Math.pow(1 - t, 2) * t * p1.x
-                    + 3 * (1 - t) * Math.pow(t, 2) * p2.x
-                    + Math.pow(t, 3) * p3.x;
+            double x = Math.pow(1 - t, 3) * p0.getX()
+                    + 3 * Math.pow(1 - t, 2) * t * p1.getX()
+                    + 3 * (1 - t) * Math.pow(t, 2) * p2.getX()
+                    + Math.pow(t, 3) * p3.getX();
 
-            double y = Math.pow(1 - t, 3) * p0.y
-                    + 3 * Math.pow(1 - t, 2) * t * p1.y
-                    + 3 * (1 - t) * Math.pow(t, 2) * p2.y
-                    + Math.pow(t, 3) * p3.y;
+            double y = Math.pow(1 - t, 3) * p0.getY()
+                    + 3 * Math.pow(1 - t, 2) * t * p1.getY()
+                    + 3 * (1 - t) * Math.pow(t, 2) * p2.getY()
+                    + Math.pow(t, 3) * p3.getY();
 
             segmentPoints.add(new Vector2D(x, y));
         }

@@ -29,21 +29,20 @@ public class Agent {
      * methode definissant la nouvelle position de l'agent grace a sa velocite, calculee selon le
      * comportement de l'agent
      */
-    public void update() {
-        if (behavior != null) {
-            Vector2D steeringForce = behavior.calculateForce(this);
-            velocity = velocity.add(steeringForce).normalize().scale(maxSpeed);
-            position = position.add(velocity);
-        }
-    }
-
-    public void setBehavior(Behavior behavior) {
-        this.behavior = behavior;
-    }
+//    public void update() {
+//        if (behavior != null) {
+//            Vector2D steeringForce = behavior.calculateForce(this);
+//            velocity = velocity.add(steeringForce).normalize().scale(maxSpeed);
+//            position = position.add(velocity);
+//        }
+//    }
 
     public Vector2D getPosition() { return position; }
     public Vector2D getVelocity() { return velocity; }
     public double getMaxSpeed() { return maxSpeed; }
     public Behavior getBehavior() { return behavior; }
+    public void setBehavior(Behavior behavior) {
+        this.behavior = behavior;
+    }
 }
 
