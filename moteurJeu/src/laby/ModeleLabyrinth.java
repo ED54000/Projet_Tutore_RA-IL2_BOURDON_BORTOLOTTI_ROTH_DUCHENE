@@ -23,6 +23,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public static final char CANON = 'C';
     public static final char BOMB = 'B';
 
+    // Nombre d'ennemis qui doivent arriver à la fin pour gagner
+    public int nbEnnemiesToWin;
+
     public ArrayList<Ennemy> enemies = new ArrayList<>();
     public ArrayList<Defense> defenses = new ArrayList<>();
 
@@ -31,7 +34,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     //labyrinthe
     private char[][] cases;
-    private double Xstart, Ystart;
 
     private ArrayList<Observer> observateurs;
 
@@ -42,7 +44,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.observateurs = new ArrayList<>();
     }
 
-    public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches) throws IOException {
+    public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches, int nbEnnemiesToWin) throws IOException {
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
@@ -53,6 +55,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         //création du labyrinthe vide
         this.cases = new char[nbLignes][nbColonnes];
+
+        // Nombre d'ennemis qui doivent arriver à la fin pour gagner
+        this.nbEnnemiesToWin = nbEnnemiesToWin;
 
         //lecture des cases
         String ligne = br.readLine();
@@ -76,8 +81,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case START:
                         //ajouter le point de départ
                         this.cases[numLigne][colonne] = START;
-                        this.Xstart = colonne;
-                        this.Ystart = numLigne;
                         createEnnemies(nbEnnemies, colonne, numLigne);
                         break;
                     case END:
@@ -122,12 +125,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
     @Override
     public void update(double secondes) {
         for (Ennemy ennemy : this.enemies) {
-            //si l'ennemi est sur la case de départ
-            if (ennemy.getDistanceToArrival() == ennemy.getDistanceStartToArrival()) {
-                //System.out.println("test");
-            }
-            while (ennemy.getTimeSpawn() != 0) {
-                ennemy.setTimeSpawn(ennemy.getTimeSpawn() - 1);
+            enemies.get(0).takeDamage(3000);
+
+            if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
+                deadEnemies.add(ennemy);
+                setLogs(true);
+                continue;
             }
             ennemy.move(secondes);
             notifyObserver();
@@ -137,7 +140,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     @Override
     public void init(Canvas canvas) {
         notifyObserver();//utilité ?
-        //attendre une seconde
     }
 
     @Override

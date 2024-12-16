@@ -20,12 +20,14 @@ public class ControllerStart implements EventHandler<MouseEvent> {
     private ComboBox<String> labyrinthComboBox;
     private TextField enemiesField;
     private TextField roundsField;
+    private TextField ennemiesToWinField;
 
-    public ControllerStart(ModeleLabyrinth laby, ComboBox<String> labyrinthComboBox, TextField enemiesField, TextField roundsField) {
+    public ControllerStart(ModeleLabyrinth laby, ComboBox<String> labyrinthComboBox, TextField enemiesField, TextField roundsField, TextField ennemiesToWinField) {
         this.laby = laby;
         this.labyrinthComboBox = labyrinthComboBox;
         this.enemiesField = enemiesField;
         this.roundsField = roundsField;
+        this.ennemiesToWinField = ennemiesToWinField;
     }
 
     @Override
@@ -45,7 +47,7 @@ public class ControllerStart implements EventHandler<MouseEvent> {
 
         // Créer le labyrinthe
         try {
-            laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()));
+            laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()), Integer.parseInt(ennemiesToWinField.getText()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
