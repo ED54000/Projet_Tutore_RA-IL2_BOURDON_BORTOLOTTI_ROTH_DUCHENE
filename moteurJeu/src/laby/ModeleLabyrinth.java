@@ -31,7 +31,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     //labyrinthe
     private char[][] cases;
-    private double Xstart, Ystart;
 
     private ArrayList<Observer> observateurs;
 
@@ -76,8 +75,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case START:
                         //ajouter le point de départ
                         this.cases[numLigne][colonne] = START;
-                        this.Xstart = colonne;
-                        this.Ystart = numLigne;
                         createEnnemies(nbEnnemies, colonne, numLigne);
                         break;
                     case END:
@@ -122,14 +119,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
     @Override
     public void update(double secondes) {
         for (Ennemy ennemy : this.enemies) {
-            //si l'ennemi est sur la case de départ
-            if (ennemy.getDistanceToArrival() == ennemy.getDistanceStartToArrival()) {
-                //System.out.println("test");
+            enemies.get(0).takeDamage(3000);
+
+            if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
+                deadEnemies.add(ennemy);
+                setLogs(true);
+                continue;
             }
-            while (ennemy.getTimeSpawn() != 0) {
-                ennemy.setTimeSpawn(ennemy.getTimeSpawn() - 1);
-            }
-            ennemy.move(secondes);
             notifyObserver();
         }
     }
@@ -137,7 +133,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     @Override
     public void init(Canvas canvas) {
         notifyObserver();//utilité ?
-        //attendre une seconde
     }
 
     @Override

@@ -3,6 +3,7 @@ package laby.views;
 import entites.enemies.Ennemy;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import laby.ModeleLabyrinth;
 import laby.Observer;
@@ -12,10 +13,14 @@ public class ViewLabyrinth implements Observer {
     static int tailleCase = 50;
     private ModeleLabyrinth laby;
     private Canvas canvas;
+    private Image tree, canon, bomb, road, start, end;
 
     public ViewLabyrinth(ModeleLabyrinth laby, Canvas canvas) {
         this.laby = laby;
         this.canvas = canvas;
+        tree = new Image("/tree.png");
+        road = new Image("/tiles.png");
+
     }
 
     @Override
@@ -55,12 +60,10 @@ public class ViewLabyrinth implements Observer {
                         gc.fillRect(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
                         break;
                     case ModeleLabyrinth.ROAD:
-                        gc.setFill(Color.BROWN);
-                        gc.fillRect(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
+                        gc.drawImage(road, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
                         break;
                     case ModeleLabyrinth.TREE:
-                        gc.setFill(Color.CORAL);
-                        gc.fillRect(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
+                        gc.drawImage(tree, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
                         break;
                     default:
                         break;
@@ -70,14 +73,6 @@ public class ViewLabyrinth implements Observer {
 
         //dessiner les ennemis
         for (int i = 0; i < laby.enemies.size(); i++) {
-            laby.enemies.get(0).takeDamage(3000);
-
-            Ennemy ennemy = laby.enemies.get(i);
-            if (ennemy.isDead() && !laby.deadEnemies.contains(ennemy)) {
-                laby.deadEnemies.add(ennemy);
-                laby.setLogs(true);
-                continue;
-            }
             gc.setFill(Color.RED);
             gc.fillOval(ennemy.getX() * tailleCase, ennemy.getY() * tailleCase, tailleCase/3, tailleCase/3);
         }
