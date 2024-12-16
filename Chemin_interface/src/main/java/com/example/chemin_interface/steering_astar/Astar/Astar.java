@@ -1,9 +1,14 @@
 package com.example.chemin_interface.steering_astar.Astar;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
+import com.example.chemin_interface.entites.defenses.Bomb;
+import com.example.chemin_interface.entites.defenses.Canon;
 import com.example.chemin_interface.steering_astar.Steering.Vector2D;
 
 import java.util.*;
@@ -303,6 +308,48 @@ public class Astar {
 
     private double getTowerPenalty(double[][] costGrid, Vector2D point) {
         return costGrid[(int) point.getX()][(int) point.getY()];
+    }
+
+    public char[][] getGrid(String fichier) throws IOException {
+        FileReader fr = new FileReader(fichier);
+        BufferedReader br = new BufferedReader(fr);
+
+        int nbLignes, nbColonnes;
+        nbLignes = Integer.parseInt(br.readLine());
+        nbColonnes = Integer.parseInt(br.readLine());
+
+        char[][] cases = new char[nbLignes][nbColonnes];
+
+        String ligne = br.readLine();
+
+        int numLigne = 0;
+        while (ligne != null) {
+            for (int colonne = 0; colonne < ligne.length(); colonne++) {
+                char c = ligne.charAt(colonne);
+                switch (c){
+                    case '#':
+                        cases[numLigne][colonne] = '#';
+                        break;
+                    case '.':
+                        cases[numLigne][colonne] = '.';
+                        break;
+                    case 'S':
+                        cases[numLigne][colonne] = 'S';
+                        break;
+                    case 'E':
+                        cases[numLigne][colonne] = 'E';
+                        break;
+                    case 'C':
+                    case 'B':
+                        cases[numLigne][colonne] = 'T';
+                        break;
+                }
+            }
+            numLigne++;
+            ligne = br.readLine();
+        }
+        br.close();
+        return cases;
     }
 
 }
