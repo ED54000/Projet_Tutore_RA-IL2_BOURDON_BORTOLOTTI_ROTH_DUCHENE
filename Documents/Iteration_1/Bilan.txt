@@ -35,4 +35,5 @@ Pour lancer chaque prototype :
 Steering behaviours : Un agent (point bleu) suit un objectif fixé (ici la souris) symbolisé par un point rouge. Le prototype est validé.
 A* : Affiche la suite des coordonnées pour le chemin le plus court en fonction de chaque comportement. Le prototype est validé.
 Interface graphique : Affiche une pop-up pour choisir un labyrinthe prédéfini, le nombre de vagues ainsi le nombre d'ennemi. Les ennemis sont ensuite affichés et bougent en ligne droite en ignorant les obstacles. Le prototype est validé.
-Algorithme évolutionnaire: Choisit le meilleur couple de chaque type. Pour tout les ennemis morts ont leur mets les moyennes du couple du même type puis on met une mutation en ajoutant ou en enlevant quelques points. Le prototype n'est pas terminé.
+Algorithme évolutionnaire: Choisit le meilleur couple de chaque comportement. Pour tout les ennemis morts ont leur mets les moyennes du couple du même comportement puis on met une mutation en ajoutant ou en enlevant quelques points. Le prototype n'est pas terminé.
+Fusion A* et Steering behaviour : Suit le chemin optimal pour chaque comportement avec un affichage graphique.
