@@ -13,14 +13,15 @@ public class ViewLabyrinth implements Observer {
     static int tailleCase = 50;
     private ModeleLabyrinth laby;
     private Canvas canvas;
-    private Image tree, canon, bomb, road, start, end;
+    private Image tree, canon, archer, bomb, road, start, end;
 
     public ViewLabyrinth(ModeleLabyrinth laby, Canvas canvas) {
         this.laby = laby;
         this.canvas = canvas;
         tree = new Image("/tree.png");
         road = new Image("/tiles.png");
-
+        archer = new Image("/archer.png");
+        bomb = new Image("/bomb.png");
     }
 
     @Override
@@ -40,16 +41,18 @@ public class ViewLabyrinth implements Observer {
             for (int j = 0; j < laby.getLengthY(); j++) {
                 switch (laby.getCase(i, j)) {
                     case ModeleLabyrinth.CANON:
+                        /*
                         gc.setFill(Color.CORAL);
                         gc.fillRect(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
                         gc.setFill(Color.GREY);
                         gc.fillOval(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
+
+                         */
+                        gc.drawImage(archer, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
                         break;
                     case ModeleLabyrinth.BOMB:
-                        gc.setFill(Color.BROWN);
-                        gc.fillRect(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        gc.setFill(Color.BLACK);
-                        gc.fillOval(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
+                        gc.drawImage(road, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
+                        gc.drawImage(bomb, j * tailleCase-3, i * tailleCase-5, tailleCase+5, tailleCase+5);
                         break;
                     case ModeleLabyrinth.START:
                         gc.setFill(Color.GREEN);
