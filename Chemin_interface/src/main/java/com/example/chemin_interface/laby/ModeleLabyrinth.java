@@ -8,8 +8,6 @@ import com.example.chemin_interface.entites.enemies.Giant;
 import com.example.chemin_interface.entites.enemies.Ninja;
 import com.example.chemin_interface.steering_astar.Steering.Vector2D;
 import javafx.scene.canvas.Canvas;
-import com.example.chemin_interface.laby.controllers.ControllerStart;
-import com.example.chemin_interface.laby.views.ViewLabyrinth;
 import com.example.chemin_interface.moteur.Jeu;
 
 import java.io.*;
@@ -120,7 +118,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         for (Ennemy ennemy : this.enemies) {
             //si l'ennemi est sur la case de départ
             if (ennemy.getDistanceToArrival() == ennemy.getDistanceStartToArrival()) {
-                System.out.println("test");
+
             }
             while (ennemy.getTimeSpawn() != 0) {
                 ennemy.setTimeSpawn(ennemy.getTimeSpawn() - 1);

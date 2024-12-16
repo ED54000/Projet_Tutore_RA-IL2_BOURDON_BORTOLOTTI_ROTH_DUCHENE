@@ -8,18 +8,24 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import com.example.chemin_interface.laby.ModeleLabyrinth;
 import com.example.chemin_interface.laby.controllers.ControllerStart;
 import com.example.chemin_interface.laby.views.ViewLabyrinth;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,9 +71,10 @@ public class MoteurJeu extends Application {
      *
      * @param jeu    jeu a lancer
      */
-    public static void launch(Jeu jeu) {
+    public static void launch(Jeu jeu, int fps) {
         // le jeu en cours et son afficheur
         MoteurJeu.jeu = jeu;
+        MoteurJeu.setFPS(fps);
 
         // si le jeu existe, on lance le moteur de jeu
         if (jeu != null)
@@ -84,14 +91,11 @@ public class MoteurJeu extends Application {
         dureeFPS = 1000 / (FPS + 1);
     }
 
-    public static void setTaille(double width, double height) {
-        WIDTH = width;
-        HEIGHT = height;
-    }
 
-    public static void setLaby(ModeleLabyrinth laby) {
-        MoteurJeu.jeu = laby;
-    }
+
+//    public static void setLaby(ModeleLabyrinth laby) {
+//        MoteurJeu.jeu = laby;
+//    }
 
 
     //#################################
@@ -101,7 +105,6 @@ public class MoteurJeu extends Application {
      * creation de l'application avec juste un canvas et des statistiques
      */
     public void start(Stage primaryStage) throws IOException {
-        //TODO : création des controleurs
         //ControllerStart controllerStart = new ControllerStart(laby);
         // création des vues
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
@@ -151,7 +154,6 @@ public class MoteurJeu extends Application {
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent MouseEvent) {
-                System.out.println(labyrinthMap.get(labyrinthComboBox.getValue()));
                 dialogStage.close();
                 try {
                     laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()));
@@ -174,6 +176,10 @@ public class MoteurJeu extends Application {
         dialogStage.initModality(Modality.APPLICATION_MODAL);
         // Affiche la fenêtre
         dialogStage.showAndWait();
+
+        primaryStage.setX(-7);
+        primaryStage.setY(0);
+        primaryStage.setAlwaysOnTop(true);
     }
 
     public void startJeu(Stage primaryStage) {
@@ -190,6 +196,13 @@ public class MoteurJeu extends Application {
         root.setBottom(stats);
 
         // creation de la scene
+        Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        Rectangle2D fullBounds = Screen.getPrimary().getBounds();
+        Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
+        double taskbarHeight = fullBounds.getHeight() - visualBounds.getHeight();
+
+        WIDTH = screenSize.getWidth();
+        HEIGHT = screenSize.getHeight()-taskbarHeight/2;
         final Scene scene = new Scene(root, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
