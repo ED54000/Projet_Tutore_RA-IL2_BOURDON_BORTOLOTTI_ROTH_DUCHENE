@@ -19,6 +19,7 @@ import javafx.util.Pair;
 import laby.ModeleLabyrinth;
 import laby.controllers.ControllerStart;
 import laby.views.ViewLabyrinth;
+import laby.views.ViewLogs;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -58,7 +59,7 @@ public class MoteurJeu extends Application {
     // initialisation du canvas de dessin et du container
     final Canvas canvas = new Canvas();
     final Pane canvasContainer = new Pane(canvas);
-
+    //final VBox logs = new VBox();
 
     /**
      * lancement d'un jeu
@@ -101,12 +102,6 @@ public class MoteurJeu extends Application {
      * creation de l'application avec juste un canvas et des statistiques
      */
     public void start(Stage primaryStage) throws IOException {
-        //TODO : création des controleurs
-        //ControllerStart controllerStart = new ControllerStart(laby);
-        // création des vues
-        ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
-        //enregistrement des observateurs
-        laby.registerObserver(viewLabyrinth);
 
         // Crée une nouvelle fenêtre (Stage)
         Stage dialogStage = new Stage();
@@ -151,7 +146,18 @@ public class MoteurJeu extends Application {
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent MouseEvent) {
-                System.out.println(labyrinthMap.get(labyrinthComboBox.getValue()));
+                switch (labyrinthComboBox.getValue()) {
+                    case "Petit":
+                        System.out.println("Petit");
+                        MoteurJeu.setTaille(1000, 550);
+                        break;
+                    case "Grand":
+                        MoteurJeu.setTaille(1200, 950);
+                        break;
+                    case "Large":
+                        MoteurJeu.setTaille(1700, 950);
+                        break;
+                }
                 dialogStage.close();
                 try {
                     laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()));
@@ -180,14 +186,29 @@ public class MoteurJeu extends Application {
         canvas.widthProperty().bind(canvasContainer.widthProperty());
         canvas.heightProperty().bind(canvasContainer.heightProperty());
 
-        // affichage des stats
-        final Label stats = new Label();
-        stats.textProperty().bind(frameStats.textProperty());
+        VBox logs = new VBox();
+        logs.setPrefWidth(200);
+        logs.setPadding(new Insets(10));
+        logs.setSpacing(10);
 
-        // ajout des statistiques en bas de la fenetre
+        Label title = new Label("Logs");
+        title.setStyle("-fx-font-weight: bold");
+        title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        logs.getChildren().add(title);
+
+        //TODO : création des controleurs
+        //ControllerStart controllerStart = new ControllerStart(laby);
+        // création des vues
+        ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
+        ViewLogs viewLogs = new ViewLogs(laby, logs);
+        //enregistrement des observateurs
+        laby.registerObserver(viewLabyrinth);
+        laby.registerObserver(viewLogs);
+
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);
-        root.setBottom(stats);
+        //ajout des logs
+        root.setRight(logs);
 
         // creation de la scene
         final Scene scene = new Scene(root, WIDTH, HEIGHT);

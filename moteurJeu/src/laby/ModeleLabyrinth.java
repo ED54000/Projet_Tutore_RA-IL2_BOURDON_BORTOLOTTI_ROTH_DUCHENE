@@ -26,11 +26,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Ennemy> enemies = new ArrayList<>();
     public ArrayList<Defense> defenses = new ArrayList<>();
 
+    public ArrayList<Ennemy> deadEnemies = new ArrayList<>();
+    public ArrayList<Defense> deadDefenses = new ArrayList<>();
+
     //labyrinthe
     private char[][] cases;
     private double Xstart, Ystart;
 
     private ArrayList<Observer> observateurs;
+
+    private boolean logs = false;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -119,8 +124,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         for (Ennemy ennemy : this.enemies) {
             //si l'ennemi est sur la case de départ
             if (ennemy.getDistanceToArrival() == ennemy.getDistanceStartToArrival()) {
-                System.out.println("test");
-                //
+                //System.out.println("test");
             }
             while (ennemy.getTimeSpawn() != 0) {
                 ennemy.setTimeSpawn(ennemy.getTimeSpawn() - 1);
@@ -132,7 +136,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     @Override
     public void init(Canvas canvas) {
-        notifyObserver(); //utilité ?
+        notifyObserver();//utilité ?
+        //attendre une seconde
     }
 
     @Override
@@ -169,7 +174,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return this.cases[x][y];
     }
 
-    public char[][] getCases() {
-        return this.cases;
+    public void setLogs(boolean val){
+        logs = val;
+    }
+
+    public boolean getLogs(){
+        return logs;
     }
 }
