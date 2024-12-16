@@ -3,6 +3,11 @@ Bilan :
 Le(s) bug(s) restant :
     - Aucun à notre connaissance 
 
+Conformité à l'étude préalable : 
+
+Nous avons réalisé toutes les fonctionnalités prévues pour l'itération 1.
+Nous avons également pu faire des choses prévues dans l'itération 2, notammment la fusion de Steering behaviors et de A*.
+
 Eloi :
 Tests validés : 
   - Le choix de chemin est fonctionnel avec les comportements choisis
