@@ -22,7 +22,7 @@ public class ViewLogs implements Observer {
             logs.getChildren().clear();
 
             for (Ennemy e : laby.deadEnemies){
-                Label l = new Label("Ennemy " + e.get + " is dead");
+                Label l = new Label("Ennemy " + e + " is dead");
                 logs.getChildren().add(l);
             }
 

@@ -10,7 +10,7 @@ public class Bomb extends PassiveDefense{
     @Override
     public void attack(Ennemy target) {
         if (target != null) {
-            target.takeDamage(getDamage()*getBonus(getType(), target.getType()));
+            target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
         }
     }
 }
