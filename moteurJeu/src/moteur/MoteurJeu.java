@@ -19,6 +19,7 @@ import javafx.util.Pair;
 import laby.ModeleLabyrinth;
 import laby.controllers.ControllerStart;
 import laby.views.ViewLabyrinth;
+import laby.views.ViewLogs;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ public class MoteurJeu extends Application {
     // initialisation du canvas de dessin et du container
     final Canvas canvas = new Canvas();
     final Pane canvasContainer = new Pane(canvas);
+    final VBox logs = new VBox();
 
 
     /**
@@ -101,12 +103,6 @@ public class MoteurJeu extends Application {
      * creation de l'application avec juste un canvas et des statistiques
      */
     public void start(Stage primaryStage) throws IOException {
-        //TODO : création des controleurs
-        //ControllerStart controllerStart = new ControllerStart(laby);
-        // création des vues
-        ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
-        //enregistrement des observateurs
-        laby.registerObserver(viewLabyrinth);
 
         // Crée une nouvelle fenêtre (Stage)
         Stage dialogStage = new Stage();
@@ -180,6 +176,15 @@ public class MoteurJeu extends Application {
         canvas.widthProperty().bind(canvasContainer.widthProperty());
         canvas.heightProperty().bind(canvasContainer.heightProperty());
 
+        //TODO : création des controleurs
+        //ControllerStart controllerStart = new ControllerStart(laby);
+        // création des vues
+        ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
+        ViewLogs viewLogs = new ViewLogs(laby, logs);
+        //enregistrement des observateurs
+        laby.registerObserver(viewLabyrinth);
+        laby.registerObserver(viewLogs);
+
         // affichage des stats
         final Label stats = new Label();
         stats.textProperty().bind(frameStats.textProperty());
@@ -188,6 +193,8 @@ public class MoteurJeu extends Application {
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);
         root.setBottom(stats);
+        //ajout des logs
+        root.setRight(logs);
 
         // creation de la scene
         final Scene scene = new Scene(root, WIDTH, HEIGHT);

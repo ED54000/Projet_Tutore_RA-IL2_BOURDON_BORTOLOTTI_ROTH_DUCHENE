@@ -40,6 +40,10 @@ public abstract class Ennemy extends Entity {
         this.distanceToArrival -= this.speed;
     }
 
+    public boolean isDead() {
+        return health <= 0;
+    }
+
     public int getDistanceToArrival() {
         return distanceToArrival;
     }

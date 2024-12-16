@@ -67,7 +67,7 @@ public class Main extends Application {
         };
 
         //GRILLE UTILISEE
-        grid = grid2;
+        grid = grid1;
 
         // COMPORTEMENT UTILISEE
         String[] comportements = {"Normal","Fugitive","Kamikaze"};

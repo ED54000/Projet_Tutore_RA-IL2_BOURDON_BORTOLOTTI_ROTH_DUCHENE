@@ -32,6 +32,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private ArrayList<Observer> observateurs;
 
+    private boolean logs = false;
+
     //constructeur vide
     public ModeleLabyrinth() {
         this.observateurs = new ArrayList<>();
@@ -114,13 +116,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
     }
 
+    public void updateLogs(){
+        logs = true;
+    }
+
     @Override
     public void update(double secondes) {
         for (Ennemy ennemy : this.enemies) {
             //si l'ennemi est sur la case de départ
             if (ennemy.getDistanceToArrival() == ennemy.getDistanceStartToArrival()) {
-                System.out.println("test");
-                //
+                //System.out.println("test");
             }
             while (ennemy.getTimeSpawn() != 0) {
                 ennemy.setTimeSpawn(ennemy.getTimeSpawn() - 1);
