@@ -10,6 +10,17 @@ public class EnnemyEvolution {
     public final static double distStartEnd = 200;
 
     /**
+     * Fait évoluer les ennemis
+     * @param ennemies la liste complète des ennemis
+     */
+    public static void evoluer(List<Ennemy> ennemies) {
+        // On affecte les statistiques moyennes des meilleurs ennemis aux ennemis morts
+        affectStatsToDeadEnnemies(ennemies);
+        // On ajoute des statistiques aléatoires aux ennemis
+        addRandomStats(ennemies);
+    }
+
+    /**
      * Retourne les meilleurs couples d'ennemis pour chaque type
      * @param ennemies la liste complète des ennemis
      * @return un tableau à deux dimensions d'ennemis, chaque sous-tableau contient les deux meilleurs ennemis d'un type
