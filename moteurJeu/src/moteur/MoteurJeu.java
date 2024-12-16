@@ -127,6 +127,11 @@ public class MoteurJeu extends Application {
         enemiesField.setPromptText("Nombre d'ennemis");
         enemiesField.setText("5");
 
+        // Champ pour le nombre d'ennemis qui doivent atteindre la ligne d'arrivée
+        TextField nbEnnemiesToWinField = new TextField();
+        nbEnnemiesToWinField.setPromptText("Nombre d'ennemis qui doivent atteindre la ligne d'arrivée");
+        nbEnnemiesToWinField.setText("5");
+
         HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
         // Champ pour le nombre de manches
         TextField roundsField = new TextField();
@@ -135,12 +140,14 @@ public class MoteurJeu extends Application {
         labyrinthComboBox.setId("labyrinthComboBox");
         enemiesField.setId("enemiesField");
         roundsField.setId("roundsField");
+        nbEnnemiesToWinField.setId("ennemiesToWinField");
 
         // Création du contrôleur avec les références des champs
-        ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField);
+        ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField, nbEnnemiesToWinField);
 
 
         HBox roundsBox = new HBox(10, new Label("Nombre de manches :"), roundsField);
+        HBox ennemiesToWinBox = new HBox(10, new Label("Objectif :"), nbEnnemiesToWinField);
         // Bouton Start
         Button startButton = new Button("Start");
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -160,7 +167,7 @@ public class MoteurJeu extends Application {
                 }
                 dialogStage.close();
                 try {
-                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()));
+                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -168,7 +175,7 @@ public class MoteurJeu extends Application {
             }
         });
         // Ajout des composants au conteneur principal
-        root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, startButton);
+        root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, ennemiesToWinBox, startButton);
 
         //startButton.setOnMouseClicked(controllerStart);
 

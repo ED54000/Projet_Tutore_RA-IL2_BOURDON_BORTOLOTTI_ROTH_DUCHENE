@@ -23,6 +23,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public static final char CANON = 'C';
     public static final char BOMB = 'B';
 
+    // Nombre d'ennemis qui doivent arriver à la fin pour gagner
+    public int nbEnnemiesToWin;
+
     public ArrayList<Ennemy> enemies = new ArrayList<>();
     public ArrayList<Defense> defenses = new ArrayList<>();
 
@@ -41,7 +44,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.observateurs = new ArrayList<>();
     }
 
-    public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches) throws IOException {
+    public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches, int nbEnnemiesToWin) throws IOException {
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
@@ -52,6 +55,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         //création du labyrinthe vide
         this.cases = new char[nbLignes][nbColonnes];
+
+        // Nombre d'ennemis qui doivent arriver à la fin pour gagner
+        this.nbEnnemiesToWin = nbEnnemiesToWin;
 
         //lecture des cases
         String ligne = br.readLine();
