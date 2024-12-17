@@ -73,7 +73,7 @@
 //        grid = grid2;
 //
 //        // COMPORTEMENT UTILISEE
-//        String[] comportements = {"Normal","Fugitive","Kamikaze","Healer"};
+//        String[] comportements = {"Normal","Fugitive","Kamikaze"};
 //
 //        int[] startIndex = Vector2D.getPairIndex(grid, 'S');
 //        Vector2D start = new Vector2D(startIndex[0], startIndex[1]);
