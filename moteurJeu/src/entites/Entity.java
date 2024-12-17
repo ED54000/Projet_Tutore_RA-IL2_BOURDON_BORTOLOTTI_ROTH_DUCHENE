@@ -50,7 +50,7 @@ public abstract class Entity {
                     return -30/100;
                 }
                 break;
-            case "Wood":
+            case "Plant":
                 if (TargetType.equals("Water")) {
                     return 30/100;
                 }

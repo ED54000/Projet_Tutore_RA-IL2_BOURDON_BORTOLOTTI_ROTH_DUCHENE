@@ -13,6 +13,7 @@ import moteur.Jeu;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ModeleLabyrinth implements Jeu, Subject {
 
@@ -34,10 +35,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     //labyrinthe
     private char[][] cases;
+    private int XArrival, YArrival;
 
     private ArrayList<Observer> observateurs;
 
     private String logs = "";
+    private int nbEnnemiesArrived;
+
+    private int nbManches;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -86,6 +91,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case END:
                         //ajouter le point d'arrivée
                         this.cases[numLigne][colonne] = END;
+                        this.XArrival = colonne;
+                        this.YArrival = numLigne;
+                        System.out.println("XArrival : " + XArrival + " YArrival : " + YArrival);
                         break;
                     case CANON:
                         //ajouter un canon
@@ -111,11 +119,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 2);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(colonne+Math.random(), numLigne+Math.random());
+                    Giant giant = new Giant(colonne+Math.random(), numLigne+Math.random(), "Giant"+i);
                     this.enemies.add(giant);
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(colonne+Math.random(), numLigne+Math.random());
+                    Ninja ninja = new Ninja(colonne+Math.random(), numLigne+Math.random(), "Ninja"+i);
                     this.enemies.add(ninja);
                     break;
             }
@@ -124,17 +132,47 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     @Override
     public void update(double secondes) {
-        for (Ennemy ennemy : this.enemies) {
-            enemies.get(0).takeDamage(3000);
-
-            if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
-                deadEnemies.add(ennemy);
-                setLogs("Ennemy " + ennemy + " is dead");
-                continue;
-            }
-            ennemy.move(secondes);
-            notifyObserver();
+        // Vérification de la fin d'une manche
+        if (enemies.isEmpty()) {
+            System.out.println("Manche terminée");
+            setLogs("Manche terminée");
+            deadEnemies.clear();
+            //TODO : lancer la prochaine manche
         }
+
+        Iterator<Ennemy> iterator = this.enemies.iterator();
+        while (iterator.hasNext()) {
+            Ennemy ennemy = iterator.next();
+            ennemy.move(secondes);
+
+            // On vérifie si l'enneemi est dans la zone de dégâts d'une défense
+            for (Defense defense : defenses) {
+                if(defense.isInRange(ennemy)) {
+                    defense.attack(ennemy);
+                    System.out.println("Attaque de " + defense.getClass() + " sur " + ennemy.getName());
+                }
+
+                // Si l'ennemi est mort, on le retire de la liste des ennemis
+                if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
+                    deadEnemies.add(ennemy);
+                    enemies.remove(ennemy);
+                    setLogs(ennemy.getName() + " is dead");
+                }
+            }
+
+
+            //vérification d'arrivée
+            if ((int)(ennemy.getX()) == XArrival && (int)(ennemy.getY()) == YArrival && !ennemy.isArrived() && !deadEnemies.contains(ennemy)) {
+                ennemy.setArrived(true);
+                this.nbEnnemiesArrived++;
+                setLogs("Le " + ennemy.getName() + " est arrivé");
+
+                if (this.nbEnnemiesArrived == this.enemies.size()) { //changer par le bombre d'ennemies nécessaire pour perdre
+                    setLogs("Ta perdu bouuh !");
+                }
+            }
+        }
+        notifyObserver();
     }
 
     @Override

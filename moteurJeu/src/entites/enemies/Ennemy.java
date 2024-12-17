@@ -15,8 +15,9 @@ public abstract class Ennemy extends Entity {
     private String behavior;
     private boolean isArrived;
     private int survivalTime;
+    private String name;
 
-    public Ennemy(double x, double y, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival) {
+    public Ennemy(double x, double y, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name) {
         super(x, y, damages, range);
         this.speed = speed;
         this.attackSpeed = attackSpeed;
@@ -26,6 +27,8 @@ public abstract class Ennemy extends Entity {
         this.health = health;
         this.isArrived = false;
         this.behavior = "Normal";
+
+        this.name = name;
         timeSpawn++;
     }
 
@@ -123,6 +126,18 @@ public abstract class Ennemy extends Entity {
 
     public void setKillerType(String killerType) {
         this.killerType = killerType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isArrived() {
+        return isArrived;
+    }
+
+    public void setArrived(boolean res) {
+        this.isArrived = res;
     }
 }
 

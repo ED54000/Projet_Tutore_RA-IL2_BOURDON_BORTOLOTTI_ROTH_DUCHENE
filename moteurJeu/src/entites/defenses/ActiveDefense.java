@@ -14,6 +14,16 @@ public abstract class ActiveDefense extends Defense {
         this.health = health;
     }
 
+    /**
+     * Attaque un ennemi
+     * @param target l'ennemi à attaquer
+     */
+    @Override
+    public void attack(Ennemy target) {
+        // On attaque l'ennemi
+        target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()));
+    }
+
     public void takeDamage(double damage) {
         health -= damage;
     }
