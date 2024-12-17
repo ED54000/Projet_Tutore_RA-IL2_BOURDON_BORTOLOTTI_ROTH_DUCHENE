@@ -49,7 +49,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.observateurs = new ArrayList<>();
     }
 
-    public void creerLabyrinthe(String fichier, int nbEnnemies, int nbEnnemiesToWin) throws IOException {
+    public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches, int nbEnnemiesToWin) throws IOException {
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
@@ -128,6 +128,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     break;
             }
         }
+        this.enemies = new ArrayList<>();
     }
 
     @Override
