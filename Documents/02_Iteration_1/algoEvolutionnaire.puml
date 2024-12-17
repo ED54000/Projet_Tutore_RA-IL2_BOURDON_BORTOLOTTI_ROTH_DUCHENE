@@ -1,0 +1,32 @@
+@startuml
+
+'CLASSES
+class Ennemy {
+    attributs
+    méthodes()
+}
+
+abstract class Evolution {
+    {abstract} evoluer()
+}
+
+class EnnemyEvolution {
+    +evoluer()
+    +getBestCouple(List<Ennemy> ennemies) : Ennemy[][]
+    +getAverageStats(List<Ennemy> ennemies) : double[][]
+    +affectStatsToDeathEnnemies(List<Ennemy> ennemies)
+    +defineNewType(List<Ennemy> ennemies)
+    +addRandomStats(List<Ennemy> ennemies) : void
+    +getDeadEnnemies(List<Ennemy> ennemies) : ArrayList<Ennemy>
+}
+
+class DefenseEvolution {
+    +evoluer()
+}
+
+'RELATIONS ENTRE LES CLASSES
+Evolution <|-- EnnemyEvolution
+Evolution <|-- DefenseEvolution
+Ennemy "*" -- "1" EnnemyEvolution: uses
+
+@enduml
