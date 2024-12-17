@@ -26,7 +26,7 @@ public abstract class Entity {
                 this.type = "Water";
                 break;
             case 3:
-                this.type = "Wood";
+                this.type = "Plant";
                 break;
         }
     }
