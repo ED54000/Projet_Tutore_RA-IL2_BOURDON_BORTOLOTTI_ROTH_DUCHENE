@@ -42,7 +42,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private String logs = "";
     private int nbEnnemiesArrived;
 
-    private int nbManches;
+    private boolean pause = false;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -134,19 +134,19 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     @Override
     public void update(double secondes) {
-        Iterator<Ennemy> iterator = this.enemies.iterator();
 
         // Vérification de la fin d'une manche
-        if (enemies.isEmpty()) {
+        if (enemies.isEmpty() && !this.pause) {
+            this.pause = true;
             System.out.println("Manche terminée");
             setLogs("Manche terminée");
             deadEnemies.clear();
             //TODO : lancer la prochaine manche
         }
 
-        while (iterator.hasNext()) {
+        Iterator<Ennemy> iterator = this.enemies.iterator();
+        while (iterator.hasNext() && !this.pause) {
             Ennemy ennemy = iterator.next();
-            ennemy.move(secondes);
 
             if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                 deadEnemies.add(ennemy);
@@ -166,6 +166,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     setLogs("Ta perdu bouuh !");
                 }
             }
+            ennemy.move(secondes);
         }
         notifyObserver();
     }
@@ -216,5 +217,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public String getLogs(){
         return logs;
+    }
+
+    public boolean isPause() {
+        return this.pause;
+    }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
     }
 }

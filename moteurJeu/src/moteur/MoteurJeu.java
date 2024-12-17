@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import laby.ModeleLabyrinth;
+import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerStart;
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
@@ -205,6 +206,7 @@ public class MoteurJeu extends Application {
 
         //TODO : création des controleurs
         //ControllerStart controllerStart = new ControllerStart(laby);
+        //ControllerLearn controllerLearn = new ControllerLearn(laby);
         // création des vues
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
         ViewLogs viewLogs = new ViewLogs(laby, logs);

@@ -7,6 +7,7 @@ import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
+import laby.controllers.ControllerLearn;
 
 public class ViewLogs implements Observer {
     private ModeleLabyrinth laby;
@@ -20,15 +21,16 @@ public class ViewLogs implements Observer {
     @Override
     public void update(Subject s) {
         if (laby.getLogs()!=""){
-            if (laby.getLogs() == "Manche terminée"){
-                Button apprendre = new Button("Apprendre");
-                logs.getChildren().add(apprendre);
-            }
-
             Label label = new Label(laby.getLogs());
             logs.getChildren().add(label);
 
             laby.setLogs("");
+
+            if (laby.isPause()){
+                Button button = new Button("Learn");
+                button.setOnMouseClicked(new ControllerLearn(laby)); // a cérer dans le moteur avec les vues ?
+                logs.getChildren().add(button);
+            }
         }
     }
 }
