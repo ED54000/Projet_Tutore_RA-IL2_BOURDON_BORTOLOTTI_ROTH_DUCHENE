@@ -14,14 +14,14 @@ public abstract class ActiveDefense extends Defense {
         this.health = health;
     }
 
+    /**
+     * Attaque un ennemi
+     * @param target l'ennemi à attaquer
+     */
     @Override
     public void attack(Ennemy target) {
-        // On détecte si un ennemi est dans la portée de la défense avec une formule de distance euclidienne
-        if (((target.getX() - this.getX()) * (target.getX() - this.getX()) +
-                (target.getY() - this.getY()) * (target.getY() - this.getY()) <= this.getRange() * this.getRange())) {
-            // On attaque l'ennemi
-            target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()));
-        }
+        // On attaque l'ennemi
+        target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()));
     }
 
     public void takeDamage(double damage) {

@@ -8,16 +8,21 @@ public abstract class PassiveDefense extends Defense {
             super(x, y, damage, range);
         }
 
+    /**
+     * Attaque un ennemi
+     * @param target l'ennemi à attaquer
+     */
     @Override
     public void attack(Ennemy target) {
-        // On détecte si un ennemi est dans la portée de la défense avec une formule de distance euclidienne
-        if (((target.getX() - this.getX()) * (target.getX() - this.getX()) +
-                (target.getY() - this.getY()) * (target.getY() - this.getY()) <= this.getRange() * this.getRange())) {
-            target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
-        }
+        target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
         // C'est une défense passive, donc après avoir attaqué, elle s'autodétruit
         this.takeDamage(10000);
     }
+
+    /**
+     * Prendre des dégâts
+     * @param damage les dégâts à prendre
+     */
     public void takeDamage(double damage) {
     }
 }
