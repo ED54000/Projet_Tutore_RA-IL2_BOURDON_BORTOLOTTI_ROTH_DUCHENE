@@ -128,14 +128,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     break;
             }
         }
-        this.enemies = new ArrayList<>(); //a enlever
-
     }
 
     @Override
     public void update(double secondes) {
-        Iterator<Ennemy> iterator = this.enemies.iterator();
-
         // Vérification de la fin d'une manche
         if (enemies.isEmpty()) {
             System.out.println("Manche terminée");
@@ -144,20 +140,29 @@ public class ModeleLabyrinth implements Jeu, Subject {
             //TODO : lancer la prochaine manche
         }
 
+        Iterator<Ennemy> iterator = this.enemies.iterator();
         while (iterator.hasNext()) {
             Ennemy ennemy = iterator.next();
             ennemy.move(secondes);
 
-            if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
-                deadEnemies.add(ennemy);
-                enemies.remove(ennemy);
-                iterator.remove();
-                setLogs(ennemy.getName() + " is dead");
-                continue;
+            // On vérifie si l'enneemi est dans la zone de dégâts d'une défense
+            for (Defense defense : defenses) {
+                if(defense.isInRange(ennemy)) {
+                    defense.attack(ennemy);
+                    System.out.println("Attaque de " + defense.getClass() + " sur " + ennemy.getName());
+                }
+
+                // Si l'ennemi est mort, on le retire de la liste des ennemis
+                if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
+                    deadEnemies.add(ennemy);
+                    enemies.remove(ennemy);
+                    setLogs(ennemy.getName() + " is dead");
+                }
             }
 
-            // Vérification d'arriver
-            if ((int)(ennemy.getX()) == XArrival && (int)(ennemy.getY()) == YArrival && !ennemy.isArrived()) {
+
+            //vérification d'arrivée
+            if ((int)(ennemy.getX()) == XArrival && (int)(ennemy.getY()) == YArrival && !ennemy.isArrived() && !deadEnemies.contains(ennemy)) {
                 ennemy.setArrived(true);
                 this.nbEnnemiesArrived++;
                 setLogs("Le " + ennemy.getName() + " est arrivé");
@@ -169,7 +174,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
         notifyObserver();
     }
-
 
     @Override
     public void init(Canvas canvas) {

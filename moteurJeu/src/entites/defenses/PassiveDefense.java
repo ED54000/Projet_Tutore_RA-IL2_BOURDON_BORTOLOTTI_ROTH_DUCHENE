@@ -1,6 +1,7 @@
 package entites.defenses;
 
 import entites.enemies.Ennemy;
+import laby.ModeleLabyrinth;
 
 public abstract class PassiveDefense extends Defense {
 
