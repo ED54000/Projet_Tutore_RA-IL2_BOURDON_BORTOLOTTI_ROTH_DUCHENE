@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import laby.ModeleLabyrinth;
+import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerStart;
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
@@ -193,21 +194,25 @@ public class MoteurJeu extends Application {
         canvas.widthProperty().bind(canvasContainer.widthProperty());
         canvas.heightProperty().bind(canvasContainer.heightProperty());
 
+        VBox ContainerLogs = new VBox();
+        Label title = new Label("Logs");
+        title.setStyle("-fx-font-weight: bold");
+        title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+
         VBox logs = new VBox();
         logs.setPrefWidth(200);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
+        logs.getChildren().add(new Label("Logs"));
 
-        Label title = new Label("Logs");
-        title.setStyle("-fx-font-weight: bold");
-        title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-        logs.getChildren().add(title);
+        ContainerLogs.getChildren().addAll(title, logs);
 
         //TODO : création des controleurs
         //ControllerStart controllerStart = new ControllerStart(laby);
+        //ControllerLearn controllerLearn = new ControllerLearn(laby);
         // création des vues
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
-        ViewLogs viewLogs = new ViewLogs(laby, logs);
+        ViewLogs viewLogs = new ViewLogs(laby, ContainerLogs);
         //enregistrement des observateurs
         laby.registerObserver(viewLabyrinth);
         laby.registerObserver(viewLogs);

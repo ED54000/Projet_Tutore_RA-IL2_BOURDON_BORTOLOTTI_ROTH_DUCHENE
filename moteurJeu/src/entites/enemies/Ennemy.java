@@ -56,18 +56,6 @@ public abstract class Ennemy extends Entity {
         return distanceToArrival;
     }
 
-    public int getDistanceStartToArrival() {
-        return distanceStartToArrival;
-    }
-
-    public int getTimeSpawn() {
-        return timeSpawn;
-    }
-
-    public void setTimeSpawn(int i) {
-        timeSpawn = i;
-    }
-
     public String getBehavior() {
         return behavior;
     }
