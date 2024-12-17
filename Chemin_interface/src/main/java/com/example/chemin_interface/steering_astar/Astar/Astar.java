@@ -27,9 +27,9 @@ public class Astar {
      */
     boolean isValid(char[][] grid, Vector2D point) {
         if (grid.length > 0 && grid[0].length > 0)
-            return (point.getX() >= 0) && (point.getX() < grid.length)
+            return (point.getX() >= 0) && (point.getX() < grid.length )
                     && (point.getY() >= 0)
-                    && (point.getY() < grid[0].length);
+                    && (point.getY() < grid[0].length );
 
         return false;
     }
@@ -108,7 +108,7 @@ public class Astar {
         while (!path.empty()) {
             Vector2D p = path.peek();
             path.pop();
-            //  System.out.println("-> (" + p.getX() + "," + p.getY() + ") ");
+             System.out.println("-> (" + p.getX() + "," + p.getY() + ") ");
         }
         return pathArray;
     }
@@ -128,11 +128,12 @@ public class Astar {
      * @return Le chemin le plus court
      */
     public ArrayList<Vector2D> aStarSearch(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest, String comp) {
+        System.out.println("Départ aStar: " + src);
         double[][] costGrid = createTowerAvoidanceCostGrid(grid, comp);
 
         if (comp.equals("Kamikaze")) {
             try {
-                double[] newEnd = Vector2D.getCloserPairIndex(grid, 'T');
+                double[] newEnd = Vector2D.getCloserPairIndex(grid, 'C');
                 dest = new Vector2D(newEnd[0], newEnd[1]);
                 grid[(int) dest.getX()][(int) dest.getY()] = 'E';
             } catch (Exception e) {
@@ -233,11 +234,12 @@ public class Astar {
         // Initialiser les coûts de base
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                if (comp.equals("Fugitive") && grid[i][j] == 'T') {
-                    queue.add(new Vector2D(i, j));
-                    visited[i][j] = true;
-                    costGrid[i][j] = 1000.0; // Coût initial très élevé pour les tours
-                } else {
+                if (comp.equals("Fugitive") ){
+                    if(grid[i][j] == 'C') {
+                        queue.add(new Vector2D(i, j));
+                        visited[i][j] = true;
+                        costGrid[i][j] = 1000.0; // Coût initial très élevé pour les tours
+                    } } else {
                     costGrid[i][j] = 1.0; // Coût minimal pour les chemins traversables
                 }
             }
@@ -295,11 +297,11 @@ public class Astar {
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
         for (int[] dir : directions) {
-            int newRow = (int) position.getX() + dir[0];
-            int newCol = (int) position.getY() + dir[1];
+            int newRow = (int) position.getY() + dir[1];
+            int newCol = (int) position.getX() + dir[0];
             Vector2D newPosition = new Vector2D(newRow, newCol);
 
-            if (isValid(grid, newPosition) && grid[newRow][newCol] == 'T') {
+            if (isValid(grid, newPosition) && grid[newRow][newCol] == 'C') {
                 towerCount++;
             }
         }
@@ -310,46 +312,6 @@ public class Astar {
         return costGrid[(int) point.getX()][(int) point.getY()];
     }
 
-    public char[][] getGrid(String fichier) throws IOException {
-        FileReader fr = new FileReader(fichier);
-        BufferedReader br = new BufferedReader(fr);
 
-        int nbLignes, nbColonnes;
-        nbLignes = Integer.parseInt(br.readLine());
-        nbColonnes = Integer.parseInt(br.readLine());
-
-        char[][] cases = new char[nbLignes][nbColonnes];
-
-        String ligne = br.readLine();
-
-        int numLigne = 0;
-        while (ligne != null) {
-            for (int colonne = 0; colonne < ligne.length(); colonne++) {
-                char c = ligne.charAt(colonne);
-                switch (c){
-                    case '#':
-                        cases[numLigne][colonne] = '#';
-                        break;
-                    case '.':
-                        cases[numLigne][colonne] = '.';
-                        break;
-                    case 'S':
-                        cases[numLigne][colonne] = 'S';
-                        break;
-                    case 'E':
-                        cases[numLigne][colonne] = 'E';
-                        break;
-                    case 'C':
-                    case 'B':
-                        cases[numLigne][colonne] = 'T';
-                        break;
-                }
-            }
-            numLigne++;
-            ligne = br.readLine();
-        }
-        br.close();
-        return cases;
-    }
 
 }
