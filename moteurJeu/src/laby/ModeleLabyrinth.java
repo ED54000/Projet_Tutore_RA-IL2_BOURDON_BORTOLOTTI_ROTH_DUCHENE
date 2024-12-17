@@ -1,5 +1,6 @@
 package laby;
 
+import entites.defenses.ActiveDefense;
 import entites.defenses.Bomb;
 import entites.defenses.Canon;
 import entites.defenses.Defense;
@@ -130,7 +131,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
         //iterator = this.enemies.iterator();
-        this.enemies = new ArrayList<>();
+        //this.enemies = new ArrayList<>();
+
     }
 
     @Override
@@ -142,29 +144,65 @@ public class ModeleLabyrinth implements Jeu, Subject {
             deadEnemies.clear();
             //TODO : lancer la prochaine manche
         }
-        Iterator<Ennemy> iterator = this.enemies.iterator();
-        while (iterator.hasNext() && !this.pause) {
 
-            Ennemy ennemy = iterator.next();
 
-            // On vérifie si l'enneemi est dans la zone de dégâts d'une défense
-            for (Defense defense : defenses) {
-                if(defense.isInRange(ennemy)) {
-                    defense.attack(ennemy);
-                    //System.out.println("Attaque de " + defense.getClass() + " sur " + ennemy.getName());
+        // On gère les attaques des défenses
+        for (Defense defense : defenses) {
+            // Si c'est une défense active
+            if (defense instanceof entites.defenses.ActiveDefense) {
+                // Si la defense focus déja un ennemi
+                if (((ActiveDefense) defense).getTarget() != null) {
+                    // On vérifie si l'ennemi est toujours dans la portée de la défense
+                    if(defense.isInRange(((ActiveDefense) defense).getTarget())) {
+                        // On l'attaque
+                        defense.attack(((ActiveDefense) defense).getTarget());
+                        //setLogs("Attaque de " + defense.getClass() + " sur " + ((ActiveDefense) defense).getTarget()+"pv restants:"+((ActiveDefense) defense).getTarget().getHealth());
+                        // Si l'ennemi est mort, on le retire de la liste des ennemis
+                        if (((ActiveDefense) defense).getTarget().isDead() && !deadEnemies.contains(((ActiveDefense) defense).getTarget())) {
+                            deadEnemies.add(((ActiveDefense) defense).getTarget());
+                            enemies.remove(((ActiveDefense) defense).getTarget());
+                            setLogs(((ActiveDefense) defense).getTarget().getName() + " est mort. Coup dur !");
+                            // On retire la cible de la défense
+                            ((ActiveDefense) defense).setTarget(null);
+                        }
+                    }
+                    // Si l'ennemi n'est plus dans la portée de la défense
+                    else {
+                        // On retire la cible de la défense
+                        ((ActiveDefense) defense).setTarget(null);
+                    }
                 }
-
-                // Si l'ennemi est mort, on le retire de la liste des ennemis
-                if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
-                    deadEnemies.add(ennemy);
-                    //enemies.remove(ennemy);
-                    iterator.remove(); // Utilisation de la méthode remove() de l'Iterator
-
-                    setLogs(ennemy.getName() + " is dead");
+                // Si la défense n'a pas de cible
+                else {
+                    // On cherche un ennemi à attaquer
+                    Ennemy ennemy = getCloserEnnemy((ActiveDefense) defense);
+                    // Si on a trouvé un ennemi et qu'il est dans la range de la défense
+                    if (ennemy != null && defense.isInRange(ennemy)) {
+                        // On l'attaque
+                        defense.attack(ennemy);
+                        // On set la cible de la défense
+                        ((ActiveDefense) defense).setTarget(ennemy);
+                        //setLogs("Attaque de " + defense.getClass() + " sur " + ennemy.getName()+"pv restants:"+ennemy.getHealth());
+                        // Si l'ennemi est mort, on le retire de la liste des ennemis
+                        if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
+                            deadEnemies.add(ennemy);
+                            enemies.remove(ennemy);
+                            setLogs(ennemy.getName() + " is dead");
+                            // On retire la cible de la défense
+                            ((ActiveDefense) defense).setTarget(null);
+                        }
+                    }
                 }
             }
+            // Si la defense est passive
+            else {
 
+            }
+        }
 
+        Iterator<Ennemy> iterator = this.enemies.iterator();
+        while (iterator.hasNext() && !this.pause) {
+            Ennemy ennemy = iterator.next();
             //vérification d'arrivée
             if ((int)(ennemy.getX()) == XArrival && (int)(ennemy.getY()) == YArrival && !ennemy.isArrived() && !deadEnemies.contains(ennemy)) {
                 ennemy.setArrived(true);
@@ -233,5 +271,23 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void setPause(boolean pause) {
         this.pause = pause;
+    }
+
+    /**
+     * Retourne l'ennemi le plus proche d'une défense
+     * @param defense la défense à étudier
+     * @return l'ennemi le plus proche
+     */
+    public Ennemy getCloserEnnemy(ActiveDefense defense) {
+        Ennemy closerEnnemy = null;
+        double minDistance = Double.MAX_VALUE;
+        for (Ennemy ennemy : enemies) {
+            double distance = Math.sqrt(Math.pow(ennemy.getX() - defense.getX(), 2) - Math.pow(ennemy.getY() - defense.getY(), 2));
+            if (distance < minDistance) {
+                minDistance = distance;
+                closerEnnemy = ennemy;
+            }
+        }
+        return closerEnnemy;
     }
 }

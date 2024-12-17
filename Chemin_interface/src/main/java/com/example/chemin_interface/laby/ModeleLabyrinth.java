@@ -4,6 +4,7 @@ import com.example.chemin_interface.entites.defenses.Bomb;
 import com.example.chemin_interface.entites.defenses.Canon;
 import com.example.chemin_interface.entites.defenses.Defense;
 import com.example.chemin_interface.entites.enemies.*;
+import com.example.chemin_interface.laby.views.ViewLabyrinth;
 import com.example.chemin_interface.steering_astar.Astar.Astar;
 import com.example.chemin_interface.steering_astar.Steering.BezierCurveFromAStarPoints;
 import com.example.chemin_interface.steering_astar.Steering.PathfollowingBehavior;
@@ -74,18 +75,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         break;
                     case START:
                         //ajouter le point de départ
-                        System.out.println(numLigne+ " : "+ colonne);
                         this.cases[numLigne][colonne] = START;
-                        this.Xstart = colonne;
-                        this.Ystart = numLigne;
-                        System.out.println("Départ : " + Xstart +","+ Ystart);
-                        //createEnnemies(nbEnnemies, colonne, numLigne);
+                        this.Xstart = colonne *ViewLabyrinth.getTailleCase();
+                        this.Ystart = numLigne*ViewLabyrinth.getTailleCase() ;
+//                       createEnnemies(nbEnnemies/*, colonne, numLigne*/);
                         break;
                     case END:
                         //ajouter le point d'arrivée
                         this.cases[numLigne][colonne] = END;
-                        this.Xend = colonne;
-                        this.Yend = numLigne;
+                        this.Xend = colonne *ViewLabyrinth.getTailleCase();
+                        this.Yend = numLigne *ViewLabyrinth.getTailleCase();
                         break;
                     case CANON:
                         //ajouter un canon
@@ -106,7 +105,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         br.close();
     }
 
-    private void createEnnemies(int nbEnnemies) { // colonne, numLigne
+    private void createEnnemies(int nbEnnemies) {
         Astar astar = new Astar();
 
         ArrayList<Vector2D> aStarNormal = BezierCurveFromAStarPoints.getBezierCurve(
@@ -158,9 +157,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
         for (int i = 0; i < nbDruides; i++) {
             Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()));
             ArrayList<Vector2D> aStarHealer = null;
-            if(nbGiant > nbBerserker && nbGiant > nbNinja){
+            if(nbGiant >= nbBerserker && nbGiant >= nbNinja){
                 aStarHealer = aStarNormal;
-            } else if(nbNinja > nbGiant && nbNinja > nbBerserker){
+            } else if(nbNinja > nbGiant && nbNinja >= nbBerserker){
                 aStarHealer = aStarFugitive;
             } else if(nbBerserker > nbGiant && nbBerserker > nbNinja){
                 aStarHealer = aStarKamikaze;
