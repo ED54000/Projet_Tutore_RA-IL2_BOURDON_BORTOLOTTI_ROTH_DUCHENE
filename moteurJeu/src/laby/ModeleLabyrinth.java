@@ -13,6 +13,7 @@ import moteur.Jeu;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ModeleLabyrinth implements Jeu, Subject {
 
@@ -40,6 +41,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private String logs = "";
     private int nbEnnemiesArrived;
+
+    private int nbManches;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -125,32 +128,48 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     break;
             }
         }
+        this.enemies = new ArrayList<>(); //a enlever
+
     }
 
     @Override
     public void update(double secondes) {
-        for (Ennemy ennemy : this.enemies) {
-            enemies.get(0).takeDamage(3000);
+        Iterator<Ennemy> iterator = this.enemies.iterator();
+
+        // Vérification de la fin d'une manche
+        if (enemies.isEmpty()) {
+            System.out.println("Manche terminée");
+            setLogs("Manche terminée");
+            deadEnemies.clear();
+            //TODO : lancer la prochaine manche
+        }
+
+        while (iterator.hasNext()) {
+            Ennemy ennemy = iterator.next();
+            ennemy.move(secondes);
 
             if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                 deadEnemies.add(ennemy);
+                enemies.remove(ennemy);
+                iterator.remove();
                 setLogs(ennemy.getName() + " is dead");
                 continue;
             }
-            ennemy.move(secondes);
-            notifyObserver();
 
-            //vérification d'arriver
+            // Vérification d'arriver
             if ((int)(ennemy.getX()) == XArrival && (int)(ennemy.getY()) == YArrival && !ennemy.isArrived()) {
                 ennemy.setArrived(true);
                 this.nbEnnemiesArrived++;
-                setLogs("Le "+ennemy.getName() + " est arrivé");
-                if (this.nbEnnemiesArrived == this.enemies.size()) { //changer ennemies.size pour le nombre d'ennemis nécessaire à la win
-                    setLogs("You win !");
+                setLogs("Le " + ennemy.getName() + " est arrivé");
+
+                if (this.nbEnnemiesArrived == this.enemies.size()) { //changer par le bombre d'ennemies nécessaire pour perdre
+                    setLogs("Ta perdu bouuh !");
                 }
             }
         }
+        notifyObserver();
     }
+
 
     @Override
     public void init(Canvas canvas) {

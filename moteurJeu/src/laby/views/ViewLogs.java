@@ -1,6 +1,7 @@
 package laby.views;
 
 import entites.enemies.Ennemy;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
@@ -19,6 +20,10 @@ public class ViewLogs implements Observer {
     @Override
     public void update(Subject s) {
         if (laby.getLogs()!=""){
+            if (laby.getLogs() == "Manche terminée"){
+                Button apprendre = new Button("Apprendre");
+                logs.getChildren().add(apprendre);
+            }
 
             Label label = new Label(laby.getLogs());
             logs.getChildren().add(label);
