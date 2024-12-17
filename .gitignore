@@ -10,7 +10,7 @@ out/
 */.gitignore
 */mvn
 */target/*
-
+*/*.log/
 
 ### Eclipse ###
 .apt_generated

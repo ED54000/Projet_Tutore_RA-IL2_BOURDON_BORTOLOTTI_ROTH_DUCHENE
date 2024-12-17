@@ -1,11 +1,16 @@
 package com.example.chemin_interface.laby.views;
 
+import com.example.chemin_interface.entites.enemies.Ennemy;
+import com.example.chemin_interface.steering_astar.Steering.Vector2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import com.example.chemin_interface.laby.ModeleLabyrinth;
 import com.example.chemin_interface.laby.Observer;
 import com.example.chemin_interface.laby.Subject;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class ViewLabyrinth implements Observer {
     static int tailleCase = 50;
@@ -67,10 +72,17 @@ public class ViewLabyrinth implements Observer {
             }
         }
 
+
+
+        Color colorPath = Color.rgb((15), (175), (252));
         //dessiner les ennemis
         for (int i = 0; i < laby.enemies.size(); i++) {
-            gc.setFill(Color.RED);
-            gc.fillOval(laby.enemies.get(i).getPosition().getX() * tailleCase, laby.enemies.get(i).getPosition().getY() * tailleCase, tailleCase/3, tailleCase/3);
+            for (String behaviour : laby.getBehaviours()){
+                renderEnnemi(gc,laby.enemies.get(i),laby.getBehavioursMap().get(behaviour),colorPath,Color.RED);
+            }
+
+//            gc.setFill(Color.RED);
+//            gc.fillOval(laby.enemies.get(i).getPosition().getX() * tailleCase, laby.enemies.get(i).getPosition().getY() * tailleCase, tailleCase/3, tailleCase/3);
         }
 
         //dessiner la range des defenses
@@ -98,5 +110,25 @@ public class ViewLabyrinth implements Observer {
             }
         }
          */
+    }
+
+    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor, Color agentColor) {
+
+        gc.setFill(pathColor);
+        checkpoint.forEach((n) ->
+                gc.fillOval(n.getX() + 20, n.getY() + 20, 10, 10)
+        );
+        
+        Vector2D position = ennemi.getPosition();
+        gc.setFill(agentColor);
+        gc.fillOval(position.getX() + 10, position.getY() + 10, 20, 20);
+
+        gc.setFill(Color.RED);
+        gc.setStroke(Color.RED);
+        double xCoord = position.getX() + ennemi.getVelocity().getX()*20;
+        double yCoord = position.getY() + ennemi.getVelocity().getY()*20;
+        gc.strokeLine(position.getX()+20, position.getY()+20, xCoord, yCoord);
+        gc.fillOval(xCoord - 5, yCoord - 5, 10, 10);
+
     }
 }

@@ -48,6 +48,7 @@ public class MoteurJeu extends Application {
     private static double WIDTH;
     private static double HEIGHT;
 
+
     /**
      * statistiques sur les frames
      */
@@ -122,11 +123,12 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
+        labyrinthMap.put("Test", "Ressources/Laby_test.txt");
 
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large");
-        labyrinthComboBox.setValue("Large");
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "Test");
+        labyrinthComboBox.setValue("Test");
 
         // Définit "Petit" comme valeur par défaut
         HBox labyrinthBox = new HBox(10, new Label("Choisir le labyrinthe :"), labyrinthComboBox);

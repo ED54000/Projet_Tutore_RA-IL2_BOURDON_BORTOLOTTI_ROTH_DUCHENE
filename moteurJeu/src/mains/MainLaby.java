@@ -6,7 +6,6 @@ import moteur.MoteurJeu;
 
 import java.io.IOException;
 
-
 public class MainLaby {
     public static void main(String[] args) throws IOException {
         double width = 1500;
