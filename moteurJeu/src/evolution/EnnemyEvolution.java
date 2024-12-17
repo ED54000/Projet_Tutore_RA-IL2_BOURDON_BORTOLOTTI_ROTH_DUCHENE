@@ -7,7 +7,7 @@ import java.util.List;
 
 public class EnnemyEvolution {
 
-    public final static double distStartEnd = 200;
+    public final static double distStartEnd = 200; //a enlever
 
     /**
      * Retourne les meilleurs couples d'ennemis pour chaque type

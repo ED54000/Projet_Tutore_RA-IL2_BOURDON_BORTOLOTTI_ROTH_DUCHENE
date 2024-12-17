@@ -1,0 +1,326 @@
+@startuml
+
+package entites{
+    abstract class Entity {
+        - x: double
+        - y: double
+        - type: String
+        - damage: double
+        - range: double
+
+        + Entity(double x, double y, int damage,int range, double damages)
+        + getBonus(String attackerType, String TargetType) : double
+        + takeDamage(double damages)
+    }
+    package defenses{
+        abstract class Defense {
+            + Defense(...)
+            + {abstract} attack(Ennemy target)
+            + isInRange(Ennemy target): boolean
+        }
+
+        abstract class ActiveDefense {
+            - health: double
+            + attackSpeed: double
+
+            + ActiveDefense(...)
+            + {abstract} attack(Ennemy target)
+            + takeDamage(double damages)
+        }
+
+        abstract class PassiveDefense {
+            + PassiveDefense(...)
+            + {abstract} attack(Ennemy target)
+            + takeDamage(double damages)
+        }
+
+        class Canon {
+            + Canon(double x, double y)
+        }
+
+        class Bomb {
+            + Bomb(double x, double y)
+        }
+    }
+    package ennemies{
+        class Ennemy {
+            - speed: double
+            - attackSpeed: double
+            - distanceToArrival: int
+            - distanceStartToArrival: int
+            - killerType: String
+            - health: double
+            - {static} timeSpawn: int
+            - behavior: String
+            - isArrived: boolean
+            - survivalTime: int
+            - name: String
+
+
+            + Ennemy(...)
+            + takeDamage(double damages)
+            + attack(Defense target)
+            + move(double seconde)
+
+
+        }
+        class Ninja {
+            + Ninja(double x, double y, String name)
+        }
+
+        class Giant {
+            + Giant(double x, double y, String name)
+        }
+    }
+}
+package evolution{
+    abstract class Evolution {
+        {abstract} evoluer()
+    }
+    class EnnemyEvolution {
+        +evoluer()
+        +getBestCouple(List<Ennemy> ennemies) : Ennemy[][]
+        +getAverageStats(List<Ennemy> ennemies) : double[][]
+        +affectStatsToDeathEnnemies(List<Ennemy> ennemies)
+        +defineNewType(List<Ennemy> ennemies)
+        +addRandomStats(List<Ennemy> ennemies) : void
+        +getDeadEnnemies(List<Ennemy> ennemies) : ArrayList<Ennemy>
+    }
+
+    class DefenseEvolution {
+        +evoluer()
+    }
+
+}
+package laby{
+    class ModeleLabyrinth {
+        + {static} START: char
+        + {static} END: char
+        + {static} ROAD: char
+        + {static} TREE: char
+        + {static} CANON: char
+        + {static} BOMB: char
+        + nbEnnemiesToWin: int
+        + enemies: Ennemy[]
+        + defenses: Defense[]
+        + deadEnemies: Ennemy[]
+        + deadDefenses: Defense[]
+        - cases: char[][]
+        - Xarrivals: int
+        - Yarrivals: int
+        - observateurs: Observer[]
+        - logs: String
+        - nbEnnemiesArrived: int
+        - pause : boolean
+
+        + ModeleLabyrinth()
+        + creerLabyrinthe(String fichier, int nbEnnemies, int nbEnnemiesToWin)
+        - createEnnemies(int nbEnnemies, int colonne, int numLigne)
+        + update(double seconde)
+        + init(Canva canvas)
+        + etreFinie(): boolean
+        + registerObserver(Observer o)
+        + deleteObserver(Observer o)
+
+    }
+    interface Observer {
+        + update(Subject s)
+    }
+    interface Subject {
+        + registerObserver(Observer o)
+        + removeObserver(Observer o)
+        + notifyObservers()
+    }
+
+    package controllers{
+        class ControllerLearn {
+            + handle(event: Event)
+        }
+
+        class ControllerNextManche {
+            + handle(event: Event)
+        }
+
+        class ControllerStart {
+            + handle(event: Event)
+        }
+    }
+
+    package views{
+        class ViewLabyrinth {
+            - tailleCase: int
+            - laby: ModeleLabyrinth
+            - canvas: Canvas
+            - tree: Image
+            - road: Image
+            - canon: Image
+            - archer: Image
+            - bomb: Image
+            - start: Image
+            - end: Image
+
+            + ViewLabyrinth(ModeleLabyrinth laby, Canvas canvas)
+            + update(Subject s)
+            - dessinerJeu(ModeleLabyrinth laby, Canva canvas)
+        }
+        class ViewLogs {
+            + ViewLogs(ModeleLabyrint laby)
+            + update(Subject s)
+        }
+
+        class ViewLabyrinth {
+            + ViewLabyrinth(ModeleLabyrinth laby, Canvas canvas)
+            + update(Subject s)
+            - dessinerJeu(ModeleLabyrinth laby, Canva canvas)
+        }
+    }
+}
+
+package mains{
+    class Main {
+    }
+    class MainLaby
+}
+
+package moteur{
+    class MoteurJeu {}
+    class FrameStats{}
+    interface Jeu {
+    }
+}
+
+
+'CLASSES
+
+class Behavior {
+}
+
+class Application {
+}
+
+'ALGOS STEERING ET A*
+class Agent {
+  + Agent(Vector2D, double):
+  - behavior: Behavior
+  - velocity: Vector2D
+  - maxSpeed: double
+  - position: Vector2D
+  + update(): void
+   behavior: Behavior
+   velocity: Vector2D
+   maxSpeed: double
+   position: Vector2D
+}
+class Astar {
+  + Astar():
+  + gridWithTower(char[][], int, int, Vector2D, Vector2D): char[][]
+  - tracePath(Cell[][], Vector2D): ArrayList<Vector2D>
+  ~ isValid(char[][], Vector2D): boolean
+  ~ isDestination(Vector2D, Vector2D): boolean
+  ~ calculateHValue(Vector2D, Vector2D): double
+  ~ isUnblocked(char[][], Vector2D): boolean
+  ~ isTowerObligatory(char[][], Vector2D, Vector2D, Vector2D): boolean
+  + aStarSearch(char[][], int, int, Vector2D, Vector2D, String): ArrayList<Vector2D>
+  + isPathBlocked(char[][], Vector2D, Vector2D): boolean
+}
+class Behavior {
+  + Behavior():
+  - target: Vector2D
+  ~ calculateForce(Agent): Vector2D
+   target: Vector2D
+}
+class BezierCurveFromAStarPoints {
+  + BezierCurveFromAStarPoints():
+  - generateControlPoints(ArrayList<Vector2D>): ArrayList<Vector2D>
+  - generateBezierSegment(Vector2D, Vector2D, Vector2D, Vector2D): ArrayList<Vector2D>
+  + getBezierCurve(ArrayList<Vector2D>): ArrayList<Vector2D>
+}
+class Cell {
+  ~ Cell():
+  + Cell(Vector2D, double, double, double):
+}
+class Details {
+  + Details(double, double, double):
+}
+class PathfollowingBehavior {
+  + PathfollowingBehavior(ArrayList<Vector2D>):
+  + calculateForce(Agent): Vector2D
+}
+class SeekBehavior {
+  + SeekBehavior(Vector2D):
+  + calculateForce(Agent): Vector2D
+}
+class Vector2D {
+  + Vector2D(double, double):
+  + equals(Object): boolean
+  + scale(double): Vector2D
+  + subtract(Vector2D): Vector2D
+  + normalize(): Vector2D
+  + magnitude(): double
+  + distanceTo(Vector2D): double
+  - getCloser(Vector2D, Vector2D): Vector2D
+  + getCloserPairIndex(char[][], char): double[]
+  + toString(): String
+  + add(Vector2D): Vector2D
+  + getPairIndex(char[][], char): int[]
+}
+
+'RELATIONS ENTRE LES CLASSES
+ModeleLabyrinth "1" <-- "1" ViewLabyrinth
+Entity <|-- Ennemy
+Entity <|-- Defense
+Defense <|-- ActiveDefense
+Defense <|-- PassiveDefense
+ActiveDefense <|-- Canon
+PassiveDefense <|-- Bomb
+Ennemy <|-- Giant
+Ennemy <|-- Ninja
+Behavior "1" <-- "1" Ennemy
+ControllerLearn "1" --> "1" ModeleLabyrinth: laby
+ControllerStart "1" --> "1" ModeleLabyrinth: laby
+ModeleLabyrinth "1" --> "*" Ennemy: ennemies
+ModeleLabyrinth "1" --> "*" Defense: defenses
+ViewLogs "1" --> "1" ModeleLabyrinth: laby
+ViewLabyrinth ..> Observer: implements
+ViewLogs ..> Observer: implements
+ModeleLabyrinth --> Observer: observers
+Main --> MoteurJeu: use
+MoteurJeu --|> Application
+ModeleLabyrinth ..> Jeu: implements
+ModeleLabyrinth ..> Subject: implements
+Main --> ModeleLabyrinth: use
+Ennemy --> Vector2D: use
+Evolution <|-- EnnemyEvolution
+Evolution <|-- DefenseEvolution
+Ennemy "*" -- "1" EnnemyEvolution: uses
+
+'RELATIONS ALGOS STEERING ET A*
+Agent                      "1" *-[#595959,plain]-> "behavior\n1" Behavior
+Agent                       -[#595959,dashed]->  Vector2D                   : "«create»"
+Agent                      "1" *-[#595959,plain]-> "position\n1" Vector2D
+Astar                       -[#595959,dashed]->  Cell                       : "«create»"
+Astar                       -[#595959,dashed]->  Details                    : "«create»"
+Astar                       -[#595959,dashed]->  Vector2D                   : "«create»"
+Behavior                   "1" *-[#595959,plain]-> "target\n1" Vector2D
+BezierCurveFromAStarPoints  -[#595959,dashed]->  Vector2D                   : "«create»"
+Cell                       "1" *-[#595959,plain]-> "parent\n1" Vector2D
+Cell                        -[#595959,dashed]->  Vector2D                   : "«create»"
+PathfollowingBehavior       -[#000082,plain]-^  Behavior
+PathfollowingBehavior       -[#595959,dashed]->  SeekBehavior               : "«create»"
+PathfollowingBehavior      "1" *-[#595959,plain]-> "checkpoints\n*" Vector2D
+SeekBehavior                -[#000082,plain]-^  Behavior
+
+'NOTES
+note left of ViewLabyrinth::boxSize
+    Taille d'une case
+end note
+note left of Giant
+    Exemple d'un ennemi
+end note
+note left of Canon
+    Exemple d'une défense active
+end note
+note left of MoteurJeu
+    Crée/enregistre les observers
+end note
+@enduml
