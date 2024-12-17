@@ -34,10 +34,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     //labyrinthe
     private char[][] cases;
+    private int XArrival, YArrival;
 
     private ArrayList<Observer> observateurs;
 
     private String logs = "";
+    private int nbEnnemiesArrived;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -86,6 +88,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case END:
                         //ajouter le point d'arrivée
                         this.cases[numLigne][colonne] = END;
+                        this.XArrival = colonne;
+                        this.YArrival = numLigne;
+                        System.out.println("XArrival : " + XArrival + " YArrival : " + YArrival);
                         break;
                     case CANON:
                         //ajouter un canon
@@ -111,11 +116,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 2);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(colonne+Math.random(), numLigne+Math.random());
+                    Giant giant = new Giant(colonne+Math.random(), numLigne+Math.random(), "Giant"+i);
                     this.enemies.add(giant);
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(colonne+Math.random(), numLigne+Math.random());
+                    Ninja ninja = new Ninja(colonne+Math.random(), numLigne+Math.random(), "Ninja"+i);
                     this.enemies.add(ninja);
                     break;
             }
@@ -129,11 +134,21 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
             if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                 deadEnemies.add(ennemy);
-                setLogs("Ennemy " + ennemy + " is dead");
+                setLogs(ennemy.getName() + " is dead");
                 continue;
             }
             ennemy.move(secondes);
             notifyObserver();
+
+            //vérification d'arriver
+            if ((int)(ennemy.getX()) == XArrival && (int)(ennemy.getY()) == YArrival && !ennemy.isArrived()) {
+                ennemy.setArrived(true);
+                this.nbEnnemiesArrived++;
+                setLogs("Le "+ennemy.getName() + " est arrivé");
+                if (this.nbEnnemiesArrived == this.enemies.size()) { //changer ennemies.size pour le nombre d'ennemis nécessaire à la win
+                    setLogs("You win !");
+                }
+            }
         }
     }
 
