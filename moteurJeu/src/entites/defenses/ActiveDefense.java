@@ -8,10 +8,14 @@ public abstract class ActiveDefense extends Defense {
 
     private double health;
 
+    // Indique si la défense est actuellement focus sur un ennemi
+    private boolean isFocused;
+
     public ActiveDefense(double x, double y, int health, int damage, double range, double attackSpeed) {
         super(x, y, damage, range);
         this.attackSpeed = attackSpeed;
         this.health = health;
+        this.isFocused = false;
     }
 
     /**
