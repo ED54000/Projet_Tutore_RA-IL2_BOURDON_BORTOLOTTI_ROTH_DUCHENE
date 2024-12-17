@@ -32,4 +32,8 @@ public abstract class ActiveDefense extends Defense {
         health -= damage;
     }
 
+    public boolean getIsFocused() {
+        return isFocused;
+    }
+
 }
