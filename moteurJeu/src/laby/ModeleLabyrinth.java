@@ -44,6 +44,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private boolean pause = false;
 
+
     //constructeur vide
     public ModeleLabyrinth() {
         this.observateurs = new ArrayList<>();
@@ -128,6 +129,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     break;
             }
         }
+        //iterator = this.enemies.iterator();
         this.enemies = new ArrayList<>();
     }
 
@@ -136,12 +138,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
             this.pause = true;
-            System.out.println("Manche terminée");
             setLogs("Manche terminée");
             deadEnemies.clear();
             //TODO : lancer la prochaine manche
         }
-
         Iterator<Ennemy> iterator = this.enemies.iterator();
         while (iterator.hasNext() && !this.pause) {
 
@@ -151,13 +151,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
             for (Defense defense : defenses) {
                 if(defense.isInRange(ennemy)) {
                     defense.attack(ennemy);
-                    System.out.println("Attaque de " + defense.getClass() + " sur " + ennemy.getName());
+                    //System.out.println("Attaque de " + defense.getClass() + " sur " + ennemy.getName());
                 }
 
                 // Si l'ennemi est mort, on le retire de la liste des ennemis
                 if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                     deadEnemies.add(ennemy);
-                    enemies.remove(ennemy);
+                    //enemies.remove(ennemy);
+                    iterator.remove(); // Utilisation de la méthode remove() de l'Iterator
+
                     setLogs(ennemy.getName() + " is dead");
                 }
             }

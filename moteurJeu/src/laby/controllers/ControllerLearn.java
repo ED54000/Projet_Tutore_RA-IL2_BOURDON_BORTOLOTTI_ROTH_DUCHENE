@@ -4,6 +4,7 @@ import entites.enemies.Ennemy;
 import entites.enemies.Giant;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
@@ -24,7 +25,10 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
         //TODO : faire l'apprentissage
         laby.enemies.add(new Giant(10, 10, "NewGiant"));
-        laby.setLogs("Learned");
+        //laby.setIterator(laby.enemies);
+        //laby.setLogs("Learned");
+
+        parentVBox.getChildren().add(new Label("Learned"));
 
         Button nextManche = new Button("Next Manche");
         nextManche.setOnMouseClicked(new ControllerNextManche(laby));

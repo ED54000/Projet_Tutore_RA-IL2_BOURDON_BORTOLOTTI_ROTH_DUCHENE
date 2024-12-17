@@ -203,7 +203,7 @@ public class MoteurJeu extends Application {
         logs.setPrefWidth(200);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
-        logs.getChildren().add(new Label("Logs"));
+        //logs.getChildren().add(new Label("Logs"));
 
         ContainerLogs.getChildren().addAll(title, logs);
 
@@ -220,7 +220,7 @@ public class MoteurJeu extends Application {
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);
         //ajout des logs
-        root.setRight(logs);
+        root.setRight(ContainerLogs);
 
         // creation de la scene
         final Scene scene = new Scene(root, WIDTH, HEIGHT);
