@@ -35,31 +35,37 @@ public abstract class Entity {
     public double getBonus(String AttackerType, String TargetType) {
         switch (AttackerType) {
             case "Fire":
-                if (TargetType.equals("Wood")) {
+                if (TargetType.equals("Plant")) {
                     return 30/100;
                 }
-                if (TargetType.equals("Water")) {
+                else if (TargetType.equals("Water")) {
                     return -30/100;
                 }
-                break;
+                else {
+                    return 0;
+                }
             case "Water":
                 if (TargetType.equals("Fire")) {
                     return 30/100;
                 }
-                if (TargetType.equals("Wood")) {
+                else if (TargetType.equals("Plant")) {
                     return -30/100;
                 }
-                break;
+                else {
+                    return 0;
+                }
             case "Plant":
                 if (TargetType.equals("Water")) {
                     return 30/100;
                 }
-                if (TargetType.equals("Fire")) {
+                else if (TargetType.equals("Fire")) {
                     return -30/100;
                 }
-                break;
+                else {
+                    return 0;
+                }
         }
-        return 1;
+        return 0;
     }
 
     public abstract void takeDamage(double damage);

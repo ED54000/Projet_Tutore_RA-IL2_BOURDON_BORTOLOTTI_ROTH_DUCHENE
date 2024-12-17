@@ -21,7 +21,7 @@ public abstract class ActiveDefense extends Defense {
     @Override
     public void attack(Ennemy target) {
         // On attaque l'ennemi
-        target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()));
+        target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
     }
 
     public void takeDamage(double damage) {
