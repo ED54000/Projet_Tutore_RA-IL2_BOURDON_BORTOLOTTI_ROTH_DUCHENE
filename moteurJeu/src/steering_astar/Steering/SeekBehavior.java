@@ -20,7 +20,7 @@ public class SeekBehavior extends Behavior {
     @Override
     public Vector2D calculateForce(Ennemy ennemy) {
         Vector2D desired = this.getTarget().subtract(ennemy.getPosition()).normalize().scale(ennemy.getMaxSpeed());
-        return desired.subtract(ennemy.getVelocity());
+        return (desired.subtract(ennemy.getVelocity())).scale(ACCELERATION_DIVISER);
     }
 }
 
