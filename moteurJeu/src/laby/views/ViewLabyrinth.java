@@ -22,8 +22,8 @@ public class ViewLabyrinth implements Observer {
     public ViewLabyrinth(ModeleLabyrinth laby, Canvas canvas) {
         this.laby = laby;
         this.canvas = canvas;
-        tree = new Image("/tree.png");
-        road = new Image("/tiles.png");
+        tree = new Image("/tree4.png");
+        road = new Image("/tiles4.png");
         bomb = new Image("/bomb.png");
         archer = new Image("/archerClash.png");
         canon = new Image("/canon.png");
