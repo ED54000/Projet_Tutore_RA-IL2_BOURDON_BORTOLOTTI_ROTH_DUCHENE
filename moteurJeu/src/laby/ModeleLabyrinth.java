@@ -50,6 +50,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     //constructeur vide
     public ModeleLabyrinth() {
         this.observateurs = new ArrayList<>();
+        this.nbEnnemiesArrived = 0;
     }
 
     public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches, int nbEnnemiesToWin) throws IOException {
@@ -257,28 +258,35 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
             }
         }
+        synchronized (this.enemies) {
+            ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
+            Iterator<Ennemy> iterator = this.enemies.iterator();
+            while (iterator.hasNext() && !this.pause) {
+                Ennemy ennemy = iterator.next();
+                //System.out.println("Ennemy : " + ennemy.getName());
 
-        Iterator<Ennemy> iterator = this.enemies.iterator();
-        while (iterator.hasNext() && !this.pause) {
-            Ennemy ennemy = iterator.next();
-            System.out.println("Ennemy : " + ennemy.getName() + "Coordonnées :"+ ennemy.getPosition().getX()+" / "+ ennemy.getPosition().getY());
+                //vérification d'arrivée
+                if ((int) (ennemy.getPosition().getX()) >= XArrival - 10 && (int) (ennemy.getPosition().getX()) <= XArrival + 10 &&
+                        (int) (ennemy.getPosition().getY()) >= YArrival - 10 && (int) (ennemy.getPosition().getY()) <= YArrival + 10 &&
+                        !ennemy.isArrived() && !deadEnemies.contains(ennemy)
+                ) {
+                    ennemy.setArrived(true);
+                    this.nbEnnemiesArrived++;
+                    setLogs("Le " + ennemy.getName() + " est arrivé");
 
-            //vérification d'arrivée
-            if ((int) (ennemy.getPosition().getX()) == XArrival && (int) (ennemy.getPosition().getY()) == YArrival && !ennemy.isArrived() && !deadEnemies.contains(ennemy)) {
-                ennemy.setArrived(true);
-                this.nbEnnemiesArrived++;
-                setLogs("Le " + ennemy.getName() + " est arrivé");
-
-                if (this.nbEnnemiesArrived == this.enemies.size()) { //changer par le bombre d'ennemies nécessaire pour perdre
-                    setLogs("Ta perdu bouuh !");
+                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin) { //changer par le bombre d'ennemies nécessaire pour perdre
+                        setLogs("Ta perdu bouuh !");
+                    }
+                    enemiesToRemove.add(ennemy);
+                    //enemies.remove(ennemy);
                 }
-                enemies.remove(ennemy);
+                //ennemy.move(secondes);
+                ennemy.update();
+                notifyObserver();
             }
-            //ennemy.move(secondes);
-            ennemy.update();
-
+            this.enemies.removeAll(enemiesToRemove);
+            notifyObserver();
         }
-        notifyObserver();
     }
 
     @Override

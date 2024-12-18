@@ -83,7 +83,7 @@ public class ViewLabyrinth implements Observer {
         }
 
         //dessiner les ennemis
-        //System.out.println("Nombre d'ennemis : " + laby.enemies.size());
+        System.out.println("Nombre d'ennemis : " + laby.enemies.size());
         Color colorPath = Color.rgb((15), (175), (252));
         for (int i = 0; i < laby.enemies.size(); i++) {
             for (String behaviour : laby.getBehaviours()) {
