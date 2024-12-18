@@ -60,7 +60,7 @@ public class Astar {
      * @param dest Le point d'arrivée
      * @return true si le point testé est le point d'arrivé false sinon
      */
-    boolean isDestination(Vector2D position, Vector2D dest) {
+    public boolean isDestination(Vector2D position, Vector2D dest) {
         return position == dest || position.equals(dest);
     }
 

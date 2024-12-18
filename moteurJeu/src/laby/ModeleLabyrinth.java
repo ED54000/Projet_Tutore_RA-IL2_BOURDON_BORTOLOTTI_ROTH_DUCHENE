@@ -45,12 +45,22 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private int nbEnnemiesArrived;
 
     private boolean pause = false;
+    private Astar astar = new Astar();
 
     //constructeur vide
     public ModeleLabyrinth() {
         this.observateurs = new ArrayList<>();
+        this.nbEnnemiesArrived = 0;
     }
 
+    /**
+     * Crée un labyrinthe à partir d'un fichier
+     * @param fichier le fichier contenant le labyrinthe
+     * @param nbEnnemies le nombre d'ennemis
+     * @param nbManches le nombre de manches
+     * @param nbEnnemiesToWin le nombre d'ennemis à atteindre l'arrivée pour gagner
+     * @throws IOException si le fichier n'existe pas
+     */
     public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches, int nbEnnemiesToWin) throws IOException {
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
@@ -123,7 +133,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private void createEnnemies(int nbEnnemies) {
-        Astar astar = new Astar();
+        //Astar astar = new Astar();
 
         ArrayList<Vector2D> aStarNormal =
                 astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
@@ -144,6 +154,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         int nbNinja = 0;
         int nbBerserker = 0;
         int nbDruides = 0;
+
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
             int random = (int) (Math.random() * 4);
@@ -184,12 +195,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             this.enemies.add(druide);
         }
-        //iterator = this.enemies.iterator();
-        //this.enemies = new ArrayList<>();
-
     }
 
 
+    /**
+     * Met à jour le modèle du jeu
+     * @param secondes temps ecoule depuis la derniere mise a jour
+     */
     @Override
     public void update(double secondes) {
         // Vérification de la fin d'une manche
@@ -200,6 +212,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             deadEnemies.clear();
             //TODO : lancer la prochaine manche
         }
+
 
         // On gère les attaques des défenses
         for (Defense defense : defenses) {
@@ -254,26 +267,35 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
             }
         }
+        synchronized (this.enemies) {
+            ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
+            Iterator<Ennemy> iterator = this.enemies.iterator();
+            while (iterator.hasNext() && !this.pause) {
+                Ennemy ennemy = iterator.next();
+                //System.out.println("Ennemy : " + ennemy.getName());
 
-        Iterator<Ennemy> iterator = this.enemies.iterator();
-        while (iterator.hasNext() && !this.pause) {
-            Ennemy ennemy = iterator.next();
+                //vérification d'arrivée
+                if ((int) (ennemy.getPosition().getX()) >= XArrival - 10 && (int) (ennemy.getPosition().getX()) <= XArrival + 10 &&
+                        (int) (ennemy.getPosition().getY()) >= YArrival - 10 && (int) (ennemy.getPosition().getY()) <= YArrival + 10 &&
+                        !ennemy.isArrived() && !deadEnemies.contains(ennemy)
+                ) {
+                    ennemy.setArrived(true);
+                    this.nbEnnemiesArrived++;
+                    setLogs("Le " + ennemy.getName() + " est arrivé");
 
-            //vérification d'arrivée
-            if ((int) (ennemy.getPosition().getX()) == XArrival && (int) (ennemy.getPosition().getY()) == YArrival && !ennemy.isArrived() && !deadEnemies.contains(ennemy)) {
-                ennemy.setArrived(true);
-                this.nbEnnemiesArrived++;
-                setLogs("Le " + ennemy.getName() + " est arrivé");
-
-                if (this.nbEnnemiesArrived == this.enemies.size()) { //changer par le bombre d'ennemies nécessaire pour perdre
-                    setLogs("Ta perdu bouuh !");
+                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin) { //changer par le bombre d'ennemies nécessaire pour perdre
+                        setLogs("Ta perdu bouuh !");
+                    }
+                    enemiesToRemove.add(ennemy);
+                    //enemies.remove(ennemy);
                 }
+                //ennemy.move(secondes);
+                ennemy.update();
+                notifyObserver();
             }
-            //ennemy.move(secondes);
-            ennemy.update();
-
+            this.enemies.removeAll(enemiesToRemove);
+            notifyObserver();
         }
-        notifyObserver();
     }
 
     @Override
@@ -337,7 +359,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     /**
      * Retourne l'ennemi le plus proche d'une défense
-     *
      * @param defense la défense à étudier
      * @return l'ennemi le plus proche
      */

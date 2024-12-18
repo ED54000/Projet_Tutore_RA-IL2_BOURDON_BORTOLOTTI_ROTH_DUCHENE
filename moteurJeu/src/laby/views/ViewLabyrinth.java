@@ -25,8 +25,8 @@ public class ViewLabyrinth implements Observer {
         this.laby = laby;
         System.out.println(laby);
         this.canvas = canvas;
-        tree = new Image("/tree.png");
-        road = new Image("/tiles.png");
+        tree = new Image("/tree4.png");
+        road = new Image("/tiles4.png");
         bomb = new Image("/bomb.png");
         archer = new Image("/archerClash.png");
         canon = new Image("/canon.png");
@@ -62,7 +62,7 @@ public class ViewLabyrinth implements Observer {
                         break;
                     case ModeleLabyrinth.BOMB:
                         gc.drawImage(road, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        gc.drawImage(bomb, j * tailleCase-3, i * tailleCase-5, tailleCase+5, tailleCase+5);
+                        gc.drawImage(bomb, j * tailleCase+5, i * tailleCase+5, tailleCase-10, tailleCase-10);
                         break;
                     case ModeleLabyrinth.START:
                         gc.setFill(Color.GREEN);
@@ -89,6 +89,7 @@ public class ViewLabyrinth implements Observer {
         }
 
         //dessiner les ennemis
+        System.out.println("Nombre d'ennemis : " + laby.enemies.size());
         Color colorPath = Color.rgb((15), (175), (252));
         for (int i = 0; i < laby.enemies.size(); i++) {
             for (String behaviour : laby.getBehaviours()) {
