@@ -107,8 +107,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         this.cases[numLigne][colonne] = END;
                         this.XArrival = colonne * ViewLabyrinth.getTailleCase();
                         this.YArrival = numLigne * ViewLabyrinth.getTailleCase();
-
-                        System.out.println("XArrival : " + XArrival + " YArrival : " + YArrival);
                         break;
                     case CANON:
                         //ajouter un canon
