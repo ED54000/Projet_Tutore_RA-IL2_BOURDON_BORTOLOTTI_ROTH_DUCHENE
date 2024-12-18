@@ -22,9 +22,9 @@ public class Astar {
      */
     boolean isValid(char[][] grid, Vector2D point) {
         if (grid.length > 0 && grid[0].length > 0)
-            return (point.x >= 0) && (point.x < grid.length)
-                    && (point.y >= 0)
-                    && (point.y < grid[0].length);
+            return (point.getX() >= 0) && (point.getX() < grid.length)
+                    && (point.getY() >= 0)
+                    && (point.getY() < grid[0].length);
 
         return false;
     }
@@ -43,7 +43,7 @@ public class Astar {
      */
     boolean isUnblocked(char[][] grid, Vector2D point) {
         if (isValid(grid, point)) {
-            char cell = grid[(int) point.x][(int) point.y];
+            char cell = grid[(int) point.getX()][(int) point.getY()];
             return cell == '.' || cell == 'E' || cell == 'S';
         }
 
@@ -70,7 +70,7 @@ public class Astar {
      * @return La distance euclidienne entre les deux points
      */
     double calculateHValue(Vector2D src, Vector2D dest) {
-        return Math.sqrt(Math.pow((src.x - dest.x), 2.0) + Math.pow((src.y - dest.y), 2.0));
+        return Math.sqrt(Math.pow((src.getX() - dest.getX()), 2.0) + Math.pow((src.getY() - dest.getY()), 2.0));
     }
 
     /***
@@ -87,23 +87,23 @@ public class Astar {
 
         Stack<Vector2D> path = new Stack<>();
 
-        double row = dest.x;
-        double col = dest.y;
+        double row = dest.getX();
+        double col = dest.getY();
 
         Vector2D nextNode;
         do {
             path.push(new Vector2D(row, col));
             pathArray.addFirst(new Vector2D(col * 50, row * 50));
             nextNode = cellDetails[(int) row][(int) col].parent;
-            row = nextNode.x;
-            col = nextNode.y;
+            row = nextNode.getX();
+            col = nextNode.getY();
         } while (cellDetails[(int) row][(int) col].parent != nextNode);
 
 
         while (!path.empty()) {
             Vector2D p = path.peek();
             path.pop();
-          //  System.out.println("-> (" + p.x + "," + p.y + ") ");
+          //  System.out.println("-> (" + p.getX() + "," + p.getY() + ") ");
         }
         return pathArray;
     }
@@ -129,7 +129,7 @@ public class Astar {
             try {
                 double[] newEnd = Vector2D.getCloserPairIndex(grid, 'T');
                 dest = new Vector2D(newEnd[0], newEnd[1]);
-                grid[(int) dest.x][(int) dest.y] = 'E';
+                grid[(int) dest.getX()][(int) dest.getY()] = 'E';
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
@@ -158,8 +158,8 @@ public class Astar {
 
         double i, j;
 
-        i = src.x;
-        j = src.y;
+        i = src.getX();
+        j = src.getY();
         cellDetails[(int) i][(int) j] = new Cell();
         cellDetails[(int) i][(int) j].f = 0.0;
         cellDetails[(int) i][(int) j].g = 0.0;
@@ -180,31 +180,31 @@ public class Astar {
             for (int[] dir : directions) {
                 Vector2D neighbour = new Vector2D(i + dir[0], j + dir[1]);
                 if (isValid(grid, neighbour)) {
-                    if (cellDetails[(int) neighbour.x] == null) {
-                        cellDetails[(int) neighbour.x] = new Cell[cols];
+                    if (cellDetails[(int) neighbour.getX()] == null) {
+                        cellDetails[(int) neighbour.getX()] = new Cell[cols];
                     }
-                    if (cellDetails[(int) neighbour.x][(int) neighbour.y] == null) {
-                        cellDetails[(int) neighbour.x][(int) neighbour.y] = new Cell();
+                    if (cellDetails[(int) neighbour.getX()][(int) neighbour.getY()] == null) {
+                        cellDetails[(int) neighbour.getX()][(int) neighbour.getY()] = new Cell();
                     }
 
                     if (isDestination(neighbour, dest)) {
-                        cellDetails[(int) neighbour.x][(int) neighbour.y].parent = new Vector2D(i, j);
+                        cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].parent = new Vector2D(i, j);
                         System.out.println("The destination cell is found");
                         return tracePath(cellDetails, dest);
-                    } else if (!closedList[(int) neighbour.x][(int) neighbour.y]
+                    } else if (!closedList[(int) neighbour.getX()][(int) neighbour.getY()]
                             && isUnblocked(grid, neighbour)) {
                         double gNew, hNew, fNew;
                         gNew = cellDetails[(int) i][(int) j].g + 1.0;
                         hNew = calculateHValue(neighbour, dest) + getTowerPenalty(costGrid, neighbour);
                         fNew = gNew + hNew;
 
-                        if (cellDetails[(int) neighbour.x][(int) neighbour.y].f == -1
-                                || cellDetails[(int) neighbour.x][(int) neighbour.y].f > fNew) {
+                        if (cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f == -1
+                                || cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f > fNew) {
 
-                            openList.add(new Details(fNew, neighbour.x, neighbour.y));
-                            cellDetails[(int) neighbour.x][(int) neighbour.y].g = gNew;
-                            cellDetails[(int) neighbour.x][(int) neighbour.y].f = fNew;
-                            cellDetails[(int) neighbour.x][(int) neighbour.y].parent = new Vector2D(i, j);
+                            openList.add(new Details(fNew, neighbour.getX(), neighbour.getY()));
+                            cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].g = gNew;
+                            cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f = fNew;
+                            cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].parent = new Vector2D(i, j);
                         }
                     }
                 }
@@ -240,8 +240,8 @@ public class Astar {
             Vector2D current = queue.poll();
 
             for (int[] dir : directions) {
-                int newRow = (int) current.x + dir[0];
-                int newCol = (int) current.y + dir[1];
+                int newRow = (int) current.getX() + dir[0];
+                int newCol = (int) current.getY() + dir[1];
                 Vector2D newPosition = new Vector2D(newRow, newCol);
 
                 // Vérifier la validité de la position
@@ -249,7 +249,7 @@ public class Astar {
                     visited[newRow][newCol] = true;
 
                     // Ajouter un coût progressif autour des tours
-                    costGrid[newRow][newCol] = costGrid[(int) current.x][(int) current.y] / 2;
+                    costGrid[newRow][newCol] = costGrid[(int) current.getX()][(int) current.getY()] / 2;
 
                     // Si la zone est entourée de tours, ajouter une forte pénalité
                     if (countNearbyTowers(grid, newPosition) >= 3) { // Seuil ajustable
@@ -284,8 +284,8 @@ public class Astar {
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
         for (int[] dir : directions) {
-            int newRow = (int) position.x + dir[0];
-            int newCol = (int) position.y + dir[1];
+            int newRow = (int) position.getX() + dir[0];
+            int newCol = (int) position.getY() + dir[1];
             Vector2D newPosition = new Vector2D(newRow, newCol);
 
             if (isValid(grid, newPosition) && grid[newRow][newCol] == 'T') {
@@ -296,7 +296,7 @@ public class Astar {
     }
 
     private double getTowerPenalty(double[][] costGrid, Vector2D point) {
-        return costGrid[(int) point.x][(int) point.y];
+        return costGrid[(int) point.getX()][(int) point.getY()];
     }
 
 }

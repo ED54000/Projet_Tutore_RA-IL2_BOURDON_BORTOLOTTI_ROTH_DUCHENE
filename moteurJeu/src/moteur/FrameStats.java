@@ -1,4 +1,5 @@
 package moteur;
+//Classe récupérée de Zeldiablo
 
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;

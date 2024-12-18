@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * et des methodes pour effectuer des calculs sur ces coordonnees
  */
 public class Vector2D {
-    public double x, y;
+    private double x, y;
 
     /***
      * constructeur de la classe
@@ -128,6 +128,14 @@ public class Vector2D {
                 "x=" + x +
                 ", y=" + y +
                 '}';
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
     }
 }
 

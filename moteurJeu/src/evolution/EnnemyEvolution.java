@@ -302,5 +302,13 @@ public class EnnemyEvolution {
         // On retourne la liste des ennemis morts
         return deadEnnemies;
     }
+
+
+    public static void evoluer(List<Ennemy> ennemies){
+        // On affecte les statistiques moyennes des meilleurs ennemis aux ennemis morts (pour chaque comportement)
+        affectStatsToDeadEnnemies(ennemies);
+        // On ajoute des statistiques aléatoires aux ennemis (mutation)
+        addRandomStats(ennemies);
+    }
 }
 

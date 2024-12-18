@@ -1,5 +1,5 @@
 package moteur;
-
+//interface récupérée de Zeldiablo
 
 import javafx.scene.canvas.Canvas;
 

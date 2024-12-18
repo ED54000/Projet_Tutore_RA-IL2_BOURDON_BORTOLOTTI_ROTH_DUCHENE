@@ -1,5 +1,5 @@
 package moteur;
-
+//squelette adapté et modifié du moteur de Zeldiablo inspiré de :
 //https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 
 import javafx.animation.AnimationTimer;
@@ -203,7 +203,7 @@ public class MoteurJeu extends Application {
         logs.setPrefWidth(200);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
-        logs.getChildren().add(new Label("Logs"));
+        //logs.getChildren().add(new Label("Logs"));
 
         ContainerLogs.getChildren().addAll(title, logs);
 

@@ -2,6 +2,7 @@ package entites.enemies;
 
 import entites.Entity;
 import entites.defenses.Defense;
+import javafx.scene.image.Image;
 import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
@@ -19,6 +20,7 @@ public abstract class Ennemy extends Entity {
     private boolean isArrived;
     private int survivalTime;
     private String name;
+    //private String sprite;
     private Vector2D velocity;
 
     public Ennemy(Vector2D position, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name) {
@@ -34,6 +36,7 @@ public abstract class Ennemy extends Entity {
         this.behavior = "Normal";
         this.velocity = new Vector2D(0, 0);
         this.name = name;
+        //this.sprite = sprite;
         timeSpawn++;
     }
 
@@ -148,5 +151,11 @@ public abstract class Ennemy extends Entity {
     public String getBehavior() {
         return behavior;
     }
+    /*
+    public String getImage() {
+        return sprite;
+    }
+
+     */
 }
 

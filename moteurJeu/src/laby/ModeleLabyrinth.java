@@ -1,9 +1,6 @@
 package laby;
 
-import entites.defenses.ActiveDefense;
-import entites.defenses.Bomb;
-import entites.defenses.Canon;
-import entites.defenses.Defense;
+import entites.defenses.*;
 import entites.enemies.*;
 import javafx.scene.canvas.Canvas;
 import laby.controllers.ControllerStart;
@@ -15,9 +12,8 @@ import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
 
 import java.io.*;
+
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ModeleLabyrinth implements Jeu, Subject {
 
@@ -26,6 +22,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public static final char ROAD = '.';
     public static final char TREE = '#';
     public static final char CANON = 'C';
+    public static final char ARCHER = 'A';
     public static final char BOMB = 'B';
     private final ArrayList<String> BEHAVIOURS = new ArrayList<>(Arrays.asList("Normal", "Fugitive", "Kamikaze" /*,"Healer"*/));
 
@@ -113,6 +110,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         this.cases[numLigne][colonne] = BOMB;
                         this.defenses.add(new Bomb(colonne, numLigne));
                         break;
+                    case ARCHER:
+                        //ajouter un archer
+                        this.cases[numLigne][colonne] = ARCHER;
+                        this.defenses.add(new Archer(colonne, numLigne));
+                        break;
                 }
             }
             numLigne++;
@@ -149,19 +151,19 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant "+nbGiant);
+                    Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant " + (nbGiant+1));
                     giant.setBehaviorPath(new PathfollowingBehavior(aStarNormal));
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja "+nbNinja);
+                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja " + (nbNinja+1));
                     ninja.setBehaviorPath(new PathfollowingBehavior(aStarFugitive));
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker "+nbBerserker);
+                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker " + (nbBerserker+1));
                     berserker.setBehaviorPath(new PathfollowingBehavior(aStarKamikaze));
                     this.enemies.add(berserker);
                     nbBerserker++;
@@ -172,7 +174,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
         for (int i = 0; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide "+i);
+            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i+1));
             ArrayList<Vector2D> aStarHealer = null;
             if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
                 aStarHealer = aStarNormal;
@@ -184,8 +186,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             this.enemies.add(druide);
         }
-    }
+        //iterator = this.enemies.iterator();
+        //this.enemies = new ArrayList<>();
 
+    }
 
 
     @Override
@@ -235,7 +239,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         defense.attack(ennemy);
                         // On set la cible de la défense
                         ((ActiveDefense) defense).setTarget(ennemy);
-                        //setLogs("Attaque de " + defense.getClass() + " sur " + ennemy.getName() + "pv restants:" + ennemy.getHealth());
+                        //setLogs("Attaque de " + defense.getClass() + " sur " + ennemy.getName()+"pv restants:"+ennemy.getHealth());
                         // Si l'ennemi est mort, on le retire de la liste des ennemis
                         if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                             deadEnemies.add(ennemy);
@@ -272,7 +276,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         }
         notifyObserver();
-
     }
 
     @Override
@@ -313,6 +316,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public char getCase(int x, int y) {
         return this.cases[x][y];
     }
+
     public char[][] getCases() {
         return this.cases;
     }

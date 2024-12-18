@@ -23,8 +23,9 @@ public class ViewLabyrinth implements Observer {
         this.canvas = canvas;
         tree = new Image("/tree.png");
         road = new Image("/tiles.png");
-        archer = new Image("/archer.png");
         bomb = new Image("/bomb.png");
+        archer = new Image("/archerClash.png");
+        canon = new Image("/canon.png");
     }
 
     @Override
@@ -50,7 +51,7 @@ public class ViewLabyrinth implements Observer {
                         gc.setFill(Color.GREY);
                         gc.fillOval(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
                          */
-                        gc.drawImage(archer, j * tailleCase, i * tailleCase, tailleCase, tailleCase); //a chnager
+                        gc.drawImage(canon, j * tailleCase, i * tailleCase, tailleCase, tailleCase); //a chnager
                         break;
                     case ModeleLabyrinth.BOMB:
                         gc.drawImage(road, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
@@ -69,6 +70,10 @@ public class ViewLabyrinth implements Observer {
                         break;
                     case ModeleLabyrinth.TREE:
                         gc.drawImage(tree, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
+                        break;
+                    case ModeleLabyrinth.ARCHER:
+                        gc.drawImage(tree, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
+                        gc.drawImage(archer, j * tailleCase-12, i * tailleCase-12, tailleCase+25, tailleCase+25);
                         break;
                     default:
                         break;
