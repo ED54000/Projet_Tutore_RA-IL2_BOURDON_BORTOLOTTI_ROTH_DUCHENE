@@ -149,9 +149,17 @@ public class ViewLabyrinth implements Observer {
 
     public static int getTailleCase(){
         if ( laby.getLengthY() >= laby.getLength()){
-            return  (screenSize.width/7)*6/laby.getLengthY();
+            if ((((screenSize.width/7)*6/laby.getLengthY())*laby.getLength()) > screenSize.height/laby.getLength()) {
+                return screenSize.height/laby.getLength()-2;
+            } else {
+                return (screenSize.width/7)*6/laby.getLengthY();
+            }
         } else {
-            return screenSize.height/laby.getLength();
+            if (((screenSize.height/laby.getLength()*laby.getLengthY()) > screenSize.width/laby.getLengthY())) {
+                return (screenSize.width/7)*6/laby.getLengthY();
+            } else {
+                return screenSize.height/laby.getLength()-2;
+            }
         }
     }
 

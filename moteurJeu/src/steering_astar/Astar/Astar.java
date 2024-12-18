@@ -3,6 +3,7 @@ package steering_astar.Astar;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
+
 import laby.views.ViewLabyrinth;
 import steering_astar.Steering.Vector2D;
 
@@ -24,9 +25,9 @@ public class Astar {
      */
     boolean isValid(char[][] grid, Vector2D point) {
         if (grid.length > 0 && grid[0].length > 0)
-            return (point.getX()  >= 0) && (point.getX())  < grid.length
+            return (point.getX() >= 0) && (point.getX()) < grid.length
                     && (point.getY() >= 0)
-                    && (point.getY() < grid[0].length );
+                    && (point.getY() < grid[0].length);
 
         return false;
     }
@@ -44,7 +45,7 @@ public class Astar {
      * @return true si le point peut être traversé, false sinon
      */
     boolean isUnblocked(char[][] grid, Vector2D point) {
-        Vector2D pointDivide = new Vector2D(point.getX()/ViewLabyrinth.getTailleCase(),point.getY()/ViewLabyrinth.getTailleCase());
+        Vector2D pointDivide = new Vector2D(point.getX() / ViewLabyrinth.getTailleCase(), point.getY() / ViewLabyrinth.getTailleCase());
         if (isValid(grid, pointDivide)) {
             char cell = grid[(int) point.getX()][(int) point.getY()];
             return cell == '.' || cell == 'E' || cell == 'S';
@@ -73,8 +74,8 @@ public class Astar {
      * @return La distance euclidienne entre les deux points
      */
     double calculateHValue(Vector2D src, Vector2D dest) {
-        return Math.sqrt(Math.pow((src.getX()/ViewLabyrinth.getTailleCase()  - dest.getX()/ViewLabyrinth.getTailleCase() ), 2.0)
-                + Math.pow((src.getY()/ViewLabyrinth.getTailleCase()  - dest.getY()/ViewLabyrinth.getTailleCase() ), 2.0));
+        return Math.sqrt(Math.pow((src.getX() / ViewLabyrinth.getTailleCase() - dest.getX() / ViewLabyrinth.getTailleCase()), 2.0)
+                + Math.pow((src.getY() / ViewLabyrinth.getTailleCase() - dest.getY() / ViewLabyrinth.getTailleCase()), 2.0));
     }
 
     /***
@@ -91,23 +92,23 @@ public class Astar {
 
         Stack<Vector2D> path = new Stack<>();
 
-        double row = dest.getX() ;
-        double col = dest.getY() ;
+        double row = dest.getX();
+        double col = dest.getY();
 
         Vector2D nextNode;
         do {
             path.push(new Vector2D(row * ViewLabyrinth.getTailleCase(), col * ViewLabyrinth.getTailleCase()));
             pathArray.addFirst(new Vector2D(col * ViewLabyrinth.getTailleCase(), row * ViewLabyrinth.getTailleCase()));
-            nextNode = cellDetails[(int) row ][(int) col].parent;
-            row = nextNode.getX() ;
-            col = nextNode.getY() ;
+            nextNode = cellDetails[(int) row][(int) col].parent;
+            row = nextNode.getX();
+            col = nextNode.getY();
         } while (cellDetails[(int) row][(int) col].parent != nextNode);
 
 
         while (!path.empty()) {
             Vector2D p = path.peek();
             path.pop();
-             System.out.println("-> (" + p.getX()/ViewLabyrinth.getTailleCase() + "," + p.getY()/ViewLabyrinth.getTailleCase() + ") ");
+            System.out.println("-> (" + p.getX() / ViewLabyrinth.getTailleCase() + "," + p.getY() / ViewLabyrinth.getTailleCase() + ") ");
         }
         return pathArray;
     }
@@ -134,15 +135,15 @@ public class Astar {
         }
         if (comp.equals("Kamikaze")) {
             try {
-                double[] newEnd = Vector2D.getCloserPairIndex(copyGrid, 'C');
-                dest = new Vector2D(newEnd[0]*ViewLabyrinth.getTailleCase(), newEnd[1]*ViewLabyrinth.getTailleCase());
-                copyGrid[(int) dest.getX()/ViewLabyrinth.getTailleCase()][(int) dest.getY()/ViewLabyrinth.getTailleCase()] = 'E';
+                double[] newEnd = getNearTower(copyGrid);
+                dest = new Vector2D(newEnd[0] * ViewLabyrinth.getTailleCase(), newEnd[1] * ViewLabyrinth.getTailleCase());
+                copyGrid[(int) dest.getX() / ViewLabyrinth.getTailleCase()][(int) dest.getY() / ViewLabyrinth.getTailleCase()] = 'E';
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
         }
-        Vector2D destDivide = new Vector2D(dest.getX()/ViewLabyrinth.getTailleCase(), dest.getY()/ViewLabyrinth.getTailleCase());
-        Vector2D srcDivide = new Vector2D(src.getX()/ViewLabyrinth.getTailleCase(), src.getY()/ViewLabyrinth.getTailleCase());
+        Vector2D destDivide = new Vector2D(dest.getX() / ViewLabyrinth.getTailleCase(), dest.getY() / ViewLabyrinth.getTailleCase());
+        Vector2D srcDivide = new Vector2D(src.getX() / ViewLabyrinth.getTailleCase(), src.getY() / ViewLabyrinth.getTailleCase());
 
         if (!isValid(copyGrid, srcDivide)) {
             System.err.println("Source is invalid...");
@@ -163,14 +164,13 @@ public class Astar {
         }
 
 
-
         boolean[][] closedList = new boolean[rows][cols];
         Cell[][] cellDetails = new Cell[rows][cols];
 
         double i, j;
 
-        i = src.getX()/ViewLabyrinth.getTailleCase() ;
-        j = src.getY()/ViewLabyrinth.getTailleCase() ;
+        i = src.getX() / ViewLabyrinth.getTailleCase();
+        j = src.getY() / ViewLabyrinth.getTailleCase();
         cellDetails[(int) i][(int) j] = new Cell();
         cellDetails[(int) i][(int) j].f = 0.0;
         cellDetails[(int) i][(int) j].g = 0.0;
@@ -212,10 +212,10 @@ public class Astar {
                         if (cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f == -1
                                 || cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f > fNew) {
 
-                            openList.add(new Details(fNew, neighbour.getX() , neighbour.getY() ));
-                            cellDetails[(int) neighbour.getX() ][(int) neighbour.getY() ].g = gNew;
-                            cellDetails[(int) neighbour.getX() ][(int) neighbour.getY() ].f = fNew;
-                            cellDetails[(int) neighbour.getX() ][(int) neighbour.getY() ].parent = new Vector2D(i, j);
+                            openList.add(new Details(fNew, neighbour.getX(), neighbour.getY()));
+                            cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].g = gNew;
+                            cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f = fNew;
+                            cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].parent = new Vector2D(i, j);
                         }
                     }
                 }
@@ -240,11 +240,11 @@ public class Astar {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 if (comp.equals("Fugitive") && grid[i][j] == 'C') {
-                        queue.add(new Vector2D(i, j));
-                        visited[i][j] = true;
-                        costGrid[i][j] = 1000.0; // Coût initial très élevé pour les tours
-                    } else {
-                        costGrid[i][j] = 1.0; // Coût minimal pour les chemins traversables
+                    queue.add(new Vector2D(i, j));
+                    visited[i][j] = true;
+                    costGrid[i][j] = 1000.0; // Coût initial très élevé pour les tours
+                } else {
+                    costGrid[i][j] = 1.0; // Coût minimal pour les chemins traversables
                 }
             }
         }
@@ -256,7 +256,7 @@ public class Astar {
         while (!queue.isEmpty()) {
             Vector2D current = queue.poll();
             for (int[] dir : directions) {
-                int newRow = (int) current.getX()  + dir[0];
+                int newRow = (int) current.getX() + dir[0];
                 int newCol = (int) current.getY() + dir[1];
                 Vector2D newPosition = new Vector2D(newRow, newCol);
 
@@ -265,7 +265,7 @@ public class Astar {
                     visited[newRow][newCol] = true;
 
                     // Ajouter un coût progressif autour des tours
-                    costGrid[newRow][newCol] = costGrid[(int) current.getX() ][(int) current.getY() ] / 2;
+                    costGrid[newRow][newCol] = costGrid[(int) current.getX()][(int) current.getY()] / 2;
 
                     // Si la zone est entourée de tours, ajouter une forte pénalité
                     if (countNearbyTowers(grid, newPosition) >= 3) { // Seuil ajustable
@@ -291,7 +291,8 @@ public class Astar {
 
     /**
      * Comptabilise le nombre de tours autour d'une cellule.
-     * @param grid La grille à vérifier
+     *
+     * @param grid     La grille à vérifier
      * @param position La position de la cellule à examiner
      * @return Le nombre de tours dans les cellules voisines
      */
@@ -300,8 +301,8 @@ public class Astar {
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
         for (int[] dir : directions) {
-            int newRow = (int) position.getY()  + dir[1];
-            int newCol = (int) position.getX()   + dir[0];
+            int newRow = (int) position.getY() + dir[1];
+            int newCol = (int) position.getX() + dir[0];
             Vector2D newPosition = new Vector2D(newRow, newCol);
 
             if (isValid(grid, newPosition) && grid[newRow][newCol] == 'C') {
@@ -312,9 +313,32 @@ public class Astar {
     }
 
     private double getTowerPenalty(double[][] costGrid, Vector2D point) {
-        return costGrid[(int) point.getX() ][(int) point.getY() ];
+        return costGrid[(int) point.getX()][(int) point.getY()];
     }
 
+    private double[] getNearTower(char[][] grid) {
+            char[] charTowers = {'A', 'B', 'C'};
+            double[] nearest = {Double.MAX_VALUE, Double.MAX_VALUE};
+            double nearestDistance = Double.MAX_VALUE;
+
+            for (char c : charTowers) {
+                try {
+                    double[] near = Vector2D.getCloserPairIndex(grid, c);
+
+                    double currentDistance = Math.sqrt(Math.pow(near[0], 2) + Math.pow(near[1], 2));
+
+                    if (currentDistance < nearestDistance) {
+                        nearestDistance = currentDistance;
+                        nearest = near;
+                    }
+                } catch (Exception e) {
+                    System.err.println("Defense " + c + " not found: " + e.getMessage());
+
+                }
+            }
+
+            return nearest;
+        }
 
 
-}
+    }
