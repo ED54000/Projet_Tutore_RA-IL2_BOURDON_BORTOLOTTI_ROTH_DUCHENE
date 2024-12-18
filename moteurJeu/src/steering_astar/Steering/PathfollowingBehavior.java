@@ -36,7 +36,7 @@ public class PathfollowingBehavior extends Behavior {
     public Vector2D calculateForce(Ennemy ennemy) {
         SeekBehavior seek = new SeekBehavior(currentCheckpoint);
         Vector2D res = seek.calculateForce(ennemy);
-        if (ennemy.getPosition().distanceTo(currentCheckpoint) < 10) {
+        if (ennemy.getPosition().distanceTo(currentCheckpoint) < Behavior.getTargetRadius()) {
             if (currentCheckpointIndex != checkpoints.size()-1) {
                 currentCheckpointIndex++;
             }

@@ -10,6 +10,7 @@ import entites.enemies.Ennemy;
 public abstract class Behavior {
 
     private Vector2D target;
+    private static final double targetRadius = 50.0;
 
     /***
      * methode servant a calculer la force de mouvement selon un comportement
@@ -24,6 +25,10 @@ public abstract class Behavior {
 
     public Vector2D getTarget() {
          return this.target;
+    }
+
+    public static double getTargetRadius() {
+        return targetRadius;
     }
 }
 

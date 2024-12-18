@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
+import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
@@ -118,9 +119,13 @@ public class ViewLabyrinth implements Observer {
     private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor, Color agentColor) {
 
         gc.setFill(pathColor);
-        checkpoint.forEach((n) ->
-                gc.fillOval(n.getX() + 20, n.getY() + 20, 10, 10)
-        );
+        double radius = Behavior.getTargetRadius();
+        for (Vector2D point : checkpoint){
+            gc.fillOval(point.getX() + 20, point.getY() + 20, 10, 10);
+            gc.strokeOval(point.getX() - radius/2 + 25, point.getY() - radius/2 + 25, radius, radius);
+        }
+
+//        gc.fillOval(n.getX() + 20, n.getY() + 20, 10, 10)
 
         Vector2D position = ennemi.getPosition();
         gc.setFill(agentColor);
