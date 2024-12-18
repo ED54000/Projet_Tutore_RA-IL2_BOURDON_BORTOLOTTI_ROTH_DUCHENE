@@ -209,7 +209,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     if (defense.isInRange(((ActiveDefense) defense).getTarget())) {
                         // On l'attaque
                         defense.attack(((ActiveDefense) defense).getTarget());
-                        setLogs("Attaque de " + defense.getClass() + " sur " + ((ActiveDefense) defense).getTarget() + "pv restants:" + ((ActiveDefense) defense).getTarget().getHealth());
+                        //setLogs("Attaque de " + defense.getClass() + " sur " + ((ActiveDefense) defense).getTarget() + "pv restants:" + ((ActiveDefense) defense).getTarget().getHealth());
                         // Si l'ennemi est mort, on le retire de la liste des ennemis
                         if (((ActiveDefense) defense).getTarget().isDead() && !deadEnemies.contains(((ActiveDefense) defense).getTarget())) {
                             deadEnemies.add(((ActiveDefense) defense).getTarget());
@@ -235,7 +235,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         defense.attack(ennemy);
                         // On set la cible de la défense
                         ((ActiveDefense) defense).setTarget(ennemy);
-                        setLogs("Attaque de " + defense.getClass() + " sur " + ennemy.getName() + "pv restants:" + ennemy.getHealth());
+                        //setLogs("Attaque de " + defense.getClass() + " sur " + ennemy.getName() + "pv restants:" + ennemy.getHealth());
                         // Si l'ennemi est mort, on le retire de la liste des ennemis
                         if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                             deadEnemies.add(ennemy);

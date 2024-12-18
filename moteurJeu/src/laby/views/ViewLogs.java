@@ -21,16 +21,18 @@ public class ViewLogs implements Observer {
 
     @Override
     public void update(Subject s) {
-       // System.out.println(this.logs.getChildren());
-        if (laby.getLogs()!=""){
+        if (!laby.getLogs().isEmpty()) {
             Label label = new Label(laby.getLogs());
-            logs.getChildren().add(label);
-            //(VBox)(logs.getChildren().get(1).add(label));
+            //System.out.println("Le labbel : "+label);
+            //System.out.println("Container : "+logs.getChildren());
+            VBox vbox = (VBox) logs.getChildren().get(1);
+            //System.out.println("Sous VBOx : "+vbox.getChildren());
+            vbox.getChildren().add(label);
 
             if (laby.isPause()&&laby.getLogs().equals("Manche terminée")){
                 Button button = new Button("Learn");
                 button.setOnMouseClicked(new ControllerLearn(laby)); // a cérer dans le moteur avec les vues ?
-                logs.getChildren().add(button);
+                vbox.getChildren().add(button);
             }
             laby.setLogs("");
         }
