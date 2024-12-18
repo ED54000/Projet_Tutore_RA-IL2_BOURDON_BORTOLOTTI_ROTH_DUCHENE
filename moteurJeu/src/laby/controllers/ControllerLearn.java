@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
+import steering_astar.Steering.Vector2D;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
@@ -24,11 +25,13 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         parentVBox.getChildren().clear();
 
         //TODO : faire l'apprentissage
-        laby.enemies.add(new Giant(10, 10, "NewGiant"));
+        laby.enemies.add(new Giant(new Vector2D(10, 10), "NewGiant"));
         //laby.setIterator(laby.enemies);
         //laby.setLogs("Learned");
 
         parentVBox.getChildren().add(new Label("Learned"));
+        laby.enemies.add(new Giant(new Vector2D(10, 10), "NewGiant"));
+        laby.setLogs("Learned");
 
         Button nextManche = new Button("Next Manche");
         nextManche.setOnMouseClicked(new ControllerNextManche(laby));

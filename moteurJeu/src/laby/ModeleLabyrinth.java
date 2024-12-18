@@ -1,20 +1,19 @@
 package laby;
 
-import entites.defenses.ActiveDefense;
-import entites.defenses.Bomb;
-import entites.defenses.Canon;
-import entites.defenses.Defense;
-import entites.enemies.Ennemy;
-import entites.enemies.Giant;
-import entites.enemies.Ninja;
+import entites.defenses.*;
+import entites.enemies.*;
 import javafx.scene.canvas.Canvas;
 import laby.controllers.ControllerStart;
 import laby.views.ViewLabyrinth;
 import moteur.Jeu;
+import steering_astar.Steering.BezierCurveFromAStarPoints;
+import steering_astar.Steering.PathfollowingBehavior;
+import steering_astar.Steering.Vector2D;
+import steering_astar.Astar.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+
+import java.util.*;
 
 public class ModeleLabyrinth implements Jeu, Subject {
 
@@ -23,7 +22,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public static final char ROAD = '.';
     public static final char TREE = '#';
     public static final char CANON = 'C';
+    public static final char ARCHER = 'A';
     public static final char BOMB = 'B';
+    private final ArrayList<String> BEHAVIOURS = new ArrayList<>(Arrays.asList("Normal", "Fugitive", "Kamikaze" /*,"Healer"*/));
 
     // Nombre d'ennemis qui doivent arriver à la fin pour gagner
     public int nbEnnemiesToWin;
@@ -36,15 +37,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     //labyrinthe
     private char[][] cases;
-    private int XArrival, YArrival;
-
+    private int Xstart, Ystart, XArrival, YArrival;
+    private Map<String, ArrayList<Vector2D>> BehavioursMap = new HashMap<>();
     private ArrayList<Observer> observateurs;
 
     private String logs = "";
     private int nbEnnemiesArrived;
 
     private boolean pause = false;
-
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -76,7 +76,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         while (ligne != null) {
             for (int colonne = 0; colonne < ligne.length(); colonne++) {
                 char c = ligne.charAt(colonne);
-                switch (c){
+                switch (c) {
                     case TREE:
                         //ajouter un mur
                         this.cases[numLigne][colonne] = TREE;
@@ -88,13 +88,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case START:
                         //ajouter le point de départ
                         this.cases[numLigne][colonne] = START;
-                        createEnnemies(nbEnnemies, colonne, numLigne);
+                        this.Xstart = colonne * ViewLabyrinth.getTailleCase();
+                        this.Ystart = numLigne * ViewLabyrinth.getTailleCase();
+//                      createEnnemies(nbEnnemies, colonne, numLigne);
                         break;
                     case END:
                         //ajouter le point d'arrivée
                         this.cases[numLigne][colonne] = END;
-                        this.XArrival = colonne;
-                        this.YArrival = numLigne;
+                        this.XArrival = colonne * ViewLabyrinth.getTailleCase();
+                        this.YArrival = numLigne * ViewLabyrinth.getTailleCase();
+
                         System.out.println("XArrival : " + XArrival + " YArrival : " + YArrival);
                         break;
                     case CANON:
@@ -107,44 +110,98 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         this.cases[numLigne][colonne] = BOMB;
                         this.defenses.add(new Bomb(colonne, numLigne));
                         break;
+                    case ARCHER:
+                        //ajouter un archer
+                        this.cases[numLigne][colonne] = ARCHER;
+                        this.defenses.add(new Archer(colonne, numLigne));
+                        break;
                 }
             }
             numLigne++;
             ligne = br.readLine();
         }
+        createEnnemies(nbEnnemies);
         br.close();
     }
 
-    private void createEnnemies(int nbEnnemies, int colonne, int numLigne) {
+    private void createEnnemies(int nbEnnemies) {
+        Astar astar = new Astar();
+
+        ArrayList<Vector2D> aStarNormal = BezierCurveFromAStarPoints.getBezierCurve(
+                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
+                        new Vector2D(this.getYstart(), this.getXstart()),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0)));
+        BehavioursMap.put(BEHAVIOURS.get(0), aStarNormal);
+        ArrayList<Vector2D> aStarFugitive = BezierCurveFromAStarPoints.getBezierCurve(
+                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
+                        new Vector2D(this.getYstart(), this.getXstart()),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1)));
+        BehavioursMap.put(BEHAVIOURS.get(1), aStarFugitive);
+        ArrayList<Vector2D> aStarKamikaze = BezierCurveFromAStarPoints.getBezierCurve(
+                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
+                        new Vector2D(this.getYstart(), this.getXstart()),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2)));
+        BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
+        int nbGiant = 0;
+        int nbNinja = 0;
+        int nbBerserker = 0;
+        int nbDruides = 0;
         for (int i = 0; i < nbEnnemies; i++) {
-           //crée un ennemi au hasard
-            int random = (int) (Math.random() * 2);
+            //crée un ennemi au hasard
+            int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(colonne+Math.random(), numLigne+Math.random(), "Giant"+i);
+                    Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant " + (nbGiant+1));
+                    giant.setBehaviorPath(new PathfollowingBehavior(aStarNormal));
                     this.enemies.add(giant);
+                    nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(colonne+Math.random(), numLigne+Math.random(), "Ninja"+i);
+                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja " + (nbNinja+1));
+                    ninja.setBehaviorPath(new PathfollowingBehavior(aStarFugitive));
                     this.enemies.add(ninja);
+                    nbNinja++;
+                    break;
+                case 2:
+                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker " + (nbBerserker+1));
+                    berserker.setBehaviorPath(new PathfollowingBehavior(aStarKamikaze));
+                    this.enemies.add(berserker);
+                    nbBerserker++;
+                    break;
+                case 3:
+                    nbDruides++;
                     break;
             }
+        }
+        for (int i = 0; i < nbDruides; i++) {
+            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i+1));
+            ArrayList<Vector2D> aStarHealer = null;
+            if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
+                aStarHealer = aStarNormal;
+            } else if (nbNinja > nbGiant && nbNinja >= nbBerserker) {
+                aStarHealer = aStarFugitive;
+            } else if (nbBerserker > nbGiant && nbBerserker > nbNinja) {
+                aStarHealer = aStarKamikaze;
+            }
+            druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
+            this.enemies.add(druide);
         }
         //iterator = this.enemies.iterator();
         //this.enemies = new ArrayList<>();
 
     }
 
+
     @Override
     public void update(double secondes) {
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
             this.pause = true;
+            System.out.println("Manche terminée");
             setLogs("Manche terminée");
             deadEnemies.clear();
             //TODO : lancer la prochaine manche
         }
-
 
         // On gère les attaques des défenses
         for (Defense defense : defenses) {
@@ -153,10 +210,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // Si la defense focus déja un ennemi
                 if (((ActiveDefense) defense).getTarget() != null) {
                     // On vérifie si l'ennemi est toujours dans la portée de la défense
-                    if(defense.isInRange(((ActiveDefense) defense).getTarget())) {
+                    if (defense.isInRange(((ActiveDefense) defense).getTarget())) {
                         // On l'attaque
                         defense.attack(((ActiveDefense) defense).getTarget());
-                        //setLogs("Attaque de " + defense.getClass() + " sur " + ((ActiveDefense) defense).getTarget()+"pv restants:"+((ActiveDefense) defense).getTarget().getHealth());
+                        //setLogs("Attaque de " + defense.getClass() + " sur " + ((ActiveDefense) defense).getTarget() + "pv restants:" + ((ActiveDefense) defense).getTarget().getHealth());
                         // Si l'ennemi est mort, on le retire de la liste des ennemis
                         if (((ActiveDefense) defense).getTarget().isDead() && !deadEnemies.contains(((ActiveDefense) defense).getTarget())) {
                             deadEnemies.add(((ActiveDefense) defense).getTarget());
@@ -203,8 +260,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Iterator<Ennemy> iterator = this.enemies.iterator();
         while (iterator.hasNext() && !this.pause) {
             Ennemy ennemy = iterator.next();
+
             //vérification d'arrivée
-            if ((int)(ennemy.getX()) == XArrival && (int)(ennemy.getY()) == YArrival && !ennemy.isArrived() && !deadEnemies.contains(ennemy)) {
+            if ((int) (ennemy.getPosition().getX()) == XArrival && (int) (ennemy.getPosition().getY()) == YArrival && !ennemy.isArrived() && !deadEnemies.contains(ennemy)) {
                 ennemy.setArrived(true);
                 this.nbEnnemiesArrived++;
                 setLogs("Le " + ennemy.getName() + " est arrivé");
@@ -213,7 +271,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     setLogs("Ta perdu bouuh !");
                 }
             }
-            ennemy.move(secondes);
+            //ennemy.move(secondes);
+            ennemy.update();
+
         }
         notifyObserver();
     }
@@ -257,11 +317,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return this.cases[x][y];
     }
 
-    public void setLogs(String log){
+    public char[][] getCases() {
+        return this.cases;
+    }
+
+    public void setLogs(String log) {
         logs = log;
     }
 
-    public String getLogs(){
+    public String getLogs() {
         return logs;
     }
 
@@ -275,6 +339,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     /**
      * Retourne l'ennemi le plus proche d'une défense
+     *
      * @param defense la défense à étudier
      * @return l'ennemi le plus proche
      */
@@ -282,7 +347,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Ennemy closerEnnemy = null;
         double minDistance = Double.MAX_VALUE;
         for (Ennemy ennemy : enemies) {
-            double distance = Math.sqrt(Math.pow(ennemy.getX() - defense.getX(), 2) - Math.pow(ennemy.getY() - defense.getY(), 2));
+            double distance = Math.sqrt(Math.pow(ennemy.getPosition().getX() - defense.getPosition().getX(), 2) - Math.pow(ennemy.getPosition().getY() - defense.getPosition().getY(), 2));
             if (distance < minDistance) {
                 minDistance = distance;
                 closerEnnemy = ennemy;
@@ -290,4 +355,30 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
         return closerEnnemy;
     }
+
+    public double getXstart() {
+        return Xstart;
+    }
+
+    public double getYstart() {
+        return Ystart;
+    }
+
+    public double getXArrival() {
+        return XArrival;
+    }
+
+    public double getYArrival() {
+        return YArrival;
+    }
+
+    public ArrayList<String> getBehaviours() {
+        return BEHAVIOURS;
+    }
+
+    public Map<String, ArrayList<Vector2D>> getBehavioursMap() {
+        return BehavioursMap;
+    }
+
+
 }

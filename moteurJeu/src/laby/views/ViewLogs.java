@@ -27,7 +27,6 @@ public class ViewLogs implements Observer {
             //System.out.println("Container : "+logs.getChildren());
             VBox vbox = (VBox) logs.getChildren().get(1);
             //System.out.println("Sous VBOx : "+vbox.getChildren());
-
             vbox.getChildren().add(label);
 
             if (laby.isPause()&&laby.getLogs().equals("Manche terminée")){

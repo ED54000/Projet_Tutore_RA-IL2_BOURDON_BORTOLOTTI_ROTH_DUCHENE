@@ -4,18 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.iut.nc</groupId>
-  <artifactId>moteurJeu</artifactId>
+  <groupId>src</groupId>
+  <artifactId>MoteurJeu</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>moteurJeu</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-    <junit.version>5.10.0</junit.version>
-  </properties>
-
+<junit.version>5.10.2</junit.version>  </properties>
 
   <dependencies>
     <dependency>
@@ -47,7 +43,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.13.0</version>
         <configuration>
           <source>21</source>
           <target>21</target>
@@ -62,6 +58,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
+              <mainClass>src.demo/src.demo.HelloApplication</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>

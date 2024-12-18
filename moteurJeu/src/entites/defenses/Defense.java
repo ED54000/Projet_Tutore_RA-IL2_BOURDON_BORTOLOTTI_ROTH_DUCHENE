@@ -2,11 +2,13 @@ package entites.defenses;
 
 import entites.Entity;
 import entites.enemies.Ennemy;
+import laby.views.ViewLabyrinth;
+import steering_astar.Steering.Vector2D;
 
 public abstract class Defense extends Entity {
 
     public Defense(double x, double y, int damage, double range) {
-        super(x, y, damage, range);
+        super(new Vector2D(x,y), damage, range);
     }
 
     public abstract void attack(Ennemy target);
@@ -18,8 +20,9 @@ public abstract class Defense extends Entity {
      */
     public boolean isInRange(Ennemy target) {
         // On détecte si un ennemi est dans la portée de la défense avec une formule de distance euclidienne
-        if (((target.getX() - this.getX()) * (target.getX() - this.getX()) +
-                (target.getY() - this.getY()) * (target.getY() - this.getY()) <= this.getRange() * this.getRange())) {
+        if (((target.getPosition().getX()/ ViewLabyrinth.getTailleCase() - this.getPosition().getX()) * (target.getPosition().getX()/ ViewLabyrinth.getTailleCase() - this.getPosition().getX()) +
+                (target.getPosition().getY()/ ViewLabyrinth.getTailleCase() - this.getPosition().getY()) * (target.getPosition().getY()/ ViewLabyrinth.getTailleCase() - this.getPosition().getY()) <= this.getRange() * this.getRange())) {
+
             return true;
         }
         // Sinon
