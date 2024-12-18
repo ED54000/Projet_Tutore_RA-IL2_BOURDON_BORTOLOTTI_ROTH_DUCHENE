@@ -20,8 +20,9 @@ public class ViewLabyrinth implements Observer {
         this.canvas = canvas;
         tree = new Image("/tree.png");
         road = new Image("/tiles.png");
-        archer = new Image("/archer.png");
         bomb = new Image("/bomb.png");
+        archer = new Image("/archerClash.png");
+        canon = new Image("/canon.png");
     }
 
     @Override
@@ -47,11 +48,11 @@ public class ViewLabyrinth implements Observer {
                         gc.setFill(Color.GREY);
                         gc.fillOval(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
                          */
-                        gc.drawImage(archer, j * tailleCase, i * tailleCase, tailleCase, tailleCase); //a chnager
+                        gc.drawImage(canon, j * tailleCase, i * tailleCase, tailleCase, tailleCase); //a chnager
                         break;
                     case ModeleLabyrinth.BOMB:
                         gc.drawImage(road, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        gc.drawImage(bomb, j * tailleCase-3, i * tailleCase-5, tailleCase+5, tailleCase+5);
+                        gc.drawImage(bomb, j * tailleCase+5, i * tailleCase+5, tailleCase-10, tailleCase-10);
                         break;
                     case ModeleLabyrinth.START:
                         gc.setFill(Color.GREEN);
@@ -67,6 +68,10 @@ public class ViewLabyrinth implements Observer {
                     case ModeleLabyrinth.TREE:
                         gc.drawImage(tree, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
                         break;
+                    case ModeleLabyrinth.ARCHER:
+                        gc.drawImage(tree, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
+                        gc.drawImage(archer, j * tailleCase-12, i * tailleCase-12, tailleCase+25, tailleCase+25);
+                        break;
                     default:
                         break;
                 }
@@ -76,6 +81,8 @@ public class ViewLabyrinth implements Observer {
         //dessiner les ennemis
         for (int i = 0; i < laby.enemies.size(); i++) {
             Ennemy ennemy = laby.enemies.get(i);
+            //Image sprite = new Image("/giant1.png");
+            //gc.drawImage(sprite, ennemy.getX() * tailleCase, ennemy.getY() * tailleCase, tailleCase, tailleCase);
 
             gc.setFill(Color.RED);
             gc.fillOval(ennemy.getX() * tailleCase, ennemy.getY() * tailleCase, tailleCase/3, tailleCase/3);

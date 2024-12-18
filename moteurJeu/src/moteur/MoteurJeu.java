@@ -1,5 +1,5 @@
 package moteur;
-
+//squelette adapté et modifié du moteur de Zeldiablo inspiré de :
 //https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 
 import javafx.animation.AnimationTimer;

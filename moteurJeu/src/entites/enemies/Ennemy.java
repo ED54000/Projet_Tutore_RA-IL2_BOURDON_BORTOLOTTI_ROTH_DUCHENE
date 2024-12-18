@@ -2,6 +2,7 @@ package entites.enemies;
 
 import entites.Entity;
 import entites.defenses.Defense;
+import javafx.scene.image.Image;
 
 public abstract class Ennemy extends Entity {
 
@@ -16,6 +17,7 @@ public abstract class Ennemy extends Entity {
     private boolean isArrived;
     private int survivalTime;
     private String name;
+    //private String sprite;
 
     public Ennemy(double x, double y, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name) {
         super(x, y, damages, range);
@@ -29,6 +31,7 @@ public abstract class Ennemy extends Entity {
         this.behavior = "Normal";
 
         this.name = name;
+        //this.sprite = sprite;
         timeSpawn++;
     }
 
@@ -127,5 +130,11 @@ public abstract class Ennemy extends Entity {
     public void setArrived(boolean res) {
         this.isArrived = res;
     }
+    /*
+    public String getImage() {
+        return sprite;
+    }
+
+     */
 }
 

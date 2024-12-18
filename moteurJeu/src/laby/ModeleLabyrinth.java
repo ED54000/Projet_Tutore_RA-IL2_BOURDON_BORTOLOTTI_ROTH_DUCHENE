@@ -1,9 +1,6 @@
 package laby;
 
-import entites.defenses.ActiveDefense;
-import entites.defenses.Bomb;
-import entites.defenses.Canon;
-import entites.defenses.Defense;
+import entites.defenses.*;
 import entites.enemies.Ennemy;
 import entites.enemies.Giant;
 import entites.enemies.Ninja;
@@ -23,6 +20,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public static final char ROAD = '.';
     public static final char TREE = '#';
     public static final char CANON = 'C';
+    public static final char ARCHER = 'A';
     public static final char BOMB = 'B';
 
     // Nombre d'ennemis qui doivent arriver à la fin pour gagner
@@ -107,6 +105,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         this.cases[numLigne][colonne] = BOMB;
                         this.defenses.add(new Bomb(colonne, numLigne));
                         break;
+                    case ARCHER:
+                        //ajouter un archer
+                        this.cases[numLigne][colonne] = ARCHER;
+                        this.defenses.add(new Archer(colonne, numLigne));
+                        break;
                 }
             }
             numLigne++;
@@ -118,7 +121,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private void createEnnemies(int nbEnnemies, int colonne, int numLigne) {
         for (int i = 0; i < nbEnnemies; i++) {
            //crée un ennemi au hasard
-            int random = (int) (Math.random() * 2);
+            int random = (int) (Math.random() * 3);
             switch (random) {
                 case 0:
                     Giant giant = new Giant(colonne+Math.random(), numLigne+Math.random(), "Giant"+i);
