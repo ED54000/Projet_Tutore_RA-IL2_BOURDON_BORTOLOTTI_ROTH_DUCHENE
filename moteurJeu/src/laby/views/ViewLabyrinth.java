@@ -79,6 +79,7 @@ public class ViewLabyrinth implements Observer {
         }
 
         //dessiner les ennemis
+        System.out.println("Nombre d'ennemis : " + laby.enemies.size());
         for (int i = 0; i < laby.enemies.size(); i++) {
             Ennemy ennemy = laby.enemies.get(i);
             //Image sprite = new Image("/giant1.png");
