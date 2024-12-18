@@ -255,7 +255,6 @@ public class Astar {
         // Propager la pénalité depuis les tours
         while (!queue.isEmpty()) {
             Vector2D current = queue.poll();
-            System.out.println(current);
             for (int[] dir : directions) {
                 int newRow = (int) current.getX()  + dir[0];
                 int newCol = (int) current.getY() + dir[1];

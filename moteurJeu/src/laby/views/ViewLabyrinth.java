@@ -11,16 +11,19 @@ import laby.Subject;
 import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class ViewLabyrinth implements Observer {
+    static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
     static int tailleCase = 50;
-    private ModeleLabyrinth laby;
+    private static ModeleLabyrinth laby;
     private Canvas canvas;
     private Image tree, canon, archer, bomb, road, start, end;
 
     public ViewLabyrinth(ModeleLabyrinth laby, Canvas canvas) {
         this.laby = laby;
+        System.out.println(laby);
         this.canvas = canvas;
         tree = new Image("/tree.png");
         road = new Image("/tiles.png");
@@ -36,6 +39,9 @@ public class ViewLabyrinth implements Observer {
     }
 
     private void dessinerJeu(ModeleLabyrinth laby, Canvas canvas) {
+        //on définit la taille des cases selon la taille de l'écran
+        tailleCase = getTailleCase();
+
         // recupere un pinceau pour dessiner
         final GraphicsContext gc = canvas.getGraphicsContext2D();
         //netoyer le canvas
@@ -141,6 +147,14 @@ public class ViewLabyrinth implements Observer {
     }
 
     public static int getTailleCase(){
-        return tailleCase;
+        if ( laby.getLengthY() >= laby.getLength()){
+            return  (screenSize.width/7)*6/laby.getLengthY();
+        } else {
+            return screenSize.height/laby.getLength();
+        }
+    }
+
+    public static Dimension getScreenSize(){
+        return screenSize;
     }
 }

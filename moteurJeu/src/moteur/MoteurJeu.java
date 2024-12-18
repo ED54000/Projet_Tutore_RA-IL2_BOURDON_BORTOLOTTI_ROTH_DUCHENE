@@ -38,11 +38,6 @@ public class MoteurJeu extends Application {
     private static double FPS = 100;
     private static double dureeFPS = 1000 / (FPS + 1);
 
-    /**
-     * taille par defaut
-     */
-    private static double WIDTH;
-    private static double HEIGHT;
 
     /**
      * statistiques sur les frames
@@ -86,10 +81,6 @@ public class MoteurJeu extends Application {
         dureeFPS = 1000 / (FPS + 1);
     }
 
-    public static void setTaille(double width, double height) {
-        WIDTH = width;
-        HEIGHT = height;
-    }
 
     public static void setLaby(ModeleLabyrinth laby) {
         MoteurJeu.jeu = laby;
@@ -103,7 +94,10 @@ public class MoteurJeu extends Application {
      * creation de l'application avec juste un canvas et des statistiques
      */
     public void start(Stage primaryStage) throws IOException {
-
+        // création des vues
+        ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
+        //enregistrement des observateurs
+        laby.registerObserver(viewLabyrinth);
         // Crée une nouvelle fenêtre (Stage)
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Labyrinthe");
@@ -156,14 +150,11 @@ public class MoteurJeu extends Application {
             public void handle(MouseEvent MouseEvent) {
                 switch (labyrinthComboBox.getValue()) {
                     case "Petit":
-                        System.out.println("Petit");
-                        MoteurJeu.setTaille(1000, 550);
                         break;
                     case "Grand":
-                        MoteurJeu.setTaille(1200, 950);
                         break;
                     case "Large":
-                        MoteurJeu.setTaille(1700, 950);
+
                         break;
                 }
                 dialogStage.close();
@@ -191,6 +182,7 @@ public class MoteurJeu extends Application {
     }
 
     public void startJeu(Stage primaryStage) {
+        canvas.setWidth((ViewLabyrinth.getScreenSize().width/7.0)*6);
         canvas.widthProperty().bind(canvasContainer.widthProperty());
         canvas.heightProperty().bind(canvasContainer.heightProperty());
 
@@ -200,7 +192,7 @@ public class MoteurJeu extends Application {
         title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         VBox logs = new VBox();
-        logs.setPrefWidth(200);
+        logs.setPrefWidth(ViewLabyrinth.getScreenSize().width/7.0);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
         //logs.getChildren().add(new Label("Logs"));
@@ -223,8 +215,9 @@ public class MoteurJeu extends Application {
         root.setRight(ContainerLogs);
 
         // creation de la scene
-        final Scene scene = new Scene(root, WIDTH, HEIGHT);
+        final Scene scene = new Scene(root);
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
         primaryStage.show();
 
         // lance la boucle de jeu
