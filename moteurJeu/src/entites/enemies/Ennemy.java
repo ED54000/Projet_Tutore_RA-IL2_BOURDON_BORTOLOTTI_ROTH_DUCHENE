@@ -2,6 +2,8 @@ package entites.enemies;
 
 import entites.Entity;
 import entites.defenses.Defense;
+import steering_astar.Steering.Behavior;
+import steering_astar.Steering.Vector2D;
 
 public abstract class Ennemy extends Entity {
 
@@ -12,13 +14,15 @@ public abstract class Ennemy extends Entity {
     private String killerType;
     private double health;
     private static int timeSpawn = 0;
+    private Behavior behaviorPath;
     private String behavior;
     private boolean isArrived;
     private int survivalTime;
     private String name;
+    private Vector2D velocity;
 
-    public Ennemy(double x, double y, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name) {
-        super(x, y, damages, range);
+    public Ennemy(Vector2D position, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name) {
+        super(position, damages, range);
         this.speed = speed;
         this.attackSpeed = attackSpeed;
         this.distanceToArrival = distanceToArrival;
@@ -26,8 +30,9 @@ public abstract class Ennemy extends Entity {
         this.killerType = null;
         this.health = health;
         this.isArrived = false;
+        this.behaviorPath = null;
         this.behavior = "Normal";
-
+        this.velocity = new Vector2D(0, 0);
         this.name = name;
         timeSpawn++;
     }
@@ -42,10 +47,16 @@ public abstract class Ennemy extends Entity {
         }
     }
 
-    public void move(double secondes) {
-        //attendre une seconde
-        this.setX(this.getX() + this.speed);
-        this.distanceToArrival -= this.speed;
+    /***
+     * methode definissant la nouvelle position de l'agent grace a sa velocite, calculee selon le
+     * comportement de l'agent
+     */
+    public void update() {
+        if (behaviorPath != null) {
+            Vector2D steeringForce = behaviorPath.calculateForce(this);
+            velocity = velocity.add(steeringForce).normalize().scale(speed);
+            position = position.add(velocity);
+        }
     }
 
     public boolean isDead() {
@@ -54,10 +65,6 @@ public abstract class Ennemy extends Entity {
 
     public int getDistanceToArrival() {
         return distanceToArrival;
-    }
-
-    public String getBehavior() {
-        return behavior;
     }
 
     public boolean isItArrived() {
@@ -126,6 +133,20 @@ public abstract class Ennemy extends Entity {
 
     public void setArrived(boolean res) {
         this.isArrived = res;
+    }
+
+    public Vector2D getVelocity() { return velocity; }
+
+    public double getMaxSpeed() { return speed; }
+
+    public Behavior getBehaviorPath() { return behaviorPath; }
+
+    public void setBehaviorPath(Behavior behaviorPath) {
+        this.behaviorPath = behaviorPath;
+    }
+
+    public String getBehavior() {
+        return behavior;
     }
 }
 

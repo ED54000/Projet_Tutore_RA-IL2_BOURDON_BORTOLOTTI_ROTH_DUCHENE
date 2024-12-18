@@ -1,10 +1,11 @@
 package entites.enemies;
 
 import entites.defenses.Defense;
+import steering_astar.Steering.Vector2D;
 
 public class Ninja extends Ennemy{
 
-    public Ninja(double x, double y, String name) {
-        super(x, y, 50, 0.05, 30, 2, 1.5, Integer.MAX_VALUE, name);
+    public Ninja(Vector2D position, String name) {
+        super(position, 80, 4, 50, 1.5, 0.15, 1, name);
     }
 }

@@ -220,7 +220,7 @@ public class MoteurJeu extends Application {
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);
         //ajout des logs
-        root.setRight(logs);
+        root.setRight(ContainerLogs);
 
         // creation de la scene
         final Scene scene = new Scene(root, WIDTH, HEIGHT);

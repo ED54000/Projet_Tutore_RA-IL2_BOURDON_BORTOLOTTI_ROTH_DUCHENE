@@ -21,7 +21,7 @@ public class ViewLogs implements Observer {
 
     @Override
     public void update(Subject s) {
-        System.out.println(this.logs.getChildren());
+       // System.out.println(this.logs.getChildren());
         if (laby.getLogs()!=""){
             Label label = new Label(laby.getLogs());
             logs.getChildren().add(label);

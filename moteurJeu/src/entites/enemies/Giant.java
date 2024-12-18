@@ -1,8 +1,10 @@
 package entites.enemies;
 
+import steering_astar.Steering.Vector2D;
+
 public class Giant extends Ennemy {
 
-    public Giant(double x, double y, String name) {
-        super(x, y, 150, 0.025, 10, 1, 1, 10, name);
+    public Giant(Vector2D position, String name) {
+        super(position, 200, 2, 100, 0.5, 0.5, 1, name);
     }
 }
