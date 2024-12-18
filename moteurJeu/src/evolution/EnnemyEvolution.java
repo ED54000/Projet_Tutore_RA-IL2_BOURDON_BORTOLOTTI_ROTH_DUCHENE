@@ -206,7 +206,7 @@ public class EnnemyEvolution {
      * Affecte les statistiques moyennes des meilleurs ennemis aux ennemis morts
      * @param ennemies la liste complète des ennemis
      */
-    public static void affectStatsToDeadEnnemies(List<Ennemy> ennemies) {
+    public static List<Ennemy> affectStatsToDeadEnnemies(List<Ennemy> ennemies) {
         // On récupère les ennemis morts
         ArrayList<Ennemy> deadEnnemies = getDeadEnnemies(ennemies);
         // On récupère les statistiques moyennes
@@ -257,13 +257,14 @@ public class EnnemyEvolution {
                     break;
             }
         }
+        return ennemies;
     }
 
     /**
      * Ajoute des statistiques aléatoires aux ennemis (mutation)
      * @param ennemies la liste complète des ennemis
      */
-    public static void addRandomStats(List<Ennemy> ennemies) {
+    public static List<Ennemy> addRandomStats(List<Ennemy> ennemies) {
         // Pour chaque ennemi
         for(Ennemy e: ennemies) {
             // Si l'ennemi n'a pas atteint la fin
@@ -282,6 +283,7 @@ public class EnnemyEvolution {
                 e.setRange(e.getRange() + (-1 + (Math.random() * (1 - (-1)))));
             }
         }
+        return ennemies;
     }
 
     /**
@@ -304,11 +306,11 @@ public class EnnemyEvolution {
     }
 
 
-    public static void evoluer(List<Ennemy> ennemies){
+    public static List<Ennemy> evoluer(List<Ennemy> ennemies){
         // On affecte les statistiques moyennes des meilleurs ennemis aux ennemis morts (pour chaque comportement)
-        affectStatsToDeadEnnemies(ennemies);
+        ennemies = affectStatsToDeadEnnemies(ennemies);
         // On ajoute des statistiques aléatoires aux ennemis (mutation)
-        addRandomStats(ennemies);
+        return addRandomStats(ennemies);
     }
 }
 
