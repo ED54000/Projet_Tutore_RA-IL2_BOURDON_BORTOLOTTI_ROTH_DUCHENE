@@ -75,10 +75,10 @@ public class ViewLabyrinth implements Observer {
             double range = defense.getRange() * getTailleCase();
 
             gc.setFill(Color.color(0.0, 0.0, 0.0, 0.17));
-            gc.fillOval(x - range + (getTailleCase() / 2.0), y - range + getTailleCase() / 2, 2 * range, 2 * range);
+            gc.fillOval(x - range + (getTailleCase() / 2.0), y - range + getTailleCase() / 2.0, 2 * range, 2 * range);
 
             gc.setStroke(Color.BLACK);
-            gc.strokeOval(x - range + (getTailleCase() / 2), y - range + getTailleCase() / 2, 2 * range, 2 * range);
+            gc.strokeOval(x - range + (getTailleCase() / 2.0), y - range + getTailleCase() / 2.0, 2 * range, 2 * range);
         });
     }
 
@@ -113,23 +113,32 @@ public class ViewLabyrinth implements Observer {
 
     private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor, Color agentColor) {
         gc.setFill(pathColor);
+        //variables et constantes
         double radius = Behavior.getTargetRadius();
+        double ennemiSize = 20;
+        double waypointsSize = 10;
+        double velocityPointSize = 10;
+        double halfCase = getTailleCase()/2.0;
+        double velocityPointMultiplier = 10.0;
 
+        //points de passage
         for (Vector2D point : checkpoint) {
-            gc.fillOval(point.getX() + 20, point.getY() + 20, 10, 10);
-            gc.strokeOval(point.getX() - radius / 2 + 25, point.getY() - radius / 2 + 25, radius, radius);
+            gc.fillOval(point.getX() + halfCase, point.getY() + halfCase, waypointsSize, waypointsSize);
+            gc.strokeOval(point.getX(), point.getY(), radius, radius);
         }
 
+        //ennemi
         Vector2D position = ennemi.getPosition();
         gc.setFill(agentColor);
-        gc.fillOval(position.getX() + 10, position.getY() + 10, 20, 20);
+        gc.fillOval(position.getX() + halfCase, position.getY() + halfCase, ennemiSize, ennemiSize);
 
+        //velocité ennemi
         gc.setFill(Color.RED);
         gc.setStroke(Color.RED);
-        double xCoord = position.getX() + ennemi.getVelocity().getX() * 20;
-        double yCoord = position.getY() + ennemi.getVelocity().getY() * 20;
-        gc.strokeLine(position.getX() + 20, position.getY() + 20, xCoord, yCoord);
-        gc.fillOval(xCoord - 5, yCoord - 5, 10, 10);
+        double xCoord = position.getX() + ennemi.getVelocity().getX() * velocityPointMultiplier;
+        double yCoord = position.getY() + ennemi.getVelocity().getY() * velocityPointMultiplier;
+        gc.strokeLine(position.getX() + halfCase + ennemiSize/2, position.getY() + halfCase + ennemiSize/2, xCoord, yCoord);
+        gc.fillOval(xCoord , yCoord, velocityPointSize, velocityPointSize);
     }
 
     public static int getTailleCase(){
