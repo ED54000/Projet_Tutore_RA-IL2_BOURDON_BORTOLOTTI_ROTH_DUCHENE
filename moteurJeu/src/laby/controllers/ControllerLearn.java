@@ -25,13 +25,12 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         parentVBox.getChildren().clear();
 
         //TODO : faire l'apprentissage
-        laby.enemies.add(new Giant(new Vector2D(10, 10), "NewGiant"));
+        laby.enemies.add(new Giant(new Vector2D(laby.getXstart(), laby.getYstart()), "NewGiant"));
         //laby.setIterator(laby.enemies);
         //laby.setLogs("Learned");
 
         parentVBox.getChildren().add(new Label("Learned"));
         laby.enemies.add(new Giant(new Vector2D(10, 10), "NewGiant"));
-        laby.setLogs("Learned");
 
         Button nextManche = new Button("Next Manche");
         nextManche.setOnMouseClicked(new ControllerNextManche(laby));

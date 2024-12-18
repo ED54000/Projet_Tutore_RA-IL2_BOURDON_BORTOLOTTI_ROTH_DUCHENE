@@ -12,21 +12,25 @@ import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ViewLabyrinth implements Observer {
-    static int tailleCase = 50;
-    private ModeleLabyrinth laby;
-    private Canvas canvas;
-    private Image tree, canon, archer, bomb, road, start, end;
+    private static final int TAILLE_CASE = 50;
+    private final ModeleLabyrinth laby;
+    private final Canvas canvas;
+    private final Map<Character, Image> images = new HashMap<>();
 
     public ViewLabyrinth(ModeleLabyrinth laby, Canvas canvas) {
         this.laby = laby;
         this.canvas = canvas;
-        tree = new Image("/tree4.png");
-        road = new Image("/tiles4.png");
-        bomb = new Image("/bomb.png");
-        archer = new Image("/archerClash.png");
-        canon = new Image("/canon.png");
+
+        // Chargement des images
+        images.put(ModeleLabyrinth.TREE, new Image("/tree4.png"));
+        images.put(ModeleLabyrinth.ROAD, new Image("/tiles4.png"));
+        images.put(ModeleLabyrinth.BOMB, new Image("/bomb.png"));
+        images.put(ModeleLabyrinth.ARCHER, new Image("/archerClash.png"));
+        images.put(ModeleLabyrinth.CANON, new Image("/canon.png"));
     }
 
     @Override
@@ -36,97 +40,78 @@ public class ViewLabyrinth implements Observer {
     }
 
     private void dessinerJeu(ModeleLabyrinth laby, Canvas canvas) {
-        // recupere un pinceau pour dessiner
         final GraphicsContext gc = canvas.getGraphicsContext2D();
-        //netoyer le canvas
+
+        // Nettoyage du canvas
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
+        // Dessin du labyrinthe
         for (int i = 0; i < laby.getLength(); i++) {
             for (int j = 0; j < laby.getLengthY(); j++) {
-                switch (laby.getCase(i, j)) {
-                    case ModeleLabyrinth.CANON:
-                        /*
-                        gc.setFill(Color.CORAL);
-                        gc.fillRect(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        gc.setFill(Color.GREY);
-                        gc.fillOval(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                         */
-                        gc.drawImage(canon, j * tailleCase, i * tailleCase, tailleCase, tailleCase); //a chnager
-                        break;
-                    case ModeleLabyrinth.BOMB:
-                        gc.drawImage(road, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        gc.drawImage(bomb, j * tailleCase+5, i * tailleCase+5, tailleCase-10, tailleCase-10);
-                        break;
-                    case ModeleLabyrinth.START:
-                        gc.setFill(Color.GREEN);
-                        gc.fillRect(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        break;
-                    case ModeleLabyrinth.END:
-                        gc.setFill(Color.RED);
-                        gc.fillRect(j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        break;
-                    case ModeleLabyrinth.ROAD:
-                        gc.drawImage(road, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        break;
-                    case ModeleLabyrinth.TREE:
-                        gc.drawImage(tree, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        break;
-                    case ModeleLabyrinth.ARCHER:
-                        gc.drawImage(tree, j * tailleCase, i * tailleCase, tailleCase, tailleCase);
-                        gc.drawImage(archer, j * tailleCase-12, i * tailleCase-12, tailleCase+25, tailleCase+25);
-                        break;
-                    default:
-                        break;
-                }
+                dessinerCase(gc, laby.getCase(i, j), i, j);
             }
         }
 
-        //dessiner les ennemis
-        System.out.println("Nombre d'ennemis : " + laby.enemies.size());
-        Color colorPath = Color.rgb((15), (175), (252));
-        for (int i = 0; i < laby.enemies.size(); i++) {
+        // Dessin des ennemis
+        Color colorPath = Color.rgb(15, 175, 252);
+        for (Ennemy ennemi : laby.enemies) {
             for (String behaviour : laby.getBehaviours()) {
-                renderEnnemi(gc, laby.enemies.get(i), laby.getBehavioursMap().get(behaviour), colorPath, Color.RED);
+                renderEnnemi(gc, ennemi, laby.getBehavioursMap().get(behaviour), colorPath, Color.RED);
             }
         }
 
-        //dessiner la range des defenses
-        for (int i = 0; i < laby.defenses.size(); i++) {
-            double x = laby.defenses.get(i).getPosition().getX() * tailleCase;
-            double y = laby.defenses.get(i).getPosition().getY() * tailleCase;
-            double range = laby.defenses.get(i).getRange() * tailleCase;
+        // Dessin des portées des défenses
+        laby.defenses.forEach(defense -> {
+            double x = defense.getPosition().getX() * TAILLE_CASE;
+            double y = defense.getPosition().getY() * TAILLE_CASE;
+            double range = defense.getRange() * TAILLE_CASE;
 
             gc.setFill(Color.color(0.0, 0.0, 0.0, 0.17));
-            gc.fillOval(x - range + (tailleCase/2), y - range + tailleCase/2, 2 * range, 2 * range);
+            gc.fillOval(x - range + (TAILLE_CASE / 2), y - range + TAILLE_CASE / 2, 2 * range, 2 * range);
 
-            // Dessiner le contour
             gc.setStroke(Color.BLACK);
-            gc.strokeOval(x - range + (tailleCase/2), y - range + tailleCase/2, 2 * range, 2 * range);
-        }
+            gc.strokeOval(x - range + (TAILLE_CASE / 2), y - range + TAILLE_CASE / 2, 2 * range, 2 * range);
+        });
+    }
 
+    private void dessinerCase(GraphicsContext gc, char caseType, int i, int j) {
+        int x = j * TAILLE_CASE;
+        int y = i * TAILLE_CASE;
 
-
-
-        /*if (jeu.etreFini()) {
-            if (laby.getPj().getPv() == 0) {
-                gameover(canvas, laby);
-            } else {
-                win(canvas, laby);
+        switch (caseType) {
+            case ModeleLabyrinth.CANON -> gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, TAILLE_CASE, TAILLE_CASE);
+            case ModeleLabyrinth.BOMB -> {
+                gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, TAILLE_CASE, TAILLE_CASE);
+                gc.drawImage(images.get(ModeleLabyrinth.BOMB), x + 5, y + 5, TAILLE_CASE - 10, TAILLE_CASE - 10);
+            }
+            case ModeleLabyrinth.START -> {
+                gc.setFill(Color.GREEN);
+                gc.fillRect(x, y, TAILLE_CASE, TAILLE_CASE);
+            }
+            case ModeleLabyrinth.END -> {
+                gc.setFill(Color.RED);
+                gc.fillRect(x, y, TAILLE_CASE, TAILLE_CASE);
+            }
+            case ModeleLabyrinth.ROAD -> gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, TAILLE_CASE, TAILLE_CASE);
+            case ModeleLabyrinth.TREE -> gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, TAILLE_CASE, TAILLE_CASE);
+            case ModeleLabyrinth.ARCHER -> {
+                gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, TAILLE_CASE, TAILLE_CASE);
+                gc.drawImage(images.get(ModeleLabyrinth.ARCHER), x - 12, y - 12, TAILLE_CASE + 25, TAILLE_CASE + 25);
+            }
+            default -> {
             }
         }
-         */
     }
-    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor, Color agentColor) {
 
+    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor, Color agentColor) {
         gc.setFill(pathColor);
         double radius = Behavior.getTargetRadius();
-        for (Vector2D point : checkpoint){
-            gc.fillOval(point.getX() + 20, point.getY() + 20, 10, 10);
-            gc.strokeOval(point.getX() - radius/2 + 25, point.getY() - radius/2 + 25, radius, radius);
-        }
 
-//        gc.fillOval(n.getX() + 20, n.getY() + 20, 10, 10)
+        for (Vector2D point : checkpoint) {
+            gc.fillOval(point.getX() + 20, point.getY() + 20, 10, 10);
+            gc.strokeOval(point.getX() - radius / 2 + 25, point.getY() - radius / 2 + 25, radius, radius);
+        }
 
         Vector2D position = ennemi.getPosition();
         gc.setFill(agentColor);
@@ -138,10 +123,10 @@ public class ViewLabyrinth implements Observer {
         double yCoord = position.getY() + ennemi.getVelocity().getY() * 20;
         gc.strokeLine(position.getX() + 20, position.getY() + 20, xCoord, yCoord);
         gc.fillOval(xCoord - 5, yCoord - 5, 10, 10);
-
     }
 
-    public static int getTailleCase(){
-        return tailleCase;
+    public static int getTailleCase() {
+        return TAILLE_CASE;
     }
 }
+
