@@ -1,18 +1,16 @@
 package entites;
 
-import java.util.Random;
+import steering_astar.Steering.Vector2D;
 
 public abstract class Entity {
 
-    private double x;
-    private double y;
+    protected Vector2D position;
     private String type;
     private double damages;
     private double range;
 
-    public Entity(double x, double y, double damages, double range) {
-        this.x = x;
-        this.y = y;
+    public Entity(Vector2D position, double damages, double range) {
+        this.position = position;
         this.damages = damages;
         this.range = range;
 
@@ -74,20 +72,16 @@ public abstract class Entity {
         return type;
     }
 
-    public double getX() {
-        return x;
+    public Vector2D getPosition() {
+        return position;
     }
 
-    public double getY() {
-        return y;
+    public void setPosition(Vector2D position) {
+        this.position = position;
     }
 
     public double getDamages() {
         return damages;
-    }
-
-    public void setX(double x) {
-        this.x = x;
     }
 
     public double getRange() {

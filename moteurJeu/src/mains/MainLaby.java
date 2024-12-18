@@ -4,10 +4,9 @@ import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
 
-import java.io.IOException;
 
 public class MainLaby {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)  {
         double width = 1500;
         double height = 1000;
         int pFPS = 100;

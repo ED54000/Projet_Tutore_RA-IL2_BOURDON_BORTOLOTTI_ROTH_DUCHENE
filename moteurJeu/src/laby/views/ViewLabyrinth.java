@@ -8,6 +8,9 @@ import javafx.scene.paint.Color;
 import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
+import steering_astar.Steering.Vector2D;
+
+import java.util.ArrayList;
 
 public class ViewLabyrinth implements Observer {
     static int tailleCase = 50;
@@ -79,20 +82,18 @@ public class ViewLabyrinth implements Observer {
         }
 
         //dessiner les ennemis
-        System.out.println("Nombre d'ennemis : " + laby.enemies.size());
+        //System.out.println("Nombre d'ennemis : " + laby.enemies.size());
+        Color colorPath = Color.rgb((15), (175), (252));
         for (int i = 0; i < laby.enemies.size(); i++) {
-            Ennemy ennemy = laby.enemies.get(i);
-            //Image sprite = new Image("/giant1.png");
-            //gc.drawImage(sprite, ennemy.getX() * tailleCase, ennemy.getY() * tailleCase, tailleCase, tailleCase);
-
-            gc.setFill(Color.RED);
-            gc.fillOval(ennemy.getX() * tailleCase, ennemy.getY() * tailleCase, tailleCase/3, tailleCase/3);
+            for (String behaviour : laby.getBehaviours()) {
+                renderEnnemi(gc, laby.enemies.get(i), laby.getBehavioursMap().get(behaviour), colorPath, Color.RED);
+            }
         }
 
         //dessiner la range des defenses
         for (int i = 0; i < laby.defenses.size(); i++) {
-            double x = laby.defenses.get(i).getX() * tailleCase;
-            double y = laby.defenses.get(i).getY() * tailleCase;
+            double x = laby.defenses.get(i).getPosition().getX() * tailleCase;
+            double y = laby.defenses.get(i).getPosition().getY() * tailleCase;
             double range = laby.defenses.get(i).getRange() * tailleCase;
 
             gc.setFill(Color.color(0.0, 0.0, 0.0, 0.17));
@@ -114,5 +115,28 @@ public class ViewLabyrinth implements Observer {
             }
         }
          */
+    }
+    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor, Color agentColor) {
+
+        gc.setFill(pathColor);
+        checkpoint.forEach((n) ->
+                gc.fillOval(n.getX() + 20, n.getY() + 20, 10, 10)
+        );
+
+        Vector2D position = ennemi.getPosition();
+        gc.setFill(agentColor);
+        gc.fillOval(position.getX() + 10, position.getY() + 10, 20, 20);
+
+        gc.setFill(Color.RED);
+        gc.setStroke(Color.RED);
+        double xCoord = position.getX() + ennemi.getVelocity().getX() * 20;
+        double yCoord = position.getY() + ennemi.getVelocity().getY() * 20;
+        gc.strokeLine(position.getX() + 20, position.getY() + 20, xCoord, yCoord);
+        gc.fillOval(xCoord - 5, yCoord - 5, 10, 10);
+
+    }
+
+    public static int getTailleCase(){
+        return tailleCase;
     }
 }
