@@ -92,13 +92,13 @@ public class Main extends Application {
         ArrayList<Vector2D> listBezier3 = BezierCurveFromAStarPoints.getBezierCurve(checkpoints3);
 
         // BEHAVIORS
-        behavior = new PathfollowingBehavior(listBezier);
-        behavior2 = new PathfollowingBehavior(listBezier2);
-        behavior3 = new PathfollowingBehavior(listBezier3);
+        behavior = new PathfollowingBehavior(checkpoints);
+        behavior2 = new PathfollowingBehavior(checkpoints2);
+        behavior3 = new PathfollowingBehavior(checkpoints3);
 
         // AGENTS
         agents = new ArrayList<>();
-        agents.add(new Agent(checkpoints.getFirst(), 3));
+        agents.add(new Agent(checkpoints.getFirst(), 2));
         agents.add(new Agent(checkpoints.getFirst(), 2));
         agents.add(new Agent(checkpoints.getFirst(), 1));
 
@@ -154,19 +154,21 @@ public class Main extends Application {
     private void renderAgent(GraphicsContext gc, Agent agent, ArrayList<Vector2D> checkpoint, Color pathColor, Color agentColor) {
 
         gc.setFill(pathColor);
-        checkpoint.forEach((n) ->
-                gc.fillOval(n.x - 10, n.y - 10, 20, 20)
-        );
+        double radius = Behavior.getTargetRadius();
+        for (Vector2D point : checkpoint){
+            gc.fillOval(point.getX() - 10, point.getY() - 10, 20, 20);
+            gc.strokeOval(point.getX() - radius/2, point.getY() - radius/2, radius, radius);
+        }
 
         Vector2D position = agent.getPosition();
         gc.setFill(agentColor);
-        gc.fillOval(position.x - 10, position.y - 10, 20, 20);
+        gc.fillOval(position.getX() - 10, position.getY() - 10, 20, 20);
 
         gc.setFill(Color.RED);
         gc.setStroke(Color.RED);
-        double xCoord = position.x + agent.getVelocity().x*20;
-        double yCoord = position.y + agent.getVelocity().y*20;
-        gc.strokeLine(position.x, position.y, xCoord, yCoord);
+        double xCoord = position.getX() + agent.getVelocity().getX()*20;
+        double yCoord = position.getY() + agent.getVelocity().getY()*20;
+        gc.strokeLine(position.getX(), position.getY(), xCoord, yCoord);
         gc.fillOval(xCoord -5, yCoord -5, 10, 10);
 
     }

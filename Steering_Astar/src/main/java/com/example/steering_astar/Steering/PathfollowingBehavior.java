@@ -34,7 +34,7 @@ public class PathfollowingBehavior extends Behavior {
     public Vector2D calculateForce(Agent agent) {
         SeekBehavior seek = new SeekBehavior(currentCheckpoint);
         Vector2D res = seek.calculateForce(agent);
-        if (agent.getPosition().distanceTo(currentCheckpoint) < 10) {
+        if (agent.getPosition().distanceTo(currentCheckpoint) < Behavior.getTargetRadius()) {
             if (currentCheckpointIndex != checkpoints.size()-1) {
                 currentCheckpointIndex++;
             }
