@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
+import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
@@ -24,13 +25,20 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
         parentVBox.getChildren().clear();
 
+
         //TODO : faire l'apprentissage
-        laby.enemies.add(new Giant(new Vector2D(laby.getXstart(), laby.getYstart()), "NewGiant"));
+        laby.createBehaviours();
+        Giant giant = new Giant(new Vector2D(laby.getXstart(), laby.getYstart()), "NewGiant");
+        System.out.println(new PathfollowingBehavior(laby.getBehavioursMap().get(laby.getBehaviours().get(0))));
+        giant.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(laby.getBehaviours().get(0))));
+
         //laby.setIterator(laby.enemies);
         //laby.setLogs("Learned");
 
+
+
         parentVBox.getChildren().add(new Label("Learned"));
-        laby.enemies.add(new Giant(new Vector2D(10, 10), "NewGiant"));
+        laby.enemies.add(giant);
 
         Button nextManche = new Button("Next Manche");
         nextManche.setOnMouseClicked(new ControllerNextManche(laby));

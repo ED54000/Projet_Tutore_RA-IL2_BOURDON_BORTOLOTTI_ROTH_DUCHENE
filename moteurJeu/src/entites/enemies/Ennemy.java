@@ -55,6 +55,7 @@ public abstract class Ennemy extends Entity {
      * comportement de l'agent
      */
     public void update() {
+        //System.out.println(behaviorPath);
         if (behaviorPath != null) {
             Vector2D steeringForce = behaviorPath.calculateForce(this);
             velocity = velocity.add(steeringForce).normalize().scale(speed);

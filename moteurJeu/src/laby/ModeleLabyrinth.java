@@ -35,6 +35,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Ennemy> deadEnemies = new ArrayList<>();
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
 
+    //private ArrayList<Vector2D> aStarNormal, aStarFugitive, aStarKamikaze;
+
     //labyrinthe
     private char[][] cases;
     private int Xstart, Ystart, XArrival, YArrival;
@@ -134,7 +136,56 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void createEnnemies(int nbEnnemies) {
         //Astar astar = new Astar();
+        createBehaviours();
 
+        int nbGiant = 0;
+        int nbNinja = 0;
+        int nbBerserker = 0;
+        int nbDruides = 0;
+
+        for (int i = 0; i < nbEnnemies; i++) {
+            //crée un ennemi au hasard
+            int random = (int) (Math.random() * 4);
+            switch (random) {
+                case 0:
+                    Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant " + (nbGiant+1));
+                    giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+                    this.enemies.add(giant);
+                    nbGiant++;
+                    break;
+                case 1:
+                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja " + (nbNinja+1));
+                    ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
+                    this.enemies.add(ninja);
+                    nbNinja++;
+                    break;
+                case 2:
+                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker " + (nbBerserker+1));
+                    berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
+                    this.enemies.add(berserker);
+                    nbBerserker++;
+                    break;
+                case 3:
+                    nbDruides++;
+                    break;
+            }
+        }
+        for (int i = 0; i < nbDruides; i++) {
+            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i+1));
+            ArrayList<Vector2D> aStarHealer = null;
+            if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
+                aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(0));
+            } else if (nbNinja > nbGiant && nbNinja >= nbBerserker) {
+                aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(1));
+            } else if (nbBerserker > nbGiant && nbBerserker > nbNinja) {
+                aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(2));
+            }
+            druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
+            this.enemies.add(druide);
+        }
+    }
+
+    public void createBehaviours() {
         ArrayList<Vector2D> aStarNormal =
                 astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
@@ -150,51 +201,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2));
         BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
-        int nbGiant = 0;
-        int nbNinja = 0;
-        int nbBerserker = 0;
-        int nbDruides = 0;
-
-        for (int i = 0; i < nbEnnemies; i++) {
-            //crée un ennemi au hasard
-            int random = (int) (Math.random() * 4);
-            switch (random) {
-                case 0:
-                    Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant " + (nbGiant+1));
-                    giant.setBehaviorPath(new PathfollowingBehavior(aStarNormal));
-                    this.enemies.add(giant);
-                    nbGiant++;
-                    break;
-                case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja " + (nbNinja+1));
-                    ninja.setBehaviorPath(new PathfollowingBehavior(aStarFugitive));
-                    this.enemies.add(ninja);
-                    nbNinja++;
-                    break;
-                case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker " + (nbBerserker+1));
-                    berserker.setBehaviorPath(new PathfollowingBehavior(aStarKamikaze));
-                    this.enemies.add(berserker);
-                    nbBerserker++;
-                    break;
-                case 3:
-                    nbDruides++;
-                    break;
-            }
-        }
-        for (int i = 0; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i+1));
-            ArrayList<Vector2D> aStarHealer = null;
-            if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
-                aStarHealer = aStarNormal;
-            } else if (nbNinja > nbGiant && nbNinja >= nbBerserker) {
-                aStarHealer = aStarFugitive;
-            } else if (nbBerserker > nbGiant && nbBerserker > nbNinja) {
-                aStarHealer = aStarKamikaze;
-            }
-            druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
-            this.enemies.add(druide);
-        }
     }
 
 
