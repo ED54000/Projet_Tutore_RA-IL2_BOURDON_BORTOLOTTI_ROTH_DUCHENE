@@ -128,20 +128,20 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private void createEnnemies(int nbEnnemies) {
         //Astar astar = new Astar();
 
-        ArrayList<Vector2D> aStarNormal = BezierCurveFromAStarPoints.getBezierCurve(
+        ArrayList<Vector2D> aStarNormal =
                 astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0)));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0));
         BehavioursMap.put(BEHAVIOURS.get(0), aStarNormal);
-        ArrayList<Vector2D> aStarFugitive = BezierCurveFromAStarPoints.getBezierCurve(
+        ArrayList<Vector2D> aStarFugitive =
                 astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1)));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1));
         BehavioursMap.put(BEHAVIOURS.get(1), aStarFugitive);
-        ArrayList<Vector2D> aStarKamikaze = BezierCurveFromAStarPoints.getBezierCurve(
+        ArrayList<Vector2D> aStarKamikaze =
                 astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2)));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2));
         BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
         int nbGiant = 0;
         int nbNinja = 0;
