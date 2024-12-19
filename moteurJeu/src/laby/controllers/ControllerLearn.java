@@ -27,6 +27,10 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
 
         //TODO : faire l'apprentissage
+
+
+
+
         laby.createBehaviours();
         Giant giant = new Giant(new Vector2D(laby.getXstart(), laby.getYstart()), "NewGiant");
         System.out.println(new PathfollowingBehavior(laby.getBehavioursMap().get(laby.getBehaviours().get(0))));

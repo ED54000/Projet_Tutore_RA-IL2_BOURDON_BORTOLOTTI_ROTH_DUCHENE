@@ -29,8 +29,8 @@ public class ViewLabyrinth implements Observer {
         this.canvas = canvas;
 
         // Chargement des images
-        images.put(ModeleLabyrinth.TREE, new Image("/tree4.png"));
-        images.put(ModeleLabyrinth.ROAD, new Image("/tiles4.png"));
+        images.put(ModeleLabyrinth.TREE, new Image("/tree3.png"));
+        images.put(ModeleLabyrinth.ROAD, new Image("/tiles3.png"));
         images.put(ModeleLabyrinth.BOMB, new Image("/bomb.png"));
         images.put(ModeleLabyrinth.ARCHER, new Image("/archerClash.png"));
         images.put(ModeleLabyrinth.CANON, new Image("/canon.png"));

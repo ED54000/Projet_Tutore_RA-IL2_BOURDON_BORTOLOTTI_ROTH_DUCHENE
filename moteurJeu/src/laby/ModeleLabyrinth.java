@@ -24,6 +24,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public static final char BOMB = 'B';
     private final ArrayList<String> BEHAVIOURS = new ArrayList<>(Arrays.asList("Normal", "Fugitive", "Kamikaze" /*,"Healer"*/));
 
+    private int nbManches = 1;
+    private int limManches;
     // Nombre d'ennemis qui doivent arriver à la fin pour gagner
     public int nbEnnemiesToWin;
 
@@ -45,6 +47,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private int nbEnnemiesArrived;
 
     private boolean pause = false;
+    private boolean end = false;
     private Astar astar = new Astar();
 
     //constructeur vide
@@ -57,11 +60,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
      * Crée un labyrinthe à partir d'un fichier
      * @param fichier le fichier contenant le labyrinthe
      * @param nbEnnemies le nombre d'ennemis
-     * @param nbManches le nombre de manches
+     * @param limManches le nombre de manches
      * @param nbEnnemiesToWin le nombre d'ennemis à atteindre l'arrivée pour gagner
      * @throws IOException si le fichier n'existe pas
      */
-    public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches, int nbEnnemiesToWin) throws IOException {
+    public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin) throws IOException {
+        this.limManches = limManches;
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
@@ -208,11 +212,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     @Override
     public void update(double secondes) {
+        //Vérification de la fin du jeu
+        if (this.nbManches == this.limManches) {
+            setLogs("Fin du jeu");
+            this.end = true;
+            return;
+
+        }
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
             this.pause = true;
-            System.out.println("Manche terminée");
-            setLogs("Manche terminée");
+            setLogs("Manche "+nbManches+" terminée");
             deadEnemies.clear();
             //TODO : lancer la prochaine manche
         }
@@ -289,6 +299,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
                     if (this.nbEnnemiesArrived == this.nbEnnemiesToWin) { //changer par le bombre d'ennemies nécessaire pour perdre
                         setLogs("Ta perdu bouuh !");
+                        this.end = true;
                     }
                     enemiesToRemove.add(ennemy);
                     //enemies.remove(ennemy);
@@ -309,7 +320,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     @Override
     public boolean etreFini() {
-        return false;
+        return end;
     }
 
     @Override
@@ -401,6 +412,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public Map<String, ArrayList<Vector2D>> getBehavioursMap() {
         return BehavioursMap;
+    }
+
+    public int getNbManches() {
+        return nbManches;
+    }
+
+    public void setNbManches(int nbManches) {
+        this.nbManches = nbManches;
     }
 
 
