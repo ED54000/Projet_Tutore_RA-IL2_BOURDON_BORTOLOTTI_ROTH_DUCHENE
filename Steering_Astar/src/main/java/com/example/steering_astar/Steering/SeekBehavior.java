@@ -18,7 +18,7 @@ public class SeekBehavior extends Behavior {
     @Override
     public Vector2D calculateForce(Agent agent) {
         Vector2D desired = this.getTarget().subtract(agent.getPosition()).normalize().scale(agent.getMaxSpeed());
-        return desired.subtract(agent.getVelocity());
+        return desired.subtract(agent.getVelocity()).scale(ACCELERATION_DIVISER);
     }
 }
 
