@@ -181,6 +181,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     break;
             }
         }
+        getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
+    }
+
+    public void getNewHealerAStar(int nbDruides, int nbGiant, int nbBerserker, int nbNinja) {
         for (int i = 0; i < nbDruides; i++) {
             Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i + 1));
             ArrayList<Vector2D> aStarHealer = null;
