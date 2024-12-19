@@ -492,4 +492,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return ennemiesEndOfManche;
     }
 
+    /**
+     * Pour vider la liste des deadEnemies a chaque nouvelle manche
+     **/
+    public void clearDeadEnemies() {
+        this.deadEnemies.clear();
+    }
+
 }
