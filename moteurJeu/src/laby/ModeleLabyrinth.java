@@ -171,21 +171,21 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(new Vector2D(this.getXstart() + nbNinja*10, this.getYstart() + nbGiant*10), "Giant " + nbGiant);
+                    Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant " + nbGiant);
                     giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
                     giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + nbNinja*10, this.getYstart() + nbNinja*10), "Ninja " + nbNinja);
+                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja " + nbNinja);
                     ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
                     ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + nbBerserker*10, this.getYstart() + nbBerserker*10), "Berseker " + nbBerserker);
+                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker " + nbBerserker);
                     berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
                     berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
                     this.enemies.add(berserker);
@@ -197,7 +197,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
         for (int i = 1; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.getXstart(), this.getYstart() + nbDruides*10), "Druide " + i);
+            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + i);
             ArrayList<Vector2D> aStarHealer = null;
             if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
                 aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(0));

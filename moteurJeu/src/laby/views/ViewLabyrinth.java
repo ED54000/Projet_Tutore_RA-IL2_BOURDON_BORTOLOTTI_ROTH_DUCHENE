@@ -136,15 +136,14 @@ public class ViewLabyrinth implements Observer {
         double ennemiSize = 20;
         double waypointsSize = 10;
         double velocityPointSize = 10;
-        double halfCase = getTailleCase()/2.0;
         double velocityPointMultiplier = 20;
 
         //points de passage
         gc.setFill(pathColor);
         gc.setStroke(pathColor);
         for (Vector2D point : checkpoint){
-            gc.fillOval(point.getX() + halfCase, point.getY() + halfCase, waypointsSize, waypointsSize);
-            gc.strokeOval(point.getX(), point.getY(), radius, radius);
+            gc.fillOval(point.getX(), point.getY(), waypointsSize, waypointsSize);
+            gc.strokeOval(point.getX() - radius/2 + waypointsSize/2, point.getY() - radius/2 + waypointsSize/2, radius, radius);
         }
 
         //vélocité de l'ennemi
