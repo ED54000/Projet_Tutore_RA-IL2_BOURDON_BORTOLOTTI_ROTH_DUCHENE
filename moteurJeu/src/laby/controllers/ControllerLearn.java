@@ -26,8 +26,13 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             //clear les logs
             VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
             parentVBox.getChildren().clear();
+
             // On fait évoluer les ennemis
             laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
+
+            //on remet les valeurs par défaut
+            laby.RefreshEnnemyArrived();
+            laby.RefreshEnnemyEndOfManche();
 
             // On va compter le nombre d'ennemis pour chaque comportement
             int nbNinja = 0;
@@ -61,6 +66,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 } else {
                     e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
                 }
+                e.setArrived(false);
                 e.setPosition(new Vector2D(laby.getXstart(), laby.getYstart()));
             }
 

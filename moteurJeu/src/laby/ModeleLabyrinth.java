@@ -508,4 +508,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.deadEnemies.clear();
     }
 
+    public void RefreshEnnemyEndOfManche() {
+        this.ennemiesEndOfManche = new ArrayList<>();
+    }
+
+    public void RefreshEnnemyArrived() {
+        this.nbEnnemiesArrived = 0;
+    }
 }
