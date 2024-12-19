@@ -55,9 +55,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     /**
      * Crée un labyrinthe à partir d'un fichier
-     * @param fichier le fichier contenant le labyrinthe
-     * @param nbEnnemies le nombre d'ennemis
-     * @param nbManches le nombre de manches
+     *
+     * @param fichier         le fichier contenant le labyrinthe
+     * @param nbEnnemies      le nombre d'ennemis
+     * @param nbManches       le nombre de manches
      * @param nbEnnemiesToWin le nombre d'ennemis à atteindre l'arrivée pour gagner
      * @throws IOException si le fichier n'existe pas
      */
@@ -146,19 +147,19 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant " + (nbGiant+1));
+                    Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant " + (nbGiant + 1));
                     giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja " + (nbNinja+1));
+                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja " + (nbNinja + 1));
                     ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker " + (nbBerserker+1));
+                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker " + (nbBerserker + 1));
                     berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
                     this.enemies.add(berserker);
                     nbBerserker++;
@@ -169,7 +170,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
         for (int i = 0; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i+1));
+            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i + 1));
             ArrayList<Vector2D> aStarHealer = null;
             if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
                 aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(0));
@@ -204,6 +205,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     /**
      * Met à jour le modèle du jeu
+     *
      * @param secondes temps ecoule depuis la derniere mise a jour
      */
     @Override
@@ -223,7 +225,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si c'est une défense active
             if (defense instanceof entites.defenses.ActiveDefense) {
                 // Si la defense focus déja un ennemi
+
                 if (((ActiveDefense) defense).getTarget() != null) {
+
                     // On vérifie si l'ennemi est toujours dans la portée de la défense
                     if (defense.isInRange(((ActiveDefense) defense).getTarget())) {
                         // On l'attaque
@@ -363,6 +367,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     /**
      * Retourne l'ennemi le plus proche d'une défense
+     *
      * @param defense la défense à étudier
      * @return l'ennemi le plus proche
      */
@@ -370,7 +375,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Ennemy closerEnnemy = null;
         double minDistance = Double.MAX_VALUE;
         for (Ennemy ennemy : enemies) {
-            double distance = Math.sqrt(Math.pow(ennemy.getPosition().getX() - defense.getPosition().getX(), 2) - Math.pow(ennemy.getPosition().getY() - defense.getPosition().getY(), 2));
+            double ennemyX = ennemy.getPosition().getX() / ViewLabyrinth.getTailleCase();
+            double ennemyY = ennemy.getPosition().getY() / ViewLabyrinth.getTailleCase();
+            Vector2D defensePosition = defense.getPosition();
+            double distance = Math.sqrt(Math.pow(ennemyX - defensePosition.getX(), 2)
+                    - Math.pow(ennemyY - defensePosition.getY(), 2));
             if (distance < minDistance) {
                 minDistance = distance;
                 closerEnnemy = ennemy;
