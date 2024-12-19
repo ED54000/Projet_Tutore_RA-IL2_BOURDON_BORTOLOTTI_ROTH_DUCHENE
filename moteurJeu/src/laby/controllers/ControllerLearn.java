@@ -34,6 +34,9 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         System.out.println("Dégâts : "+laby.enemies.get(0).getDamages());
         System.out.println("Vitesse : "+laby.enemies.get(0).getSpeed());
         System.out.println("Type : "+laby.enemies.get(0).getType());
+        System.out.println("Distance a l'arrivée : "+laby.enemies.get(0).getDistanceToArrival());
+        System.out.println("Killer type : "+laby.enemies.get(0).getKillerType());
+        System.out.println("Behavior : "+laby.enemies.get(0).getBehavior());
         System.out.println("=====================================");
 
         /*

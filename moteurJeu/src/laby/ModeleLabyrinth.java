@@ -188,12 +188,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             this.enemies.add(druide);
         }
-        System.out.println(enemies.get(0)+ "Statistiques : ");
-        System.out.println("Vie : "+enemies.get(0).getHealth());
-        System.out.println("Dégâts : "+enemies.get(0).getDamages());
-        System.out.println("Vitesse : "+enemies.get(0).getSpeed());
-        System.out.println("Type : "+enemies.get(0).getType());
-        System.out.println("=====================================");
     }
 
     public void createBehaviours() {
@@ -234,6 +228,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
             this.ennemiesEndOfManche.addAll(enemies);
             this.ennemiesEndOfManche.addAll(deadEnemies);
+            System.out.println(ennemiesEndOfManche);
+
+            System.out.println(ennemiesEndOfManche.get(0)+ "Statistiques : ");
+            System.out.println("Vie : "+ennemiesEndOfManche.get(0).getHealth());
+            System.out.println("Dégâts : "+ennemiesEndOfManche.get(0).getDamages());
+            System.out.println("Vitesse : "+ennemiesEndOfManche.get(0).getSpeed());
+            System.out.println("Type : "+ennemiesEndOfManche.get(0).getType());
+            System.out.println("Distance a l'arrivée : "+ennemiesEndOfManche.get(0).getDistanceToArrival());
+            System.out.println("Killer type : "+ennemiesEndOfManche.get(0).getKillerType());
+            System.out.println("Behavior : "+ennemiesEndOfManche.get(0).getBehavior());
+            System.out.println("=====================================");
 
             setLogs("Manche "+nbManches+" terminée");
             deadEnemies.clear();
