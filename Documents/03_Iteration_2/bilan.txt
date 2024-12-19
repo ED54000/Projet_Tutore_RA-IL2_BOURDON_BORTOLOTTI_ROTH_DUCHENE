@@ -1,0 +1,9 @@
+Bilan Itération 2 :
+
+Le(s) bug(s) restant :
+	- Evolution pas totalement fonctionnelle
+
+Conformité à l'étude préalable :
+
+	- Les prototypes fonctionnent bien les uns avec les autres
+	- Le panneau latéral des logs permet bien de gérer et de visualiser le cours d'une partie
