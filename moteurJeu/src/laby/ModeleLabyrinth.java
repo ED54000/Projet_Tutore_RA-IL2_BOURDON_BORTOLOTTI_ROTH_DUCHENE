@@ -182,8 +182,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     break;
             }
         }
-        for (int i = 0; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i + 1));
+        for (int i = 1; i < nbDruides; i++) {
+            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + i);
             ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             druide.setDistanceStartToArrival(aStarHealer);
