@@ -327,7 +327,24 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
             // Si la defense est passive
             else {
-
+                // On parcourt les ennemis
+                for(Ennemy e: enemies) {
+                    // Si l'ennemi est dans la portée de la défense
+                    if (defense.isInRange(e)) {
+                        // On l'attaque
+                        defense.attack(e);
+                        System.out.println("Attaque de " + defense.getClass() + " sur " + e.getName()+"pv restants:"+e.getHealth());
+                        // Si l'ennemi est mort, on le retire de la liste des ennemis
+                        if (e.isDead() && !deadEnemies.contains(e)) {
+                            deadEnemies.add(e);
+                            enemies.remove(e);
+                            setLogs(e.getName() + " is dead");
+                        }
+                        // La défense s'autodétruit après avoir attaqué
+                        deadDefenses.add(defense);
+                        defense.takeDamage(10000);
+                    }
+                }
             }
         }
         synchronized (this.enemies) {

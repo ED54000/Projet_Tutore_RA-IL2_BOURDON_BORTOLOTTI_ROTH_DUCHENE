@@ -1,5 +1,6 @@
 package laby.views;
 
+import entites.defenses.Defense;
 import entites.enemies.Ennemy;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
@@ -80,18 +81,39 @@ public class ViewLabyrinth implements Observer {
             }
         }
 
-        // dessiner la range des défenses
-        laby.defenses.forEach(defense -> {
-            double x = defense.getPosition().getX() * getTailleCase();;
+        // Dessin des défenses
+        for(Defense defense : laby.defenses){
+            double x = defense.getPosition().getX() * getTailleCase();
             double y = defense.getPosition().getY() * getTailleCase();
-            double range = defense.getRange() * getTailleCase();
 
-            gc.setFill(Color.color(0.0, 0.0, 0.0, 0.17));
-            gc.fillOval(x - range + (getTailleCase() / 2.0), y - range + getTailleCase() / 2.0, 2 * range, 2 * range);
+            if (defense.getHealth() <= 0 && defense.isDead()) {
+                gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
+                defense.setDead(true);
+            }
+            else {
+                if (defense instanceof entites.defenses.Canon) {
+                    gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
+                    gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, getTailleCase(), getTailleCase());
+                } else if (defense instanceof entites.defenses.Archer) {
+                    gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
+                    gc.drawImage(images.get(ModeleLabyrinth.ARCHER), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
+                } else if (defense instanceof entites.defenses.Bomb) {
+                    gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
+                    gc.drawImage(images.get(ModeleLabyrinth.BOMB), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
+                }
 
-            gc.setStroke(Color.BLACK);
-            gc.strokeOval(x - range + (getTailleCase() / 2.0), y - range + getTailleCase() / 2.0, 2 * range, 2 * range);
-        });
+                // dessiner la range des défenses
+                x = defense.getPosition().getX() * getTailleCase();;
+                y = defense.getPosition().getY() * getTailleCase();
+                double range = defense.getRange() * getTailleCase();
+
+                gc.setFill(Color.color(0.0, 0.0, 0.0, 0.17));
+                gc.fillOval(x - range + (getTailleCase() / 2.0), y - range + getTailleCase() / 2.0, 2 * range, 2 * range);
+
+                gc.setStroke(Color.BLACK);
+                gc.strokeOval(x - range + (getTailleCase() / 2.0), y - range + getTailleCase() / 2.0, 2 * range, 2 * range);
+            }
+        }
     }
 
     private void dessinerCase(GraphicsContext gc, char caseType, int i, int j) {
@@ -99,11 +121,11 @@ public class ViewLabyrinth implements Observer {
         int y = i * getTailleCase();
 
         switch (caseType) {
-            case ModeleLabyrinth.CANON -> gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, getTailleCase(), getTailleCase());
-            case ModeleLabyrinth.BOMB -> {
+            //case ModeleLabyrinth.CANON -> gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, getTailleCase(), getTailleCase());
+            /*case ModeleLabyrinth.BOMB -> {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 gc.drawImage(images.get(ModeleLabyrinth.BOMB), x + 5, y + 5, getTailleCase() - 10, getTailleCase() - 10);
-            }
+            }*/
             case ModeleLabyrinth.START -> {
                 gc.setFill(Color.GREEN);
                 gc.fillRect(x, y, getTailleCase(), getTailleCase());
@@ -114,10 +136,10 @@ public class ViewLabyrinth implements Observer {
             }
             case ModeleLabyrinth.ROAD -> gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
             case ModeleLabyrinth.TREE -> gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
-            case ModeleLabyrinth.ARCHER -> {
+            /*case ModeleLabyrinth.ARCHER -> {
                 gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
                 gc.drawImage(images.get(ModeleLabyrinth.ARCHER), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
-            }
+            }*/
             default -> {
             }
         }
