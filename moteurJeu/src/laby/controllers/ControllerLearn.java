@@ -26,14 +26,39 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
         parentVBox.getChildren().clear();
 
-
-        //TODO : faire l'apprentissage
+        // On fait évoluer les ennemis
         laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
+
+        // On va compter le nombre d'ennemis pour chaque comportement
+        int nbNinja = 0;
+        int nbGiant = 0;
+        int nbHealer = 0;
+        int nbBerserker = 0;
         for(Ennemy e : laby.enemies){
+            if(e.getBehavior() == "Ninja"){
+                nbNinja++;
+            }
+            if(e.getBehavior() == "Giant"){
+                nbGiant++;
+            }
+            if(e.getBehavior() == "Druide"){
+                nbHealer++;
+            }
+            if(e.getBehavior() == "Berserker"){
+                nbBerserker++;
+            }
+        }
+
+        for(Ennemy e : laby.enemies){
+            if(e.getBehavior() == "Healer"){
+                // On doit passer en paramètres le nombre d'ennemis de chaque type pour que le comportement puisse être adapté
+                laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja);
+            }
             // On les place à la position de départ
             e.setPosition(new Vector2D(laby.getXstart(), laby.getYstart()));
             // On leur donne un aStar en fonction de leur comportement
             e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
+
         }
 
         int c = 0;

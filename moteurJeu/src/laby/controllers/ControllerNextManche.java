@@ -18,8 +18,12 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
     @Override
     public void handle(MouseEvent mouseEvent) {
 
+        // On clear la liste des ennemis morts dans le modèle
+        laby.clearDeadEnemies();
+
         //clear les logs
         VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+
         parentVBox.getChildren().clear();
         int nbManches = laby.getNbManches()+1;
         parentVBox.getChildren().add(new Label("Manche " + nbManches));
