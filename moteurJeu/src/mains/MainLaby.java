@@ -1,6 +1,5 @@
 package mains;
 
-import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
 

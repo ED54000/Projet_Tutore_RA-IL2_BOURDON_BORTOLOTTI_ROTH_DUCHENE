@@ -35,6 +35,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Ennemy> deadEnemies = new ArrayList<>();
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
 
+    private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
+
+
     //private ArrayList<Vector2D> aStarNormal, aStarFugitive, aStarKamikaze;
 
     //labyrinthe
@@ -185,6 +188,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             this.enemies.add(druide);
         }
+        System.out.println(enemies.get(0)+ "Statistiques : ");
+        System.out.println("Vie : "+enemies.get(0).getHealth());
+        System.out.println("Dégâts : "+enemies.get(0).getDamages());
+        System.out.println("Vitesse : "+enemies.get(0).getSpeed());
+        System.out.println("Type : "+enemies.get(0).getType());
+        System.out.println("=====================================");
     }
 
     public void createBehaviours() {
@@ -222,6 +231,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
             this.pause = true;
+
+            this.ennemiesEndOfManche.addAll(enemies);
+            this.ennemiesEndOfManche.addAll(deadEnemies);
+
             setLogs("Manche "+nbManches+" terminée");
             deadEnemies.clear();
             //TODO : lancer la prochaine manche
@@ -423,4 +436,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
 
+    public ArrayList<Ennemy> getEnnemyEndOfManche() {
+        return ennemiesEndOfManche;
+    }
 }
