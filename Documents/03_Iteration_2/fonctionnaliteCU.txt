@@ -11,9 +11,11 @@ Marin :
   - Sprites
 
 Florian : 
-  - Fusion du prototype de déplacement avec celui de choix de chemin
+  - Utilisation de steering behaviours et A* pour le déplacement des ennemis
+ 
 
 Eloi : 
+  - Utilisation de steering behaviours et A* pour le déplacement des ennemis
   
 À la fin de cette itération, nous pouvons :
 
