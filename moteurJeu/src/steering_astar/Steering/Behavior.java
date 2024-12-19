@@ -11,7 +11,7 @@ public abstract class Behavior {
 
     private Vector2D target;
     private static final double targetRadius = 50.0;
-    protected final double ACCELERATION_DIVISER = 0.1;
+    protected final double ACCELERATION_DIVISER = 0.15;
 
     /***
      * methode servant a calculer la force de mouvement selon un comportement
