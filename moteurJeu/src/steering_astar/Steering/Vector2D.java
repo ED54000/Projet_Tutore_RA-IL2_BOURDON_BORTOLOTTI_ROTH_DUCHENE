@@ -65,10 +65,18 @@ public class Vector2D {
         return new Vector2D(this.x * scalar, this.y * scalar);
     }
 
+    /***
+     * methode permettant de calculer le module d'un vecteur
+     * @return un reel correspondant au module (longueur) du vecteur
+     */
     public double magnitude() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
+    /***
+     * methode permettant de normaliser un vecteur, donc de faire passer ses coordonnées entre 0 et 1
+     * @return le nouveau vecteur avec les coordonnées normalisées
+     */
     public Vector2D normalize() {
         double mag = magnitude();
         return mag == 0 ? new Vector2D(0, 0) : scale(1 / mag);

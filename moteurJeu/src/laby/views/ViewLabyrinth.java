@@ -181,25 +181,21 @@ public class ViewLabyrinth implements Observer {
         gc.fillOval(xCoordEnnemi, yCoordEnnemi, ennemiSize, ennemiSize);
     }
 
-    public static int getTailleCase(){
-        if ( laby.getLengthY() >= laby.getLength()){
-            if ((((screenSize.width/7)*6/laby.getLengthY())*laby.getLength()) > screenSize.height/laby.getLength()) {
-                tailleCase = screenSize.height/laby.getLength()-2;
-            } else {
-                tailleCase = (screenSize.width/7)*6/laby.getLengthY();
-            }
-        } else {
-            if (((screenSize.height/laby.getLength()*laby.getLengthY()) > screenSize.width/laby.getLengthY())) {
-                tailleCase = (screenSize.width/7)*6/laby.getLengthY();
-            } else {
-                tailleCase = screenSize.height/laby.getLength()-2;
-            }
-        }
+    public static int getTailleCase() {
+        int largeurDisponible = (screenSize.width / 7) * 6;
+        int taskbarSize = 2 ;
+        int tailleCaseHorizontale = largeurDisponible / laby.getLengthY();
+        int tailleCaseVerticale = screenSize.height / laby.getLength();
+        int tailleCase = Math.min(tailleCaseHorizontale, tailleCaseVerticale);
+
+        // Vérifier les débordements
         if (tailleCase * laby.getLengthY() > screenSize.width || tailleCase * laby.getLength() > screenSize.height) {
-            tailleCase = tailleCase/2;
+            tailleCase /= 2;
         }
-        return tailleCase;
+
+        return tailleCase - taskbarSize ;
     }
+
 
     public static Dimension getScreenSize(){
         return screenSize;
