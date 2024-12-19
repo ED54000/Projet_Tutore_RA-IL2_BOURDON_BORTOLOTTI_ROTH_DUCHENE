@@ -25,7 +25,7 @@ https://trello.com/b/qyPhaAyy/ra-il2-2024-bortolotti-bourdon-roth-duchene
      - Prototype de l'algorithme de A* avec la Javadoc associée
     
 ## Itération 2 
-- Tag : Pas encore mis
+- Tag : [iteration_2](https://github.com/ED54000/Projet_Tutore_RA-IL2_BOURDON_BORTOLOTTI_ROTH_DUCHENE/releases/tag/It%C3%A9ration_2)
 - Réalisations :
   - Fusion de l'interface graphique avec le prototype d'algorithme évolutionnaire
   - Panneau de logs
