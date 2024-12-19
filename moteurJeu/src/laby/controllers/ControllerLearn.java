@@ -1,7 +1,6 @@
 package laby.controllers;
 
-import entites.enemies.Ennemy;
-import entites.enemies.Giant;
+import entites.enemies.*;
 import evolution.EnnemyEvolution;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -12,6 +11,8 @@ import laby.ModeleLabyrinth;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
+import java.util.ArrayList;
+
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
     ModeleLabyrinth laby;
@@ -21,50 +22,48 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
     }
 
     @Override
-    public void handle(MouseEvent mouseEvent) {
-        //clear les logs
-        VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
-        parentVBox.getChildren().clear();
+        public void handle(MouseEvent mouseEvent) {
+            //clear les logs
+            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+            parentVBox.getChildren().clear();
+            // On fait évoluer les ennemis
+            laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
 
-        // On fait évoluer les ennemis
-        laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
+            // On va compter le nombre d'ennemis pour chaque comportement
+            int nbNinja = 0;
+            int nbGiant = 0;
+            int nbHealer = 0;
+            int nbBerserker = 0;
+            for(Ennemy e : laby.enemies){
 
-        // On va compter le nombre d'ennemis pour chaque comportement
-        int nbNinja = 0;
-        int nbGiant = 0;
-        int nbHealer = 0;
-        int nbBerserker = 0;
-        for(Ennemy e : laby.enemies){
-            if(e.getBehavior() == "Ninja"){
-                nbNinja++;
+                if(e instanceof Ninja){
+                    e.setBehavior("Fugitive");
+                    nbNinja++;
+                }
+                if(e instanceof Giant){
+                    e.setBehavior("Normal");
+                    nbGiant++;
+                }
+                if(e instanceof Druide){
+                    e.setBehavior("Healer");
+                    nbHealer++;
+                }
+                if(e instanceof Berserker){
+                    e.setBehavior("Kamikaze");
+                    nbBerserker++;
+                }
             }
-            if(e.getBehavior() == "Giant"){
-                nbGiant++;
-            }
-            if(e.getBehavior() == "Druide"){
-                nbHealer++;
-            }
-            if(e.getBehavior() == "Berserker"){
-                nbBerserker++;
-            }
-        }
-        System.out.println("Nombre de Ninjas : "+nbNinja);
-        System.out.println("Nombre de Giants : "+nbGiant);
-        System.out.println("Nombre de Healers : "+nbHealer);
-        System.out.println("Nombre de Berserkers : "+nbBerserker);
+            System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
 
-        for(Ennemy e : laby.enemies){
-            if(e.getBehavior() == "Healer"){
-                // On doit passer en paramètres le nombre d'ennemis de chaque type pour que le comportement puisse être adapté
-                laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja);
+            for (Ennemy e : laby.enemies) {
+                if (e.getBehavior().equals("Healer")) {
+                  e.setBehaviorPath(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
+                } else {
+                    e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
+                }
+                e.setPosition(new Vector2D(laby.getXstart(), laby.getYstart()));
             }
-            // On les place à la position de départ
-            e.setPosition(new Vector2D(laby.getXstart(), laby.getYstart()));
-            // On leur donne un aStar en fonction de leur comportement
-            e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
 
-        }
-        System.out.println("nombre d'ennemis après évolution : "+laby.enemies.size());
 
         int c = 0;
         for (Ennemy e: laby.enemies) {
@@ -82,7 +81,6 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         System.out.println("Killer type : "+laby.enemies.get(0).getKillerType());
         System.out.println("Behavior : "+laby.enemies.get(0).getBehavior());
         System.out.println("=====================================");
-
          */
 
         /*

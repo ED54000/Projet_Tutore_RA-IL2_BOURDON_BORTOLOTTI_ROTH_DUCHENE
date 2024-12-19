@@ -146,21 +146,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         //Astar astar = new Astar();
         createBehaviours();
 
-        ArrayList<Vector2D> aStarNormal =
-                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
-                        new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0));
-        BehavioursMap.put(BEHAVIOURS.get(0), aStarNormal);
-        ArrayList<Vector2D> aStarFugitive =
-                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
-                        new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1));
-        BehavioursMap.put(BEHAVIOURS.get(1), aStarFugitive);
-        ArrayList<Vector2D> aStarKamikaze =
-                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
-                        new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2));
-        BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
+
         int nbGiant = 1;
         int nbNinja = 1;
         int nbBerserker = 1;
@@ -196,24 +182,27 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     break;
             }
         }
-        getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-    }
-
-    public void getNewHealerAStar(int nbDruides, int nbGiant, int nbBerserker, int nbNinja) {
-        for (int i = 1; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + i);
-            ArrayList<Vector2D> aStarHealer = null;
-            if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
-                aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(0));
-            } else if (nbNinja > nbGiant && nbNinja >= nbBerserker) {
-                aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(1));
-            } else if (nbBerserker > nbGiant && nbBerserker > nbNinja) {
-                aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(2));
-            }
+        for (int i = 0; i < nbDruides; i++) {
+            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i + 1));
+            ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             druide.setDistanceStartToArrival(aStarHealer);
             this.enemies.add(druide);
         }
+    }
+
+    public ArrayList<Vector2D> getNewHealerAStar(int nbDruides, int nbGiant, int nbBerserker, int nbNinja) {
+        ArrayList<Vector2D> aStarHealer = null;
+
+        if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
+            aStarHealer = this.BehavioursMap.get(BEHAVIOURS.getFirst());
+        } else if (nbNinja > nbGiant && nbNinja >= nbBerserker) {
+            aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(1));
+        } else if (nbBerserker > nbGiant && nbBerserker > nbNinja) {
+            aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(2));
+        }
+
+        return aStarHealer;
     }
 
     public void createBehaviours() {

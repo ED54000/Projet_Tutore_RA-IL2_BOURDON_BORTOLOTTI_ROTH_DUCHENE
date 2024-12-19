@@ -155,6 +155,10 @@ public abstract class Ennemy extends Entity {
         return behavior;
     }
 
+    public void setBehavior(String behavior) {
+        this.behavior = behavior;
+    }
+
     public void setDistanceToArrival(ArrayList<Vector2D> vector2DS) {
         this.distanceToArrival = vector2DS.size();
     }
