@@ -48,6 +48,10 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 nbBerserker++;
             }
         }
+        System.out.println("Nombre de Ninjas : "+nbNinja);
+        System.out.println("Nombre de Giants : "+nbGiant);
+        System.out.println("Nombre de Healers : "+nbHealer);
+        System.out.println("Nombre de Berserkers : "+nbBerserker);
 
         for(Ennemy e : laby.enemies){
             if(e.getBehavior() == "Healer"){
@@ -60,6 +64,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
 
         }
+        System.out.println("nombre d'ennemis après évolution : "+laby.enemies.size());
 
         int c = 0;
         for (Ennemy e: laby.enemies) {
@@ -67,6 +72,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             c++;
         }
 
+        /*
         System.out.println(laby.enemies.get(0)+ "Statistiques : ");
         System.out.println("Vie : "+laby.enemies.get(0).getHealth());
         System.out.println("Dégâts : "+laby.enemies.get(0).getDamages());
@@ -76,6 +82,8 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         System.out.println("Killer type : "+laby.enemies.get(0).getKillerType());
         System.out.println("Behavior : "+laby.enemies.get(0).getBehavior());
         System.out.println("=====================================");
+
+         */
 
         /*
         laby.createBehaviours();

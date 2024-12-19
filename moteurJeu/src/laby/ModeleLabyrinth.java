@@ -269,7 +269,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior()));
             }
-
+            /*
             System.out.println(ennemiesEndOfManche.get(0) + "Statistiques : ");
             System.out.println("Vie : " + ennemiesEndOfManche.get(0).getHealth());
             System.out.println("Dégâts : " + ennemiesEndOfManche.get(0).getDamages());
@@ -280,6 +280,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
             System.out.println("Killer type : " + ennemiesEndOfManche.get(0).getKillerType());
             System.out.println("Behavior : " + ennemiesEndOfManche.get(0).getBehavior());
             System.out.println("=====================================");
+
+             */
 
             setLogs("Manche " + nbManches + " terminée");
             deadEnemies.clear();
@@ -355,10 +357,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 ) {
                     ennemy.setArrived(true);
                     this.nbEnnemiesArrived++;
+                    System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
                     setLogs("Le " + ennemy.getName() + " est arrivé");
 
-                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin) { //changer par le bombre d'ennemies nécessaire pour perdre
-                        setLogs("Ta perdu bouuh !");
+                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin+1) { //changer par le bombre d'ennemies nécessaire pour perdre
+                        setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
                         this.end = true;
                     }
                     enemiesToRemove.add(ennemy);

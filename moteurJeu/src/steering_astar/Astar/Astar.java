@@ -108,7 +108,7 @@ public class Astar {
         while (!path.empty()) {
             Vector2D p = path.peek();
             path.pop();
-            System.out.println("-> (" + p.getX() / ViewLabyrinth.getTailleCase() + "," + p.getY() / ViewLabyrinth.getTailleCase() + ") ");
+            //System.out.println("-> (" + p.getX() / ViewLabyrinth.getTailleCase() + "," + p.getY() / ViewLabyrinth.getTailleCase() + ") ");
         }
         return pathArray;
     }
