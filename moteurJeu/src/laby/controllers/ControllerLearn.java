@@ -1,7 +1,6 @@
 package laby.controllers;
 
-import entites.enemies.Ennemy;
-import entites.enemies.Giant;
+import entites.enemies.*;
 import evolution.EnnemyEvolution;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -12,6 +11,8 @@ import laby.ModeleLabyrinth;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
+import java.util.ArrayList;
+
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
     ModeleLabyrinth laby;
@@ -21,47 +22,50 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
     }
 
     @Override
-    public void handle(MouseEvent mouseEvent) {
-        //clear les logs
-        VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
-        parentVBox.getChildren().clear();
+        public void handle(MouseEvent mouseEvent) {
+            //clear les logs
+            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+            parentVBox.getChildren().clear();
+            // On fait évoluer les ennemis
+            laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
 
-        // On fait évoluer les ennemis
-        laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
+            // On va compter le nombre d'ennemis pour chaque comportement
+            int nbNinja = 0;
+            int nbGiant = 0;
+            int nbHealer = 0;
+            int nbBerserker = 0;
+            for(Ennemy e : laby.enemies){
 
-        // On va compter le nombre d'ennemis pour chaque comportement
-        int nbNinja = 0;
-        int nbGiant = 0;
-        int nbHealer = 0;
-        int nbBerserker = 0;
-        for(Ennemy e : laby.enemies){
-            if(e.getBehavior() == "Ninja"){
-                nbNinja++;
+                if(e instanceof Ninja){
+                    e.setBehavior("Fugitive");
+                    nbNinja++;
+                }
+                if(e instanceof Giant){
+                    e.setBehavior("Normal");
+                    nbGiant++;
+                }
+                if(e instanceof Druide){
+                    e.setBehavior("Healer");
+                    nbHealer++;
+                }
+                if(e instanceof Berserker){
+                    e.setBehavior("Kamikaze");
+                    nbBerserker++;
+                }
             }
-            if(e.getBehavior() == "Giant"){
-                nbGiant++;
-            }
-            if(e.getBehavior() == "Druide"){
-                nbHealer++;
-            }
-            if(e.getBehavior() == "Berserker"){
-                nbBerserker++;
-            }
-        }
 
-        for(Ennemy e : laby.enemies){
-            if(e.getBehavior() == "Healer"){
-                // On doit passer en paramètres le nombre d'ennemis de chaque type pour que le comportement puisse être adapté
-                laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja);
+            for (Ennemy e : new ArrayList<>(laby.enemies)) {
+                if (e.getBehavior().equals("Healer")) {
+                  e.setBehaviorPath(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
+                } else {
+                    e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
+                }
+                e.setPosition(new Vector2D(laby.getXstart(), laby.getYstart()));
             }
-            // On les place à la position de départ
-            e.setPosition(new Vector2D(laby.getXstart(), laby.getYstart()));
-            // On leur donne un aStar en fonction de leur comportement
-            e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
 
-        }
 
         int c = 0;
+        System.out.println(laby.enemies);
         for (Ennemy e: laby.enemies) {
             System.out.println("Ennemy "+c+" après évolution : "+e.getName()+" type:"+e.getType()+" vie"+e.getHealth()+" vitesse :"+e.getSpeed()+" dégâts :"+e.getDamages()+" distance arrivée :"+e.getDistanceToArrival()+" behavior :"+e.getBehavior());
             c++;

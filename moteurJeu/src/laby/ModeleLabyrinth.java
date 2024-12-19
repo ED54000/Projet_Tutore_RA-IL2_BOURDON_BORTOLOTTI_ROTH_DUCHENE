@@ -146,21 +146,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         //Astar astar = new Astar();
         createBehaviours();
 
-        ArrayList<Vector2D> aStarNormal =
-                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
-                        new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0));
-        BehavioursMap.put(BEHAVIOURS.get(0), aStarNormal);
-        ArrayList<Vector2D> aStarFugitive =
-                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
-                        new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1));
-        BehavioursMap.put(BEHAVIOURS.get(1), aStarFugitive);
-        ArrayList<Vector2D> aStarKamikaze =
-                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
-                        new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2));
-        BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
+
         int nbGiant = 1;
         int nbNinja = 1;
         int nbBerserker = 1;
@@ -171,21 +157,21 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(new Vector2D(this.getXstart() + nbNinja*10, this.getYstart() + nbGiant*10), "Giant " + nbGiant);
+                    Giant giant = new Giant(new Vector2D(this.getXstart() + nbNinja * 10, this.getYstart() + nbGiant * 10), "Giant " + nbGiant);
                     giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
                     giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + nbNinja*10, this.getYstart() + nbNinja*10), "Ninja " + nbNinja);
+                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + nbNinja * 10, this.getYstart() + nbNinja * 10), "Ninja " + nbNinja);
                     ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
                     ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + nbBerserker*10, this.getYstart() + nbBerserker*10), "Berseker " + nbBerserker);
+                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + nbBerserker * 10, this.getYstart() + nbBerserker * 10), "Berseker " + nbBerserker);
                     berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
                     berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
                     this.enemies.add(berserker);
@@ -196,24 +182,27 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     break;
             }
         }
-        getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-    }
-
-    public void getNewHealerAStar(int nbDruides, int nbGiant, int nbBerserker, int nbNinja) {
         for (int i = 0; i < nbDruides; i++) {
             Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + (i + 1));
-            ArrayList<Vector2D> aStarHealer = null;
-            if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
-                aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(0));
-            } else if (nbNinja > nbGiant && nbNinja >= nbBerserker) {
-                aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(1));
-            } else if (nbBerserker > nbGiant && nbBerserker > nbNinja) {
-                aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(2));
-            }
+            ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             druide.setDistanceStartToArrival(aStarHealer);
             this.enemies.add(druide);
         }
+    }
+
+    public ArrayList<Vector2D> getNewHealerAStar(int nbDruides, int nbGiant, int nbBerserker, int nbNinja) {
+        ArrayList<Vector2D> aStarHealer = null;
+
+        if (nbGiant >= nbBerserker && nbGiant >= nbNinja) {
+            aStarHealer = this.BehavioursMap.get(BEHAVIOURS.getFirst());
+        } else if (nbNinja > nbGiant && nbNinja >= nbBerserker) {
+            aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(1));
+        } else if (nbBerserker > nbGiant && nbBerserker > nbNinja) {
+            aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(2));
+        }
+        
+        return aStarHealer;
     }
 
     public void createBehaviours() {
@@ -257,12 +246,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
             this.ennemiesEndOfManche.addAll(ennemiesArrived);
 
             int c = 0;
-            for (Ennemy e: ennemiesEndOfManche) {
-                System.out.println("Ennemy "+c+" fin de manche : "+e.getName()+" type:"+e.getType()+" vie"+e.getHealth()+" vitesse :"+e.getSpeed()+" dégâts :"+e.getDamages()+" distance arrivée :"+e.getDistanceToArrival()+" behavior :"+e.getBehavior());
+            for (Ennemy e : ennemiesEndOfManche) {
+                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
                 c++;
             }
 
-            System.out.println("ennemis en fin de manche : "+ennemiesEndOfManche);
+            System.out.println("ennemis en fin de manche : " + ennemiesEndOfManche);
 
             for (Ennemy ennemy : ennemiesEndOfManche) {
                 ennemy.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
