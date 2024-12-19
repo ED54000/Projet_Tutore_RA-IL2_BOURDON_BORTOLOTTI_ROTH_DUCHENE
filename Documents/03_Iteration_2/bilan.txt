@@ -7,3 +7,17 @@ Conformité à l'étude préalable :
 
 	- Les prototypes fonctionnent bien les uns avec les autres
 	- Le panneau latéral des logs permet bien de gérer et de visualiser le cours d'une partie
+	- Les ennemis se déplacent bien en suivant le chemin prédéfini par A*
+
+Problèmes rencontrés :
+ 	- Confusion des coordonnées d'affichages et d'utilisatation " en jeu"
+	- Spawn des ennemis aléatoire
+
+Pour lancer l'application : 
+ 	- Lancer le fichier MainLaby.java situé dans le chemin suivant src/mains/MainLaby.java
+
+
+L'application permet de : 
+	- Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, et le nombre d'ennemies qui passe pour gagner.
+	- Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites.
+	- Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués jusqu'à la fin du jeu.
