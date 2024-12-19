@@ -12,8 +12,8 @@ public abstract class ActiveDefense extends Defense {
     private Ennemy target;
     private long lastAttackTime;
 
-    public ActiveDefense(double x, double y, int health, int damage, double range, long attackSpeed) {
-        super(x, y, damage, range);
+    public ActiveDefense(double x, double y, double health, int damage, double range, long attackSpeed) {
+        super(x, y, damage, range, health);
         this.attackSpeed = attackSpeed;
         this.health = health;
         this.target = null;

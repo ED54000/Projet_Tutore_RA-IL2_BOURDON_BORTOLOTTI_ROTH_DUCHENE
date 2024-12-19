@@ -5,8 +5,8 @@ import laby.ModeleLabyrinth;
 
 public abstract class PassiveDefense extends Defense {
 
-    public PassiveDefense(double x, double y, int damage, double range) {
-            super(x, y, damage, range);
+    public PassiveDefense(double x, double y, int damage, double range, double health) {
+            super(x, y, damage, range, health);
         }
 
     /**
@@ -16,8 +16,6 @@ public abstract class PassiveDefense extends Defense {
     @Override
     public void attack(Ennemy target) {
         target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
-        // C'est une défense passive, donc après avoir attaqué, elle s'autodétruit
-        this.takeDamage(10000);
     }
 
     /**
@@ -25,5 +23,9 @@ public abstract class PassiveDefense extends Defense {
      * @param damage les dégâts à prendre
      */
     public void takeDamage(double damage) {
+        this.setHealth(this.getHealth()- damage);
+        if (this.getHealth() <= 0) {
+            this.setDead(true);
+        }
     }
 }
