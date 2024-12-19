@@ -155,18 +155,21 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 case 0:
                     Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant " + (nbGiant+1));
                     giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+                    giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
                     Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja " + (nbNinja+1));
                     ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
+                    ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
                     Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker " + (nbBerserker+1));
                     berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
+                    berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
                     this.enemies.add(berserker);
                     nbBerserker++;
                     break;
@@ -230,11 +233,18 @@ public class ModeleLabyrinth implements Jeu, Subject {
             this.ennemiesEndOfManche.addAll(deadEnemies);
             System.out.println(ennemiesEndOfManche);
 
+            for (Ennemy ennemy : ennemiesEndOfManche) {
+                ennemy.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
+                        new Vector2D(this.getYstart(), this.getXstart()),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior()));
+            }
+
             System.out.println(ennemiesEndOfManche.get(0)+ "Statistiques : ");
             System.out.println("Vie : "+ennemiesEndOfManche.get(0).getHealth());
             System.out.println("Dégâts : "+ennemiesEndOfManche.get(0).getDamages());
             System.out.println("Vitesse : "+ennemiesEndOfManche.get(0).getSpeed());
             System.out.println("Type : "+ennemiesEndOfManche.get(0).getType());
+            System.out.println("Distance départ arrivé : "+ennemiesEndOfManche.get(0).getDistanceStartToArrival());
             System.out.println("Distance a l'arrivée : "+ennemiesEndOfManche.get(0).getDistanceToArrival());
             System.out.println("Killer type : "+ennemiesEndOfManche.get(0).getKillerType());
             System.out.println("Behavior : "+ennemiesEndOfManche.get(0).getBehavior());
