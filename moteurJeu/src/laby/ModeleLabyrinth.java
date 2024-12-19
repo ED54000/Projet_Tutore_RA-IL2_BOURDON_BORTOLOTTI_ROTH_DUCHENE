@@ -24,6 +24,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public static final char BOMB = 'B';
     private final ArrayList<String> BEHAVIOURS = new ArrayList<>(Arrays.asList("Normal", "Fugitive", "Kamikaze" /*,"Healer"*/));
 
+    private int nbManches = 1;
+    private int limManches;
     // Nombre d'ennemis qui doivent arriver à la fin pour gagner
     public int nbEnnemiesToWin;
 
@@ -32,6 +34,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public ArrayList<Ennemy> deadEnemies = new ArrayList<>();
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
+
+    private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
+
 
     //private ArrayList<Vector2D> aStarNormal, aStarFugitive, aStarKamikaze;
 
@@ -45,6 +50,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private int nbEnnemiesArrived;
 
     private boolean pause = false;
+    private boolean end = false;
     private Astar astar = new Astar();
 
     //constructeur vide
@@ -58,11 +64,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
      *
      * @param fichier         le fichier contenant le labyrinthe
      * @param nbEnnemies      le nombre d'ennemis
-     * @param nbManches       le nombre de manches
+     * @param limManches      le nombre de manches
      * @param nbEnnemiesToWin le nombre d'ennemis à atteindre l'arrivée pour gagner
      * @throws IOException si le fichier n'existe pas
      */
-    public void creerLabyrinthe(String fichier, int nbEnnemies, int nbManches, int nbEnnemiesToWin) throws IOException {
+    public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin) throws IOException {
+        this.limManches = limManches;
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
@@ -149,18 +156,21 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 case 0:
                     Giant giant = new Giant(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Giant " + (nbGiant + 1));
                     giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+                    giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
                     Ninja ninja = new Ninja(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Ninja " + (nbNinja + 1));
                     ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
+                    ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
                     Berserker berserker = new Berserker(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Berseker " + (nbBerserker + 1));
                     berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
+                    berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
                     this.enemies.add(berserker);
                     nbBerserker++;
                     break;
@@ -180,6 +190,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 aStarHealer = this.BehavioursMap.get(BEHAVIOURS.get(2));
             }
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
+            druide.setDistanceStartToArrival(aStarHealer);
             this.enemies.add(druide);
         }
     }
@@ -210,11 +221,39 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     @Override
     public void update(double secondes) {
+        //Vérification de la fin du jeu
+        if (this.nbManches == this.limManches) {
+            setLogs("Fin du jeu");
+            this.end = true;
+            return;
+
+        }
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
             this.pause = true;
-            System.out.println("Manche terminée");
-            setLogs("Manche terminée");
+
+            this.ennemiesEndOfManche.addAll(enemies);
+            this.ennemiesEndOfManche.addAll(deadEnemies);
+            System.out.println(ennemiesEndOfManche);
+
+            for (Ennemy ennemy : ennemiesEndOfManche) {
+                ennemy.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
+                        new Vector2D(this.getYstart(), this.getXstart()),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior()));
+            }
+
+            System.out.println(ennemiesEndOfManche.get(0) + "Statistiques : ");
+            System.out.println("Vie : " + ennemiesEndOfManche.get(0).getHealth());
+            System.out.println("Dégâts : " + ennemiesEndOfManche.get(0).getDamages());
+            System.out.println("Vitesse : " + ennemiesEndOfManche.get(0).getSpeed());
+            System.out.println("Type : " + ennemiesEndOfManche.get(0).getType());
+            System.out.println("Distance départ arrivé : " + ennemiesEndOfManche.get(0).getDistanceStartToArrival());
+            System.out.println("Distance a l'arrivée : " + ennemiesEndOfManche.get(0).getDistanceToArrival());
+            System.out.println("Killer type : " + ennemiesEndOfManche.get(0).getKillerType());
+            System.out.println("Behavior : " + ennemiesEndOfManche.get(0).getBehavior());
+            System.out.println("=====================================");
+
+            setLogs("Manche " + nbManches + " terminée");
             deadEnemies.clear();
             //TODO : lancer la prochaine manche
         }
@@ -225,9 +264,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si c'est une défense active
             if (defense instanceof entites.defenses.ActiveDefense) {
                 // Si la defense focus déja un ennemi
-
                 if (((ActiveDefense) defense).getTarget() != null) {
-
                     // On vérifie si l'ennemi est toujours dans la portée de la défense
                     if (defense.isInRange(((ActiveDefense) defense).getTarget())) {
                         // On l'attaque
@@ -293,6 +330,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
                     if (this.nbEnnemiesArrived == this.nbEnnemiesToWin) { //changer par le bombre d'ennemies nécessaire pour perdre
                         setLogs("Ta perdu bouuh !");
+                        this.end = true;
                     }
                     enemiesToRemove.add(ennemy);
                     //enemies.remove(ennemy);
@@ -313,7 +351,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     @Override
     public boolean etreFini() {
-        return false;
+        return end;
     }
 
     @Override
@@ -412,5 +450,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return BehavioursMap;
     }
 
+    public int getNbManches() {
+        return nbManches;
+    }
+
+    public void setNbManches(int nbManches) {
+        this.nbManches = nbManches;
+    }
 
 }

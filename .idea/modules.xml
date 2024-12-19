@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/moteurJeu/MoteurJeu.iml" filepath="$PROJECT_DIR$/moteurJeu/MoteurJeu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Projet_Tutore_RA-IL2_BOURDON_BORTOLOTTI_ROTH_DUCHENE.iml" filepath="$PROJECT_DIR$/.idea/Projet_Tutore_RA-IL2_BOURDON_BORTOLOTTI_ROTH_DUCHENE.iml" />
+    </modules>
+  </component>
+</project>
