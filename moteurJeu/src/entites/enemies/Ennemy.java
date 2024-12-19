@@ -6,6 +6,8 @@ import javafx.scene.image.Image;
 import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
+import java.util.ArrayList;
+
 public abstract class Ennemy extends Entity {
 
     private double speed;
@@ -55,6 +57,7 @@ public abstract class Ennemy extends Entity {
      * comportement de l'agent
      */
     public void update() {
+        //System.out.println(behaviorPath);
         if (behaviorPath != null) {
             Vector2D steeringForce = behaviorPath.calculateForce(this);
             velocity = velocity.add(steeringForce).normalize().scale(speed);
@@ -151,6 +154,19 @@ public abstract class Ennemy extends Entity {
     public String getBehavior() {
         return behavior;
     }
+
+    public void setDistanceToArrival(ArrayList<Vector2D> vector2DS) {
+        this.distanceToArrival = vector2DS.size();
+    }
+
+    public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
+        this.distanceStartToArrival = vector2DS.size();
+    }
+
+    public int getDistanceStartToArrival() {
+        return distanceStartToArrival;
+    }
+
     /*
     public String getImage() {
         return sprite;

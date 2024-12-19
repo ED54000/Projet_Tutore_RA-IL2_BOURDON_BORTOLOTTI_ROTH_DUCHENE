@@ -197,7 +197,7 @@ public class MoteurJeu extends Application {
         logs.setPrefWidth(ViewLabyrinth.getScreenSize().width/7.0);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
-        //logs.getChildren().add(new Label("Logs"));
+        logs.getChildren().add(new Label("Manche 1"));
 
         ContainerLogs.getChildren().addAll(title, logs);
 

@@ -2,12 +2,14 @@ package laby.controllers;
 
 import entites.enemies.Ennemy;
 import entites.enemies.Giant;
+import evolution.EnnemyEvolution;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
+import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
@@ -24,13 +26,46 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
         parentVBox.getChildren().clear();
 
+
         //TODO : faire l'apprentissage
-        laby.enemies.add(new Giant(new Vector2D(laby.getXstart(), laby.getYstart()), "NewGiant"));
+        laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
+        for(Ennemy e : laby.enemies){
+            // On les place à la position de départ
+            e.setPosition(new Vector2D(laby.getXstart(), laby.getYstart()));
+            // On leur donne un aStar en fonction de leur comportement
+            e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
+        }
+
+        int c = 0;
+        for (Ennemy e: laby.enemies) {
+            System.out.println("Ennemy "+c+" après évolution : "+e.getName()+" type:"+e.getType()+" vie"+e.getHealth()+" vitesse :"+e.getSpeed()+" dégâts :"+e.getDamages()+" distance arrivée :"+e.getDistanceToArrival()+" behavior :"+e.getBehavior());
+            c++;
+        }
+
+        System.out.println(laby.enemies.get(0)+ "Statistiques : ");
+        System.out.println("Vie : "+laby.enemies.get(0).getHealth());
+        System.out.println("Dégâts : "+laby.enemies.get(0).getDamages());
+        System.out.println("Vitesse : "+laby.enemies.get(0).getSpeed());
+        System.out.println("Type : "+laby.enemies.get(0).getType());
+        System.out.println("Distance a l'arrivée : "+laby.enemies.get(0).getDistanceToArrival());
+        System.out.println("Killer type : "+laby.enemies.get(0).getKillerType());
+        System.out.println("Behavior : "+laby.enemies.get(0).getBehavior());
+        System.out.println("=====================================");
+
+        /*
+        laby.createBehaviours();
+        Giant giant = new Giant(new Vector2D(laby.getXstart(), laby.getYstart()), "NewGiant");
+        System.out.println(new PathfollowingBehavior(laby.getBehavioursMap().get(laby.getBehaviours().get(0))));
+        giant.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(laby.getBehaviours().get(0))));
+        laby.enemies.add(giant);
+         */
+
         //laby.setIterator(laby.enemies);
         //laby.setLogs("Learned");
 
+
+
         parentVBox.getChildren().add(new Label("Learned"));
-        laby.enemies.add(new Giant(new Vector2D(10, 10), "NewGiant"));
 
         Button nextManche = new Button("Next Manche");
         nextManche.setOnMouseClicked(new ControllerNextManche(laby));
