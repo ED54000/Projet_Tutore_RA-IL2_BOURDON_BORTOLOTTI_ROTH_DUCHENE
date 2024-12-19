@@ -7,8 +7,13 @@ import steering_astar.Steering.Vector2D;
 
 public abstract class Defense extends Entity {
 
-    public Defense(double x, double y, int damage, double range) {
+    private double health;
+
+    private boolean isDead = false;
+
+    public Defense(double x, double y, int damage, double range, double health) {
         super(new Vector2D(x, y), damage, range);
+        this.health = health;
     }
 
     public abstract void attack(Ennemy target);
@@ -37,5 +42,20 @@ public abstract class Defense extends Entity {
         return distanceSquared <= rangeInPixels * rangeInPixels;
     }
 
+    public double getHealth() {
+        return this.health;
+    }
+
+    protected void setHealth(double health) {
+        this.health = health;
+    }
+
+    public void setDead(boolean b) {
+        this.isDead = b;
+    }
+
+    public boolean isDead() {
+        return this.isDead;
+    }
 }
 
