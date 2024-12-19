@@ -37,6 +37,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
 
+    private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
+
 
     //private ArrayList<Vector2D> aStarNormal, aStarFugitive, aStarKamikaze;
 
@@ -232,9 +234,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
         if (enemies.isEmpty() && !this.pause) {
             this.pause = true;
 
-            this.ennemiesEndOfManche.addAll(enemies);
             this.ennemiesEndOfManche.addAll(deadEnemies);
-            System.out.println(ennemiesEndOfManche);
+            this.ennemiesEndOfManche.addAll(ennemiesArrived);
+
+            int c = 0;
+            for (Ennemy e: ennemiesEndOfManche) {
+                System.out.println("Ennemy "+c+" fin de manche : "+e.getName()+" type:"+e.getType()+" vie"+e.getHealth()+" vitesse :"+e.getSpeed()+" dégâts :"+e.getDamages()+" distance arrivée :"+e.getDistanceToArrival()+" behavior :"+e.getBehavior());
+                c++;
+            }
+
+            System.out.println("ennemis en fin de manche : "+ennemiesEndOfManche);
 
             for (Ennemy ennemy : ennemiesEndOfManche) {
                 ennemy.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
@@ -272,6 +281,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         //setLogs("Attaque de " + defense.getClass() + " sur " + ((ActiveDefense) defense).getTarget() + "pv restants:" + ((ActiveDefense) defense).getTarget().getHealth());
                         // Si l'ennemi est mort, on le retire de la liste des ennemis
                         if (((ActiveDefense) defense).getTarget().isDead() && !deadEnemies.contains(((ActiveDefense) defense).getTarget())) {
+                            ((ActiveDefense) defense).getTarget().setKillerType(defense.getType());
                             deadEnemies.add(((ActiveDefense) defense).getTarget());
                             enemies.remove(((ActiveDefense) defense).getTarget());
                             setLogs(((ActiveDefense) defense).getTarget().getName() + " est mort. Coup dur !");
@@ -333,6 +343,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         this.end = true;
                     }
                     enemiesToRemove.add(ennemy);
+                    ennemiesArrived.add(ennemy);
                     //enemies.remove(ennemy);
                 }
                 //ennemy.move(secondes);
@@ -456,6 +467,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void setNbManches(int nbManches) {
         this.nbManches = nbManches;
+    }
+
+    public ArrayList<Ennemy> getEnnemyEndOfManche() {
+        return ennemiesEndOfManche;
     }
 
 }

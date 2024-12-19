@@ -29,6 +29,19 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
         //TODO : faire l'apprentissage
         laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
+        for(Ennemy e : laby.enemies){
+            // On les place à la position de départ
+            e.setPosition(new Vector2D(laby.getXstart(), laby.getYstart()));
+            // On leur donne un aStar en fonction de leur comportement
+            e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
+        }
+
+        int c = 0;
+        for (Ennemy e: laby.enemies) {
+            System.out.println("Ennemy "+c+" après évolution : "+e.getName()+" type:"+e.getType()+" vie"+e.getHealth()+" vitesse :"+e.getSpeed()+" dégâts :"+e.getDamages()+" distance arrivée :"+e.getDistanceToArrival()+" behavior :"+e.getBehavior());
+            c++;
+        }
+
         System.out.println(laby.enemies.get(0)+ "Statistiques : ");
         System.out.println("Vie : "+laby.enemies.get(0).getHealth());
         System.out.println("Dégâts : "+laby.enemies.get(0).getDamages());

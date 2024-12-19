@@ -40,7 +40,7 @@ public abstract class Entity {
                     return -30/100;
                 }
                 else {
-                    return 0;
+                    return 1;
                 }
             case "Water":
                 if (TargetType.equals("Fire")) {
@@ -50,7 +50,7 @@ public abstract class Entity {
                     return -30/100;
                 }
                 else {
-                    return 0;
+                    return 1;
                 }
             case "Plant":
                 if (TargetType.equals("Water")) {
@@ -60,7 +60,7 @@ public abstract class Entity {
                     return -30/100;
                 }
                 else {
-                    return 0;
+                    return 1;
                 }
         }
         return 0;
