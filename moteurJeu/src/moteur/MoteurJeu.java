@@ -4,6 +4,7 @@ package moteur;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.event.EventHandler;
@@ -109,10 +110,12 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
+        labyrinthMap.put("test1", "Ressources/Laby_test.txt");
+        labyrinthMap.put("test2", "Ressources/Laby_test2.txt");
 
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large");
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2");
         labyrinthComboBox.setValue("Large");
 
         // Définit "Petit" comme valeur par défaut
@@ -154,7 +157,6 @@ public class MoteurJeu extends Application {
                     case "Grand":
                         break;
                     case "Large":
-
                         break;
                 }
                 dialogStage.close();
