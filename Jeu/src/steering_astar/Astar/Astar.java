@@ -89,7 +89,7 @@ public class Astar {
      */
     private ArrayList<Vector2D> tracePath(Cell[][] cellDetails, Vector2D dest) {
         ArrayList<Vector2D> pathArray = new ArrayList<>();
-        System.out.println("The Path:  ");
+        //System.out.println("The Path:  ");
 
         Stack<Vector2D> path = new Stack<>();
 
@@ -201,7 +201,7 @@ public class Astar {
 
                     if (isDestination(neighbour, destDivide)) {
                         cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].parent = new Vector2D(i, j);
-                        System.out.println("The destination cell is found");
+                        //System.out.println("The destination cell is found");
                         return tracePath(cellDetails, destDivide);
                     } else if (!closedList[(int) neighbour.getX()][(int) neighbour.getY()]
                             && isUnblocked(grid, neighbour)) {

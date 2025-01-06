@@ -40,7 +40,7 @@ public class MainSimulation extends Application {
                 double dureeEnMilliSecondes = elapsedTime / 1_000_000.0;
 
 
-                // si le temps ecoule depasse le necessaire pour FPS souhaite
+                // si le temps ecoule depasse le neAcessaire pour FPS souhaite
                 if (dureeEnMilliSecondes > dureeFPS) {
                     // met a jour le jeu
                     jeu.update(dureeEnMilliSecondes / 1_000.);
@@ -61,4 +61,32 @@ public class MainSimulation extends Application {
         // lance l'animation
         timer.start();
     }
+    /*
+    @Override
+    public void start(Stage stage) throws Exception {
+        ModeleLabyrinth jeu = new ModeleLabyrinth();
+        jeu.setSimulation(true);
+        jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", 2, 1000, 1200);
+
+        // Lancer la simulation dans un thread séparé
+        new Thread(() -> {
+            long lastUpdateTime = System.nanoTime();
+
+            while (!jeu.etreFini()) {
+                // Calculer le temps écoulé depuis la dernière mise à jour
+                long currentTime = System.nanoTime();
+                double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
+
+                // Mettre à jour la simulation
+                jeu.update(elapsedTimeInSeconds);
+
+                // Mettre à jour le temps de la dernière mise à jour
+                lastUpdateTime = currentTime;
+            }
+
+            System.out.println("Simulation terminée.");
+        }).start();
+    }
+
+     */
 }
