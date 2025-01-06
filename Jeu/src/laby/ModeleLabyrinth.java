@@ -9,6 +9,7 @@ import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
 
+import java.awt.*;
 import java.io.*;
 
 import java.util.*;
@@ -41,12 +42,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
 
     //private ArrayList<Vector2D> aStarNormal, aStarFugitive, aStarKamikaze;
+    static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+
 
     //labyrinthe
-    private char[][] cases;
+    private static char[][] cases;
     private int Xstart, Ystart, XArrival, YArrival;
     private Map<String, ArrayList<Vector2D>> BehavioursMap = new HashMap<>();
     private ArrayList<Observer> observateurs;
+
 
     private String logs = "";
     private int nbEnnemiesArrived;
@@ -108,15 +112,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case START:
                         //ajouter le point de départ
                         this.cases[numLigne][colonne] = START;
-                        this.Xstart = colonne * ViewLabyrinth.getTailleCase();
-                        this.Ystart = numLigne * ViewLabyrinth.getTailleCase();
+                        this.Xstart = colonne * getTailleCase();
+                        this.Ystart = numLigne * getTailleCase();
 //                      createEnnemies(nbEnnemies, colonne, numLigne);
                         break;
                     case END:
                         //ajouter le point d'arrivée
                         this.cases[numLigne][colonne] = END;
-                        this.XArrival = colonne * ViewLabyrinth.getTailleCase();
-                        this.YArrival = numLigne * ViewLabyrinth.getTailleCase();
+                        this.XArrival = colonne * getTailleCase();
+                        this.YArrival = numLigne * getTailleCase();
                         break;
                     case CANON:
                         //ajouter un canon
@@ -366,7 +370,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
                     setLogs("Le " + ennemy.getName() + " est arrivé");
 
-                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin+1) { //changer par le bombre d'ennemies nécessaire pour perdre
+                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin+1) {
                         setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
                         this.end = true;
                     }
@@ -410,16 +414,35 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
     }
 
-    public int getLength() {
-        return this.cases.length;
+    public static int getTailleCase() {
+        int largeurDisponible = (screenSize.width / 7) * 6;
+        int taskbarSize = 2 ;
+        int tailleCaseHorizontale = largeurDisponible / getLengthY();
+        int tailleCaseVerticale = screenSize.height / getLength();
+        int tailleCase = Math.min(tailleCaseHorizontale, tailleCaseVerticale);
+
+        // Vérifier les débordements
+        if (tailleCase * getLengthY() > screenSize.width || tailleCase * getLength() > screenSize.height) {
+            tailleCase /= 2;
+        }
+
+        return tailleCase - taskbarSize ;
     }
 
-    public int getLengthY() {
-        return this.cases[0].length;
+    public static Dimension getScreenSize() {
+        return screenSize;
+    }
+
+    public static int getLength() {
+        return cases.length;
+    }
+
+    public static int getLengthY() {
+        return cases[0].length;
     }
 
     public char getCase(int x, int y) {
-        return this.cases[x][y];
+        return cases[x][y];
     }
 
     public char[][] getCases() {
@@ -452,8 +475,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Ennemy closerEnnemy = null;
         double minDistance = Double.MAX_VALUE;
         for (Ennemy ennemy : enemies) {
-            double ennemyX = ennemy.getPosition().getX() / ViewLabyrinth.getTailleCase();
-            double ennemyY = ennemy.getPosition().getY() / ViewLabyrinth.getTailleCase();
+            double ennemyX = ennemy.getPosition().getX() / getTailleCase();
+            double ennemyY = ennemy.getPosition().getY() / getTailleCase();
             Vector2D defensePosition = defense.getPosition();
             double distance = Math.sqrt(Math.pow(ennemyX - defensePosition.getX(), 2)
                     - Math.pow(ennemyY - defensePosition.getY(), 2));

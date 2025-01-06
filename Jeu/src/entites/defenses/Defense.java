@@ -5,6 +5,8 @@ import entites.enemies.Ennemy;
 import laby.views.ViewLabyrinth;
 import steering_astar.Steering.Vector2D;
 
+import static laby.ModeleLabyrinth.getTailleCase;
+
 public abstract class Defense extends Entity {
 
     private double health;
@@ -25,8 +27,8 @@ public abstract class Defense extends Entity {
      * @return true si l'ennemi est dans la portée de la défense, false sinon
      */
     public boolean isInRange(Ennemy target) {
-        double targetX = target.getPosition().getX() / ViewLabyrinth.getTailleCase();
-        double targetY = target.getPosition().getY() / ViewLabyrinth.getTailleCase();
+        double targetX = target.getPosition().getX() / getTailleCase();
+        double targetY = target.getPosition().getY() / getTailleCase();
         double defenseX = this.getPosition().getX();
         double defenseY = this.getPosition().getY();
 

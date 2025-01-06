@@ -19,8 +19,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static laby.ModeleLabyrinth.getTailleCase;
+
 public class ViewLabyrinth implements Observer {
-    static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
     static int tailleCase = 50;
     private static ModeleLabyrinth laby;
     private Canvas canvas;
@@ -179,26 +180,6 @@ public class ViewLabyrinth implements Observer {
         //ennemi
         gc.setFill(ennemiColor);
         gc.fillOval(xCoordEnnemi, yCoordEnnemi, ennemiSize, ennemiSize);
-    }
-
-    public static int getTailleCase() {
-        int largeurDisponible = (screenSize.width / 7) * 6;
-        int taskbarSize = 2 ;
-        int tailleCaseHorizontale = largeurDisponible / laby.getLengthY();
-        int tailleCaseVerticale = screenSize.height / laby.getLength();
-        int tailleCase = Math.min(tailleCaseHorizontale, tailleCaseVerticale);
-
-        // Vérifier les débordements
-        if (tailleCase * laby.getLengthY() > screenSize.width || tailleCase * laby.getLength() > screenSize.height) {
-            tailleCase /= 2;
-        }
-
-        return tailleCase - taskbarSize ;
-    }
-
-
-    public static Dimension getScreenSize(){
-        return screenSize;
     }
 }
 
