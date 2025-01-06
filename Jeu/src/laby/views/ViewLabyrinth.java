@@ -2,6 +2,7 @@ package laby.views;
 
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
+import entites.enemies.Ninja;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -30,6 +31,8 @@ public class ViewLabyrinth implements Observer {
     public ViewLabyrinth(ModeleLabyrinth laby, Canvas canvas) {
         this.laby = laby;
         this.canvas = canvas;
+        Canvas canvasEnnemis = new Canvas(canvas.getWidth(), canvas.getHeight());
+
 
         // Chargement des images
         images.put(ModeleLabyrinth.TREE, new Image("/tree3.png"));
@@ -57,27 +60,17 @@ public class ViewLabyrinth implements Observer {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         // Dessin du labyrinthe
-        for (int i = 0; i < laby.getLength(); i++) {
-            for (int j = 0; j < laby.getLengthY(); j++) {
-                dessinerCase(gc, laby.getCase(i, j), i, j);
+            for (int i = 0; i < laby.getLength(); i++) {
+                for (int j = 0; j < laby.getLengthY(); j++) {
+                    dessinerCase(gc, laby.getCase(i, j), i, j);
+                }
             }
-        }
 
         // Dessin des ennemis
         Color colorPath = Color.rgb(15, 175, 252);
         for (Ennemy ennemi : laby.enemies) {
-            Color c;
-            if (ennemi instanceof entites.enemies.Giant) {
-                c = Color.ORANGE;
-            } else if (ennemi instanceof entites.enemies.Ninja) {
-                c = Color.BLACK;
-            } else if (ennemi instanceof entites.enemies.Berserker) {
-                c = Color.RED;
-            } else {
-                c = Color.GREEN;
-            }
             for (String behaviour : laby.getBehaviours()) {
-                renderEnnemi(gc, ennemi, laby.getBehavioursMap().get(behaviour), colorPath, c);
+                renderEnnemi(gc, ennemi, laby.getBehavioursMap().get(behaviour), colorPath);
             }
         }
 
@@ -145,7 +138,7 @@ public class ViewLabyrinth implements Observer {
         }
     }
 
-    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor, Color ennemiColor) {
+    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor) {
         //variables
         double radius = Behavior.getTargetRadius();
         Vector2D position = ennemi.getPosition();
@@ -177,8 +170,7 @@ public class ViewLabyrinth implements Observer {
         gc.fillOval(xCoord + ennemiSize/2 - velocityPointSize/2, yCoord + ennemiSize/2 - velocityPointSize/2, velocityPointSize, velocityPointSize);
 
         //ennemi
-        gc.setFill(ennemiColor);
-        gc.fillOval(xCoordEnnemi, yCoordEnnemi, ennemiSize, ennemiSize);
+        gc.drawImage(ennemi.getImage(), xCoordEnnemi, yCoordEnnemi, getTailleCase(), getTailleCase());
     }
 
     public static int getTailleCase() {

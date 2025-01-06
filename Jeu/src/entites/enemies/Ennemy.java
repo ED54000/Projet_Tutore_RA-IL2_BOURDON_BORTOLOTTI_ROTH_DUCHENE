@@ -22,10 +22,10 @@ public abstract class Ennemy extends Entity {
     private boolean isArrived;
     private int survivalTime;
     private String name;
-    //private String sprite;
+    private Image sprite;
     private Vector2D velocity;
 
-    public Ennemy(Vector2D position, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name) {
+    public Ennemy(Vector2D position, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite) {
         super(position, damages, range);
         this.speed = speed;
         this.attackSpeed = attackSpeed;
@@ -38,7 +38,7 @@ public abstract class Ennemy extends Entity {
         this.behavior = "Normal";
         this.velocity = new Vector2D(0, 0);
         this.name = name;
-        //this.sprite = sprite;
+        this.sprite = new Image(sprite);
         timeSpawn++;
     }
 
@@ -171,11 +171,9 @@ public abstract class Ennemy extends Entity {
         return distanceStartToArrival;
     }
 
-    /*
-    public String getImage() {
-        return sprite;
-    }
 
-     */
+    public Image getImage() {
+        return sprite;
+}
 }
 
