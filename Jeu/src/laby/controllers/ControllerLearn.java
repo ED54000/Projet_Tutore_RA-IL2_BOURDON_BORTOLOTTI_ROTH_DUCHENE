@@ -23,9 +23,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
     @Override
         public void handle(MouseEvent mouseEvent) {
-            //clear les logs
-            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
-            parentVBox.getChildren().clear();
+
 
             // On fait évoluer les ennemis
             laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
@@ -77,6 +75,18 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             c++;
         }
 
+        //clear les logs si ce n'est pas une simulation
+        if (!laby.estSimulation()) {
+            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+            parentVBox.getChildren().clear();
+
+            parentVBox.getChildren().add(new Label("Learned"));
+
+            Button nextManche = new Button("Next Manche");
+            nextManche.setOnMouseClicked(new ControllerNextManche(laby));
+            parentVBox.getChildren().add(nextManche);
+        }
+
         /*
         System.out.println(laby.enemies.get(0)+ "Statistiques : ");
         System.out.println("Vie : "+laby.enemies.get(0).getHealth());
@@ -102,11 +112,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
 
 
-        parentVBox.getChildren().add(new Label("Learned"));
 
-        Button nextManche = new Button("Next Manche");
-        nextManche.setOnMouseClicked(new ControllerNextManche(laby));
-        parentVBox.getChildren().add(nextManche);
 
         //laby.setPause(false); //???
     }

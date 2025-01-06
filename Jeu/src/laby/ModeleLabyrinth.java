@@ -3,6 +3,9 @@ package laby;
 import entites.defenses.*;
 import entites.enemies.*;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseEvent;
+import laby.controllers.ControllerLearn;
+import laby.controllers.ControllerNextManche;
 import laby.views.ViewLabyrinth;
 import moteur.Jeu;
 import steering_astar.Steering.PathfollowingBehavior;
@@ -10,6 +13,7 @@ import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.*;
 
 import java.util.*;
@@ -27,21 +31,22 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private int nbManches = 1;
     private int limManches;
-    // Nombre d'ennemis qui doivent arriver à la fin pour gagner
     public int nbEnnemiesToWin;
+    private int nbEnnemiesArrived;
 
+
+    //entités
     public ArrayList<Ennemy> enemies = new ArrayList<>();
     public ArrayList<Defense> defenses = new ArrayList<>();
-
     public ArrayList<Ennemy> deadEnemies = new ArrayList<>();
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
-
     private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
-
     private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
 
 
-    //private ArrayList<Vector2D> aStarNormal, aStarFugitive, aStarKamikaze;
+    //si le jeu est avec le main simulation
+    private boolean simulation = false;
+
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
 
@@ -53,7 +58,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
 
     private String logs = "";
-    private int nbEnnemiesArrived;
 
     private boolean pause = false;
     private boolean end = false;
@@ -75,6 +79,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
      * @throws IOException si le fichier n'existe pas
      */
     public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin) throws IOException {
+        this.simulation = simulation;
         this.limManches = limManches;
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
@@ -278,6 +283,29 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
             setLogs("Manche " + nbManches + " terminée");
             deadEnemies.clear();
+
+            if(this.simulation){
+                //simuler un appui sur le bouton learn
+                Component fakeSource = new Component() {}; // Composant source fictif
+                MouseEvent fakeClickEvent = new MouseEvent(
+                        MouseEvent.MOUSE_CLICKED,    // Type d'événement
+                        0, 0,                        // Coordonnées locales (x, y)
+                        0, 0,                        // Coordonnées écran (screenX, screenY)
+                        javafx.scene.input.MouseButton.PRIMARY,  // Bouton de la souris (clic gauche)
+                        1,                           // Nombre de clics
+                        false, false, false, false,   // Modificateurs (Shift, Ctrl, Alt, Meta)
+                        false, false, false, false,   // Indicateurs de boutons de la souris
+                        false, false, null           // Autres paramètres par défaut
+                );
+
+                ControllerLearn cl = new ControllerLearn(this);
+                new ControllerNextManche(this).handle(fakeClickEvent);
+
+                cl.handle(fakeClickEvent);
+
+                //simuler un appui sur le bouton next manche
+
+            }
             //TODO : lancer la prochaine manche
         }
 
@@ -537,5 +565,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void RefreshEnnemyArrived() {
         this.nbEnnemiesArrived = 0;
+    }
+
+    public void setSimulation(boolean b) {
+        this.simulation = b;
+    }
+
+    public boolean estSimulation() {
+        return this.simulation;
     }
 }

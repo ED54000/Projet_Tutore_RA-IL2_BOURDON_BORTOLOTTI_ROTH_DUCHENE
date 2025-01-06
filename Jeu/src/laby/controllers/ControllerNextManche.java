@@ -22,11 +22,15 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         laby.clearDeadEnemies();
 
         //clear les logs
-        VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+        if (!laby.estSimulation()) {
+            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+            parentVBox.getChildren().clear();
 
-        parentVBox.getChildren().clear();
-        int nbManches = laby.getNbManches()+1;
-        parentVBox.getChildren().add(new Label("Manche " + nbManches));
+            int nbManches = laby.getNbManches()+1;
+            parentVBox.getChildren().add(new Label("Manche " + nbManches));
+
+        }
+
         //TODO : faire la prochaine manche
         laby.setPause(false);
         laby.setNbManches(laby.getNbManches() + 1);

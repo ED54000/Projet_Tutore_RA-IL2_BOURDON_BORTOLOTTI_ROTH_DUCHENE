@@ -14,6 +14,7 @@ public class MainSimulation extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         ModeleLabyrinth jeu = new ModeleLabyrinth();
+        jeu.setSimulation(true);
         jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", 2, 1000, 1200);
 
         // stocke la derniere mise e jour
