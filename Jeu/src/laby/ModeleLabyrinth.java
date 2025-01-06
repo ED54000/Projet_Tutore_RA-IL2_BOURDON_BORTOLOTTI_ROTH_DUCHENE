@@ -46,7 +46,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     //labyrinthe
     private static char[][] cases;
-    private int Xstart, Ystart, XArrival, YArrival;
+    private int Xstart, Ystart, XArrival, YArrival, XstartRender, YstartRender, XArrivalRender, YArrivalRender;
     private Map<String, ArrayList<Vector2D>> BehavioursMap = new HashMap<>();
     private ArrayList<Observer> observateurs;
 
@@ -111,15 +111,18 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case START:
                         //ajouter le point de départ
                         this.cases[numLigne][colonne] = START;
-                        this.Xstart = colonne * getTailleCase();
-                        this.Ystart = numLigne * getTailleCase();
-//                      createEnnemies(nbEnnemies, colonne, numLigne);
+                        this.Xstart = colonne;
+                        this.Ystart = numLigne;
+                        this.XstartRender = colonne * getTailleCase();
+                        this.YstartRender = numLigne * getTailleCase();
                         break;
                     case END:
                         //ajouter le point d'arrivée
                         this.cases[numLigne][colonne] = END;
-                        this.XArrival = colonne * getTailleCase();
-                        this.YArrival = numLigne * getTailleCase();
+                        this.XArrival = colonne;
+                        this.YArrival = numLigne;
+                        this.XArrivalRender = colonne * getTailleCase();
+                        this.YArrivalRender = numLigne * getTailleCase();
                         break;
                     case CANON:
                         //ajouter un canon
@@ -157,23 +160,26 @@ public class ModeleLabyrinth implements Jeu, Subject {
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
             int random = (int) (Math.random() * 4);
+            System.out.println("Xstart : "+ XstartRender);
+            System.out.println("Ystart : "+ YstartRender);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(new Vector2D(this.getXstart() + nbNinja*10, this.getYstart() + nbGiant*10), "Giant " + nbGiant);
+
+                    Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random(), this.YstartRender + Math.random()), "Giant " + nbGiant);
                     giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
                     giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.getXstart() + nbNinja*10, this.getYstart() + nbNinja*10), "Ninja " + nbNinja);
+                    Ninja ninja = new Ninja(new Vector2D(this.XstartRender + Math.random(), this.YstartRender + Math.random()), "Ninja " + nbNinja);
                     ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
                     ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.getXstart() + nbBerserker*10, this.getYstart() + nbBerserker*10), "Berseker " + nbBerserker);
+                    Berserker berserker = new Berserker(new Vector2D(this.XstartRender + Math.random(), this.YstartRender + Math.random()), "Berseker " + nbBerserker);
                     berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
                     berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
                     this.enemies.add(berserker);
@@ -185,7 +191,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
         for (int i = 1; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.getXstart() + Math.random(), this.getYstart() + Math.random()), "Druide " + i);
+            Druide druide = new Druide(new Vector2D(this.XstartRender + Math.random(), this.YstartRender + Math.random()), "Druide " + i);
             ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             druide.setDistanceStartToArrival(aStarHealer);
@@ -335,22 +341,27 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // On parcourt les ennemis
                 for(Ennemy e: enemies) {
                     // Si l'ennemi est dans la portée de la défense
-                    if (defense.isInRange(e)) {
-                        // On l'attaque
-                        defense.attack(e);
-                        System.out.println("Attaque de " + defense.getClass() + " sur " + e.getName()+"pv restants:"+e.getHealth());
-                        // Si l'ennemi est mort, on le retire de la liste des ennemis
-                        if (e.isDead() && !deadEnemies.contains(e)) {
-                            this.TowerIsDestroyed(defense);
-                            deadEnemies.add(e);
-                            enemies.remove(e);
-                            e.setKillerType(defense.getType());
-                            setLogs(e.getName() + " is dead");
+                    if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
+                        // Cela active la bombe
+
+                                // On l'attaque
+                                defense.attack(e);
+                                System.out.println("Attaque de " + defense.getClass() + " sur " + e.getName()+" pv restants : "+e.getHealth());
+                                // Si l'ennemi est mort, on le retire de la liste des ennemis
+                                if (e.isDead() && !deadEnemies.contains(e)) {
+                                    deadEnemies.add(e);
+                                    enemies.remove(e);
+                                    e.setKillerType(defense.getType());
+                                    setLogs(e.getName() + " is dead");
+
                         }
+
                         // La défense s'autodétruit après avoir attaqué
                         deadDefenses.add(defense);
                         defenses.remove(defense);
                         defense.takeDamage(10000);
+                        defense.setDead(true);
+                        setLogs("La défense : " + defense.getType() + " à été détruite");
                     }
                 }
             }
@@ -363,8 +374,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 //System.out.println("Ennemy : " + ennemy.getName());
 
                 //vérification d'arrivée
-                if ((int) (ennemy.getPosition().getX()) >= XArrival - 10 && (int) (ennemy.getPosition().getX()) <= XArrival + 10 &&
-                        (int) (ennemy.getPosition().getY()) >= YArrival - 10 && (int) (ennemy.getPosition().getY()) <= YArrival + 10 &&
+                if ((int) (ennemy.getPosition().getX()) >=  XArrivalRender- 10 && (int) (ennemy.getPosition().getX()) <= XArrivalRender + 10 &&
+                        (int) (ennemy.getPosition().getY()) >= YArrivalRender - 10 && (int) (ennemy.getPosition().getY()) <= YArrivalRender + 10 &&
                         !ennemy.isArrived() && !deadEnemies.contains(ennemy)
                 ) {
                     ennemy.setArrived(true);
@@ -477,8 +488,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Ennemy closerEnnemy = null;
         double minDistance = Double.MAX_VALUE;
         for (Ennemy ennemy : enemies) {
-            double ennemyX = ennemy.getPosition().getX() / getTailleCase();
-            double ennemyY = ennemy.getPosition().getY() / getTailleCase();
+            double ennemyX = ennemy.getPosition().getX();
+            double ennemyY = ennemy.getPosition().getY();
             Vector2D defensePosition = defense.getPosition();
             double distance = Math.sqrt(Math.pow(ennemyX - defensePosition.getX(), 2)
                     - Math.pow(ennemyY - defensePosition.getY(), 2));
@@ -558,9 +569,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (defense instanceof Archer){
                 copyGrid[(int) position.getX()][(int) position.getY()] = 'A';
             }
+            createBehaviours(copyGrid);
             for (Ennemy ennemy : enemies) {
-                copyGrid[(int) ennemy.getPosition().getX()/getTailleCase()][(int) ennemy.getPosition().getY()/getTailleCase()] = 'S';
+                copyGrid[(int) ennemy.getPosition().getX()][(int) ennemy.getPosition().getY()] = 'S';
                 Astar newAstar = new Astar();
+                System.out.println(ennemy.getBehavior());
                 ennemy.setBehaviorPath(new PathfollowingBehavior(newAstar.aStarSearch(copyGrid,copyGrid.length,copyGrid[0].length,ennemy.getPosition(),
                         new Vector2D(this.getYArrival(), this.getXArrival()),ennemy.getBehavior())));
             }

@@ -1,5 +1,6 @@
 package laby.views;
 
+import entites.defenses.Bomb;
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
 import entites.enemies.Ninja;
@@ -113,6 +114,16 @@ public class ViewLabyrinth implements Observer {
 
                 gc.setStroke(Color.BLACK);
                 gc.strokeOval(x - range + (getTailleCase() / 2.0), y - range + getTailleCase() / 2.0, 2 * range, 2 * range);
+            }
+        }
+        for (Defense defense : laby.deadDefenses){
+            double x = defense.getPosition().getX() * getTailleCase();
+            double y = defense.getPosition().getY() * getTailleCase();
+
+            if (defense instanceof entites.defenses.Bomb) {
+                gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
+            }else {
+                gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
             }
         }
     }

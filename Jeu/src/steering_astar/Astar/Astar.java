@@ -10,6 +10,7 @@ import java.util.*;
 
 import static laby.ModeleLabyrinth.getTailleCase;
 
+
 /***
  * Classe Astar qui choisi le chemin le plus court avec l'algorithme A*
  * L'algorithme à été repris sur https://codegym.cc/groups/posts/a-search-algorithm-in-java
@@ -46,7 +47,7 @@ public class Astar {
      * @return true si le point peut être traversé, false sinon
      */
     boolean isUnblocked(char[][] grid, Vector2D point) {
-        Vector2D pointDivide = new Vector2D(point.getX() / getTailleCase(), point.getY() / getTailleCase());
+        Vector2D pointDivide = new Vector2D(point.getX(), point.getY());
         if (isValid(grid, pointDivide)) {
             char cell = grid[(int) point.getX()][(int) point.getY()];
             return cell == '.' || cell == 'E' || cell == 'S' || cell == 'B';
@@ -75,8 +76,8 @@ public class Astar {
      * @return La distance euclidienne entre les deux points
      */
     double calculateHValue(Vector2D src, Vector2D dest) {
-        return Math.sqrt(Math.pow((src.getX() / getTailleCase() - dest.getX() / getTailleCase()), 2.0)
-                + Math.pow((src.getY() / getTailleCase() - dest.getY() / getTailleCase()), 2.0));
+        return Math.sqrt(Math.pow((src.getX() - dest.getX()), 2.0)
+                + Math.pow((src.getY() - dest.getY()), 2.0));
     }
 
     /***
@@ -98,7 +99,7 @@ public class Astar {
 
         Vector2D nextNode;
         do {
-            path.push(new Vector2D(row * getTailleCase(), col * getTailleCase()));
+            path.push(new Vector2D(row, col));
             pathArray.addFirst(new Vector2D(col * getTailleCase(), row * getTailleCase()));
             nextNode = cellDetails[(int) row][(int) col].parent;
             row = nextNode.getX();
@@ -137,14 +138,14 @@ public class Astar {
         if (comp.equals("Kamikaze")) {
             try {
                 double[] newEnd = getNearTower(copyGrid);
-                dest = new Vector2D(newEnd[0] * getTailleCase(), newEnd[1] * getTailleCase());
-                copyGrid[(int) dest.getX() / getTailleCase()][(int) dest.getY() / getTailleCase()] = 'E';
+                dest = new Vector2D(newEnd[0], newEnd[1]);
+                copyGrid[(int) dest.getX()][(int) dest.getY()] = 'E';
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
         }
-        Vector2D destDivide = new Vector2D(dest.getX() / getTailleCase(), dest.getY() / getTailleCase());
-        Vector2D srcDivide = new Vector2D(src.getX() / getTailleCase(), src.getY() / getTailleCase());
+        Vector2D destDivide = new Vector2D(dest.getX(), dest.getY());
+        Vector2D srcDivide = new Vector2D(src.getX(), src.getY());
 
         if (!isValid(copyGrid, srcDivide)) {
             System.err.println("Source is invalid...");
@@ -170,8 +171,8 @@ public class Astar {
 
         double i, j;
 
-        i = src.getX() / getTailleCase();
-        j = src.getY() / getTailleCase();
+        i = src.getX();
+        j = src.getY();
         cellDetails[(int) i][(int) j] = new Cell();
         cellDetails[(int) i][(int) j].f = 0.0;
         cellDetails[(int) i][(int) j].g = 0.0;
@@ -318,28 +319,28 @@ public class Astar {
     }
 
     private double[] getNearTower(char[][] grid) {
-            char[] charTowers = {'A', 'B', 'C'};
-            double[] nearest = {Double.MAX_VALUE, Double.MAX_VALUE};
-            double nearestDistance = Double.MAX_VALUE;
+        char[] charTowers = {'A', 'B', 'C'};
+        double[] nearest = {Double.MAX_VALUE, Double.MAX_VALUE};
+        double nearestDistance = Double.MAX_VALUE;
 
-            for (char c : charTowers) {
-                try {
-                    double[] near = Vector2D.getCloserPairIndex(grid, c);
+        for (char c : charTowers) {
+            try {
+                double[] near = Vector2D.getCloserPairIndex(grid, c);
 
-                    double currentDistance = Math.sqrt(Math.pow(near[0], 2) + Math.pow(near[1], 2));
+                double currentDistance = Math.sqrt(Math.pow(near[0], 2) + Math.pow(near[1], 2));
 
-                    if (currentDistance < nearestDistance) {
-                        nearestDistance = currentDistance;
-                        nearest = near;
-                    }
-                } catch (Exception e) {
-                    System.err.println("Defense " + c + " not found: " + e.getMessage());
-
+                if (currentDistance < nearestDistance) {
+                    nearestDistance = currentDistance;
+                    nearest = near;
                 }
-            }
+            } catch (Exception e) {
+                System.err.println("Defense " + c + " not found: " + e.getMessage());
 
-            return nearest;
+            }
         }
 
-
+        return nearest;
     }
+
+
+}
