@@ -1,6 +1,7 @@
 package entites;
 
 import entites.enemies.Ennemy;
+import laby.ModeleLabyrinth;
 import laby.views.ViewLabyrinth;
 import steering_astar.Steering.Vector2D;
 
@@ -77,8 +78,8 @@ public abstract class Entity {
      * @return true si l'entite à vérifier est dans la portée de l'entite courante, false sinon
      */
     public boolean isInRange(Entity target) {
-        double targetX = target.getPosition().getX() / ViewLabyrinth.getTailleCase();
-        double targetY = target.getPosition().getY() / ViewLabyrinth.getTailleCase();
+        double targetX = target.getPosition().getX() / ModeleLabyrinth.getTailleCase();
+        double targetY = target.getPosition().getY() / ModeleLabyrinth.getTailleCase();
         double entityX = this.getPosition().getX();
         double entityY = this.getPosition().getY();
 
