@@ -12,6 +12,7 @@ public abstract class Ennemy extends Entity {
 
     private double speed;
     private double attackSpeed;
+    private long lastAttackTime;
     private int distanceToArrival;  //distanceToArrival sera calculé par A* dans le jeu
     private int distanceStartToArrival;
     private String killerType;
@@ -39,6 +40,7 @@ public abstract class Ennemy extends Entity {
         this.velocity = new Vector2D(0, 0);
         this.name = name;
         //this.sprite = sprite;
+        this.lastAttackTime = 0;
         timeSpawn++;
     }
 
@@ -46,10 +48,30 @@ public abstract class Ennemy extends Entity {
         health -= damage;
     }
 
-    public void attack(Defense target) {
-        if (target != null) {
-            target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
+    public void healDamage(Ennemy target, double heal){
+        health += heal;
+        System.out.println("Soin de " + this + " sur " + target);
+        System.out.println("Montant de soin : " + heal);
+        System.out.println("Vie de " + target + " : " + target.getHealth());
+        System.out.println("=====================================");
+    }
+
+    public void attack(Defense target){
+        // On récupère le temps actuel en millisecondes
+        long currentTime = System.currentTimeMillis();
+
+        // Si le temps écoulé depuis la dernière attaque est supérieur ou égal à l'attackSpeed
+        if(currentTime - lastAttackTime >= 1000 / attackSpeed) {
+            // On met à jour le temps de la dernière attaque
+            lastAttackTime = currentTime;
+            // On attaque la défense
+            target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
+            System.out.println("Attaque de " + this +"de type : "+this.getType()+ " sur " + target+" de type : "+target.getType());
+            System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
+            System.out.println("Vie de la défense : " + target.getHealth());
+            System.out.println("=====================================");
         }
+        // Sinon, on ne fait rien
     }
 
     /***
@@ -165,6 +187,14 @@ public abstract class Ennemy extends Entity {
 
     public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
         this.distanceStartToArrival = vector2DS.size();
+    }
+
+    public long getLastAttackTime(){
+        return this.lastAttackTime;
+    }
+
+    public void setLastAttackTime(long time){
+        this.lastAttackTime = time;
     }
 
     public int getDistanceStartToArrival() {
