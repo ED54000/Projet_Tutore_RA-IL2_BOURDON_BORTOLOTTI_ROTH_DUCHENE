@@ -18,8 +18,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import laby.ModeleLabyrinth;
-import laby.controllers.ControllerLearn;
-import laby.controllers.ControllerStart;
+
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
@@ -143,7 +142,7 @@ public class MoteurJeu extends Application {
         nbEnnemiesToWinField.setId("ennemiesToWinField");
 
         // Création du contrôleur avec les références des champs
-        ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField, nbEnnemiesToWinField);
+        //ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField, nbEnnemiesToWinField);
 
 
         HBox roundsBox = new HBox(10, new Label("Nombre de manches :"), roundsField);

@@ -294,6 +294,11 @@ public class EnnemyEvolution {
                 // Portée entre -1 et 1
                 e.setRange(e.getRange() + (-1 + (Math.random() * (1 - (-1)))));
             }
+
+            // Si la vitesse est inférieure à 0.1, on la met à 0.1
+            if(e.getSpeed() < 0.1){
+                e.setSpeed(0.1);
+            }
         }
         return ennemies;
     }

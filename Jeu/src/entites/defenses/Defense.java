@@ -20,32 +20,36 @@ public abstract class Defense extends Entity {
 
     public abstract void attack(Ennemy target);
 
-    /**
-     * Vérifie si un ennemi est dans la portée de la défense
-     *
-     * @param target l'ennemi à vérifier
-     * @return true si l'ennemi est dans la portée de la défense, false sinon
-     */
-    public boolean isInRange(Ennemy target) {
-        double targetX = target.getPosition().getX() / getTailleCase();
-        double targetY = target.getPosition().getY() / getTailleCase();
-        double defenseX = this.getPosition().getX();
-        double defenseY = this.getPosition().getY();
-
-        // Calculer la distance au carré entre les positions
-        double deltaX = targetX - defenseX;
-        double deltaY = targetY - defenseY;
-        double distanceSquared = deltaX * deltaX + deltaY * deltaY;
-
-
-        double rangeInPixels = this.getRange();
-
-        // Vérification si l'ennemi est dans la portée
-        return distanceSquared <= rangeInPixels * rangeInPixels;
-    }
+//    /**
+//     * Vérifie si un ennemi est dans la portée de la défense
+//     *
+//     * @param target l'ennemi à vérifier
+//     * @return true si l'ennemi est dans la portée de la défense, false sinon
+//     */
+//    public boolean isInRange(Ennemy target) {
+//        double targetX = target.getPosition().getX() / ViewLabyrinth.getTailleCase();
+//        double targetY = target.getPosition().getY() / ViewLabyrinth.getTailleCase();
+//        double defenseX = this.getPosition().getX();
+//        double defenseY = this.getPosition().getY();
+//
+//        // Calculer la distance au carré entre les positions
+//        double deltaX = targetX - defenseX;
+//        double deltaY = targetY - defenseY;
+//        double distanceSquared = deltaX * deltaX + deltaY * deltaY;
+//
+//
+//        double rangeInPixels = this.getRange();
+//
+//        // Vérification si l'ennemi est dans la portée
+//        return distanceSquared <= rangeInPixels * rangeInPixels;
+//    }
 
     public double getHealth() {
         return this.health;
+    }
+
+    public void takeDamage(double damage) {
+        health -= damage;
     }
 
     protected void setHealth(double health) {

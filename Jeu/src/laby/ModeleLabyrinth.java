@@ -3,12 +3,17 @@ package laby;
 import entites.defenses.*;
 import entites.enemies.*;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseEvent;
+import laby.controllers.ControllerLearn;
+import laby.controllers.ControllerNextManche;
+import laby.views.ViewLabyrinth;
 import moteur.Jeu;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.*;
 
 import java.util.*;
@@ -28,19 +33,21 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private int limManches;
     // Nombre d'ennemis qui doivent arriver à la fin pour gagner
     public int nbEnnemiesToWin;
+    private int nbEnnemiesArrived;
 
+
+    //entités
     public ArrayList<Ennemy> enemies = new ArrayList<>();
     public ArrayList<Defense> defenses = new ArrayList<>();
-
     public ArrayList<Ennemy> deadEnemies = new ArrayList<>();
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
-
     private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
-
     private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
 
 
-    //private ArrayList<Vector2D> aStarNormal, aStarFugitive, aStarKamikaze;
+    //si le jeu est avec le main simulation
+    private boolean simulation = false;
+
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
 
@@ -50,9 +57,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private Map<String, ArrayList<Vector2D>> BehavioursMap = new HashMap<>();
     private ArrayList<Observer> observateurs;
 
-
     private String logs = "";
-    private int nbEnnemiesArrived;
 
     private boolean pause = false;
     private boolean end = false;
@@ -74,6 +79,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
      * @throws IOException si le fichier n'existe pas
      */
     public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin) throws IOException {
+        this.simulation = simulation;
         this.limManches = limManches;
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
@@ -160,8 +166,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
             int random = (int) (Math.random() * 4);
-            System.out.println("Xstart : "+ XstartRender);
-            System.out.println("Ystart : "+ YstartRender);
             switch (random) {
                 case 0:
 
@@ -254,12 +258,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
             this.ennemiesEndOfManche.addAll(ennemiesArrived);
 
             int c = 0;
-            for (Ennemy e: ennemiesEndOfManche) {
-                System.out.println("Ennemy "+c+" fin de manche : "+e.getName()+" type:"+e.getType()+" vie"+e.getHealth()+" vitesse :"+e.getSpeed()+" dégâts :"+e.getDamages()+" distance arrivée :"+e.getDistanceToArrival()+" behavior :"+e.getBehavior());
+            for (Ennemy e : ennemiesEndOfManche) {
+                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
                 c++;
             }
 
-            System.out.println("ennemis en fin de manche : "+ennemiesEndOfManche);
+            System.out.println("ennemis en fin de manche : " + ennemiesEndOfManche);
 
             for (Ennemy ennemy : ennemiesEndOfManche) {
                 ennemy.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
@@ -282,9 +286,67 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
             setLogs("Manche " + nbManches + " terminée");
             deadEnemies.clear();
+
+            if (this.simulation) {
+                //simuler un appui sur le bouton learn
+                Component fakeSource = new Component() {
+                }; // Composant source fictif
+                MouseEvent fakeClickEvent = new MouseEvent(
+                        MouseEvent.MOUSE_CLICKED,    // Type d'événement
+                        0, 0,                        // Coordonnées locales (x, y)
+                        0, 0,                        // Coordonnées écran (screenX, screenY)
+                        javafx.scene.input.MouseButton.PRIMARY,  // Bouton de la souris (clic gauche)
+                        1,                           // Nombre de clics
+                        false, false, false, false,   // Modificateurs (Shift, Ctrl, Alt, Meta)
+                        false, false, false, false,   // Indicateurs de boutons de la souris
+                        false, false, null           // Autres paramètres par défaut
+                );
+
+                ControllerLearn cl = new ControllerLearn(this);
+                new ControllerNextManche(this).handle(fakeClickEvent);
+
+                cl.handle(fakeClickEvent);
+
+                //simuler un appui sur le bouton next manche
+
+            }
             //TODO : lancer la prochaine manche
         }
 
+        // On gère les attaques des ennemis
+        for (Ennemy ennemi : enemies) {
+            // Si l'ennemi est un géant
+            if (ennemi instanceof entites.enemies.Giant) {
+                // On vérifie pour chaque défense si elle est a portée du géant
+                for (Defense defense : defenses) {
+                    if (ennemi.isInRange(defense)) {
+                        // Toutes les tours a portée sont attaquées
+                        ennemi.attack(defense);
+                    }
+                }
+            }
+            // Si l'ennemi est un druide
+            else if (ennemi instanceof entites.enemies.Druide) {
+                // On vérifie pour chaque ennemi si il est a portée du druide
+                for (Ennemy ennemiTarget : enemies) {
+                    // Tous les ennemis a portée sont soignés
+                    if (ennemi.isInRange(ennemiTarget)) {
+                        ennemiTarget.healDamage(ennemiTarget, ennemi.getDamages());
+                    }
+                }
+            }
+            // Sinon
+            else {
+                // On vérifie si une défense est dans la portée de l'ennemi
+                for (Defense defense : defenses) {
+                    if (ennemi.isInRange(defense)) {
+                        // On l'attaque
+                        ennemi.attack(defense);
+                        break;
+                    }
+                }
+            }
+        }
 
         // On gère les attaques des défenses
         for (Defense defense : defenses) {
@@ -339,20 +401,20 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si la defense est passive
             else {
                 // On parcourt les ennemis
-                for(Ennemy e: enemies) {
+                for (Ennemy e : enemies) {
                     // Si l'ennemi est dans la portée de la défense
                     if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
                         // Cela active la bombe
 
-                                // On l'attaque
-                                defense.attack(e);
-                                System.out.println("Attaque de " + defense.getClass() + " sur " + e.getName()+" pv restants : "+e.getHealth());
-                                // Si l'ennemi est mort, on le retire de la liste des ennemis
-                                if (e.isDead() && !deadEnemies.contains(e)) {
-                                    deadEnemies.add(e);
-                                    enemies.remove(e);
-                                    e.setKillerType(defense.getType());
-                                    setLogs(e.getName() + " is dead");
+                        // On l'attaque
+                        defense.attack(e);
+                        System.out.println("Attaque de " + defense.getClass() + " sur " + e.getName() + " pv restants : " + e.getHealth());
+                        // Si l'ennemi est mort, on le retire de la liste des ennemis
+                        if (e.isDead() && !deadEnemies.contains(e)) {
+                            deadEnemies.add(e);
+                            enemies.remove(e);
+                            e.setKillerType(defense.getType());
+                            setLogs(e.getName() + " is dead");
 
                         }
 
@@ -374,7 +436,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 //System.out.println("Ennemy : " + ennemy.getName());
 
                 //vérification d'arrivée
-                if ((int) (ennemy.getPosition().getX()) >=  XArrivalRender- 10 && (int) (ennemy.getPosition().getX()) <= XArrivalRender + 10 &&
+                if ((int) (ennemy.getPosition().getX()) >= XArrivalRender - 10 && (int) (ennemy.getPosition().getX()) <= XArrivalRender + 10 &&
                         (int) (ennemy.getPosition().getY()) >= YArrivalRender - 10 && (int) (ennemy.getPosition().getY()) <= YArrivalRender + 10 &&
                         !ennemy.isArrived() && !deadEnemies.contains(ennemy)
                 ) {
@@ -383,7 +445,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
                     setLogs("Le " + ennemy.getName() + " est arrivé");
 
-                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin+1) {
+                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) { //changer par le nombre d'ennemies nécessaire pour perdre
                         setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
                         this.end = true;
                     }
@@ -429,7 +491,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public static int getTailleCase() {
         int largeurDisponible = (screenSize.width / 7) * 6;
-        int taskbarSize = 2 ;
+        int taskbarSize = 2;
         int tailleCaseHorizontale = largeurDisponible / getLengthY();
         int tailleCaseVerticale = screenSize.height / getLength();
         int tailleCase = Math.min(tailleCaseHorizontale, tailleCaseVerticale);
@@ -439,7 +501,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             tailleCase /= 2;
         }
 
-        return tailleCase - taskbarSize ;
+        return tailleCase - taskbarSize;
     }
 
     public static Dimension getScreenSize() {
@@ -548,12 +610,29 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.ennemiesEndOfManche = new ArrayList<>();
     }
 
+    public int getXstartRender() {
+        return XstartRender;
+    }
+
+    public int getYstartRender() {
+        return YstartRender;
+    }
+
     public void RefreshEnnemyArrived() {
         this.nbEnnemiesArrived = 0;
+        this.ennemiesArrived = new ArrayList<>();
+    }
+
+    public void setSimulation(boolean b) {
+        this.simulation = b;
+    }
+
+    public boolean estSimulation() {
+        return this.simulation;
     }
 
     public void TowerIsDestroyed(Defense defense) {
-        if (defense.isDead()){
+        if (defense.isDead()) {
             System.out.println("La défense est morte !");
             Vector2D position = defense.getPosition();
             char[][] copyGrid = new char[cases.length][];
@@ -563,10 +642,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (defense instanceof Bomb) {
                 copyGrid[(int) position.getX()][(int) position.getY()] = 'B';
             }
-            if (defense instanceof Canon){
+            if (defense instanceof Canon) {
                 copyGrid[(int) position.getX()][(int) position.getY()] = 'C';
             }
-            if (defense instanceof Archer){
+            if (defense instanceof Archer) {
                 copyGrid[(int) position.getX()][(int) position.getY()] = 'A';
             }
             createBehaviours(copyGrid);
@@ -574,8 +653,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 copyGrid[(int) ennemy.getPosition().getX()][(int) ennemy.getPosition().getY()] = 'S';
                 Astar newAstar = new Astar();
                 System.out.println(ennemy.getBehavior());
-                ennemy.setBehaviorPath(new PathfollowingBehavior(newAstar.aStarSearch(copyGrid,copyGrid.length,copyGrid[0].length,ennemy.getPosition(),
-                        new Vector2D(this.getYArrival(), this.getXArrival()),ennemy.getBehavior())));
+                ennemy.setBehaviorPath(new PathfollowingBehavior(newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length, ennemy.getPosition(),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior())));
             }
 
 

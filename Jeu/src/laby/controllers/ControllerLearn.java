@@ -23,9 +23,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
     @Override
         public void handle(MouseEvent mouseEvent) {
-            //clear les logs
-            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
-            parentVBox.getChildren().clear();
+
 
             // On fait évoluer les ennemis
             laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
@@ -67,7 +65,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                     e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
                 }
                 e.setArrived(false);
-                e.setPosition(new Vector2D(laby.getXstart(), laby.getYstart()));
+                e.setPosition(new Vector2D(laby.getXstartRender(), laby.getYstartRender()));
             }
 
 
@@ -75,6 +73,18 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         for (Ennemy e: laby.enemies) {
             System.out.println("Ennemy "+c+" après évolution : "+e.getName()+" type:"+e.getType()+" vie"+e.getHealth()+" vitesse :"+e.getSpeed()+" dégâts :"+e.getDamages()+" distance arrivée :"+e.getDistanceToArrival()+" behavior :"+e.getBehavior());
             c++;
+        }
+
+        //clear les logs si ce n'est pas une simulation
+        if (!laby.estSimulation()) {
+            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+            parentVBox.getChildren().clear();
+
+            parentVBox.getChildren().add(new Label("Learned"));
+
+            Button nextManche = new Button("Next Manche");
+            nextManche.setOnMouseClicked(new ControllerNextManche(laby));
+            parentVBox.getChildren().add(nextManche);
         }
 
         /*
@@ -102,11 +112,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
 
 
-        parentVBox.getChildren().add(new Label("Learned"));
 
-        Button nextManche = new Button("Next Manche");
-        nextManche.setOnMouseClicked(new ControllerNextManche(laby));
-        parentVBox.getChildren().add(nextManche);
 
         //laby.setPause(false); //???
     }
