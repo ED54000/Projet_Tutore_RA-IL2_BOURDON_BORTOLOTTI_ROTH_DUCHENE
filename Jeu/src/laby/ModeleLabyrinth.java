@@ -250,6 +250,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
             this.pause = true;
+            System.out.println("ennemis en fin de manche avant rajout: "+ennemiesEndOfManche);
 
             this.ennemiesEndOfManche.addAll(deadEnemies);
             this.ennemiesEndOfManche.addAll(ennemiesArrived);
@@ -567,6 +568,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void RefreshEnnemyArrived() {
         this.nbEnnemiesArrived = 0;
+        this.ennemiesArrived = new ArrayList<>();
     }
 
     public void setSimulation(boolean b) {
