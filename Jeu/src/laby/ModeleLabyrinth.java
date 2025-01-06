@@ -349,6 +349,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         }
                         // La défense s'autodétruit après avoir attaqué
                         deadDefenses.add(defense);
+                        defenses.remove(defense);
                         defense.takeDamage(10000);
                     }
                 }
