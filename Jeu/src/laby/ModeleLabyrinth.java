@@ -324,6 +324,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                             deadEnemies.add(ennemy);
                             enemies.remove(ennemy);
+                            ennemy.setKillerType(defense.getType());
                             setLogs(ennemy.getName() + " is dead");
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
@@ -344,6 +345,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         if (e.isDead() && !deadEnemies.contains(e)) {
                             deadEnemies.add(e);
                             enemies.remove(e);
+                            e.setKillerType(defense.getType());
                             setLogs(e.getName() + " is dead");
                         }
                         // La défense s'autodétruit après avoir attaqué

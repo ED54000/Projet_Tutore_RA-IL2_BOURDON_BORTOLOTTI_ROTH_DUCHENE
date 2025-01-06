@@ -216,44 +216,56 @@ public class EnnemyEvolution {
             // En fonction du comportement de l'ennemi
             switch (e.getBehavior()) {
                 case "Fugitive" :
+                    // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
+                    if(e.isDead()){
+                        // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
+                        e.setType(e.getKillerType());
+                    }
                     // On affecte les statistiques moyennes des fuyards
                     e.setHealth(averageStats[0][0]);
                     e.setSpeed(averageStats[0][1]);
                     e.setDamages(averageStats[0][2]);
                     e.setAttackSpeed(averageStats[0][3]);
                     e.setRange(averageStats[0][4]);
-                    // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
-                    e.setType(e.getKillerType());
                     break;
                 case "Normal" :
+                    // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
+                    if(e.isDead()){
+                        // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
+                        e.setType(e.getKillerType());
+                    }
                     // On affecte les statistiques moyennes des normaux
                     e.setHealth(averageStats[1][0]);
                     e.setSpeed(averageStats[1][1]);
                     e.setDamages(averageStats[1][2]);
                     e.setAttackSpeed(averageStats[1][3]);
                     e.setRange(averageStats[1][4]);
-                    // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
-                    e.setType(e.getKillerType());
                     break;
                 case "Healer" :
+                    // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
+                    if(e.isDead()){
+                        // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
+                        e.setType(e.getKillerType());
+                    }
                     // On affecte les statistiques moyennes des soigneurs
                     e.setHealth(averageStats[2][0]);
                     e.setSpeed(averageStats[2][1]);
                     e.setDamages(averageStats[2][2]);
                     e.setAttackSpeed(averageStats[2][3]);
                     e.setRange(averageStats[2][4]);
-                    // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
-                    e.setType(e.getKillerType());
                     break;
                 case "Kamikaze" :
+                    // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
+                    if(e.isDead()){
+                        // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
+                        e.setType(e.getKillerType());
+                    }
                     // On affecte les statistiques moyennes des kamikazes
                     e.setHealth(averageStats[3][0]);
                     e.setSpeed(averageStats[3][1]);
                     e.setDamages(averageStats[3][2]);
                     e.setAttackSpeed(averageStats[3][3]);
                     e.setRange(averageStats[3][4]);
-                    // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
-                    e.setType(e.getKillerType());
                     break;
             }
         }
