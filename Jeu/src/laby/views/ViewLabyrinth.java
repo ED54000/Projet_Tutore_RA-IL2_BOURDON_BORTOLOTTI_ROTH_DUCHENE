@@ -61,11 +61,11 @@ public class ViewLabyrinth implements Observer {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         // Dessin du labyrinthe
-            for (int i = 0; i < laby.getLength(); i++) {
-                for (int j = 0; j < laby.getLengthY(); j++) {
-                    dessinerCase(gc, laby.getCase(i, j), i, j);
-                }
+        for (int i = 0; i < laby.getLength(); i++) {
+            for (int j = 0; j < laby.getLengthY(); j++) {
+                dessinerCase(gc, laby.getCase(i, j), i, j);
             }
+        }
 
         // Dessin des ennemis
         Color colorPath = Color.rgb(15, 175, 252);
@@ -97,7 +97,7 @@ public class ViewLabyrinth implements Observer {
                 }
 
                 // dessiner la range des défenses
-                x = defense.getPosition().getX() * getTailleCase();;
+                x = defense.getPosition().getX() * getTailleCase();
                 y = defense.getPosition().getY() * getTailleCase();
                 double range = defense.getRange() * getTailleCase();
 
@@ -142,9 +142,8 @@ public class ViewLabyrinth implements Observer {
     private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor) {
         //variables
         double radius = Behavior.getTargetRadius();
-        Vector2D position = ennemi.getPosition();
-        double xCoordEnnemi = position.getX();
-        double yCoordEnnemi = position.getY();
+        double xCoordEnnemi = ennemi.getPosition().getX();
+        double yCoordEnnemi = ennemi.getPosition().getY();
         double xCoordVelocity = ennemi.getVelocity().getX();
         double yCoordVelocity = ennemi.getVelocity().getY();
 
@@ -172,6 +171,15 @@ public class ViewLabyrinth implements Observer {
 
         //ennemi
         gc.drawImage(ennemi.getImage(), xCoordEnnemi, yCoordEnnemi, getTailleCase(), getTailleCase());
+
+        //range des ennemis
+        double range = ennemi.getRange() * getTailleCase();
+
+        gc.setFill(Color.color(0.0, 0.0, 0.0, 0.17));
+        gc.fillOval(xCoordEnnemi + ennemiSize/2 - range, yCoordEnnemi + ennemiSize/2 - range, 2 * range, 2 * range);
+
+        gc.setStroke(Color.BLACK);
+        gc.strokeOval(xCoordEnnemi + ennemiSize/2 - range, yCoordEnnemi + ennemiSize/2 - range, 2 * range, 2 * range);
     }
 }
 

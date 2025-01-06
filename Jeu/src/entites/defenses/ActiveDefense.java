@@ -46,10 +46,6 @@ public abstract class ActiveDefense extends Defense {
         }
     }
 
-    public void takeDamage(double damage) {
-        health -= damage;
-    }
-
     public Ennemy getTarget() {
         return target;
     }

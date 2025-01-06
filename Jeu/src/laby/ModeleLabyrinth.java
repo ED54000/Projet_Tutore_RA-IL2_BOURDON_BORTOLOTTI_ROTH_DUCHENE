@@ -56,7 +56,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private Map<String, ArrayList<Vector2D>> BehavioursMap = new HashMap<>();
     private ArrayList<Observer> observateurs;
 
-
     private String logs = "";
 
     private boolean pause = false;
@@ -310,6 +309,40 @@ public class ModeleLabyrinth implements Jeu, Subject {
             //TODO : lancer la prochaine manche
         }
 
+        // On gère les attaques des ennemis
+        for (Ennemy ennemi : enemies) {
+            // Si l'ennemi est un géant
+            if (ennemi instanceof entites.enemies.Giant) {
+                // On vérifie pour chaque défense si elle est a portée du géant
+                for (Defense defense : defenses) {
+                    if (ennemi.isInRange(defense)) {
+                        // Toutes les tours a portée sont attaquées
+                        ennemi.attack(defense);
+                    }
+                }
+            }
+            // Si l'ennemi est un druide
+            else if (ennemi instanceof entites.enemies.Druide) {
+                // On vérifie pour chaque ennemi si il est a portée du druide
+                for (Ennemy ennemiTarget : enemies) {
+                    // Tous les ennemis a portée sont soignés
+                    if (ennemi.isInRange(ennemiTarget)) {
+                        ennemiTarget.healDamage(ennemiTarget, ennemi.getDamages());
+                    }
+                }
+            }
+            // Sinon
+            else {
+                // On vérifie si une défense est dans la portée de l'ennemi
+                for (Defense defense : defenses) {
+                    if (ennemi.isInRange(defense)) {
+                        // On l'attaque
+                        ennemi.attack(defense);
+                        break;
+                    }
+                }
+            }
+        }
 
         // On gère les attaques des défenses
         for (Defense defense : defenses) {
@@ -379,6 +412,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         }
                         // La défense s'autodétruit après avoir attaqué
                         deadDefenses.add(defense);
+                        defenses.remove(defense);
                         defense.takeDamage(10000);
                     }
                 }
@@ -401,7 +435,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
                     setLogs("Le " + ennemy.getName() + " est arrivé");
 
-                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin+1) {
+                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin+1) { //changer par le nombre d'ennemies nécessaire pour perdre
                         setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
                         this.end = true;
                     }

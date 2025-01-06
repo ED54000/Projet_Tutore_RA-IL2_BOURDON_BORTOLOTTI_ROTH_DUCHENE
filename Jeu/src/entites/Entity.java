@@ -1,5 +1,8 @@
 package entites;
 
+import entites.enemies.Ennemy;
+import laby.ModeleLabyrinth;
+import laby.views.ViewLabyrinth;
 import steering_astar.Steering.Vector2D;
 
 public abstract class Entity {
@@ -67,6 +70,30 @@ public abstract class Entity {
     }
 
     public abstract void takeDamage(double damage);
+
+    /**
+     * Vérifie si une entite est dans la portée de l'entite courante
+     *
+     * @param target l'entite à vérifier
+     * @return true si l'entite à vérifier est dans la portée de l'entite courante, false sinon
+     */
+    public boolean isInRange(Entity target) {
+        double targetX = target.getPosition().getX() / ModeleLabyrinth.getTailleCase();
+        double targetY = target.getPosition().getY() / ModeleLabyrinth.getTailleCase();
+        double entityX = this.getPosition().getX();
+        double entityY = this.getPosition().getY();
+
+        // Calculer la distance au carré entre les positions
+        double deltaX = targetX - entityX;
+        double deltaY = targetY - entityY;
+        double distanceSquared = deltaX * deltaX + deltaY * deltaY;
+
+
+        double rangeInPixels = this.getRange();
+
+        // Vérification si l'ennemi est dans la portée
+        return distanceSquared <= rangeInPixels * rangeInPixels;
+    }
 
     public String getType() {
         return type;
