@@ -49,7 +49,7 @@ public class Astar {
         Vector2D pointDivide = new Vector2D(point.getX() / getTailleCase(), point.getY() / getTailleCase());
         if (isValid(grid, pointDivide)) {
             char cell = grid[(int) point.getX()][(int) point.getY()];
-            return cell == '.' || cell == 'E' || cell == 'S';
+            return cell == '.' || cell == 'E' || cell == 'S' || cell == 'B';
         }
 
         return false;

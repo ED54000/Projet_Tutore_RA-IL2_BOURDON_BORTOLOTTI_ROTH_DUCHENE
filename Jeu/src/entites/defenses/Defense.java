@@ -13,8 +13,8 @@ public abstract class Defense extends Entity {
 
     private boolean isDead = false;
 
-    public Defense(double x, double y, int damage, double range, double health) {
-        super(new Vector2D(x, y), damage, range);
+    public Defense(double x, double y, int damage, double range, double health, String sprite) {
+        super(new Vector2D(x, y), damage, range, sprite);
         this.health = health;
     }
 

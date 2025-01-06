@@ -1,5 +1,6 @@
 package entites;
 
+import javafx.scene.image.Image;
 import steering_astar.Steering.Vector2D;
 
 public abstract class Entity {
@@ -8,14 +9,16 @@ public abstract class Entity {
     private String type;
     private double damages;
     private double range;
+    private Image sprite;
 
-    public Entity(Vector2D position, double damages, double range) {
+    public Entity(Vector2D position, double damages, double range, String sprite) {
         this.position = position;
         this.damages = damages;
         this.range = range;
+        this.sprite = new Image(sprite);
 
         //génère un type aléatoire
-        int randomNumber = (int) (Math.random() * 3)+1;
+        int randomNumber = (int) (Math.random() * 3) + 1;
         switch (randomNumber) {
             case 1:
                 this.type = "Fire";
@@ -34,32 +37,26 @@ public abstract class Entity {
         switch (AttackerType) {
             case "Fire":
                 if (TargetType.equals("Plant")) {
-                    return 30/100;
-                }
-                else if (TargetType.equals("Water")) {
-                    return -30/100;
-                }
-                else {
+                    return 30 / 100;
+                } else if (TargetType.equals("Water")) {
+                    return -30 / 100;
+                } else {
                     return 1;
                 }
             case "Water":
                 if (TargetType.equals("Fire")) {
-                    return 30/100;
-                }
-                else if (TargetType.equals("Plant")) {
-                    return -30/100;
-                }
-                else {
+                    return 30 / 100;
+                } else if (TargetType.equals("Plant")) {
+                    return -30 / 100;
+                } else {
                     return 1;
                 }
             case "Plant":
                 if (TargetType.equals("Water")) {
-                    return 30/100;
-                }
-                else if (TargetType.equals("Fire")) {
-                    return -30/100;
-                }
-                else {
+                    return 30 / 100;
+                } else if (TargetType.equals("Fire")) {
+                    return -30 / 100;
+                } else {
                     return 1;
                 }
         }
@@ -99,4 +96,6 @@ public abstract class Entity {
     public void setType(String type) {
         this.type = type;
     }
+
+    public Image getImage() { return sprite; }
 }

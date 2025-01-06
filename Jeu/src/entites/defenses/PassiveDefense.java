@@ -5,8 +5,8 @@ import laby.ModeleLabyrinth;
 
 public abstract class PassiveDefense extends Defense {
 
-    public PassiveDefense(double x, double y, int damage, double range, double health) {
-            super(x, y, damage, range, health);
+    public PassiveDefense(double x, double y, int damage, double range, double health, String sprite) {
+            super(x, y, damage, range, health, sprite);
         }
 
     /**

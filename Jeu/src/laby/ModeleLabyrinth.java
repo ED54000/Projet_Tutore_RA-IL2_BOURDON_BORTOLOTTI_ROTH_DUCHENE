@@ -3,7 +3,6 @@ package laby;
 import entites.defenses.*;
 import entites.enemies.*;
 import javafx.scene.canvas.Canvas;
-import laby.views.ViewLabyrinth;
 import moteur.Jeu;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
@@ -147,8 +146,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private void createEnnemies(int nbEnnemies) {
-        //Astar astar = new Astar();
-        createBehaviours();
+        createBehaviours(this.getCases());
 
 
         int nbGiant = 1;
@@ -209,19 +207,19 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return aStarHealer;
     }
 
-    public void createBehaviours() {
+    public void createBehaviours(char[][] grid) {
         ArrayList<Vector2D> aStarNormal =
-                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
+                astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0));
         BehavioursMap.put(BEHAVIOURS.get(0), aStarNormal);
         ArrayList<Vector2D> aStarFugitive =
-                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
+                astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1));
         BehavioursMap.put(BEHAVIOURS.get(1), aStarFugitive);
         ArrayList<Vector2D> aStarKamikaze =
-                astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
+                astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2));
         BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
@@ -343,6 +341,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         System.out.println("Attaque de " + defense.getClass() + " sur " + e.getName()+"pv restants:"+e.getHealth());
                         // Si l'ennemi est mort, on le retire de la liste des ennemis
                         if (e.isDead() && !deadEnemies.contains(e)) {
+                            this.TowerIsDestroyed(defense);
                             deadEnemies.add(e);
                             enemies.remove(e);
                             e.setKillerType(defense.getType());
@@ -539,5 +538,33 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void RefreshEnnemyArrived() {
         this.nbEnnemiesArrived = 0;
+    }
+
+    public void TowerIsDestroyed(Defense defense) {
+        if (defense.isDead()){
+            System.out.println("La défense est morte !");
+            Vector2D position = defense.getPosition();
+            char[][] copyGrid = new char[cases.length][];
+            for (int i = 0; i < cases.length; i++) {
+                copyGrid[i] = cases[i].clone();
+            }
+            if (defense instanceof Bomb) {
+                copyGrid[(int) position.getX()][(int) position.getY()] = 'B';
+            }
+            if (defense instanceof Canon){
+                copyGrid[(int) position.getX()][(int) position.getY()] = 'C';
+            }
+            if (defense instanceof Archer){
+                copyGrid[(int) position.getX()][(int) position.getY()] = 'A';
+            }
+            for (Ennemy ennemy : enemies) {
+                copyGrid[(int) ennemy.getPosition().getX()/getTailleCase()][(int) ennemy.getPosition().getY()/getTailleCase()] = 'S';
+                Astar newAstar = new Astar();
+                ennemy.setBehaviorPath(new PathfollowingBehavior(newAstar.aStarSearch(copyGrid,copyGrid.length,copyGrid[0].length,ennemy.getPosition(),
+                        new Vector2D(this.getYArrival(), this.getXArrival()),ennemy.getBehavior())));
+            }
+
+
+        }
     }
 }
