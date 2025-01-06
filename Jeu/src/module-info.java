@@ -6,7 +6,8 @@ module com.example.moteurjeu {
 
     opens moteur to javafx.fxml;
     exports moteur;
-    exports steering_astar.Steering;
-    exports entites.enemies;
-    exports steering_astar.Astar;
+
+    exports mains;
+    opens mains to javafx.fxml;
+
 }

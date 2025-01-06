@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static laby.ModeleLabyrinth.getScreenSize;
+
 
 // copied from: https://gist.github.com/james-d/8327842
 // and modified to use canvas drawing instead of shapes
@@ -184,7 +186,7 @@ public class MoteurJeu extends Application {
     }
 
     public void startJeu(Stage primaryStage) {
-        canvas.setWidth((ViewLabyrinth.getScreenSize().width/7.0)*6);
+        canvas.setWidth((getScreenSize().width/7.0)*6);
         canvas.widthProperty().bind(canvasContainer.widthProperty());
         canvas.heightProperty().bind(canvasContainer.heightProperty());
 
@@ -194,7 +196,7 @@ public class MoteurJeu extends Application {
         title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         VBox logs = new VBox();
-        logs.setPrefWidth(ViewLabyrinth.getScreenSize().width/7.0);
+        logs.setPrefWidth(getScreenSize().width/7.0);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
         logs.getChildren().add(new Label("Manche 1"));
