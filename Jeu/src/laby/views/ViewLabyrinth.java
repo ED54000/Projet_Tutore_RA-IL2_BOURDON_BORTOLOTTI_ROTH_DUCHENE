@@ -2,6 +2,7 @@ package laby.views;
 
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
+import entites.enemies.Ninja;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -19,8 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static laby.ModeleLabyrinth.getTailleCase;
+
 public class ViewLabyrinth implements Observer {
-    static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
     static int tailleCase = 50;
     private static ModeleLabyrinth laby;
     private Canvas canvas;
@@ -30,6 +32,8 @@ public class ViewLabyrinth implements Observer {
     public ViewLabyrinth(ModeleLabyrinth laby, Canvas canvas) {
         this.laby = laby;
         this.canvas = canvas;
+        Canvas canvasEnnemis = new Canvas(canvas.getWidth(), canvas.getHeight());
+
 
         // Chargement des images
         images.put(ModeleLabyrinth.TREE, new Image("/tree3.png"));
@@ -66,18 +70,8 @@ public class ViewLabyrinth implements Observer {
         // Dessin des ennemis
         Color colorPath = Color.rgb(15, 175, 252);
         for (Ennemy ennemi : laby.enemies) {
-            Color c;
-            if (ennemi instanceof entites.enemies.Giant) {
-                c = Color.ORANGE;
-            } else if (ennemi instanceof entites.enemies.Ninja) {
-                c = Color.BLACK;
-            } else if (ennemi instanceof entites.enemies.Berserker) {
-                c = Color.RED;
-            } else {
-                c = Color.GREEN;
-            }
             for (String behaviour : laby.getBehaviours()) {
-                renderEnnemi(gc, ennemi, laby.getBehavioursMap().get(behaviour), colorPath, c);
+                renderEnnemi(gc, ennemi, laby.getBehavioursMap().get(behaviour), colorPath);
             }
         }
 
@@ -145,7 +139,7 @@ public class ViewLabyrinth implements Observer {
         }
     }
 
-    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor, Color ennemiColor) {
+    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor) {
         //variables
         double radius = Behavior.getTargetRadius();
         double xCoordEnnemi = ennemi.getPosition().getX();
@@ -176,8 +170,7 @@ public class ViewLabyrinth implements Observer {
         gc.fillOval(xCoord + ennemiSize/2 - velocityPointSize/2, yCoord + ennemiSize/2 - velocityPointSize/2, velocityPointSize, velocityPointSize);
 
         //ennemi
-        gc.setFill(ennemiColor);
-        gc.fillOval(xCoordEnnemi, yCoordEnnemi, ennemiSize, ennemiSize);
+        gc.drawImage(ennemi.getImage(), xCoordEnnemi, yCoordEnnemi, getTailleCase(), getTailleCase());
 
         //range des ennemis
         double range = ennemi.getRange() * getTailleCase();
@@ -187,26 +180,6 @@ public class ViewLabyrinth implements Observer {
 
         gc.setStroke(Color.BLACK);
         gc.strokeOval(xCoordEnnemi + ennemiSize/2 - range, yCoordEnnemi + ennemiSize/2 - range, 2 * range, 2 * range);
-    }
-
-    public static int getTailleCase() {
-        int largeurDisponible = (screenSize.width / 7) * 6;
-        int taskbarSize = 2 ;
-        int tailleCaseHorizontale = largeurDisponible / laby.getLengthY();
-        int tailleCaseVerticale = screenSize.height / laby.getLength();
-        int tailleCase = Math.min(tailleCaseHorizontale, tailleCaseVerticale);
-
-        // Vérifier les débordements
-        if (tailleCase * laby.getLengthY() > screenSize.width || tailleCase * laby.getLength() > screenSize.height) {
-            tailleCase /= 2;
-        }
-
-        return tailleCase - taskbarSize ;
-    }
-
-
-    public static Dimension getScreenSize(){
-        return screenSize;
     }
 }
 

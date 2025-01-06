@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import laby.views.ViewLabyrinth;
 import steering_astar.Steering.Vector2D;
 
 import java.util.*;
+
+import static laby.ModeleLabyrinth.getTailleCase;
 
 /***
  * Classe Astar qui choisi le chemin le plus court avec l'algorithme A*
@@ -45,7 +46,7 @@ public class Astar {
      * @return true si le point peut être traversé, false sinon
      */
     boolean isUnblocked(char[][] grid, Vector2D point) {
-        Vector2D pointDivide = new Vector2D(point.getX() / ViewLabyrinth.getTailleCase(), point.getY() / ViewLabyrinth.getTailleCase());
+        Vector2D pointDivide = new Vector2D(point.getX() / getTailleCase(), point.getY() / getTailleCase());
         if (isValid(grid, pointDivide)) {
             char cell = grid[(int) point.getX()][(int) point.getY()];
             return cell == '.' || cell == 'E' || cell == 'S';
@@ -74,8 +75,8 @@ public class Astar {
      * @return La distance euclidienne entre les deux points
      */
     double calculateHValue(Vector2D src, Vector2D dest) {
-        return Math.sqrt(Math.pow((src.getX() / ViewLabyrinth.getTailleCase() - dest.getX() / ViewLabyrinth.getTailleCase()), 2.0)
-                + Math.pow((src.getY() / ViewLabyrinth.getTailleCase() - dest.getY() / ViewLabyrinth.getTailleCase()), 2.0));
+        return Math.sqrt(Math.pow((src.getX() / getTailleCase() - dest.getX() / getTailleCase()), 2.0)
+                + Math.pow((src.getY() / getTailleCase() - dest.getY() / getTailleCase()), 2.0));
     }
 
     /***
@@ -97,8 +98,8 @@ public class Astar {
 
         Vector2D nextNode;
         do {
-            path.push(new Vector2D(row * ViewLabyrinth.getTailleCase(), col * ViewLabyrinth.getTailleCase()));
-            pathArray.addFirst(new Vector2D(col * ViewLabyrinth.getTailleCase(), row * ViewLabyrinth.getTailleCase()));
+            path.push(new Vector2D(row * getTailleCase(), col * getTailleCase()));
+            pathArray.addFirst(new Vector2D(col * getTailleCase(), row * getTailleCase()));
             nextNode = cellDetails[(int) row][(int) col].parent;
             row = nextNode.getX();
             col = nextNode.getY();
@@ -136,14 +137,14 @@ public class Astar {
         if (comp.equals("Kamikaze")) {
             try {
                 double[] newEnd = getNearTower(copyGrid);
-                dest = new Vector2D(newEnd[0] * ViewLabyrinth.getTailleCase(), newEnd[1] * ViewLabyrinth.getTailleCase());
-                copyGrid[(int) dest.getX() / ViewLabyrinth.getTailleCase()][(int) dest.getY() / ViewLabyrinth.getTailleCase()] = 'E';
+                dest = new Vector2D(newEnd[0] * getTailleCase(), newEnd[1] * getTailleCase());
+                copyGrid[(int) dest.getX() / getTailleCase()][(int) dest.getY() / getTailleCase()] = 'E';
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
         }
-        Vector2D destDivide = new Vector2D(dest.getX() / ViewLabyrinth.getTailleCase(), dest.getY() / ViewLabyrinth.getTailleCase());
-        Vector2D srcDivide = new Vector2D(src.getX() / ViewLabyrinth.getTailleCase(), src.getY() / ViewLabyrinth.getTailleCase());
+        Vector2D destDivide = new Vector2D(dest.getX() / getTailleCase(), dest.getY() / getTailleCase());
+        Vector2D srcDivide = new Vector2D(src.getX() / getTailleCase(), src.getY() / getTailleCase());
 
         if (!isValid(copyGrid, srcDivide)) {
             System.err.println("Source is invalid...");
@@ -169,8 +170,8 @@ public class Astar {
 
         double i, j;
 
-        i = src.getX() / ViewLabyrinth.getTailleCase();
-        j = src.getY() / ViewLabyrinth.getTailleCase();
+        i = src.getX() / getTailleCase();
+        j = src.getY() / getTailleCase();
         cellDetails[(int) i][(int) j] = new Cell();
         cellDetails[(int) i][(int) j].f = 0.0;
         cellDetails[(int) i][(int) j].g = 0.0;

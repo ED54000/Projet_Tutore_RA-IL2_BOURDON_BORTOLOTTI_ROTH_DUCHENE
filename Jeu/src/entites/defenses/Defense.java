@@ -5,6 +5,8 @@ import entites.enemies.Ennemy;
 import laby.views.ViewLabyrinth;
 import steering_astar.Steering.Vector2D;
 
+import static laby.ModeleLabyrinth.getTailleCase;
+
 public abstract class Defense extends Entity {
 
     private double health;
