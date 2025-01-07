@@ -49,6 +49,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public void takeDamage(double damage) {
+        System.out.println("Attaqué : " + damage);
         health -= damage;
         if (health <= 0) {
             isDead = true;
@@ -65,9 +66,9 @@ public abstract class Ennemy extends Entity {
             lastAttackTime = currentTime;
             // On heal
             target.health += heal;
-            System.out.println("Soin de " + this + " sur " + target);
+            System.out.println("Soin de " + this.getName() + " sur " + target.getName());
             System.out.println("Montant de soin : " + heal);
-            System.out.println("Vie de " + target + " : " + target.getHealth());
+            System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
             System.out.println("=====================================");
         }
     }
@@ -105,7 +106,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public boolean isDead() {
-        return health <= 0;
+        return isDead;
     }
 
     public int getDistanceToArrival() {
