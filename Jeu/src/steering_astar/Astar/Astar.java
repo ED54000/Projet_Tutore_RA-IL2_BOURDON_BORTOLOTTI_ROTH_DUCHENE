@@ -112,6 +112,7 @@ public class Astar {
             path.pop();
             //System.out.println("-> (" + p.getX() / ViewLabyrinth.getTailleCase() + "," + p.getY() / ViewLabyrinth.getTailleCase() + ") ");
         }
+        System.out.println(pathArray);
         return pathArray;
     }
 
@@ -129,13 +130,13 @@ public class Astar {
      *     - Le comportement "Kamikaze" considère la tour la plus proche comme son arrivée
      * @return Le chemin le plus court
      */
-    public ArrayList<Vector2D> aStarSearch(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest, String comp) {
+    public ArrayList<Vector2D> aStarSearch(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest, String comp, Boolean evolv ) {
         double[][] costGrid = createTowerAvoidanceCostGrid(grid, comp);
         char[][] copyGrid = new char[grid.length][];
         for (int i = 0; i < grid.length; i++) {
             copyGrid[i] = grid[i].clone();
         }
-        if (comp.equals("Kamikaze")) {
+        if (comp.equals("Kamikaze") && !evolv) {
             try {
                 double[] newEnd = getNearTower(copyGrid);
                 if (newEnd != null && isValid(copyGrid,new Vector2D(newEnd[0], newEnd[1]))) {

@@ -75,7 +75,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 }
             }
             System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
-
+            laby.createBehaviours(laby.getCases());
             for (Ennemy e : laby.enemies) {
                 if (e.getBehavior().equals("Healer")) {
                   e.setBehaviorPath(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));

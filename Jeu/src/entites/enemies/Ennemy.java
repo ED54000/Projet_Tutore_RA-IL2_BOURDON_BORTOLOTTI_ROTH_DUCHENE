@@ -204,6 +204,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
+        System.out.println(vector2DS.size());
         this.distanceStartToArrival = vector2DS.size();
     }
 

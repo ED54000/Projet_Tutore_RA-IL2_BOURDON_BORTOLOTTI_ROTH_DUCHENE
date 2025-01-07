@@ -223,17 +223,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
         ArrayList<Vector2D> aStarNormal =
                 astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0),false);
         BehavioursMap.put(BEHAVIOURS.get(0), aStarNormal);
         ArrayList<Vector2D> aStarFugitive =
                 astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1),false);
         BehavioursMap.put(BEHAVIOURS.get(1), aStarFugitive);
         ArrayList<Vector2D> aStarKamikaze =
                 astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2),false);
         BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
     }
 
@@ -271,9 +271,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
             //on calcule la distance de chaque ennemi à l'arrivée
             int c = 0;
             for (Ennemy e : ennemiesEndOfManche) {
-                e.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
-                        new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior()));
+                char[][] copyGrid = new char[cases.length][];
+                for (int i = 0; i < cases.length; i++) {
+                    copyGrid[i] = cases[i].clone();
+                }
+                copyGrid[(int) e.getPositionReel().getY()][(int) e.getPositionReel().getX()] = 'S';
+                e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
+                        new Vector2D((int) e.getPositionReel().getY() , (int) e.getPositionReel().getX()),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(),true));
                 System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
                 c++;
             }
@@ -655,7 +660,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     Astar newAstar = new Astar();
                     ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
                             new Vector2D((int) ennemy.getPositionReel().getY() , (int) ennemy.getPositionReel().getX()),
-                            new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior());
+                            new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(),false);
                     ennemy.setBehaviorPath(new PathfollowingBehavior(path));
                     BehavioursMap.put(ennemy.getBehavior(),path);
 
