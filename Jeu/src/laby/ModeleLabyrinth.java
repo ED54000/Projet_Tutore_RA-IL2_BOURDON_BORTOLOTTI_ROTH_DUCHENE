@@ -421,15 +421,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 System.out.println("defenses : "+defenses);
             }
         }
-        // On retire les ennemies morts
+        // On retire les ennemis morts
+        ArrayList<Ennemy> enemiesDead = new ArrayList<>();
         for (Ennemy e : enemies) {
-            // Si l'ennemi est mort, on le retire de la liste des ennemis
             if (e.isDead() && !deadEnemies.contains(e)) {
                 deadEnemies.add(e);
-                enemies.remove(e);
+                enemiesDead.add(e);
                 setLogs(e.getName() + " est mort. Coup dur !");
             }
         }
+        enemies.removeAll(enemiesDead);
 
         ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
         Iterator<Ennemy> iterator = this.enemies.iterator();
