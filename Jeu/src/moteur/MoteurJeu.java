@@ -242,7 +242,7 @@ public class MoteurJeu extends Application {
             @Override
             public void handle(long timestamp) {
                 //fin du jeu
-                if (jeu.etreFini()) {
+                if (Platform.isFxApplicationThread() && jeu.etreFini()) {
                     this.stop();
                     return;
                 }

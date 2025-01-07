@@ -3,7 +3,9 @@ package laby;
 import entites.defenses.*;
 import entites.enemies.*;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import jdk.swing.interop.SwingInterOpUtils;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import laby.views.ViewLabyrinth;
@@ -252,7 +254,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
-            this.pause = true;
 
             this.ennemiesEndOfManche.addAll(deadEnemies);
             this.ennemiesEndOfManche.addAll(ennemiesArrived);
@@ -283,8 +284,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
             System.out.println("=====================================");
 
              */
-
+            this.pause = true;
             setLogs("Manche " + nbManches + " terminée");
+            System.out.println(this.getLogs());
             deadEnemies.clear();
 
             if (this.simulation) {
@@ -295,7 +297,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         MouseEvent.MOUSE_CLICKED,    // Type d'événement
                         0, 0,                        // Coordonnées locales (x, y)
                         0, 0,                        // Coordonnées écran (screenX, screenY)
-                        javafx.scene.input.MouseButton.PRIMARY,  // Bouton de la souris (clic gauche)
+                        MouseButton.PRIMARY,  // Bouton de la souris (clic gauche)
                         1,                           // Nombre de clics
                         false, false, false, false,   // Modificateurs (Shift, Ctrl, Alt, Meta)
                         false, false, false, false,   // Indicateurs de boutons de la souris
@@ -315,18 +317,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // On gère les attaques des ennemis
         for (Ennemy ennemi : enemies) {
-            // Si l'ennemi est un géant
-            if (ennemi instanceof entites.enemies.Giant) {
-                // On vérifie pour chaque défense si elle est a portée du géant
-                for (Defense defense : defenses) {
-                    if (ennemi.isInRange(defense)) {
-                        // Toutes les tours a portée sont attaquées
-                        ennemi.attack(defense);
-                    }
-                }
-            }
+
             // Si l'ennemi est un druide
-            else if (ennemi instanceof entites.enemies.Druide) {
+            if (ennemi instanceof Druide) {
                 // On vérifie pour chaque ennemi si il est a portée du druide
                 for (Ennemy ennemiTarget : enemies) {
                     // Tous les ennemis a portée sont soignés
@@ -342,7 +335,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     if (ennemi.isInRange(defense)) {
                         // On l'attaque
                         ennemi.attack(defense);
-                        break;
                     }
                 }
             }
@@ -351,23 +343,34 @@ public class ModeleLabyrinth implements Jeu, Subject {
         // On gère les attaques des défenses
         for (Defense defense : defenses) {
             // Si c'est une défense active
-            if (defense instanceof entites.defenses.ActiveDefense) {
+            if (defense instanceof ActiveDefense) {
+                Ennemy ennemyTarget = ((ActiveDefense) defense).getTarget();
                 // Si la defense focus déja un ennemi
-                if (((ActiveDefense) defense).getTarget() != null) {
+                if (ennemyTarget != null) {
                     // On vérifie si l'ennemi est toujours dans la portée de la défense
-                    if (defense.isInRange(((ActiveDefense) defense).getTarget())) {
+                    if (defense.isInRange(ennemyTarget)) {
                         // On l'attaque
-                        defense.attack(((ActiveDefense) defense).getTarget());
+                        defense.attack(ennemyTarget);
                         //setLogs("Attaque de " + defense.getClass() + " sur " + ((ActiveDefense) defense).getTarget() + "pv restants:" + ((ActiveDefense) defense).getTarget().getHealth());
+                        /*
                         // Si l'ennemi est mort, on le retire de la liste des ennemis
-                        if (((ActiveDefense) defense).getTarget().isDead() && !deadEnemies.contains(((ActiveDefense) defense).getTarget())) {
-                            ((ActiveDefense) defense).getTarget().setKillerType(defense.getType());
-                            deadEnemies.add(((ActiveDefense) defense).getTarget());
-                            enemies.remove(((ActiveDefense) defense).getTarget());
-                            setLogs(((ActiveDefense) defense).getTarget().getName() + " est mort. Coup dur !");
+                        if (ennemyTarget.isDead() && !deadEnemies.contains(ennemyTarget)) {
+                            ennemyTarget.setKillerType(defense.getType());
+                            deadEnemies.add(ennemyTarget);
+                            enemies.remove(ennemyTarget);
+                            setLogs(ennemyTarget.getName() + " est mort. Coup dur !");
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
                         }
+                        */
+                        // Si l'ennemi est mort
+                        if (ennemyTarget.isDead() && !deadEnemies.contains(ennemyTarget)) {
+                            ennemyTarget.setKillerType(defense.getType());
+                            // On retire la cible de la défense
+                            ((ActiveDefense) defense).setTarget(null);
+                        }
+
+
                     }
                     // Si l'ennemi n'est plus dans la portée de la défense
                     else {
@@ -387,11 +390,18 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         ((ActiveDefense) defense).setTarget(ennemy);
                         //setLogs("Attaque de " + defense.getClass() + " sur " + ennemy.getName()+"pv restants:"+ennemy.getHealth());
                         // Si l'ennemi est mort, on le retire de la liste des ennemis
+                        /*
                         if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                             deadEnemies.add(ennemy);
                             enemies.remove(ennemy);
                             ennemy.setKillerType(defense.getType());
                             setLogs(ennemy.getName() + " is dead");
+                            // On retire la cible de la défense
+                            ((ActiveDefense) defense).setTarget(null);
+                        }
+                         */
+                        if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
+                            ennemy.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
                         }
@@ -410,12 +420,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         defense.attack(e);
                         System.out.println("Attaque de " + defense.getClass() + " sur " + e.getName() + " pv restants : " + e.getHealth());
                         // Si l'ennemi est mort, on le retire de la liste des ennemis
+                        /*
                         if (e.isDead() && !deadEnemies.contains(e)) {
                             deadEnemies.add(e);
                             enemies.remove(e);
                             e.setKillerType(defense.getType());
                             setLogs(e.getName() + " is dead");
 
+                        }
+                         */
+                        if (e.isDead() && !deadEnemies.contains(e)) {
+                            e.setKillerType(defense.getType());
                         }
 
                         // La défense s'autodétruit après avoir attaqué
@@ -428,6 +443,18 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
             }
         }
+        // On retire les ennemies morts
+        for (Ennemy e : enemies) {
+            // Si l'ennemi est mort, on le retire de la liste des ennemis
+            if (e.isDead() && !deadEnemies.contains(e)) {
+                deadEnemies.add(e);
+                enemies.remove(e);
+                setLogs(e.getName() + " est mort. Coup dur !");
+            }
+        }
+
+
+
         synchronized (this.enemies) {
             ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
             Iterator<Ennemy> iterator = this.enemies.iterator();
