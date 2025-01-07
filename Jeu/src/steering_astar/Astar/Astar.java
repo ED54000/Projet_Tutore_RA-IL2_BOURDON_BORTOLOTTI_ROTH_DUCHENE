@@ -138,8 +138,10 @@ public class Astar {
         if (comp.equals("Kamikaze")) {
             try {
                 double[] newEnd = getNearTower(copyGrid);
-                dest = new Vector2D(newEnd[0], newEnd[1]);
-                copyGrid[(int) dest.getX()][(int) dest.getY()] = 'E';
+                if (newEnd != null && isValid(copyGrid,new Vector2D(newEnd[0], newEnd[1]))) {
+                    dest = new Vector2D(newEnd[0], newEnd[1]);
+                    copyGrid[(int) dest.getX()][(int) dest.getY()] = 'E';
+                }
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
