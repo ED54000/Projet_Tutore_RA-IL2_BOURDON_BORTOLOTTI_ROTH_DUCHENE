@@ -152,6 +152,7 @@ public class MoteurJeu extends Application {
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent MouseEvent) {
+                laby.setStartTime();
                 switch (labyrinthComboBox.getValue()) {
                     case "Petit":
                         break;

@@ -33,6 +33,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     // Nombre d'ennemis qui doivent arriver à la fin pour gagner
     public int nbEnnemiesToWin;
     private int nbEnnemiesArrived;
+    private long startTime;
 
 
     //entités
@@ -274,7 +275,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 e.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior()));
-                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
+                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior()+" estarrivé : "+e.isArrived()+" survivalTime : "+ e.getSurvivalTime());
                 c++;
             }
             System.out.println("ennemis en fin de manche : " + ennemiesEndOfManche);
@@ -352,6 +353,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             ennemyTarget.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
+                            // On met à jour le temps de survie de l'ennemi
+                            ennemyTarget.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                     }
                     // Si l'ennemi n'est plus dans la portée de la défense
@@ -375,6 +378,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             ennemy.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
+                            // On met à jour le temps de survie de l'ennemi
+                            ennemy.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                     }
                 }
@@ -392,6 +397,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         // Si l'ennemi est mort, on set son killerType
                         if (e.isDead() && !deadEnemies.contains(e)) {
                             e.setKillerType(defense.getType());
+                            // Et on met à jour son temps de survie
+                            e.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                         // La défense s'autodétruit après avoir attaqué
                         defense.takeDamage(10000);
@@ -660,6 +667,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     BehavioursMap.put(ennemy.getBehavior(),path);
 
             }
+        }
+
+        public void setStartTime() {
+            this.startTime = System.currentTimeMillis();
         }
 
 }
