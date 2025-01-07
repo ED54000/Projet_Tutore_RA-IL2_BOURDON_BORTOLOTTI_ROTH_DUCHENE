@@ -17,6 +17,8 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent mouseEvent) {
+        // On met à jour le time de départ de la manche
+        laby.setStartTime();
 
         //clear les logs si on est pas en simulation
         if (!laby.estSimulation()) {

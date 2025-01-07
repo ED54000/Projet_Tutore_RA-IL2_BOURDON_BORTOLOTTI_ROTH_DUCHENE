@@ -33,6 +33,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     // Nombre d'ennemis qui doivent arriver à la fin pour gagner
     public int nbEnnemiesToWin;
     private int nbEnnemiesArrived;
+    private long startTime;
 
 
     //entités
@@ -380,6 +381,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             ennemy.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
+                            // On met à jour le temps de survie de l'ennemi
+                            ennemy.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                     }
                 }
@@ -397,6 +400,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         // Si l'ennemi est mort, on set son killerType
                         if (e.isDead() && !deadEnemies.contains(e)) {
                             e.setKillerType(defense.getType());
+                            // Et on met à jour son temps de survie
+                            e.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                         // La défense s'autodétruit après avoir attaqué
                         defense.takeDamage(10000);
@@ -665,6 +670,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     BehavioursMap.put(ennemy.getBehavior(),path);
 
             }
+        }
+
+        public void setStartTime() {
+            this.startTime = System.currentTimeMillis();
         }
 
 }
