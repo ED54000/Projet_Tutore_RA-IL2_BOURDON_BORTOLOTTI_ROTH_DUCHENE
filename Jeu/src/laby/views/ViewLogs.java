@@ -29,7 +29,10 @@ public class ViewLogs implements Observer {
             //System.out.println("Sous VBOx : "+vbox.getChildren());
             vbox.getChildren().add(label);
 
+            System.out.println("Logs : " + laby.getLogs());
+            System.out.println("Pause : " + laby.isPause());
             if (laby.isPause() && laby.getLogs().matches("Manche \\d+ terminée")) {
+                System.out.println("Manche terminée et bioutton learn créer");
                 Button button = new Button("Learn");
                 button.setOnMouseClicked(new ControllerLearn(laby)); // a cérer dans le moteur avec les vues ?
                 vbox.getChildren().add(button);
