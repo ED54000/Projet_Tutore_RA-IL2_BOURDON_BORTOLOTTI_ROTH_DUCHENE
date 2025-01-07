@@ -18,14 +18,4 @@ public abstract class PassiveDefense extends Defense {
         target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
     }
 
-    /**
-     * Prendre des dégâts
-     * @param damage les dégâts à prendre
-     */
-    public void takeDamage(double damage) {
-        this.setHealth(this.getHealth()- damage);
-        if (this.getHealth() <= 0) {
-            this.setDead(true);
-        }
-    }
 }
