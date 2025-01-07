@@ -316,7 +316,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 for (Ennemy ennemiTarget : enemies) {
                     // Tous les ennemis a portée sont soignés
                     if (ennemi.isInRange(ennemiTarget)) {
-                        ennemiTarget.healDamage(ennemiTarget, ennemi.getDamages());
+                        ennemi.healDamage(ennemiTarget, ennemi.getDamages());
                     }
                 }
             }
@@ -647,8 +647,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 ennemy.setBehaviorPath(new PathfollowingBehavior(newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length, ennemy.getPosition(),
                         new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior())));
             }
-
-
         }
     }
 }

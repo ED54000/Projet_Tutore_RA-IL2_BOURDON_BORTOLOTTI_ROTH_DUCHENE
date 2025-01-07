@@ -75,21 +75,41 @@ public abstract class Entity {
      * @return true si l'entite à vérifier est dans la portée de l'entite courante, false sinon
      */
     public boolean isInRange(Entity target) {
-        double targetX = target.getPosition().getX() / ModeleLabyrinth.getTailleCase();
-        double targetY = target.getPosition().getY() / ModeleLabyrinth.getTailleCase();
-        double entityX = this.getPosition().getX();
-        double entityY = this.getPosition().getY();
+
+        double targetX,targetY,entityX,entityY;
+
+        if (this instanceof Ennemy) {
+            entityX = this.getPosition().getX() / ModeleLabyrinth.getTailleCase();
+            entityY = this.getPosition().getY() / ModeleLabyrinth.getTailleCase();
+            if (target instanceof Ennemy) {
+                targetX = target.getPosition().getX() / ModeleLabyrinth.getTailleCase();
+                targetY = target.getPosition().getY() / ModeleLabyrinth.getTailleCase();
+            } else {
+                targetX = target.getPosition().getX();
+                targetY = target.getPosition().getY();
+            }
+        } else {
+            targetX = target.getPosition().getX() / ModeleLabyrinth.getTailleCase();
+            targetY = target.getPosition().getY() / ModeleLabyrinth.getTailleCase();
+            entityX = this.getPosition().getX();
+            entityY = this.getPosition().getY();
+        }
+
+
+//        System.out.println("Position : " + this.getPosition());
+//        System.out.println("Target : " + target.getPosition());
 
         // Calculer la distance au carré entre les positions
         double deltaX = targetX - entityX;
         double deltaY = targetY - entityY;
         double distanceSquared = deltaX * deltaX + deltaY * deltaY;
 
-
-        double rangeInPixels = this.getRange();
+        double rangeInPixelsSquared = this.getRange() * this.getRange();
+//        System.out.println(this + " : distanceSquared: " + distanceSquared + ", "
+//                + target + " : rangeInPixelsSquared " + rangeInPixelsSquared);
 
         // Vérification si l'ennemi est dans la portée
-        return distanceSquared <= rangeInPixels * rangeInPixels;
+        return distanceSquared <= rangeInPixelsSquared;
     }
 
     public String getType() {
