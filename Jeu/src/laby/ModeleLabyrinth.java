@@ -304,7 +304,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // On vérifie pour chaque ennemi si il est a portée du druide
                 for (Ennemy ennemiTarget : enemies) {
                     // Tous les ennemis a portée sont soignés
-                    if (ennemi.isInRange(ennemiTarget)) {
+                    if (ennemi.isInRange(ennemiTarget) && !this.isPause()) {
                         ennemi.healDamage(ennemiTarget, ennemi.getDamages());
                     }
                 }
