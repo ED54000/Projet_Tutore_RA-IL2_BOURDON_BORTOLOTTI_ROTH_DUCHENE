@@ -1,10 +1,7 @@
 package entites;
 
-import entites.defenses.Defense;
 import javafx.scene.image.Image;
 import entites.enemies.Ennemy;
-import laby.ModeleLabyrinth;
-import laby.views.ViewLabyrinth;
 import steering_astar.Steering.Vector2D;
 
 public abstract class Entity {
@@ -41,25 +38,25 @@ public abstract class Entity {
         switch (AttackerType) {
             case "Fire":
                 if (TargetType.equals("Plant")) {
-                    return 30 / 100;
+                    return 1.3;
                 } else if (TargetType.equals("Water")) {
-                    return -30 / 100;
+                    return 0.7;
                 } else {
                     return 1;
                 }
             case "Water":
                 if (TargetType.equals("Fire")) {
-                    return 30 / 100;
+                    return 1.3;
                 } else if (TargetType.equals("Plant")) {
-                    return -30 / 100;
+                    return 0.7;
                 } else {
                     return 1;
                 }
             case "Plant":
                 if (TargetType.equals("Water")) {
-                    return 30 / 100;
+                    return 1.3;
                 } else if (TargetType.equals("Fire")) {
-                    return -30 / 100;
+                    return 0.7;
                 } else {
                     return 1;
                 }

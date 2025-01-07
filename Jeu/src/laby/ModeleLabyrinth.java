@@ -385,11 +385,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Si l'ennemi est dans la portée de la défense
                     if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
                         // Cela active la defense
-                        ((PassiveDefense)defense).setAttacked(true);
                         // On attaque l'ennemi
                         defense.attack(e);
-                        System.out.println("Attaque de " + defense.getName() + " sur " + e.getName() + " pv restants : " + e.getHealth());
-
+                        ((PassiveDefense)defense).setAttacked(true);
                         // Si l'ennemi est mort, on set son killerType
                         if (e.isDead() && !deadEnemies.contains(e)) {
                             e.setKillerType(defense.getType());
@@ -401,17 +399,19 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
             }
         }
+
         //On retire les défenses mortes
         for (Defense d : defenses) {
             // Si la défense est morte, on la retire de la liste des défenses
             if (d.isDead() && !deadDefenses.contains(d)) {
                 deadDefenses.add(d);
-                defenses.remove(d);
                 setLogs("La défense : " + d.getName() + " à été détruite");
                 System.out.println("dead defenses : "+deadDefenses);
                 System.out.println("defenses : "+defenses);
+                towerIsDestroyed(d);
             }
         }
+        defenses.removeAll(deadDefenses);
         // On retire les ennemis morts
         ArrayList<Ennemy> enemiesDead = new ArrayList<>();
         for (Ennemy e : enemies) {
@@ -630,13 +630,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 copyGrid[i] = cases[i].clone();
             }
             if (defense instanceof Bomb) {
-                copyGrid[(int) position.getX()][(int) position.getY()] = 'B';
+                copyGrid[(int) position.getX()][(int) position.getY()] = '.';
             }
             if (defense instanceof Canon) {
-                copyGrid[(int) position.getX()][(int) position.getY()] = 'C';
+                copyGrid[(int) position.getX()][(int) position.getY()] = '#';
             }
             if (defense instanceof Archer) {
-                copyGrid[(int) position.getX()][(int) position.getY()] = 'A';
+                copyGrid[(int) position.getX()][(int) position.getY()] = '#';
             }
             createBehaviours(copyGrid);
             for (Ennemy ennemy : enemies) {
