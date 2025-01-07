@@ -643,37 +643,37 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void towerIsDestroyed() {
-            System.out.println("La défense est morte !");
-            char[][] copyGrid = new char[cases.length][];
-            for (int i = 0; i < cases.length; i++) {
-                copyGrid[i] = cases[i].clone();
+        System.out.println("La défense est morte !");
+        char[][] copyGrid = new char[cases.length][];
+        for (int i = 0; i < cases.length; i++) {
+            copyGrid[i] = cases[i].clone();
+        }
+        for (Defense defense : deadDefenses) {
+            Vector2D position = defense.getPosition();
+            if (defense instanceof Bomb) {
+                copyGrid[(int) position.getY()][(int) position.getX()] = '.';
             }
-            for (Defense defense : deadDefenses) {
-                Vector2D position = defense.getPosition();
-                if (defense instanceof Bomb) {
-                    copyGrid[(int) position.getY()][(int) position.getX()] = '.';
-                }
-                if (defense instanceof Canon) {
-                    copyGrid[(int) position.getY()][(int) position.getX()] = '#';
-                }
-                if (defense instanceof Archer) {
-                    copyGrid[(int) position.getY()][(int) position.getX()] = '#';
-                }
+            if (defense instanceof Canon) {
+                copyGrid[(int) position.getY()][(int) position.getX()] = '#';
             }
-            for (Ennemy ennemy : enemies) {
-                    copyGrid[(int) ennemy.getPositionReel().getY()][(int) ennemy.getPositionReel().getX()] = 'S';
-                    Astar newAstar = new Astar();
-                    ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
-                            new Vector2D((int) ennemy.getPositionReel().getY() , (int) ennemy.getPositionReel().getX()),
-                            new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(),false);
-                    ennemy.setBehaviorPath(new PathfollowingBehavior(path));
-                    BehavioursMap.put(ennemy.getBehavior(),path);
-
+            if (defense instanceof Archer) {
+                copyGrid[(int) position.getY()][(int) position.getX()] = '#';
             }
         }
+        for (Ennemy ennemy : enemies) {
+                copyGrid[(int) ennemy.getPositionReel().getY()][(int) ennemy.getPositionReel().getX()] = 'S';
+                Astar newAstar = new Astar();
+                ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
+                        new Vector2D((int) ennemy.getPositionReel().getY() , (int) ennemy.getPositionReel().getX()),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(),false);
+                ennemy.setBehaviorPath(new PathfollowingBehavior(path));
+                BehavioursMap.put(ennemy.getBehavior(),path);
 
-        public void setStartTime() {
-            this.startTime = System.currentTimeMillis();
         }
+    }
+
+    public void setStartTime() {
+        this.startTime = System.currentTimeMillis();
+    }
 
 }
