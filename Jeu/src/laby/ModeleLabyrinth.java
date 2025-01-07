@@ -253,7 +253,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         }
         // Vérification de la fin d'une manche
-        System.out.println("liste des Ennemis : " + enemies);
         if (enemies.isEmpty() && !this.pause) {
 
             this.ennemiesEndOfManche.addAll(deadEnemies);
@@ -346,7 +345,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si c'est une défense active
             if (defense instanceof ActiveDefense) {
                 Ennemy ennemyTarget = ((ActiveDefense) defense).getTarget();
-                System.out.println(defense+" a pour Target : " + ennemyTarget);
                 // Si la defense focus déja un ennemi
                 if (ennemyTarget != null) {
                     // On vérifie si l'ennemi est toujours dans la portée de la défense
