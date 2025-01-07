@@ -38,25 +38,25 @@ public abstract class Entity {
         switch (AttackerType) {
             case "Fire":
                 if (TargetType.equals("Plant")) {
-                    return 0.3;
+                    return 1.3;
                 } else if (TargetType.equals("Water")) {
-                    return -0.3;
+                    return 0.7;
                 } else {
                     return 1;
                 }
             case "Water":
                 if (TargetType.equals("Fire")) {
-                    return 0.3;
+                    return 1.3;
                 } else if (TargetType.equals("Plant")) {
-                    return -0.3;
+                    return 0.7;
                 } else {
                     return 1;
                 }
             case "Plant":
                 if (TargetType.equals("Water")) {
-                    return 0.3;
+                    return 1.3;
                 } else if (TargetType.equals("Fire")) {
-                    return -0.3;
+                    return 0.7;
                 } else {
                     return 1;
                 }
