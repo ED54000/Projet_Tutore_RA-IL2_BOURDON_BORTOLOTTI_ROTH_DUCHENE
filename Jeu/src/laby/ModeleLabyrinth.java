@@ -399,6 +399,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
             }
         }
+
         //On retire les défenses mortes
         for (Defense d : defenses) {
             // Si la défense est morte, on la retire de la liste des défenses
@@ -408,6 +409,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 setLogs("La défense : " + d.getName() + " à été détruite");
                 System.out.println("dead defenses : "+deadDefenses);
                 System.out.println("defenses : "+defenses);
+                towerIsDestroyed(d);
             }
         }
         // On retire les ennemies morts
@@ -630,13 +632,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 copyGrid[i] = cases[i].clone();
             }
             if (defense instanceof Bomb) {
-                copyGrid[(int) position.getX()][(int) position.getY()] = 'B';
+                copyGrid[(int) position.getX()][(int) position.getY()] = '.';
             }
             if (defense instanceof Canon) {
-                copyGrid[(int) position.getX()][(int) position.getY()] = 'C';
+                copyGrid[(int) position.getX()][(int) position.getY()] = '#';
             }
             if (defense instanceof Archer) {
-                copyGrid[(int) position.getX()][(int) position.getY()] = 'A';
+                copyGrid[(int) position.getX()][(int) position.getY()] = '#';
             }
             createBehaviours(copyGrid);
             for (Ennemy ennemy : enemies) {
