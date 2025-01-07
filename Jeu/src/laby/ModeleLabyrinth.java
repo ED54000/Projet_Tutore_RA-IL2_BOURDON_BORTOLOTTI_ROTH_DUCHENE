@@ -252,39 +252,32 @@ public class ModeleLabyrinth implements Jeu, Subject {
             setLogs("Fin du jeu");
             this.end = true;
             return;
-
         }
+
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
+            this.pause = true;
             // On réactive toutes les défenses passives
             for (Defense defense : defenses) {
                 if (defense instanceof PassiveDefense) {
                     ((PassiveDefense) defense).setAttacked(false);
                 }
             }
-            this.pause = true;
-
+            //On ajoute les ennemis de la manche dans une liste
             this.ennemiesEndOfManche.addAll(deadEnemies);
             this.ennemiesEndOfManche.addAll(ennemiesArrived);
 
+            //on calcule la distance de chaque ennemi à l'arrivée
             int c = 0;
             for (Ennemy e : ennemiesEndOfManche) {
+                e.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
+                        new Vector2D(this.getYstart(), this.getXstart()),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior()));
                 System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
                 c++;
             }
-
             System.out.println("ennemis en fin de manche : " + ennemiesEndOfManche);
-
-            for (Ennemy ennemy : ennemiesEndOfManche) {
-                ennemy.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
-                        new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior()));
-            }
-
-            this.pause = true;
             setLogs("Manche " + nbManches + " terminée");
-            System.out.println(this.getLogs());
-            deadEnemies.clear();
 
             if (this.simulation) {
                 //simuler un appui sur le bouton learn
