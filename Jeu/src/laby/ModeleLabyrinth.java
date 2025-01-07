@@ -320,6 +320,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     }
                 }
             }
+            if (ennemi instanceof Berserker) {
+                // On vérifie si une défense est dans la portée de l'ennemi
+                for (Defense defense : defenses) {
+                    if (ennemi.isInRange(defense)) {
+                        // On l'attaque
+                        ennemi.attack(defense);
+                        // le berserker se suicide après avoir attaqué
+                        ennemi.takeDamage(1000);
+                    }
+                }
+            }
             // Sinon
             else {
                 // On vérifie si une défense est dans la portée de l'ennemi
@@ -407,6 +418,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 deadDefenses.add(d);
                 defenses.remove(d);
                 setLogs("La défense : " + d.getName() + " à été détruite");
+                System.out.println("dead defenses : "+deadDefenses);
+                System.out.println("defenses : "+defenses);
             }
         }
         // On retire les ennemies morts
@@ -419,38 +432,36 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
 
-        synchronized (this.enemies) {
-            ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
-            Iterator<Ennemy> iterator = this.enemies.iterator();
-            while (iterator.hasNext() && !this.pause) {
-                Ennemy ennemy = iterator.next();
-                //System.out.println("Ennemy : " + ennemy.getName());
+        ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
+        Iterator<Ennemy> iterator = this.enemies.iterator();
+        while (iterator.hasNext() && !this.pause) {
+            Ennemy ennemy = iterator.next();
+            //System.out.println("Ennemy : " + ennemy.getName());
 
-                //vérification d'arrivée
-                if ((int) (ennemy.getPosition().getX()) >= XArrivalRender - 10 && (int) (ennemy.getPosition().getX()) <= XArrivalRender + 10 &&
-                        (int) (ennemy.getPosition().getY()) >= YArrivalRender - 10 && (int) (ennemy.getPosition().getY()) <= YArrivalRender + 10 &&
-                        !ennemy.isArrived() && !deadEnemies.contains(ennemy)
-                ) {
-                    ennemy.setArrived(true);
-                    this.nbEnnemiesArrived++;
-                    System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
-                    setLogs("Le " + ennemy.getName() + " est arrivé");
+            //vérification d'arrivée
+            if ((int) (ennemy.getPosition().getX()) >= XArrivalRender - 10 && (int) (ennemy.getPosition().getX()) <= XArrivalRender + 10 &&
+                    (int) (ennemy.getPosition().getY()) >= YArrivalRender - 10 && (int) (ennemy.getPosition().getY()) <= YArrivalRender + 10 &&
+                    !ennemy.isArrived() && !deadEnemies.contains(ennemy)
+            ) {
+                ennemy.setArrived(true);
+                this.nbEnnemiesArrived++;
+                System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
+                setLogs("Le " + ennemy.getName() + " est arrivé");
 
-                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) { //changer par le nombre d'ennemies nécessaire pour perdre
-                        setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
-                        this.end = true;
-                    }
-                    enemiesToRemove.add(ennemy);
-                    ennemiesArrived.add(ennemy);
-                    //enemies.remove(ennemy);
+                if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) { //changer par le nombre d'ennemies nécessaire pour perdre
+                    setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
+                    this.end = true;
                 }
-                //ennemy.move(secondes);
-                ennemy.update();
-                notifyObserver();
+                enemiesToRemove.add(ennemy);
+                ennemiesArrived.add(ennemy);
+                //enemies.remove(ennemy);
             }
-            this.enemies.removeAll(enemiesToRemove);
+            //ennemy.move(secondes);
+            ennemy.update();
             notifyObserver();
         }
+        this.enemies.removeAll(enemiesToRemove);
+        notifyObserver();
     }
 
     @Override

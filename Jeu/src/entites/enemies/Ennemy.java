@@ -22,6 +22,7 @@ public abstract class Ennemy extends Entity {
     private Behavior behaviorPath;
     private String behavior;
     private boolean isArrived;
+    private boolean isDead;
     private int survivalTime;
     private String name;
 
@@ -46,6 +47,9 @@ public abstract class Ennemy extends Entity {
 
     public void takeDamage(double damage) {
         health -= damage;
+        if (health <= 0) {
+            isDead = true;
+        }
     }
 
     public void healDamage(Ennemy target, double heal){
@@ -75,7 +79,7 @@ public abstract class Ennemy extends Entity {
             lastAttackTime = currentTime;
             // On attaque la défense
             target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
-            System.out.println("Attaque de " + this +"de type : "+this.getType()+ " sur " + target+" de type : "+target.getType());
+            System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
             System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
             System.out.println("Vie de la défense : " + target.getHealth());
             System.out.println("=====================================");
@@ -97,7 +101,11 @@ public abstract class Ennemy extends Entity {
     }
 
     public boolean isDead() {
-        return health <= 0;
+        return isDead;
+    }
+
+    public void setDead(boolean dead) {
+        isDead = dead;
     }
 
     public int getDistanceToArrival() {
@@ -209,8 +217,5 @@ public abstract class Ennemy extends Entity {
     public int getDistanceStartToArrival() {
         return distanceStartToArrival;
     }
-
-
-
 }
 
