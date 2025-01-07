@@ -385,7 +385,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Si l'ennemi est dans la portée de la défense
                     if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
                         // Cela active la defense
-                        ((PassiveDefense)defense).setAttacked(true);
                         // On attaque l'ennemi
                         defense.attack(e);
                         ((PassiveDefense)defense).setAttacked(true);
