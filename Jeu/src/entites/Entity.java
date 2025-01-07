@@ -1,5 +1,6 @@
 package entites;
 
+import entites.defenses.Defense;
 import javafx.scene.image.Image;
 import entites.enemies.Ennemy;
 import laby.ModeleLabyrinth;
@@ -79,25 +80,21 @@ public abstract class Entity {
         double targetX,targetY,entityX,entityY;
 
         if (this instanceof Ennemy) {
-            entityX = this.getPosition().getX() / ModeleLabyrinth.getTailleCase();
-            entityY = this.getPosition().getY() / ModeleLabyrinth.getTailleCase();
+            entityX = ((Ennemy) this).getPositionReel().getX();
+            entityY = ((Ennemy) this).getPositionReel().getY();
             if (target instanceof Ennemy) {
-                targetX = target.getPosition().getX() / ModeleLabyrinth.getTailleCase();
-                targetY = target.getPosition().getY() / ModeleLabyrinth.getTailleCase();
+                targetX = ((Ennemy) target).getPositionReel().getX();
+                targetY = ((Ennemy) target).getPositionReel().getY();
             } else {
                 targetX = target.getPosition().getX();
                 targetY = target.getPosition().getY();
             }
         } else {
-            targetX = target.getPosition().getX() / ModeleLabyrinth.getTailleCase();
-            targetY = target.getPosition().getY() / ModeleLabyrinth.getTailleCase();
+            targetX = ((Ennemy) target).getPositionReel().getX();
+            targetY = ((Ennemy) target).getPositionReel().getY();
             entityX = this.getPosition().getX();
             entityY = this.getPosition().getY();
         }
-
-
-//        System.out.println("Position : " + this.getPosition());
-//        System.out.println("Target : " + target.getPosition());
 
         // Calculer la distance au carré entre les positions
         double deltaX = targetX - entityX;

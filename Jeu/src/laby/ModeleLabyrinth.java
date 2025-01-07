@@ -271,19 +271,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior()));
             }
-            /*
-            System.out.println(ennemiesEndOfManche.get(0) + "Statistiques : ");
-            System.out.println("Vie : " + ennemiesEndOfManche.get(0).getHealth());
-            System.out.println("Dégâts : " + ennemiesEndOfManche.get(0).getDamages());
-            System.out.println("Vitesse : " + ennemiesEndOfManche.get(0).getSpeed());
-            System.out.println("Type : " + ennemiesEndOfManche.get(0).getType());
-            System.out.println("Distance départ arrivé : " + ennemiesEndOfManche.get(0).getDistanceStartToArrival());
-            System.out.println("Distance a l'arrivée : " + ennemiesEndOfManche.get(0).getDistanceToArrival());
-            System.out.println("Killer type : " + ennemiesEndOfManche.get(0).getKillerType());
-            System.out.println("Behavior : " + ennemiesEndOfManche.get(0).getBehavior());
-            System.out.println("=====================================");
 
-             */
             this.pause = true;
             setLogs("Manche " + nbManches + " terminée");
             System.out.println(this.getLogs());
@@ -577,8 +565,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Ennemy closerEnnemy = null;
         double minDistance = Double.MAX_VALUE;
         for (Ennemy ennemy : enemies) {
-            double ennemyX = ennemy.getPosition().getX();
-            double ennemyY = ennemy.getPosition().getY();
+            double ennemyX = ennemy.getPositionReel().getX();
+            double ennemyY = ennemy.getPositionReel().getY();
             Vector2D defensePosition = defense.getPosition();
             double distance = Math.sqrt(Math.pow(ennemyX - defensePosition.getX(), 2)
                     - Math.pow(ennemyY - defensePosition.getY(), 2));
