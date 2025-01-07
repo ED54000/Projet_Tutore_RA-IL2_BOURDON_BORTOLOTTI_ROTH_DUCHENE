@@ -10,12 +10,13 @@ import static laby.ModeleLabyrinth.getTailleCase;
 public abstract class Defense extends Entity {
 
     private double health;
-
     private boolean isDead = false;
+    private String name;
 
-    public Defense(double x, double y, int damage, double range, double health, String sprite) {
+    public Defense(double x, double y, int damage, double range, double health, String sprite, String name) {
         super(new Vector2D(x, y), damage, range, sprite);
         this.health = health;
+        this.name = name;
     }
 
     public abstract void attack(Ennemy target);
@@ -46,6 +47,10 @@ public abstract class Defense extends Entity {
 
     public double getHealth() {
         return this.health;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public void takeDamage(double damage) {

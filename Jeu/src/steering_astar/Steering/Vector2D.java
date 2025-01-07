@@ -66,6 +66,16 @@ public class Vector2D {
     }
 
     /***
+     * methode effectuer une division de coordonnees
+     * @param diviser reel par lequel on va diviser les coordonnees courantes
+     * @return de nouvelles coordonnees correspondant a la division des
+     * coordonnees courantes et du parametre diviser
+     */
+    public Vector2D divide(double diviser) {
+        return new Vector2D(this.x / diviser, this.y / diviser);
+    }
+
+    /***
      * methode permettant de calculer le module d'un vecteur
      * @return un reel correspondant au module (longueur) du vecteur
      */
