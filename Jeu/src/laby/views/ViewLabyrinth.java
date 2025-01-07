@@ -1,6 +1,7 @@
 package laby.views;
 
 import entites.defenses.Bomb;
+import entites.defenses.Canon;
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
 import entites.enemies.Ninja;
@@ -58,21 +59,24 @@ public class ViewLabyrinth implements Observer {
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
+
         // Dessin du labyrinthe
         for (int i = 0; i < laby.getLength(); i++) {
             for (int j = 0; j < laby.getLengthY(); j++) {
                 dessinerCase(gc, laby.getCase(i, j), i, j);
             }
         }
+        // Dessin des défenses mortes
+        for (Defense defense : laby.deadDefenses) {
+            double x = defense.getPosition().getX() * getTailleCase();
+            double y = defense.getPosition().getY() * getTailleCase();
 
-        // Dessin des ennemis
-        Color colorPath = Color.rgb(15, 175, 252);
-        for (Ennemy ennemi : laby.enemies) {
-            for (String behaviour : laby.getBehaviours()) {
-                renderEnnemi(gc, ennemi, laby.getBehavioursMap().get(behaviour), colorPath);
+            if (defense instanceof entites.defenses.Bomb) {
+                gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
+            } else {
+                gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
             }
         }
-
         // Dessin des défenses
         for (Defense defense : laby.defenses) {
             double x = defense.getPosition().getX() * getTailleCase();
@@ -80,20 +84,19 @@ public class ViewLabyrinth implements Observer {
 
             if (defense instanceof entites.defenses.Canon) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-                if (!(defense.getHealth() <= 0 && defense.isDead())) {
+                if (!defense.isDead()) {
                     gc.drawImage(defense.getImage(), x, y, getTailleCase(), getTailleCase());
-                } else {
-                    defense.setDead(true);
                 }
-            } else if (defense instanceof entites.defenses.Archer) {
+            }
+            if (defense instanceof entites.defenses.Archer) {
                 gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
-                if (!(defense.getHealth() <= 0 && defense.isDead())) {
+                if (!defense.isDead()) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
-
-            } else if (defense instanceof entites.defenses.Bomb) {
+            }
+            if (defense instanceof entites.defenses.Bomb) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-                if (!(defense.getHealth() <= 0 && defense.isDead())) {
+                if (!defense.isDead()) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
             }
@@ -111,14 +114,11 @@ public class ViewLabyrinth implements Observer {
                 gc.strokeOval(x - range + (getTailleCase() / 2.0), y - range + getTailleCase() / 2.0, 2 * range, 2 * range);
             }
         }
-        for (Defense defense : laby.deadDefenses) {
-            double x = defense.getPosition().getX() * getTailleCase();
-            double y = defense.getPosition().getY() * getTailleCase();
-
-            if (defense instanceof entites.defenses.Bomb) {
-                gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-            } else {
-                gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
+        // Dessin des ennemis
+        Color colorPath = Color.rgb(15, 175, 252);
+        for (Ennemy ennemi : laby.enemies) {
+            for (String behaviour : laby.getBehaviours()) {
+                renderEnnemi(gc, ennemi, laby.getBehavioursMap().get(behaviour), colorPath);
             }
         }
     }
@@ -190,9 +190,6 @@ public class ViewLabyrinth implements Observer {
         gc.drawImage(ennemi.getImage(), xCoordEnnemi, yCoordEnnemi, getTailleCase(), getTailleCase());
 
         //range des ennemis
-        gc.setFill(Color.color(0.0, 0.0, 0.0, 0.17));
-        gc.fillOval(xCoordEnnemi + ennemiSize / 2 - range, yCoordEnnemi + ennemiSize / 2 - range, 2 * range, 2 * range);
-
         gc.setStroke(Color.BLACK);
         gc.strokeOval(xCoordEnnemi + ennemiSize / 2 - range, yCoordEnnemi + ennemiSize / 2 - range, 2 * range, 2 * range);
     }

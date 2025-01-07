@@ -63,8 +63,8 @@ public abstract class Defense extends Entity {
             this.setDead(true);
         }
     }
-
-    protected void setHealth(double health) {
+    //TODO : remettre en ptroected quand l'évolution des défenses sera faite
+    public void setHealth(double health) {
         this.health = health;
     }
 

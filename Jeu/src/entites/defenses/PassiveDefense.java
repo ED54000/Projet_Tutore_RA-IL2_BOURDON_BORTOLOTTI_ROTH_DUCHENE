@@ -5,6 +5,7 @@ import laby.ModeleLabyrinth;
 
 public abstract class PassiveDefense extends Defense {
 
+    //si la defense a deja attaqué
     private boolean attacked = false;
 
     public PassiveDefense(double x, double y, int damage, double range, double health, String sprite, String name) {
