@@ -161,11 +161,12 @@ public class ViewLabyrinth implements Observer {
     private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor) {
         //variables
         double radius = Behavior.getTargetRadius();
+        int tCase = getTailleCase();
         double xCoordEnnemi = ennemi.getPosition().getX();
         double yCoordEnnemi = ennemi.getPosition().getY();
         double xCoordVelocity = ennemi.getVelocity().getX();
         double yCoordVelocity = ennemi.getVelocity().getY();
-        double range = ennemi.getRange() * getTailleCase();
+        double range = ennemi.getRange() * tCase;
 
         //constantes
         double ennemiSize = 20;

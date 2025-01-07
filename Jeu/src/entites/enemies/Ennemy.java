@@ -22,14 +22,18 @@ public abstract class Ennemy extends Entity {
     private Behavior behaviorPath;
     private String behavior;
     private boolean isArrived;
+    private boolean isDead;
     private int survivalTime;
     private String name;
+    private Vector2D positionReel;
 
     private Vector2D velocity;
 
-    public Ennemy(Vector2D position, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
+
+    public Ennemy(Vector2D position, double health, double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
         super(position, damages, range,sprite);
         this.speed = speed;
+        this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         this.attackSpeed = attackSpeed;
         this.distanceToArrival = distanceToArrival;
         this.distanceStartToArrival = distanceToArrival;
@@ -46,6 +50,9 @@ public abstract class Ennemy extends Entity {
 
     public void takeDamage(double damage) {
         health -= damage;
+        if (health <= 0) {
+            isDead = true;
+        }
     }
 
     public void healDamage(Ennemy target, double heal){
@@ -75,7 +82,7 @@ public abstract class Ennemy extends Entity {
             lastAttackTime = currentTime;
             // On attaque la défense
             target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
-            System.out.println("Attaque de " + this +"de type : "+this.getType()+ " sur " + target+" de type : "+target.getType());
+            System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
             System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
             System.out.println("Vie de la défense : " + target.getHealth());
             System.out.println("=====================================");
@@ -93,6 +100,7 @@ public abstract class Ennemy extends Entity {
             Vector2D steeringForce = behaviorPath.calculateForce(this);
             velocity = velocity.add(steeringForce).normalize().scale(speed);
             position = position.add(velocity);
+            positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         }
     }
 
@@ -210,7 +218,9 @@ public abstract class Ennemy extends Entity {
         return distanceStartToArrival;
     }
 
-
+    public Vector2D getPositionReel() {
+        return positionReel;
+    }
 
 }
 

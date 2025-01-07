@@ -17,5 +17,4 @@ public abstract class PassiveDefense extends Defense {
     public void attack(Ennemy target) {
         target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
     }
-
 }

@@ -273,19 +273,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior()));
             }
-            /*
-            System.out.println(ennemiesEndOfManche.get(0) + "Statistiques : ");
-            System.out.println("Vie : " + ennemiesEndOfManche.get(0).getHealth());
-            System.out.println("Dégâts : " + ennemiesEndOfManche.get(0).getDamages());
-            System.out.println("Vitesse : " + ennemiesEndOfManche.get(0).getSpeed());
-            System.out.println("Type : " + ennemiesEndOfManche.get(0).getType());
-            System.out.println("Distance départ arrivé : " + ennemiesEndOfManche.get(0).getDistanceStartToArrival());
-            System.out.println("Distance a l'arrivée : " + ennemiesEndOfManche.get(0).getDistanceToArrival());
-            System.out.println("Killer type : " + ennemiesEndOfManche.get(0).getKillerType());
-            System.out.println("Behavior : " + ennemiesEndOfManche.get(0).getBehavior());
-            System.out.println("=====================================");
 
-             */
             this.pause = true;
             setLogs("Manche " + nbManches + " terminée");
             System.out.println(this.getLogs());
@@ -317,6 +305,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Tous les ennemis a portée sont soignés
                     if (ennemi.isInRange(ennemiTarget)) {
                         ennemi.healDamage(ennemiTarget, ennemi.getDamages());
+                    }
+                }
+            }
+            if (ennemi instanceof Berserker) {
+                // On vérifie si une défense est dans la portée de l'ennemi
+                for (Defense defense : defenses) {
+                    if (ennemi.isInRange(defense)) {
+                        // On l'attaque
+                        ennemi.attack(defense);
+                        // le berserker se suicide après avoir attaqué
+                        ennemi.takeDamage(1000);
                     }
                 }
             }
@@ -407,6 +406,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 deadDefenses.add(d);
                 defenses.remove(d);
                 setLogs("La défense : " + d.getName() + " à été détruite");
+                System.out.println("dead defenses : "+deadDefenses);
+                System.out.println("defenses : "+defenses);
             }
         }
         // On retire les ennemies morts
@@ -419,38 +420,36 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
 
-        synchronized (this.enemies) {
-            ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
-            Iterator<Ennemy> iterator = this.enemies.iterator();
-            while (iterator.hasNext() && !this.pause) {
-                Ennemy ennemy = iterator.next();
-                //System.out.println("Ennemy : " + ennemy.getName());
+        ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
+        Iterator<Ennemy> iterator = this.enemies.iterator();
+        while (iterator.hasNext() && !this.pause) {
+            Ennemy ennemy = iterator.next();
+            //System.out.println("Ennemy : " + ennemy.getName());
 
-                //vérification d'arrivée
-                if ((int) (ennemy.getPosition().getX()) >= XArrivalRender - 10 && (int) (ennemy.getPosition().getX()) <= XArrivalRender + 10 &&
-                        (int) (ennemy.getPosition().getY()) >= YArrivalRender - 10 && (int) (ennemy.getPosition().getY()) <= YArrivalRender + 10 &&
-                        !ennemy.isArrived() && !deadEnemies.contains(ennemy)
-                ) {
-                    ennemy.setArrived(true);
-                    this.nbEnnemiesArrived++;
-                    System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
-                    setLogs("Le " + ennemy.getName() + " est arrivé");
+            //vérification d'arrivée
+            if ((int) (ennemy.getPosition().getX()) >= XArrivalRender - 10 && (int) (ennemy.getPosition().getX()) <= XArrivalRender + 10 &&
+                    (int) (ennemy.getPosition().getY()) >= YArrivalRender - 10 && (int) (ennemy.getPosition().getY()) <= YArrivalRender + 10 &&
+                    !ennemy.isArrived() && !deadEnemies.contains(ennemy)
+            ) {
+                ennemy.setArrived(true);
+                this.nbEnnemiesArrived++;
+                System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
+                setLogs("Le " + ennemy.getName() + " est arrivé");
 
-                    if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) { //changer par le nombre d'ennemies nécessaire pour perdre
-                        setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
-                        this.end = true;
-                    }
-                    enemiesToRemove.add(ennemy);
-                    ennemiesArrived.add(ennemy);
-                    //enemies.remove(ennemy);
+                if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) { //changer par le nombre d'ennemies nécessaire pour perdre
+                    setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
+                    this.end = true;
                 }
-                //ennemy.move(secondes);
-                ennemy.update();
-                notifyObserver();
+                enemiesToRemove.add(ennemy);
+                ennemiesArrived.add(ennemy);
+                //enemies.remove(ennemy);
             }
-            this.enemies.removeAll(enemiesToRemove);
+            //ennemy.move(secondes);
+            ennemy.update();
             notifyObserver();
         }
+        this.enemies.removeAll(enemiesToRemove);
+        notifyObserver();
     }
 
     @Override
@@ -541,8 +540,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Ennemy closerEnnemy = null;
         double minDistance = Double.MAX_VALUE;
         for (Ennemy ennemy : enemies) {
-            double ennemyX = ennemy.getPosition().getX();
-            double ennemyY = ennemy.getPosition().getY();
+            double ennemyX = ennemy.getPositionReel().getX();
+            double ennemyY = ennemy.getPositionReel().getY();
             Vector2D defensePosition = defense.getPosition();
             double distance = Math.sqrt(Math.pow(ennemyX - defensePosition.getX(), 2)
                     - Math.pow(ennemyY - defensePosition.getY(), 2));
