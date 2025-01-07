@@ -256,6 +256,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
+            // On réactive toutes les défenses passives
+            for (Defense defense : defenses) {
+                if (defense instanceof PassiveDefense) {
+                    ((PassiveDefense) defense).setAttacked(false);
+                }
+            }
+            this.pause = true;
 
             this.ennemiesEndOfManche.addAll(deadEnemies);
             this.ennemiesEndOfManche.addAll(ennemiesArrived);
@@ -278,8 +285,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
             setLogs("Manche " + nbManches + " terminée");
             System.out.println(this.getLogs());
             deadEnemies.clear();
+
             if (this.simulation) {
                 //simuler un appui sur le bouton learn
+                Component fakeSource = new Component() {
+                }; // Composant source fictif
                 MouseEvent fakeClickEvent = new MouseEvent(
                         MouseEvent.MOUSE_CLICKED,
                         0, 0,
@@ -383,7 +393,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Si l'ennemi est dans la portée de la défense
                     if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
                         // Cela active la bombe
-                        // On l'attaque
+                        ((PassiveDefense)defense).setAttacked(true);
+                        // On attaque l'ennemi
                         defense.attack(e);
                         System.out.println("Attaque de " + defense.getName() + " sur " + e.getName() + " pv restants : " + e.getHealth());
 
