@@ -341,8 +341,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 if (ennemyTarget != null) {
                     // On vérifie si l'ennemi est toujours dans la portée de la défense
                     if (defense.isInRange(ennemyTarget)) {
-                        // On l'attaque
-                        defense.attack(ennemyTarget);
+                        // Si l'ennemi n'est pas mort
+                        if(!ennemyTarget.isDead()) {
+                            // On l'attaque
+                            defense.attack(ennemyTarget);
+                        }
                         // Si l'ennemi est mort on set son killerType
                         if (ennemyTarget.isDead() && !deadEnemies.contains(ennemyTarget)) {
                             ennemyTarget.setKillerType(defense.getType());
