@@ -170,7 +170,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-
                     Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random(), this.YstartRender + Math.random()), "Giant " + nbGiant);
                     giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
                     giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
