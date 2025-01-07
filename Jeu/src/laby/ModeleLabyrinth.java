@@ -393,11 +393,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Si l'ennemi est dans la portée de la défense
                     if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
                         // Cela active la bombe
-                        ((PassiveDefense)defense).setAttacked(true);
                         // On attaque l'ennemi
                         defense.attack(e);
-                        System.out.println("Attaque de " + defense.getName() + " sur " + e.getName() + " pv restants : " + e.getHealth());
-
+                        ((PassiveDefense)defense).setAttacked(true);
                         // Si l'ennemi est mort, on set son killerType
                         if (e.isDead() && !deadEnemies.contains(e)) {
                             e.setKillerType(defense.getType());
@@ -415,12 +413,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si la défense est morte, on la retire de la liste des défenses
             if (d.isDead() && !deadDefenses.contains(d)) {
                 deadDefenses.add(d);
-                defenses.remove(d);
                 setLogs("La défense : " + d.getName() + " à été détruite");
                 System.out.println("dead defenses : "+deadDefenses);
                 System.out.println("defenses : "+defenses);
             }
         }
+        defenses.removeAll(deadDefenses);
         // On retire les ennemis morts
         ArrayList<Ennemy> enemiesDead = new ArrayList<>();
         for (Ennemy e : enemies) {

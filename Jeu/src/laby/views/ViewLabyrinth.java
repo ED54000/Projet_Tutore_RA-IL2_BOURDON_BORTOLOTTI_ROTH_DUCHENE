@@ -89,16 +89,12 @@ public class ViewLabyrinth implements Observer {
                 gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
                 if (!(defense.getHealth() <= 0 && defense.isDead())) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
-                } else {
-                    defense.setDead(true);
                 }
 
             } else if (defense instanceof entites.defenses.Bomb) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 if (!(defense.getHealth() <= 0 && defense.isDead())) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
-                } else {
-                    defense.setDead(true);
                 }
             }
 
