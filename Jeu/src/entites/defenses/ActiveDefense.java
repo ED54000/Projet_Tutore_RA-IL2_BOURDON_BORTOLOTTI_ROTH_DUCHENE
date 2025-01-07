@@ -6,8 +6,6 @@ public abstract class ActiveDefense extends Defense {
 
     private final long attackSpeed;
 
-    private double health;
-
     // L'ennemi sur lequel la défense est focus
     private Ennemy target;
     private long lastAttackTime;
@@ -15,7 +13,6 @@ public abstract class ActiveDefense extends Defense {
     public ActiveDefense(double x, double y, double health, int damage, double range, long attackSpeed, String sprite, String name) {
         super(x, y, damage, range, health, sprite, name);
         this.attackSpeed = attackSpeed;
-        this.health = health;
         this.target = null;
         this.lastAttackTime = 0;
     }

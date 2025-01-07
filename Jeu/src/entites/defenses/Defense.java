@@ -53,8 +53,15 @@ public abstract class Defense extends Entity {
         return this.name;
     }
 
+    /**
+     * Prendre des dégâts
+     * @param damage les dégâts à prendre
+     */
     public void takeDamage(double damage) {
         health -= damage;
+        if (this.getHealth() <= 0) {
+            this.setDead(true);
+        }
     }
 
     protected void setHealth(double health) {
