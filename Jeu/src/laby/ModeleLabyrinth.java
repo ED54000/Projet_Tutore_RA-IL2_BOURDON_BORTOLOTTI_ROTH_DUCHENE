@@ -279,10 +279,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
             System.out.println("ennemis en fin de manche : " + ennemiesEndOfManche);
             setLogs("Manche " + nbManches + " terminée");
 
+            //dans le cas ou on est en simulation
             if (this.simulation) {
                 //simuler un appui sur le bouton learn
-                Component fakeSource = new Component() {
-                }; // Composant source fictif
                 MouseEvent fakeClickEvent = new MouseEvent(
                         MouseEvent.MOUSE_CLICKED,
                         0, 0,
@@ -296,7 +295,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 new ControllerLearn(this).handle(fakeClickEvent);
                 new ControllerNextManche(this).handle(fakeClickEvent);
             }
-            //TODO : lancer la prochaine manche
         }
 
         // On gère les attaques des ennemis
@@ -368,8 +366,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         defense.attack(ennemy);
                         // On set la cible de la défense
                         ((ActiveDefense) defense).setTarget(ennemy);
-                        //setLogs("Attaque de " + defense.getClass() + " sur " + ennemy.getName()+"pv restants:"+ennemy.getHealth());
-
                         // Si l'ennemi est mort, on set son killerType
                         if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                             ennemy.setKillerType(defense.getType());
@@ -385,7 +381,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 for (Ennemy e : enemies) {
                     // Si l'ennemi est dans la portée de la défense
                     if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
-                        // Cela active la bombe
+                        // Cela active la defense
                         ((PassiveDefense)defense).setAttacked(true);
                         // On attaque l'ennemi
                         defense.attack(e);
@@ -397,7 +393,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         }
                         // La défense s'autodétruit après avoir attaqué
                         defense.takeDamage(10000);
-                        //defense.setDead(true);
                         setLogs("La défense : " + defense.getType() + " à été détruite");
                     }
                 }
@@ -425,12 +420,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
         enemies.removeAll(enemiesDead);
 
+        //on gère le déplacement des ennemis en vérifiant si ils sont arrivés
         ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
         Iterator<Ennemy> iterator = this.enemies.iterator();
         while (iterator.hasNext() && !this.pause) {
             Ennemy ennemy = iterator.next();
-            //System.out.println("Ennemy : " + ennemy.getName());
-
             //vérification d'arrivée
             if ((int) (ennemy.getPosition().getX()) >= XArrivalRender - 10 && (int) (ennemy.getPosition().getX()) <= XArrivalRender + 10 &&
                     (int) (ennemy.getPosition().getY()) >= YArrivalRender - 10 && (int) (ennemy.getPosition().getY()) <= YArrivalRender + 10 &&
@@ -440,16 +434,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 this.nbEnnemiesArrived++;
                 System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
                 setLogs("Le " + ennemy.getName() + " est arrivé");
-
-                if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) { //changer par le nombre d'ennemies nécessaire pour perdre
+                //si les ennemis ont gagné
+                if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) {
                     setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
                     this.end = true;
                 }
                 enemiesToRemove.add(ennemy);
                 ennemiesArrived.add(ennemy);
-                //enemies.remove(ennemy);
             }
-            //ennemy.move(secondes);
             ennemy.update();
             notifyObserver();
         }
