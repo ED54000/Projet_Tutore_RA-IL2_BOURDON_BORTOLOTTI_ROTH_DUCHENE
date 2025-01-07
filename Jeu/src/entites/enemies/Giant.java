@@ -6,7 +6,7 @@ public class Giant extends Ennemy {
 
     public Giant(Vector2D position, String name) {
 
-        super(position, 200, 2, 30, 0.5, 1.5, 1, name,"/giant.png", "Normal");
+        super(position, 200, 2, 100, 0.5, 1.5, 1, name,"/giant.png", "Normal");
 
     }
 }

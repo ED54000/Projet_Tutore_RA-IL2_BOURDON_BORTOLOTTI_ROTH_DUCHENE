@@ -1,5 +1,8 @@
 package laby.controllers;
 
+import entites.defenses.Bomb;
+import entites.defenses.Canon;
+import entites.defenses.Defense;
 import entites.enemies.*;
 import evolution.EnnemyEvolution;
 import javafx.event.EventHandler;
@@ -11,8 +14,6 @@ import laby.ModeleLabyrinth;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
-import java.util.ArrayList;
-
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
     ModeleLabyrinth laby;
@@ -23,14 +24,31 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
     @Override
         public void handle(MouseEvent mouseEvent) {
-
-
-            // On fait évoluer les ennemis
+            // On fait évoluer les ennemis et les défenses
             laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
+            laby.defenses = laby.getDefenseEndOfManche();
+
+            //TODO : on remet les valeurs par défaut pour les defenses en attendant de les faire évoluer
+            for (Defense d : laby.defenses) {
+                d.setDead(false);
+                if (d instanceof Canon) {
+                    d.setHealth(300);
+                }
+                if (d instanceof Bomb) {
+                    d.setHealth(1000);
+                }
+                if (d instanceof entites.defenses.Archer) {
+                    d.setHealth(200);
+                }
+            }
 
             //on remet les valeurs par défaut
             laby.RefreshEnnemyArrived();
+            laby.RefreshDeadEnemies();
             laby.RefreshEnnemyEndOfManche();
+
+            laby.RefreshDefenseEndOfManche();
+            laby.RefreshDeadDefenses();
 
             // On va compter le nombre d'ennemis pour chaque comportement
             int nbNinja = 0;
@@ -86,34 +104,5 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             nextManche.setOnMouseClicked(new ControllerNextManche(laby));
             parentVBox.getChildren().add(nextManche);
         }
-
-        /*
-        System.out.println(laby.enemies.get(0)+ "Statistiques : ");
-        System.out.println("Vie : "+laby.enemies.get(0).getHealth());
-        System.out.println("Dégâts : "+laby.enemies.get(0).getDamages());
-        System.out.println("Vitesse : "+laby.enemies.get(0).getSpeed());
-        System.out.println("Type : "+laby.enemies.get(0).getType());
-        System.out.println("Distance a l'arrivée : "+laby.enemies.get(0).getDistanceToArrival());
-        System.out.println("Killer type : "+laby.enemies.get(0).getKillerType());
-        System.out.println("Behavior : "+laby.enemies.get(0).getBehavior());
-        System.out.println("=====================================");
-         */
-
-        /*
-        laby.createBehaviours();
-        Giant giant = new Giant(new Vector2D(laby.getXstart(), laby.getYstart()), "NewGiant");
-        System.out.println(new PathfollowingBehavior(laby.getBehavioursMap().get(laby.getBehaviours().get(0))));
-        giant.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(laby.getBehaviours().get(0))));
-        laby.enemies.add(giant);
-         */
-
-        //laby.setIterator(laby.enemies);
-        //laby.setLogs("Learned");
-
-
-
-
-
-        //laby.setPause(false); //???
     }
 }
