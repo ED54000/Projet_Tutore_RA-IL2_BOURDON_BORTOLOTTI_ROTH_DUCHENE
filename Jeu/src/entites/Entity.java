@@ -67,6 +67,10 @@ public abstract class Entity {
 
     //retourne le bonus de dégâts en fonction des types
     public double getBonus(String AttackerType, String TargetType) {
+        if (AttackerType == null || TargetType == null) {
+            return 0;
+        }
+
         switch (AttackerType) {
             case "Fire":
                 if (TargetType.equals("Plant")) {

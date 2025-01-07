@@ -104,5 +104,9 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             nextManche.setOnMouseClicked(new ControllerNextManche(laby));
             parentVBox.getChildren().add(nextManche);
         }
+        System.out.println("Défenese après évolution : ");
+        for (Defense d : laby.defenses) {
+            System.out.println(d.getName()+" vie :"+d.getHealth());
+        }
     }
 }

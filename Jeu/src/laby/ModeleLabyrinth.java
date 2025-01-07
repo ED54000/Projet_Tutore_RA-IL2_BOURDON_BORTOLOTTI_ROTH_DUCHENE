@@ -406,11 +406,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si la défense est morte, on la retire de la liste des défenses
             if (d.isDead() && !deadDefenses.contains(d)) {
                 deadDefenses.add(d);
-                System.out.println(deadDefenses);
                 towerIsDestroyed();
                 setLogs("La défense : " + d.getName() + " à été détruite");
-                System.out.println("dead defenses : "+deadDefenses);
-                System.out.println("defenses : "+defenses);
+                //System.out.println("dead defenses : "+deadDefenses);
+                //System.out.println("defenses : "+defenses);
             }
         }
         defenses.removeAll(deadDefenses);
@@ -633,7 +632,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void towerIsDestroyed() {
-            System.out.println("La défense est morte !");
+            //System.out.println("La défense est morte !");
             char[][] copyGrid = new char[cases.length][];
             for (int i = 0; i < cases.length; i++) {
                 copyGrid[i] = cases[i].clone();
