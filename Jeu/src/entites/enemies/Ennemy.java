@@ -33,7 +33,7 @@ public abstract class Ennemy extends Entity {
     public Ennemy(Vector2D position, double health, double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
         super(position, damages, range,sprite);
         this.speed = speed;
-        this.positionReel = new Vector2D(position.getX()/ ModeleLabyrinth.getTailleCase(), position.getY()/ ModeleLabyrinth.getTailleCase());
+        this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         this.attackSpeed = attackSpeed;
         this.distanceToArrival = distanceToArrival;
         this.distanceStartToArrival = distanceToArrival;
@@ -97,7 +97,7 @@ public abstract class Ennemy extends Entity {
             Vector2D steeringForce = behaviorPath.calculateForce(this);
             velocity = velocity.add(steeringForce).normalize().scale(speed);
             position = position.add(velocity);
-            positionReel = new Vector2D(position.getX()/ ModeleLabyrinth.getTailleCase(), position.getY()/ ModeleLabyrinth.getTailleCase());
+            positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         }
     }
 
