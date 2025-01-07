@@ -12,8 +12,8 @@ public abstract class ActiveDefense extends Defense {
     private Ennemy target;
     private long lastAttackTime;
 
-    public ActiveDefense(double x, double y, double health, int damage, double range, long attackSpeed, String sprite) {
-        super(x, y, damage, range, health, sprite);
+    public ActiveDefense(double x, double y, double health, int damage, double range, long attackSpeed, String sprite, String name) {
+        super(x, y, damage, range, health, sprite, name);
         this.attackSpeed = attackSpeed;
         this.health = health;
         this.target = null;
@@ -35,7 +35,7 @@ public abstract class ActiveDefense extends Defense {
             lastAttackTime = currentTime;
             // On attaque l'ennemi
             target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
-            System.out.println("Attaque de " + this +"de type : "+this.getType()+ " sur " + target+" de type : "+target.getType());
+            System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
             System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
             System.out.println("Vie de l'ennemi : " + target.getHealth());
             System.out.println("=====================================");

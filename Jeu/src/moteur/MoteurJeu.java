@@ -124,12 +124,12 @@ public class MoteurJeu extends Application {
         // Champ pour le nombre d'ennemis
         TextField enemiesField = new TextField();
         enemiesField.setPromptText("Nombre d'ennemis");
-        enemiesField.setText("5");
+        enemiesField.setText("10");
 
         // Champ pour le nombre d'ennemis qui doivent atteindre la ligne d'arrivée
         TextField nbEnnemiesToWinField = new TextField();
         nbEnnemiesToWinField.setPromptText("Nombre d'ennemis qui doivent atteindre la ligne d'arrivée");
-        nbEnnemiesToWinField.setText("5");
+        nbEnnemiesToWinField.setText("7");
 
         HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
         // Champ pour le nombre de manches

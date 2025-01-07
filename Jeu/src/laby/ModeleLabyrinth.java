@@ -45,6 +45,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
+    private int nbArcher, nbCanon, nbBomb = 0;
 
 
     //si le jeu est avec le main simulation
@@ -135,17 +136,20 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     case CANON:
                         //ajouter un canon
                         this.cases[numLigne][colonne] = CANON;
-                        this.defenses.add(new Canon(colonne, numLigne));
+                        this.defenses.add(new Canon(colonne, numLigne, "Canon" + this.nbCanon));
+                        this.nbCanon++;
                         break;
                     case BOMB:
                         //ajouter une bombe
                         this.cases[numLigne][colonne] = BOMB;
-                        this.defenses.add(new Bomb(colonne, numLigne));
+                        this.defenses.add(new Bomb(colonne, numLigne, "Bomb" + this.nbBomb));
+                        this.nbBomb++;
                         break;
                     case ARCHER:
                         //ajouter un archer
                         this.cases[numLigne][colonne] = ARCHER;
-                        this.defenses.add(new Archer(colonne, numLigne));
+                        this.defenses.add(new Archer(colonne, numLigne, "Archer" + this.nbArcher));
+                        this.nbArcher++;
                         break;
                 }
             }
@@ -159,7 +163,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private void createEnnemies(int nbEnnemies) {
         createBehaviours(this.getCases());
 
-
         int nbGiant = 1;
         int nbNinja = 1;
         int nbBerserker = 1;
@@ -170,22 +173,21 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-
-                    Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random(), this.YstartRender + Math.random()), "Giant " + nbGiant);
+                    Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random()*1.5, this.YstartRender + Math.random()*1.5), "Giant " + nbGiant);
                     giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
                     giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.XstartRender + Math.random(), this.YstartRender + Math.random()), "Ninja " + nbNinja);
+                    Ninja ninja = new Ninja(new Vector2D(this.XstartRender + Math.random()*1.5, this.YstartRender + Math.random()*1.5), "Ninja " + nbNinja);
                     ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
                     ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.XstartRender + Math.random(), this.YstartRender + Math.random()), "Berseker " + nbBerserker);
+                    Berserker berserker = new Berserker(new Vector2D(this.XstartRender + Math.random()*1.5, this.YstartRender + Math.random()*1.5), "Berseker " + nbBerserker);
                     berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
                     berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
                     this.enemies.add(berserker);
@@ -197,7 +199,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
         for (int i = 1; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.XstartRender + Math.random(), this.YstartRender + Math.random()), "Druide " + i);
+            Druide druide = new Druide(new Vector2D(this.XstartRender + Math.random()*1.5, this.YstartRender + Math.random()*1.5), "Druide " + i);
             ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             druide.setDistanceStartToArrival(aStarHealer);
@@ -288,36 +290,26 @@ public class ModeleLabyrinth implements Jeu, Subject {
             setLogs("Manche " + nbManches + " terminée");
             System.out.println(this.getLogs());
             deadEnemies.clear();
-
             if (this.simulation) {
                 //simuler un appui sur le bouton learn
-                Component fakeSource = new Component() {
-                }; // Composant source fictif
                 MouseEvent fakeClickEvent = new MouseEvent(
-                        MouseEvent.MOUSE_CLICKED,    // Type d'événement
-                        0, 0,                        // Coordonnées locales (x, y)
-                        0, 0,                        // Coordonnées écran (screenX, screenY)
-                        MouseButton.PRIMARY,  // Bouton de la souris (clic gauche)
-                        1,                           // Nombre de clics
-                        false, false, false, false,   // Modificateurs (Shift, Ctrl, Alt, Meta)
-                        false, false, false, false,   // Indicateurs de boutons de la souris
-                        false, false, null           // Autres paramètres par défaut
+                        MouseEvent.MOUSE_CLICKED,
+                        0, 0,
+                        0, 0,
+                        MouseButton.PRIMARY,
+                        1,
+                        false, false, false, false,
+                        false, false, false, false,
+                        false, false, null
                 );
-
-                ControllerLearn cl = new ControllerLearn(this);
+                new ControllerLearn(this).handle(fakeClickEvent);
                 new ControllerNextManche(this).handle(fakeClickEvent);
-
-                cl.handle(fakeClickEvent);
-
-                //simuler un appui sur le bouton next manche
-
             }
             //TODO : lancer la prochaine manche
         }
 
         // On gère les attaques des ennemis
         for (Ennemy ennemi : enemies) {
-
             // Si l'ennemi est un druide
             if (ennemi instanceof Druide) {
                 // On vérifie pour chaque ennemi si il est a portée du druide
@@ -351,26 +343,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     if (defense.isInRange(ennemyTarget)) {
                         // On l'attaque
                         defense.attack(ennemyTarget);
-                        //setLogs("Attaque de " + defense.getClass() + " sur " + ((ActiveDefense) defense).getTarget() + "pv restants:" + ((ActiveDefense) defense).getTarget().getHealth());
-                        /*
-                        // Si l'ennemi est mort, on le retire de la liste des ennemis
-                        if (ennemyTarget.isDead() && !deadEnemies.contains(ennemyTarget)) {
-                            ennemyTarget.setKillerType(defense.getType());
-                            deadEnemies.add(ennemyTarget);
-                            enemies.remove(ennemyTarget);
-                            setLogs(ennemyTarget.getName() + " est mort. Coup dur !");
-                            // On retire la cible de la défense
-                            ((ActiveDefense) defense).setTarget(null);
-                        }
-                        */
-                        // Si l'ennemi est mort
+                        // Si l'ennemi est mort on set son killerType
                         if (ennemyTarget.isDead() && !deadEnemies.contains(ennemyTarget)) {
                             ennemyTarget.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
                         }
-
-
                     }
                     // Si l'ennemi n'est plus dans la portée de la défense
                     else {
@@ -389,17 +367,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         // On set la cible de la défense
                         ((ActiveDefense) defense).setTarget(ennemy);
                         //setLogs("Attaque de " + defense.getClass() + " sur " + ennemy.getName()+"pv restants:"+ennemy.getHealth());
-                        // Si l'ennemi est mort, on le retire de la liste des ennemis
-                        /*
-                        if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
-                            deadEnemies.add(ennemy);
-                            enemies.remove(ennemy);
-                            ennemy.setKillerType(defense.getType());
-                            setLogs(ennemy.getName() + " is dead");
-                            // On retire la cible de la défense
-                            ((ActiveDefense) defense).setTarget(null);
-                        }
-                         */
+
+                        // Si l'ennemi est mort, on set son killerType
                         if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
                             ennemy.setKillerType(defense.getType());
                             // On retire la cible de la défense
@@ -415,32 +384,29 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Si l'ennemi est dans la portée de la défense
                     if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
                         // Cela active la bombe
-
                         // On l'attaque
                         defense.attack(e);
-                        System.out.println("Attaque de " + defense.getClass() + " sur " + e.getName() + " pv restants : " + e.getHealth());
-                        // Si l'ennemi est mort, on le retire de la liste des ennemis
-                        /*
-                        if (e.isDead() && !deadEnemies.contains(e)) {
-                            deadEnemies.add(e);
-                            enemies.remove(e);
-                            e.setKillerType(defense.getType());
-                            setLogs(e.getName() + " is dead");
+                        System.out.println("Attaque de " + defense.getName() + " sur " + e.getName() + " pv restants : " + e.getHealth());
 
-                        }
-                         */
+                        // Si l'ennemi est mort, on set son killerType
                         if (e.isDead() && !deadEnemies.contains(e)) {
                             e.setKillerType(defense.getType());
                         }
-
                         // La défense s'autodétruit après avoir attaqué
-                        deadDefenses.add(defense);
-                        defenses.remove(defense);
                         defense.takeDamage(10000);
-                        defense.setDead(true);
+                        //defense.setDead(true);
                         setLogs("La défense : " + defense.getType() + " à été détruite");
                     }
                 }
+            }
+        }
+        //On retire les défenses mortes
+        for (Defense d : defenses) {
+            // Si la défense est morte, on la retire de la liste des défenses
+            if (d.isDead() && !deadDefenses.contains(d)) {
+                deadDefenses.add(d);
+                defenses.remove(d);
+                setLogs("La défense : " + d.getName() + " à été détruite");
             }
         }
         // On retire les ennemies morts
@@ -452,8 +418,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 setLogs(e.getName() + " est mort. Coup dur !");
             }
         }
-
-
 
         synchronized (this.enemies) {
             ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
