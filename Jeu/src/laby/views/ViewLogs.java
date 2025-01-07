@@ -3,6 +3,7 @@ package laby.views;
 import entites.enemies.Ennemy;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
 import laby.Observer;
@@ -23,10 +24,9 @@ public class ViewLogs implements Observer {
     public void update(Subject s) {
         if (!laby.getLogs().isEmpty()) {
             Label label = new Label(laby.getLogs());
-            //System.out.println("Le labbel : "+label);
-            //System.out.println("Container : "+logs.getChildren());
-            VBox vbox = (VBox) logs.getChildren().get(1);
-            //System.out.println("Sous VBOx : "+vbox.getChildren());
+            ScrollPane scrollPane = (ScrollPane) logs.getChildren().get(1);
+
+            VBox vbox = (VBox) scrollPane.getContent();
             vbox.getChildren().add(label);
 
             if (laby.isPause() && laby.getLogs().matches("Manche \\d+ terminée")) {

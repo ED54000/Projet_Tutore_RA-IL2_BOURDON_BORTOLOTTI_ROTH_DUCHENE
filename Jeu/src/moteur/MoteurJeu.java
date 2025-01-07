@@ -200,7 +200,12 @@ public class MoteurJeu extends Application {
         logs.setSpacing(10);
         logs.getChildren().add(new Label("Manche 1"));
 
-        ContainerLogs.getChildren().addAll(title, logs);
+        //Ajout d'un scrollPane
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setPrefSize(getScreenSize().width/6.8, getScreenSize().height);
+        scrollPane.setContent(logs);
+
+        ContainerLogs.getChildren().addAll(title, scrollPane);
 
         //TODO : création des controleurs
         //ControllerStart controllerStart = new ControllerStart(laby);
