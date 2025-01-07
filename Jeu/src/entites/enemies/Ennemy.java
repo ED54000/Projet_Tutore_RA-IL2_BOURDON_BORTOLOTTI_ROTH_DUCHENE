@@ -106,7 +106,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public boolean isDead() {
-        return health <= 0;
+        return isDead;
     }
 
     public int getDistanceToArrival() {
