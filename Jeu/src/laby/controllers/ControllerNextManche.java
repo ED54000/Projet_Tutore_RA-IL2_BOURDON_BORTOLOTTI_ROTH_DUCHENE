@@ -18,10 +18,7 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
     @Override
     public void handle(MouseEvent mouseEvent) {
 
-        // On clear la liste des ennemis morts dans le modèle
-        laby.clearDeadEnemies();
-
-        //clear les logs
+        //clear les logs si on est pas en simulation
         if (!laby.estSimulation()) {
             VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
             parentVBox.getChildren().clear();
@@ -31,7 +28,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
         }
 
-        //TODO : faire la prochaine manche
         laby.setPause(false);
         laby.setNbManches(laby.getNbManches() + 1);
     }

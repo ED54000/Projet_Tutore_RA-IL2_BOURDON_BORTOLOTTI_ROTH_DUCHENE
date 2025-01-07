@@ -144,19 +144,18 @@ public class Astar {
                 System.err.println(e.getMessage());
             }
         }
-        Vector2D destDivide = new Vector2D(dest.getX(), dest.getY());
-        Vector2D srcDivide = new Vector2D(src.getX(), src.getY());
 
-        if (!isValid(copyGrid, srcDivide)) {
+
+        if (!isValid(copyGrid, src)) {
             System.err.println("Source is invalid...");
             return null;
         }
-        if (!isValid(copyGrid, destDivide)) {
+        if (!isValid(copyGrid, dest)) {
             System.err.println("Destination is invalid...");
             return null;
         }
-        if (!isUnblocked(copyGrid, srcDivide)
-                || !isUnblocked(copyGrid, destDivide)) {
+        if (!isUnblocked(copyGrid, src)
+                || !isUnblocked(copyGrid, dest)) {
             System.err.println("Source or destination is blocked...");
             return null;
         }
@@ -200,15 +199,15 @@ public class Astar {
                         cellDetails[(int) neighbour.getX()][(int) neighbour.getY()] = new Cell();
                     }
 
-                    if (isDestination(neighbour, destDivide)) {
+                    if (isDestination(neighbour, dest)) {
                         cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].parent = new Vector2D(i, j);
                         //System.out.println("The destination cell is found");
-                        return tracePath(cellDetails, destDivide);
+                        return tracePath(cellDetails, dest);
                     } else if (!closedList[(int) neighbour.getX()][(int) neighbour.getY()]
                             && isUnblocked(grid, neighbour)) {
                         double gNew, hNew, fNew;
                         gNew = cellDetails[(int) i][(int) j].g + 1.0;
-                        hNew = calculateHValue(neighbour, destDivide) + getTowerPenalty(costGrid, neighbour);
+                        hNew = calculateHValue(neighbour, dest) + getTowerPenalty(costGrid, neighbour);
                         fNew = gNew + hNew;
 
                         if (cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f == -1

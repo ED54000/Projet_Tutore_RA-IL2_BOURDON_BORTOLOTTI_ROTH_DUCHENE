@@ -5,17 +5,14 @@ import entites.enemies.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import jdk.swing.interop.SwingInterOpUtils;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
-import laby.views.ViewLabyrinth;
 import moteur.Jeu;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.io.*;
 
 import java.util.*;
@@ -43,6 +40,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Defense> defenses = new ArrayList<>();
     public ArrayList<Ennemy> deadEnemies = new ArrayList<>();
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
+    private ArrayList<Defense> defensesEndOfManche = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
     private int nbArcher, nbCanon, nbBomb = 0;
@@ -266,6 +264,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
             //On ajoute les ennemis de la manche dans une liste
             this.ennemiesEndOfManche.addAll(deadEnemies);
             this.ennemiesEndOfManche.addAll(ennemiesArrived);
+            //On ajoute les defenses de la manche dans une liste
+            this.defensesEndOfManche.addAll(deadDefenses);
+            this.defensesEndOfManche.addAll(defenses);
 
             //on calcule la distance de chaque ennemi à l'arrivée
             int c = 0;
@@ -304,7 +305,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // On vérifie pour chaque ennemi si il est a portée du druide
                 for (Ennemy ennemiTarget : enemies) {
                     // Tous les ennemis a portée sont soignés
-                    if (ennemi.isInRange(ennemiTarget)) {
+                    if (ennemi.isInRange(ennemiTarget) && !this.isPause()) {
                         ennemi.healDamage(ennemiTarget, ennemi.getDamages());
                     }
                 }
@@ -405,10 +406,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si la défense est morte, on la retire de la liste des défenses
             if (d.isDead() && !deadDefenses.contains(d)) {
                 deadDefenses.add(d);
+                System.out.println(deadDefenses);
+                towerIsDestroyed();
                 setLogs("La défense : " + d.getName() + " à été détruite");
                 System.out.println("dead defenses : "+deadDefenses);
                 System.out.println("defenses : "+defenses);
-                towerIsDestroyed(d);
             }
         }
         defenses.removeAll(deadDefenses);
@@ -588,16 +590,25 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Ennemy> getEnnemyEndOfManche() {
         return ennemiesEndOfManche;
     }
+    public ArrayList<Defense> getDefenseEndOfManche() {
+        return defensesEndOfManche;
+    }
 
     /**
      * Pour vider la liste des deadEnemies a chaque nouvelle manche
      **/
-    public void clearDeadEnemies() {
+    public void refreshDeadEnemies() {
         this.deadEnemies.clear();
     }
+    public void refreshDeadDefenses() {
+        this.deadDefenses.clear();
+    }
 
-    public void RefreshEnnemyEndOfManche() {
+    public void refreshEnnemyEndOfManche() {
         this.ennemiesEndOfManche = new ArrayList<>();
+    }
+    public void refreshDefenseEndOfManche() {
+        this.defensesEndOfManche = new ArrayList<>();
     }
 
     public int getXstartRender() {
@@ -608,7 +619,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return YstartRender;
     }
 
-    public void RefreshEnnemyArrived() {
+    public void refreshEnnemyArrived() {
         this.nbEnnemiesArrived = 0;
         this.ennemiesArrived = new ArrayList<>();
     }
@@ -621,31 +632,34 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return this.simulation;
     }
 
-    public void towerIsDestroyed(Defense defense) {
-        if (defense.isDead()) {
+    public void towerIsDestroyed() {
             System.out.println("La défense est morte !");
-            Vector2D position = defense.getPosition();
             char[][] copyGrid = new char[cases.length][];
             for (int i = 0; i < cases.length; i++) {
                 copyGrid[i] = cases[i].clone();
             }
-            if (defense instanceof Bomb) {
-                copyGrid[(int) position.getX()][(int) position.getY()] = '.';
+            for (Defense defense : deadDefenses) {
+                Vector2D position = defense.getPosition();
+                if (defense instanceof Bomb) {
+                    copyGrid[(int) position.getY()][(int) position.getX()] = '.';
+                }
+                if (defense instanceof Canon) {
+                    copyGrid[(int) position.getY()][(int) position.getX()] = '#';
+                }
+                if (defense instanceof Archer) {
+                    copyGrid[(int) position.getY()][(int) position.getX()] = '#';
+                }
             }
-            if (defense instanceof Canon) {
-                copyGrid[(int) position.getX()][(int) position.getY()] = '#';
-            }
-            if (defense instanceof Archer) {
-                copyGrid[(int) position.getX()][(int) position.getY()] = '#';
-            }
-            createBehaviours(copyGrid);
             for (Ennemy ennemy : enemies) {
-                copyGrid[(int) ennemy.getPosition().getX()][(int) ennemy.getPosition().getY()] = 'S';
-                Astar newAstar = new Astar();
-                System.out.println(ennemy.getBehavior());
-                ennemy.setBehaviorPath(new PathfollowingBehavior(newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length, ennemy.getPosition(),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior())));
+                    copyGrid[(int) ennemy.getPositionReel().getY()][(int) ennemy.getPositionReel().getX()] = 'S';
+                    Astar newAstar = new Astar();
+                    ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
+                            new Vector2D((int) ennemy.getPositionReel().getY() , (int) ennemy.getPositionReel().getX()),
+                            new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior());
+                    ennemy.setBehaviorPath(new PathfollowingBehavior(path));
+                    BehavioursMap.put(ennemy.getBehavior(),path);
+
             }
         }
-    }
+
 }

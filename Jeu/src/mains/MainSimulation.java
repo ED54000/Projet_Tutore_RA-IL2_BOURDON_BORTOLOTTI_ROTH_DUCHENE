@@ -16,7 +16,7 @@ public class MainSimulation extends Application {
     public void start(Stage stage) throws Exception {
         ModeleLabyrinth jeu = new ModeleLabyrinth();
         jeu.setSimulation(true);
-        jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", 2, 1000, 1200);
+        jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", 50, 1000, 1200);
 
         // Lancer la simulation dans un thread séparé
         new Thread(() -> {
