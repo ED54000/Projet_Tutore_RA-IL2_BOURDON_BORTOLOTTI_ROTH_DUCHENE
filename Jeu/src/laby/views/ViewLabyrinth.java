@@ -1,6 +1,7 @@
 package laby.views;
 
 import entites.defenses.Bomb;
+import entites.defenses.Canon;
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
 import entites.enemies.Ninja;
@@ -80,25 +81,20 @@ public class ViewLabyrinth implements Observer {
 
             if (defense instanceof entites.defenses.Canon) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-                if (!(defense.getHealth() <= 0 && defense.isDead())) {
+                if (!defense.isDead()) {
                     gc.drawImage(defense.getImage(), x, y, getTailleCase(), getTailleCase());
-                } else {
-                    defense.setDead(true);
                 }
-            } else if (defense instanceof entites.defenses.Archer) {
+            }
+            if (defense instanceof entites.defenses.Archer) {
                 gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
-                if (!(defense.getHealth() <= 0 && defense.isDead())) {
+                if (!defense.isDead()) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
-                } else {
-                    defense.setDead(true);
                 }
-
-            } else if (defense instanceof entites.defenses.Bomb) {
+            }
+            if (defense instanceof entites.defenses.Bomb) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-                if (!(defense.getHealth() <= 0 && defense.isDead())) {
+                if (!defense.isDead()) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
-                } else {
-                    defense.setDead(true);
                 }
             }
 
@@ -194,8 +190,8 @@ public class ViewLabyrinth implements Observer {
         gc.drawImage(ennemi.getImage(), xCoordEnnemi, yCoordEnnemi, getTailleCase(), getTailleCase());
 
         //range des ennemis
-        gc.setFill(Color.color(0.0, 0.0, 0.0, 0.17));
-        gc.fillOval(xCoordEnnemi + ennemiSize / 2 - range, yCoordEnnemi + ennemiSize / 2 - range, 2 * range, 2 * range);
+        //gc.setFill(Color.color(0.0, 0.0, 0.0, 0.17));
+        //gc.fillOval(xCoordEnnemi + ennemiSize / 2 - range, yCoordEnnemi + ennemiSize / 2 - range, 2 * range, 2 * range);
 
         gc.setStroke(Color.BLACK);
         gc.strokeOval(xCoordEnnemi + ennemiSize / 2 - range, yCoordEnnemi + ennemiSize / 2 - range, 2 * range, 2 * range);
