@@ -3,6 +3,7 @@ package laby;
 import entites.defenses.*;
 import entites.enemies.*;
 import evolution.EnnemyEvolution;
+import evolution.EnnemyEvolutionv2;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -51,6 +52,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     //si le jeu est avec le main simulation
     private boolean simulation = false;
+    private boolean simulationEvolution = false;
+
 
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -340,6 +343,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 );
                 new ControllerLearn(this).handle(fakeClickEvent);
                 new ControllerNextManche(this).handle(fakeClickEvent);
+            }
+
+            if (this.simulationEvolution){
+                EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
+                double score = evolution.getScore(ennemiesEndOfManche.get(0));
+                System.out.println("Score de l'ennemi : "+score);
+
             }
         }
 
@@ -718,6 +728,90 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void setStartTime() {
         this.startTime = System.currentTimeMillis();
+    }
+
+    public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
+        this.simulationEvolution = true;
+        this.limManches = 1;
+        //ouvrire le fichier
+        FileReader fr = new FileReader(fichier);
+        BufferedReader br = new BufferedReader(fr);
+
+        int nbLignes, nbColonnes;
+        nbLignes = Integer.parseInt(br.readLine());
+        nbColonnes = Integer.parseInt(br.readLine());
+
+        //création du labyrinthe vide
+        this.cases = new char[nbLignes][nbColonnes];
+
+        // Nombre d'ennemis qui doivent arriver à la fin pour gagner
+        this.nbEnnemiesToWin = nbEnnemiesToWin;
+
+        //lecture des cases
+        String ligne = br.readLine();
+
+        //stocke les indices
+        int numLigne = 0;
+
+        //parcours le fichier
+        while (ligne != null) {
+            for (int colonne = 0; colonne < ligne.length(); colonne++) {
+                char c = ligne.charAt(colonne);
+                switch (c) {
+                    case TREE:
+                        //ajouter un mur
+                        this.cases[numLigne][colonne] = TREE;
+                        break;
+                    case ROAD:
+                        // ajouter une route
+                        this.cases[numLigne][colonne] = ROAD;
+                        break;
+                    case START:
+                        //ajouter le point de départ
+                        this.cases[numLigne][colonne] = START;
+                        this.Xstart = colonne;
+                        this.Ystart = numLigne;
+                        this.XstartRender = colonne * getTailleCase();
+                        this.YstartRender = numLigne * getTailleCase();
+                        break;
+                    case END:
+                        //ajouter le point d'arrivée
+                        this.cases[numLigne][colonne] = END;
+                        this.XArrival = colonne;
+                        this.YArrival = numLigne;
+                        this.XArrivalRender = colonne * getTailleCase();
+                        this.YArrivalRender = numLigne * getTailleCase();
+                        break;
+                    case CANON:
+                        //ajouter un canon
+                        this.cases[numLigne][colonne] = CANON;
+                        this.defenses.add(new Canon(colonne, numLigne, "Canon" + this.nbCanon));
+                        this.nbCanon++;
+                        break;
+                    case BOMB:
+                        //ajouter une bombe
+                        this.cases[numLigne][colonne] = BOMB;
+                        this.defenses.add(new Bomb(colonne, numLigne, "Bomb" + this.nbBomb));
+                        this.nbBomb++;
+                        break;
+                    case ARCHER:
+                        //ajouter un archer
+                        this.cases[numLigne][colonne] = ARCHER;
+                        this.defenses.add(new Archer(colonne, numLigne, "Archer" + this.nbArcher));
+                        this.nbArcher++;
+                        break;
+                }
+            }
+            numLigne++;
+            ligne = br.readLine();
+        }
+
+        Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant "+numIndividu);
+        giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+        giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+        this.enemies.add(giant);
+
+        br.close();
     }
 
 }
