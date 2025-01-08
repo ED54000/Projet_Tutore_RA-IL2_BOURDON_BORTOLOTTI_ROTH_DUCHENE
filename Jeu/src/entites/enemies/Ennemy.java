@@ -49,7 +49,6 @@ public abstract class Ennemy extends Entity {
     }
 
     public void takeDamage(double damage) {
-        System.out.println("Attaqué : " + damage);
         health -= damage;
         if (health <= 0) {
             isDead = true;
@@ -204,7 +203,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
-        System.out.println(vector2DS.size());
+   //     System.out.println(vector2DS.size());
         this.distanceStartToArrival = vector2DS.size();
     }
 
@@ -232,12 +231,10 @@ public abstract class Ennemy extends Entity {
     }
 
     public void setToStart(ModeleLabyrinth modeleLabyrinth){
-        System.out.println("Avant : "+this.name+ " : "+ this.getPositionReel());
         double XstartRandom =  Math.random()*1.5;
         double YstartRandom =  Math.random()*1.5;
         this.setPositionReel(new Vector2D(modeleLabyrinth.getXstart() + XstartRandom, modeleLabyrinth.getYstart() + YstartRandom));
         this.setPosition(new Vector2D(modeleLabyrinth.getXstartRender() + XstartRandom, modeleLabyrinth.getYstartRender() + YstartRandom));
-        System.out.println("Apres : "+this.name+ " : "+ this.getPositionReel());
     }
 
     public void setDead(boolean b) {
