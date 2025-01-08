@@ -5,7 +5,9 @@ import entites.enemies.Ennemy;
 import java.util.ArrayList;
 
 public class EnnemyEvolutionv2 {
-    public ArrayList<Ennemy> evolve(){
 
+    public double getScore(Ennemy e){
+        double score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
+        return score;
     }
 }
