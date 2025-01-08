@@ -323,9 +323,9 @@ public class EnnemyEvolution {
                 //double randomDouble = min + (Math.random() * (max - min));
                 // On ajoute des statistiques aléatoires
                 // Vie entre -10 et 10
-                e.setHealth(e.getHealth() + (-10 + (Math.random() * (10 - (-10)))));
+                e.setHealth(e.getHealth() + (-5 + (Math.random() * (5 - (-5)))));
                 // Vitesse entre -2 et 2
-                e.setSpeed(e.getSpeed() + (-2 + (Math.random() * (2 - (-2)))));
+                e.setSpeed(e.getSpeed() + (-1 + (Math.random() * (1 - (-1)))));
                 // Dégats entre -3 et 3
                 e.setDamages(e.getDamages() + (-3 + (Math.random() * (3 - (-3)))));
                 // Vitesse d'attaque entre -1 et 1
