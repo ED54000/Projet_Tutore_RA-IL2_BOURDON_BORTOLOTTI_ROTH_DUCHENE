@@ -366,7 +366,7 @@ public class EnnemyEvolution {
         // On parcourt la liste des ennemis
         for (Ennemy e : ennemies) {
             // Si l'ennemi est mort, on l'ajoute à la liste des ennemis morts
-            if (e.getHealth() <= 0) {
+            if (e.isDead()) {
                 deadEnnemies.add(e);
             }
         }
@@ -382,6 +382,17 @@ public class EnnemyEvolution {
     public static ArrayList<Ennemy> evoluer(ArrayList<Ennemy> ennemies){
         // On affecte les statistiques moyennes des meilleurs ennemis aux ennemis morts (pour chaque comportement)
         ennemies = affectStatsToDeadEnnemies(ennemies);
+        System.out.println("Stats ennemies après affectation : ");
+        for (Ennemy e : ennemies) {
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " behavior : " + e.getBehavior());
+        }
+
+        System.out.println("Stats ennemies après mutation : ");
+        ArrayList<Ennemy> ennemiesMutated = addRandomStats(ennemies);
+        for (Ennemy e : ennemiesMutated) {
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " behavior : " + e.getBehavior());
+        }
+
         // On ajoute des statistiques aléatoires aux ennemis (mutation)
         return addRandomStats(ennemies);
     }
