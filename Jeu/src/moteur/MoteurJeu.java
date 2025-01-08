@@ -115,11 +115,12 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
         labyrinthMap.put("test1", "Ressources/Laby_test.txt");
         labyrinthMap.put("test2", "Ressources/Laby_test2.txt");
+        labyrinthMap.put("testSteering", "Ressources/Laby_testSteering.txt");
 
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2");
-        labyrinthComboBox.setValue("Large");
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2","testSteering");
+        labyrinthComboBox.setValue("testSteering");
 
         // Définit "Petit" comme valeur par défaut
         HBox labyrinthBox = new HBox(10, new Label("Choisir le labyrinthe :"), labyrinthComboBox);
