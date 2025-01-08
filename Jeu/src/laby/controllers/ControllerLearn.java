@@ -14,6 +14,9 @@ import laby.ModeleLabyrinth;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
+import java.util.Arrays;
+import java.util.Map;
+
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
     ModeleLabyrinth laby;
@@ -88,14 +91,15 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                     e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
                 }
                 e.setArrived(false);
-                System.out.println("X : " + laby.getXstartRender() + Math.random()*2+ " Y : "+laby.getYstartRender()+Math.random()*5);
-                e.setPosition(new Vector2D(laby.getXstartRender() + Math.random() * 2, laby.getYstartRender() + Math.random()*5));
             }
 
 
         int c = 0;
-        for (Ennemy e: laby.enemies) {
-            System.out.println("Ennemy "+c+" après évolution : "+e.getName()+" type:"+e.getType()+" vie"+e.getHealth()+" vitesse :"+e.getSpeed()+" dégâts :"+e.getDamages()+" distance arrivée :"+e.getDistanceToArrival()+" behavior :"+e.getBehavior());
+        for (Ennemy e : laby.enemies) {
+            if (e.getHealth() < 0 ){
+                e.setHealth(e.getHealth()*-1);
+            }
+            System.out.println("Ennemy " + c + " après évolution : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
             c++;
         }
 
@@ -109,6 +113,23 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             Button nextManche = new Button("Next Manche");
             nextManche.setOnMouseClicked(new ControllerNextManche(laby));
             parentVBox.getChildren().add(nextManche);
+        }
+
+        // On sauvegarde les statistiques des ennemis
+        EnnemyEvolution.saveStartStats(laby.enemies);
+        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : "+laby.enemies+"on les affiche");
+        // On parcourt la map pour afficher chaque couple clé valeur
+        Map<Ennemy, double[]> map = EnnemyEvolution.startStats;
+        for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
+            Ennemy enemy = entry.getKey();
+            double[] values = entry.getValue();
+
+            System.out.println("==========================================");
+            System.out.print("Enemy: " + enemy + " -> Values: ");
+            for (double value : values) {
+                System.out.print(value + " ");
+            }
+            System.out.println();
         }
     }
 }
