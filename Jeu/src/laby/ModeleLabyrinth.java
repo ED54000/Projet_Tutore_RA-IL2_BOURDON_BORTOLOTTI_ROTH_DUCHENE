@@ -282,14 +282,19 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         }
                     }
                 }
-                int posYReel = (int) e.getPositionReel().getY();
-                int posXReel = (int) e.getPositionReel().getX();
+                int posYReel = (int) Math.ceil(e.getPositionReel().getY());
+                int posXReel = (int) Math.ceil(e.getPositionReel().getX());
+                if ( posYReel < 0){
+                    posYReel = 0;
+                }
+                if ( posXReel < 0){
+                    posXReel = 0;
+                }
+
                 if (copyGrid[posYReel][posXReel] == 'E') {
                     e.setDistanceToArrival(new ArrayList<>());
-                    System.err.println(e.getDistanceToArrival());
                 } else {
                     copyGrid[posYReel][posXReel] = 'S';
-                    System.out.println(Arrays.deepToString(copyGrid));
                     e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
                             new Vector2D(posYReel, posXReel),
                             new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
@@ -671,16 +676,24 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         }
         for (Ennemy ennemy : enemies) {
-            System.out.println(ennemy.getName()+ " : "+ ennemy.getPositionReel());
-            copyGrid[(int) ennemy.getPositionReel().getY()][(int) ennemy.getPositionReel().getX()] = 'S';
-            System.out.println(Arrays.deepToString(copyGrid));
-            Astar newAstar = new Astar();
-            ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
-                    new Vector2D((int) ennemy.getPositionReel().getY(), (int) ennemy.getPositionReel().getX()),
-                    new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
-            ennemy.setBehaviorPath(new PathfollowingBehavior(path));
-            BehavioursMap.put(ennemy.getBehavior(), path);
+            int ennemiPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
+            int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
+            if ( ennemiPosY < 0){
+                ennemiPosY = 0;
+            }
+            if ( ennemyPosX < 0){
+                ennemyPosX = 0;
+            }
 
+            copyGrid[ennemiPosY][ennemyPosX] = 'S';
+            if(!(ennemiPosY==YArrival && ennemyPosX==XArrival)) {
+                Astar newAstar = new Astar();
+                ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
+                        new Vector2D(ennemiPosY, ennemyPosX),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
+                ennemy.setBehaviorPath(new PathfollowingBehavior(path));
+                BehavioursMap.put(ennemy.getBehavior(), path);
+            }
         }
     }
 

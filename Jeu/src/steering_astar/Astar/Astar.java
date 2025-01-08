@@ -206,6 +206,7 @@ public class Astar {
 
                         if (cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f == -1
                                 || cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f > fNew) {
+
                             openList.add(new Details(fNew, neighbour.getX(), neighbour.getY()));
                             cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].g = gNew;
                             cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f = fNew;
