@@ -67,37 +67,37 @@ public abstract class Entity {
 
     //retourne le bonus de dégâts en fonction des types
     public double getBonus(String AttackerType, String TargetType) {
-        System.out.println(AttackerType);
-        System.out.println(TargetType);
-        switch (AttackerType) {
-            case "Fire":
-                if (TargetType.equals("Plant")) {
-                    return 1.3;
-                } else if (TargetType.equals("Water")) {
-                    return 0.7;
-                } else {
-                    return 1;
-                }
-            case "Water":
-                if (TargetType.equals("Fire")) {
-                    return 1.3;
-                } else if (TargetType.equals("Plant")) {
-                    return 0.7;
-                } else {
-                    return 1;
-                }
-            case "Plant":
-                if (TargetType.equals("Water")) {
-                    return 1.3;
-                } else if (TargetType.equals("Fire")) {
-                    return 0.7;
-                } else {
-                    return 1;
-                }
+        if (AttackerType != null && TargetType != null) {
+            switch (AttackerType) {
+                case "Fire":
+                    if (TargetType.equals("Plant")) {
+                        return 1.3;
+                    } else if (TargetType.equals("Water")) {
+                        return 0.7;
+                    } else {
+                        return 1;
+                    }
+                case "Water":
+                    if (TargetType.equals("Fire")) {
+                        return 1.3;
+                    } else if (TargetType.equals("Plant")) {
+                        return 0.7;
+                    } else {
+                        return 1;
+                    }
+                case "Plant":
+                    if (TargetType.equals("Water")) {
+                        return 1.3;
+                    } else if (TargetType.equals("Fire")) {
+                        return 0.7;
+                    } else {
+                        return 1;
+                    }
+            }
+            return 0;
         }
-        return 0;
+        return 1;
     }
-
     public abstract void takeDamage(double damage);
 
     /**

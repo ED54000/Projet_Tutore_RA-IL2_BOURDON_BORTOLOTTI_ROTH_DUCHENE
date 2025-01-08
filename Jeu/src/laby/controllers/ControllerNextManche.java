@@ -19,6 +19,7 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
     public void handle(MouseEvent mouseEvent) {
         // On met à jour le time de départ de la manche
         laby.setStartTime();
+        System.out.println("Nouvelle Manche " + laby.getNbManches()+1);
 
         //clear les logs si on est pas en simulation
         if (!laby.estSimulation()) {
@@ -32,5 +33,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
         laby.setPause(false);
         laby.setNbManches(laby.getNbManches() + 1);
+        System.out.println("Manche " + laby.getNbManches());
     }
 }
