@@ -3,6 +3,7 @@ package laby;
 import entites.defenses.*;
 import entites.enemies.*;
 import evolution.EnnemyEvolution;
+import evolution.EnnemyEvolutionv2;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -35,7 +36,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public int nbEnnemiesToWin;
     private int nbEnnemiesArrived;
     private long startTime;
-    private long endTime;
 
 
     //entités
@@ -52,6 +52,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     //si le jeu est avec le main simulation
     private boolean simulation = false;
+    private boolean simulationEvolution = false;
+
 
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -67,6 +69,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private boolean pause = false;
     private boolean end = false;
     private Astar astar = new Astar();
+    private long endTime;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -266,7 +269,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     @Override
     public void update(double secondes) {
-
+        //System.out.println(this.enemies);
         //Vérification de la fin du jeu
         if (this.nbManches == this.limManches) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
@@ -276,8 +279,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
-            // On met à jour le temps de fin de la manche
-            this.setEndTime();
+            System.out.println("Fin de la manche " + nbManches);
             this.pause = true;
             // On réactive toutes les défenses passives
             for (Defense defense : defenses) {
@@ -288,16 +290,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
             //On ajoute les ennemis de la manche dans une liste
             this.ennemiesEndOfManche.addAll(deadEnemies);
             this.ennemiesEndOfManche.addAll(ennemiesArrived);
-
-            // Pour chaque ennemi à la fin de la manche (parce que seul les ennemis morts ont un survivalTime maj pendant la partie)
-            for(Ennemy e : ennemiesEndOfManche){
-                // Si l'ennemi n'est pas mort
-                if(!e.isDead()){
-                    // On met à jour le temps de survie de l'ennemi
-                    e.setSurvivalTime(endTime - startTime);
-                }
-            }
-
             //On ajoute les defenses de la manche dans une liste
             this.defensesEndOfManche.addAll(deadDefenses);
             this.defensesEndOfManche.addAll(defenses);
@@ -360,6 +352,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 new ControllerLearn(this).handle(fakeClickEvent);
                 new ControllerNextManche(this).handle(fakeClickEvent);
             }
+
+            if (this.simulationEvolution){
+                EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
+                double score = evolution.getScore(ennemiesEndOfManche.get(0));
+                System.out.println("Score de l'ennemi : "+score);
+                // On sauvegarde les score de l'ennemi dans une map avec l'ennemi comme clé et le score comme valeur
+                Map<Ennemy, Double> ennemyScore = new HashMap<>();
+                ennemyScore.put(ennemiesEndOfManche.get(0), score);
+
+                this.end = true;
+            }
         }
 
         // On gère les attaques des ennemis
@@ -382,8 +385,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         ennemi.attack(defense);
                         // le berserker se suicide après avoir attaqué
                         ennemi.takeDamage(1000);
-                        ennemi.setSurvivalTime(System.currentTimeMillis() - startTime);
-                        ennemi.setKillerType(ennemi.getType());
                     }
                 }
             }
@@ -418,8 +419,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             ennemyTarget.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
-                            // On met à jour le temps de survie de l'ennemi
-                            ennemyTarget.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                     }
                     // Si l'ennemi n'est plus dans la portée de la défense
@@ -533,6 +532,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
     @Override
     public boolean etreFini() {
         return end;
+    }
+
+    public void setEnd(boolean end) {
+        this.end = end;
     }
 
     @Override
@@ -703,7 +706,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public boolean estSimulation() {
-        return this.simulation;
+        if (this.simulation || this.simulationEvolution) {
+            return true;
+        }
+        return false;
     }
 
     public void towerIsDestroyed() {
@@ -754,4 +760,103 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public long getEndTime() {
         return this.endTime;
     }
+    public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
+        this.simulationEvolution = true;
+        this.limManches = 2;
+        //ouvrire le fichier
+        FileReader fr = new FileReader(fichier);
+        BufferedReader br = new BufferedReader(fr);
+
+        int nbLignes, nbColonnes;
+        nbLignes = Integer.parseInt(br.readLine());
+        nbColonnes = Integer.parseInt(br.readLine());
+
+        //création du labyrinthe vide
+        this.cases = new char[nbLignes][nbColonnes];
+
+        // Nombre d'ennemis qui doivent arriver à la fin pour gagner
+        this.nbEnnemiesToWin = nbEnnemiesToWin;
+
+        //lecture des cases
+        String ligne = br.readLine();
+
+        //stocke les indices
+        int numLigne = 0;
+
+        //parcours le fichier
+        while (ligne != null) {
+            for (int colonne = 0; colonne < ligne.length(); colonne++) {
+                char c = ligne.charAt(colonne);
+                switch (c) {
+                    case TREE:
+                        //ajouter un mur
+                        this.cases[numLigne][colonne] = TREE;
+                        break;
+                    case ROAD:
+                        // ajouter une route
+                        this.cases[numLigne][colonne] = ROAD;
+                        break;
+                    case START:
+                        //ajouter le point de départ
+                        this.cases[numLigne][colonne] = START;
+                        this.Xstart = colonne;
+                        this.Ystart = numLigne;
+                        this.XstartRender = colonne * getTailleCase();
+                        this.YstartRender = numLigne * getTailleCase();
+                        break;
+                    case END:
+                        //ajouter le point d'arrivée
+                        this.cases[numLigne][colonne] = END;
+                        this.XArrival = colonne;
+                        this.YArrival = numLigne;
+                        this.XArrivalRender = colonne * getTailleCase();
+                        this.YArrivalRender = numLigne * getTailleCase();
+                        break;
+                    case CANON:
+                        //ajouter un canon
+                        this.cases[numLigne][colonne] = CANON;
+                        this.defenses.add(new Canon(colonne, numLigne, "Canon" + this.nbCanon));
+                        this.nbCanon++;
+                        break;
+                    case BOMB:
+                        //ajouter une bombe
+                        this.cases[numLigne][colonne] = BOMB;
+                        this.defenses.add(new Bomb(colonne, numLigne, "Bomb" + this.nbBomb));
+                        this.nbBomb++;
+                        break;
+                    case ARCHER:
+                        //ajouter un archer
+                        this.cases[numLigne][colonne] = ARCHER;
+                        this.defenses.add(new Archer(colonne, numLigne, "Archer" + this.nbArcher));
+                        this.nbArcher++;
+                        break;
+                }
+            }
+            numLigne++;
+            ligne = br.readLine();
+        }
+
+        createBehaviours(this.getCases());
+
+        Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant "+numIndividu);
+        giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+        giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+        this.enemies.add(giant);
+
+        for(Ennemy e : getEnnemyEndOfManche()){
+            e.setToStart(this);
+        }
+
+        refreshEnnemyArrived();
+        refreshDeadEnemies();
+        refreshEnnemyEndOfManche();
+
+        refreshDeadDefenses();
+        refreshDefenseEndOfManche();
+
+        this.setPause(false);
+
+        br.close();
+    }
+
 }
