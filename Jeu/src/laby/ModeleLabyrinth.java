@@ -720,4 +720,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.startTime = System.currentTimeMillis();
     }
 
+    public long getStartTime() {
+        return this.startTime;
+    }
 }

@@ -168,19 +168,6 @@ public class EnnemyEvolution {
             double attackSpeedSum = 0;
             double rangeSum = 0;
             // On parcourt les ennemis de chaque couple
-            /*for (int j = 0; j < bestCouples[i].length; j++) {
-                // Si l'ennemi n'est pas null
-                if(bestCouples[i][j] != null){
-                    // On récupère l'ennemi
-                    Ennemy e = bestCouples[i][j];
-                    // On met à jour les statistiques moyennes
-                    healthSum += e.getHealth();
-                    speedSum += e.getSpeed();
-                    damagesSum += e.getDamages();
-                    attackSpeedSum += e.getAttackSpeed();
-                    rangeSum += e.getRange();
-                }
-            }*/
             for (int j = 0; j < bestCouples[i].length; j++) {
                 // Si l'ennemi n'est pas null
                 if (bestCouples[i][j] != null) {
@@ -200,7 +187,7 @@ public class EnnemyEvolution {
                         rangeSum = startStatsArray[4];
                     } else {
                         // Si l'ennemi n'a pas d'entrées dans startStats, on affiche une erreur
-                        System.out.println("Aucune statistique de départ trouvée pour l'ennemi: " + e);
+                        System.err.println("Aucune statistique de départ trouvée pour l'ennemi: " + e);
                     }
                 }
             }
