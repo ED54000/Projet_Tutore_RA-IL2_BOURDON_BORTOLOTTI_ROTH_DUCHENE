@@ -33,7 +33,7 @@ public class MainSimulation extends Application {
                 // Mettre à jour le temps de la dernière mise à jour
                 lastUpdateTime = currentTime;
             }
-
+            System.out.println(jeu.getLogs());
             System.out.println("Simulation terminée.");
             System.out.println(jeu.getLogs());
         }).start();

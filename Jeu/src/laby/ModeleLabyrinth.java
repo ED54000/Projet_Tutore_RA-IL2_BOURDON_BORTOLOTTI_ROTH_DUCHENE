@@ -174,21 +174,21 @@ public class ModeleLabyrinth implements Jeu, Subject {
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random()*1.5, this.YstartRender + Math.random()*1.5), "Giant " + nbGiant);
+                    Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant " + nbGiant);
                     giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
                     giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.XstartRender + Math.random()*1.5, this.YstartRender + Math.random()*1.5), "Ninja " + nbNinja);
+                    Ninja ninja = new Ninja(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Ninja " + nbNinja);
                     ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
                     ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.XstartRender + Math.random()*1.5, this.YstartRender + Math.random()*1.5), "Berseker " + nbBerserker);
+                    Berserker berserker = new Berserker(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Berseker " + nbBerserker);
                     berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
                     berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
                     this.enemies.add(berserker);
@@ -200,7 +200,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
         for (int i = 1; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.XstartRender + Math.random()*1.5, this.YstartRender + Math.random()*1.5), "Druide " + i);
+            Druide druide = new Druide(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Druide " + i);
             ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
             druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             druide.setDistanceStartToArrival(aStarHealer);
@@ -243,17 +243,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
         ArrayList<Vector2D> aStarNormal =
                 astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0),false);
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0), false);
         BehavioursMap.put(BEHAVIOURS.get(0), aStarNormal);
         ArrayList<Vector2D> aStarFugitive =
                 astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1),false);
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1), false);
         BehavioursMap.put(BEHAVIOURS.get(1), aStarFugitive);
         ArrayList<Vector2D> aStarKamikaze =
                 astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2),false);
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2), false);
         BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
     }
 
@@ -295,12 +295,31 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 char[][] copyGrid = new char[cases.length][];
                 for (int i = 0; i < cases.length; i++) {
                     copyGrid[i] = cases[i].clone();
+                    for (int j = 0; j < copyGrid.length; j++) {
+                        if (copyGrid[i][j] == 'B' || copyGrid[i][j] == 'C' || copyGrid[i][j] == 'A') {
+                            copyGrid[i][j] = '.';
+                        }
+                    }
                 }
-                copyGrid[(int) e.getPositionReel().getY()][(int) e.getPositionReel().getX()] = 'S';
-                e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
-                        new Vector2D((int) e.getPositionReel().getY() , (int) e.getPositionReel().getX()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(),true));
-                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
+                int posYReel = (int) Math.ceil(e.getPositionReel().getY());
+                int posXReel = (int) Math.ceil(e.getPositionReel().getX());
+                if ( posYReel < 0){
+                    posYReel = 0;
+                }
+                if ( posXReel < 0){
+                    posXReel = 0;
+                }
+
+                if (copyGrid[posYReel][posXReel] == 'E') {
+                    e.setDistanceToArrival(new ArrayList<>());
+                } else {
+                    copyGrid[posYReel][posXReel] = 'S';
+                    e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
+                            new Vector2D(posYReel, posXReel),
+                            new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
+                }
+                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior()+"survivalTime : "+e.getSurvivalTime());
+
                 c++;
             }
             System.out.println("ennemis en fin de manche : " + ennemiesEndOfManche);
@@ -369,7 +388,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // On vérifie si l'ennemi est toujours dans la portée de la défense
                     if (defense.isInRange(ennemyTarget)) {
                         // Si l'ennemi n'est pas mort
-                        if(!ennemyTarget.isDead()) {
+                        if (!ennemyTarget.isDead()) {
                             // On l'attaque
                             defense.attack(ennemyTarget);
                         }
@@ -416,7 +435,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         // Cela active la defense
                         // On attaque l'ennemi
                         defense.attack(e);
-                        ((PassiveDefense)defense).setAttacked(true);
+                        ((PassiveDefense) defense).setAttacked(true);
                         // Si l'ennemi est mort, on set son killerType
                         if (e.isDead() && !deadEnemies.contains(e)) {
                             e.setKillerType(defense.getType());
@@ -619,6 +638,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Ennemy> getEnnemyEndOfManche() {
         return ennemiesEndOfManche;
     }
+
     public ArrayList<Defense> getDefenseEndOfManche() {
         return defensesEndOfManche;
     }
@@ -629,6 +649,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public void refreshDeadEnemies() {
         this.deadEnemies.clear();
     }
+
     public void refreshDeadDefenses() {
         this.deadDefenses.clear();
     }
@@ -636,6 +657,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public void refreshEnnemyEndOfManche() {
         this.ennemiesEndOfManche = new ArrayList<>();
     }
+
     public void refreshDefenseEndOfManche() {
         this.defensesEndOfManche = new ArrayList<>();
     }
@@ -662,32 +684,35 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void towerIsDestroyed() {
-            System.out.println("La défense est morte !");
-            char[][] copyGrid = new char[cases.length][];
-            for (int i = 0; i < cases.length; i++) {
-                copyGrid[i] = cases[i].clone();
-            }
-            for (Defense defense : deadDefenses) {
-                Vector2D position = defense.getPosition();
-                if (defense instanceof Bomb) {
-                    copyGrid[(int) position.getY()][(int) position.getX()] = '.';
-                }
-                if (defense instanceof Canon) {
-                    copyGrid[(int) position.getY()][(int) position.getX()] = '#';
-                }
-                if (defense instanceof Archer) {
-                    copyGrid[(int) position.getY()][(int) position.getX()] = '#';
-                }
-            }
-            for (Ennemy ennemy : enemies) {
-                    copyGrid[(int) ennemy.getPositionReel().getY()][(int) ennemy.getPositionReel().getX()] = 'S';
-                    Astar newAstar = new Astar();
-                    ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
-                            new Vector2D((int) ennemy.getPositionReel().getY() , (int) ennemy.getPositionReel().getX()),
-                            new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(),false);
-                    ennemy.setBehaviorPath(new PathfollowingBehavior(path));
-                   BehavioursMap.put(ennemy.getBehavior(),path);
+        System.out.println("La défense  est morte !");
+        char[][] copyGrid = new char[cases.length][];
+        for (int i = 0; i < cases.length; i++) {
+            copyGrid[i] = cases[i].clone();
+        }
+        for (Defense defense : deadDefenses) {
+            Vector2D position = defense.getPosition();
+            copyGrid[(int) position.getY()][(int) position.getX()] = '.';
 
+        }
+        for (Ennemy ennemy : enemies) {
+            int ennemiPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
+            int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
+            if ( ennemiPosY < 0){
+                ennemiPosY = 0;
+            }
+            if ( ennemyPosX < 0){
+                ennemyPosX = 0;
+            }
+
+            copyGrid[ennemiPosY][ennemyPosX] = 'S';
+            if(!(ennemiPosY==YArrival && ennemyPosX==XArrival)) {
+                Astar newAstar = new Astar();
+                ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
+                        new Vector2D(ennemiPosY, ennemyPosX),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
+                ennemy.setBehaviorPath(new PathfollowingBehavior(path));
+                BehavioursMap.put(ennemy.getBehavior(), path);
+            }
         }
     }
 
