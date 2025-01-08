@@ -2,6 +2,8 @@ package moteur;
 //squelette adapté et modifié du moteur de Zeldiablo inspiré de :
 //https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 
+import entites.enemies.Ennemy;
+import evolution.EnnemyEvolution;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;

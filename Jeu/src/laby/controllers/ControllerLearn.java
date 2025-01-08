@@ -15,6 +15,7 @@ import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
@@ -112,6 +113,23 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             Button nextManche = new Button("Next Manche");
             nextManche.setOnMouseClicked(new ControllerNextManche(laby));
             parentVBox.getChildren().add(nextManche);
+        }
+
+        // On sauvegarde les statistiques des ennemis
+        EnnemyEvolution.saveStartStats(laby.enemies);
+        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : "+laby.enemies+"on les affiche");
+        // On parcourt la map pour afficher chaque couple clé valeur
+        Map<Ennemy, double[]> map = EnnemyEvolution.startStats;
+        for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
+            Ennemy enemy = entry.getKey();
+            double[] values = entry.getValue();
+
+            System.out.println("==========================================");
+            System.out.print("Enemy: " + enemy + " -> Values: ");
+            for (double value : values) {
+                System.out.print(value + " ");
+            }
+            System.out.println();
         }
     }
 }

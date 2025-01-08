@@ -3,11 +3,12 @@ package evolution;
 import entites.enemies.Ennemy;
 import laby.ModeleLabyrinth;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class EnnemyEvolution {
 
+    // On stocke les statistiques des ennemis au départ de la manche
+    public static final Map<Ennemy, double[]> startStats = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Retourne les meilleurs couples d'ennemis pour chaque type
@@ -159,6 +160,7 @@ public class EnnemyEvolution {
 
         // On parcourt les couples de meilleurs ennemis
         for (int i = 0; i < bestCouples.length; i++) {
+
             // On crée des variables pour les statistiques moyennes
             double healthSum = 0;
             double speedSum = 0;
@@ -166,7 +168,7 @@ public class EnnemyEvolution {
             double attackSpeedSum = 0;
             double rangeSum = 0;
             // On parcourt les ennemis de chaque couple
-            for (int j = 0; j < bestCouples[i].length; j++) {
+            /*for (int j = 0; j < bestCouples[i].length; j++) {
                 // Si l'ennemi n'est pas null
                 if(bestCouples[i][j] != null){
                     // On récupère l'ennemi
@@ -178,7 +180,31 @@ public class EnnemyEvolution {
                     attackSpeedSum += e.getAttackSpeed();
                     rangeSum += e.getRange();
                 }
+            }*/
+            for (int j = 0; j < bestCouples[i].length; j++) {
+                // Si l'ennemi n'est pas null
+                if (bestCouples[i][j] != null) {
+                    // On récupère l'ennemi
+                    Ennemy e = bestCouples[i][j];
+
+                    // Récupération des statistiques de début de partie de l'ennemi depuis la map startStats
+                    double[] startStatsArray = EnnemyEvolution.startStats.get(e);
+
+                    // Si l'ennemi existe dans startStats
+                    if (startStatsArray != null) {
+                        // Récupération des statistiques en début de manche
+                        healthSum = startStatsArray[0];
+                        speedSum = startStatsArray[1];
+                        damagesSum = startStatsArray[2];
+                        attackSpeedSum = startStatsArray[3];
+                        rangeSum = startStatsArray[4];
+                    } else {
+                        // Si l'ennemi n'a pas d'entrées dans startStats, on affiche une erreur
+                        System.out.println("Aucune statistique de départ trouvée pour l'ennemi: " + e);
+                    }
+                }
             }
+
             // Si il y a deux ennemis dans le couple
             if (bestCouples[i][1] != null && bestCouples[i][0] != null) {
                 // On calcule les statistiques moyennes
@@ -348,12 +374,29 @@ public class EnnemyEvolution {
         return deadEnnemies;
     }
 
-
+    /**
+     * Méthode à appeller pour faire évoluer une liste d'ennemis
+     * @param ennemies
+     * @return
+     */
     public static ArrayList<Ennemy> evoluer(ArrayList<Ennemy> ennemies){
         // On affecte les statistiques moyennes des meilleurs ennemis aux ennemis morts (pour chaque comportement)
         ennemies = affectStatsToDeadEnnemies(ennemies);
         // On ajoute des statistiques aléatoires aux ennemis (mutation)
         return addRandomStats(ennemies);
+    }
+
+    /**
+     * Sauvegarde les statistiques de départ des ennemis
+     * @param ennemies Liste des ennemis
+     */
+    public static void saveStartStats(List<Ennemy> ennemies) {
+        synchronized (startStats) {
+            for (Ennemy e : ennemies) {
+                double[] stats = {e.getHealth(), e.getSpeed(), e.getDamages(), e.getAttackSpeed(), e.getRange()};
+                startStats.put(e, stats);
+            }
+        }
     }
 }
 
