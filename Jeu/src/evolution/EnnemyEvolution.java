@@ -134,10 +134,6 @@ public class EnnemyEvolution {
             }
         }
 
-        System.out.println("bestFugitives : "+bestFugitives[0].getSpeed()+" "+bestFugitives[1].getSpeed());
-        System.out.println("bestNormals : "+bestNormals[0].getSpeed()+" "+bestNormals[1].getSpeed());
-        System.out.println("bestHealers : "+bestHealers[0].getSpeed()+" "+bestHealers[1].getSpeed());
-        System.out.println("bestKamikazes : "+bestKamikazes[0].getSpeed()+" "+bestKamikazes[1].getSpeed());
         // On met à jour le tableau des meilleurs couples
         bestCouples[0] = bestFugitives;
         bestCouples[1] = bestNormals;
@@ -156,7 +152,7 @@ public class EnnemyEvolution {
     public static double[][] getAverageStats(List<Ennemy> ennemies) {
         // On récupère les meilleurs couples
         Ennemy[][] bestCouples = getBestCouples(ennemies);
-        System.out.println("bestcouples : Ninja : "+bestCouples[0][0]+" "+bestCouples[0][1]+" Géants :"+bestCouples[1][0]+" "+bestCouples[1][1]+" Druide : "+bestCouples[2][0]+" "+bestCouples[2][1]+" Berserker vitesses : "+bestCouples[3][0].getSpeed());
+      //  System.out.println("bestcouples : Ninja : "+bestCouples[0][0]+" "+bestCouples[0][1]+" Géants :"+bestCouples[1][0]+" "+bestCouples[1][1]+" Druide : "+bestCouples[2][0]+" "+bestCouples[2][1]+" Berserker vitesses : "+bestCouples[3][0].getSpeed());
 
         // On créee un tableau pour les statistiques moyennes
         double[][] averageStats = new double[4][5]; // [0] : fuyarts, [1] : normaux, [2] : soigneurs, [3] : kamikazes

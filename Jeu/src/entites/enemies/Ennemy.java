@@ -224,8 +224,24 @@ public abstract class Ennemy extends Entity {
         return positionReel;
     }
 
+    public void setPositionReel(Vector2D positionReel) {
+        this.positionReel = positionReel;
+    }
     public void setSurvivalTime(long survivalTime) {
         this.survivalTime = survivalTime;
+    }
+
+    public void setToStart(ModeleLabyrinth modeleLabyrinth){
+        System.out.println("Avant : "+this.name+ " : "+ this.getPositionReel());
+        double XstartRandom =  Math.random()*1.5;
+        double YstartRandom =  Math.random()*1.5;
+        this.setPositionReel(new Vector2D(modeleLabyrinth.getXstart() + XstartRandom, modeleLabyrinth.getYstart() + YstartRandom));
+        this.setPosition(new Vector2D(modeleLabyrinth.getXstartRender() + XstartRandom, modeleLabyrinth.getYstartRender() + YstartRandom));
+        System.out.println("Apres : "+this.name+ " : "+ this.getPositionReel());
+    }
+
+    public void setDead(boolean b) {
+        this.isDead = b;
     }
 
 }

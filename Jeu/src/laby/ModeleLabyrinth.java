@@ -245,7 +245,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
      * @param secondes temps ecoule depuis la derniere mise a jour
      */
     @Override
-    public void update(double secondes) {
+    public synchronized  void update(double secondes) {
         //Vérification de la fin du jeu
         if (this.nbManches == this.limManches) {
             setLogs("Fin du jeu");
@@ -667,7 +667,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             new Vector2D((int) ennemy.getPositionReel().getY() , (int) ennemy.getPositionReel().getX()),
                             new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(),false);
                     ennemy.setBehaviorPath(new PathfollowingBehavior(path));
-                    BehavioursMap.put(ennemy.getBehavior(),path);
+                   BehavioursMap.put(ennemy.getBehavior(),path);
 
             }
         }
