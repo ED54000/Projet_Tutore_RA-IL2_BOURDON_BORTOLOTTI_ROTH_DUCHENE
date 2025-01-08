@@ -99,7 +99,6 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             if (e.getHealth() < 0 ){
                 e.setHealth(e.getHealth()*-1);
             }
-            System.out.println("Ennemy " + c + " après évolution : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
             c++;
         }
 

@@ -35,6 +35,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public int nbEnnemiesToWin;
     private int nbEnnemiesArrived;
     private long startTime;
+    private long endTime;
 
 
     //entités
@@ -275,6 +276,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
+            // On met à jour le temps de fin de la manche
+            this.setEndTime();
             this.pause = true;
             // On réactive toutes les défenses passives
             for (Defense defense : defenses) {
@@ -285,6 +288,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
             //On ajoute les ennemis de la manche dans une liste
             this.ennemiesEndOfManche.addAll(deadEnemies);
             this.ennemiesEndOfManche.addAll(ennemiesArrived);
+
+            // Pour chaque ennemi à la fin de la manche (parce que seul les ennemis morts ont un survivalTime maj pendant la partie)
+            for(Ennemy e : ennemiesEndOfManche){
+                // Si l'ennemi n'est pas mort
+                if(!e.isDead()){
+                    // On met à jour le temps de survie de l'ennemi
+                    e.setSurvivalTime(endTime - startTime);
+                }
+            }
+
             //On ajoute les defenses de la manche dans une liste
             this.defensesEndOfManche.addAll(deadDefenses);
             this.defensesEndOfManche.addAll(defenses);
@@ -363,6 +376,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         ennemi.attack(defense);
                         // le berserker se suicide après avoir attaqué
                         ennemi.takeDamage(1000);
+                        ennemi.setSurvivalTime(System.currentTimeMillis() - startTime);
+                        ennemi.setKillerType(ennemi.getType());
                     }
                 }
             }
@@ -397,6 +412,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             ennemyTarget.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
+                            // On met à jour le temps de survie de l'ennemi
+                            ennemyTarget.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                     }
                     // Si l'ennemi n'est plus dans la portée de la défense
@@ -722,5 +739,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public long getStartTime() {
         return this.startTime;
+    }
+
+    public void setEndTime() {
+        this.endTime = System.currentTimeMillis();
+    }
+
+    public long getEndTime() {
+        return this.endTime;
     }
 }
