@@ -134,8 +134,7 @@ public class Astar {
                     dest = new Vector2D(newEnd.getX(), newEnd.getY());
                     copyGrid[(int) dest.getX()][(int) dest.getY()] = 'E';
                 }
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
+            } catch (Exception _) {
             }
         }
 
