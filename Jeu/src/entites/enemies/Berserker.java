@@ -11,7 +11,5 @@ public class Berserker extends Ennemy {
         this.setSpeed(this.getSpeed() + (Math.random() - 0.5));
         this.setDamages(this.getDamages() + (Math.random() - 0.5) * 10);
         this.setAttackSpeed(this.getAttackSpeed() + (Math.random() - 0.5) * 0.2);
-
-
     }
 }

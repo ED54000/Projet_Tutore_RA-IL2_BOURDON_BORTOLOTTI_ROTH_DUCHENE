@@ -8,32 +8,27 @@ public class MainTest extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         ModeleLabyrinth jeu = new ModeleLabyrinth();
-        jeu.setSimulation(true);
         jeu.creerLabyrinthePour1("Ressources/Labyrinthe3.txt", 1);
-        int i = 0;
-        int population = 5;
+        jeu.setSimulation(false);
+        int population = 10;
 
         //boucle pour lancer une partie pour chaque ennemi de la population
-        while (i < population) {
+        for (int i = 0; i < population; i++) {
+            long lastUpdateTime = System.nanoTime();
+            System.out.println("Jeu fini : " + jeu.etreFini());
+            while (!jeu.etreFini()) {
+                long currentTime = System.nanoTime();
+                double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
 
-            new Thread(() -> {
-                long lastUpdateTime = System.nanoTime();
+                jeu.update(elapsedTimeInSeconds);
+                lastUpdateTime = currentTime;
+            }
+            System.out.println("Simulation numéro " + i + " terminée.");
+            jeu.setEnd(false);
+            jeu.creerLabyrinthePour1("Ressources/Labyrinthe3.txt", 1);
 
-                while (!jeu.etreFini()) {
-                    // Calculer le temps écoulé depuis la dernière mise à jour
-                    long currentTime = System.nanoTime();
-                    double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
-
-                    // Mettre à jour la simulation
-                    jeu.update(elapsedTimeInSeconds);
-
-                    // Mettre à jour le temps de la dernière mise à jour
-                    lastUpdateTime = currentTime;
-                }
-                System.out.println(jeu.getLogs());
-                System.out.println("Simulation terminée.");
-                System.out.println(jeu.getLogs());
-            }).start();
         }
+
+
     }
 }

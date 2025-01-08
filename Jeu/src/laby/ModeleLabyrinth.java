@@ -69,6 +69,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private boolean pause = false;
     private boolean end = false;
     private Astar astar = new Astar();
+    private long endTime;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -268,7 +269,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     @Override
     public void update(double secondes) {
-
+        //System.out.println(this.enemies);
         //Vérification de la fin du jeu
         if (this.nbManches == this.limManches) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
@@ -278,6 +279,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
+            System.out.println("Fin de la manche " + nbManches);
             this.pause = true;
             // On réactive toutes les défenses passives
             for (Defense defense : defenses) {
@@ -349,7 +351,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
                 double score = evolution.getScore(ennemiesEndOfManche.get(0));
                 System.out.println("Score de l'ennemi : "+score);
+                // On sauvegarde les score de l'ennemi dans une map avec l'ennemi comme clé et le score comme valeur
+                Map<Ennemy, Double> ennemyScore = new HashMap<>();
+                ennemyScore.put(ennemiesEndOfManche.get(0), score);
 
+                this.end = true;
             }
         }
 
@@ -522,6 +528,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return end;
     }
 
+    public void setEnd(boolean end) {
+        this.end = end;
+    }
+
     @Override
     public void registerObserver(Observer obs) {
         this.observateurs.add(obs);
@@ -690,7 +700,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public boolean estSimulation() {
-        return this.simulation;
+        if (this.simulation || this.simulationEvolution) {
+            return true;
+        }
+        return false;
     }
 
     public void towerIsDestroyed() {
@@ -730,9 +743,20 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.startTime = System.currentTimeMillis();
     }
 
+    public long getStartTime() {
+        return this.startTime;
+    }
+
+    public void setEndTime() {
+        this.endTime = System.currentTimeMillis();
+    }
+
+    public long getEndTime() {
+        return this.endTime;
+    }
     public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
         this.simulationEvolution = true;
-        this.limManches = 1;
+        this.limManches = 2;
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
@@ -806,10 +830,25 @@ public class ModeleLabyrinth implements Jeu, Subject {
             ligne = br.readLine();
         }
 
+        createBehaviours(this.getCases());
+
         Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant "+numIndividu);
         giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
         giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
         this.enemies.add(giant);
+
+        for(Ennemy e : getEnnemyEndOfManche()){
+            e.setToStart(this);
+        }
+
+        refreshEnnemyArrived();
+        refreshDeadEnemies();
+        refreshEnnemyEndOfManche();
+
+        refreshDeadDefenses();
+        refreshDefenseEndOfManche();
+
+        this.setPause(false);
 
         br.close();
     }
