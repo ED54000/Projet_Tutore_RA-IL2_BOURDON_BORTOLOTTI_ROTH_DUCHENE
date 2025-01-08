@@ -1,6 +1,12 @@
 package steering_astar.Steering;
 
+import laby.ModeleLabyrinth;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static java.lang.Math.round;
+
 
 /***
  * classe definissant des coordonnees reelles x,y
@@ -162,6 +168,31 @@ public class Vector2D {
                 "x=" + x +
                 ", y=" + y +
                 '}';
+    }
+
+    public int[] getCaseFromVector(Vector2D vector) {
+        int x = (int) round(vector.x / ModeleLabyrinth.getTailleCase());
+        int y = (int) round(vector.y / ModeleLabyrinth.getTailleCase());
+        return new int[]{x, y};
+    }
+
+    public boolean isObstacle(){
+        int[] coordCase = getCaseFromVector(this);
+        char theCase;
+        if (coordCase[0] > 0 && coordCase[1] > 0) {
+            theCase = new ModeleLabyrinth().getCase(coordCase[1],coordCase[0]);
+        } else {
+            theCase = 'ඞ';
+        }
+        if (theCase == '#' || theCase == 'A' || theCase == 'C'){
+            return true;
+        }
+        return false;
+    }
+
+    public Vector2D getClosestCaseCenter(){
+        int[] coordCase = getCaseFromVector(this);
+        return new Vector2D(coordCase[0] * ModeleLabyrinth.getTailleCase(), coordCase[1] * ModeleLabyrinth.getTailleCase());
     }
 }
 
