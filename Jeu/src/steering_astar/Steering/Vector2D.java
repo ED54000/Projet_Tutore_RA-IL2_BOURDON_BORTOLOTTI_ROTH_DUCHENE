@@ -179,8 +179,10 @@ public class Vector2D {
     public boolean isObstacle(){
         int[] coordCase = getCaseFromVector(this);
         char theCase;
-        if (coordCase[0] > 0 && coordCase[1] > 0) {
-            theCase = new ModeleLabyrinth().getCase(coordCase[1],coordCase[0]);
+        ModeleLabyrinth m = new ModeleLabyrinth();
+        int length = m.getCases().length;
+        if (coordCase[0] > 0 && coordCase[1] > 0 && length > coordCase[1]) {
+            theCase = m.getCase(coordCase[1],coordCase[0]);
         } else {
             theCase = 'ඞ';
         }

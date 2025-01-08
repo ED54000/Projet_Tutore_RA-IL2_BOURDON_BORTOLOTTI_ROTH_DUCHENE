@@ -37,6 +37,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private long startTime;
     private long endTime;
 
+    private boolean useAstar;
 
     //entités
     public ArrayList<Ennemy> enemies = new ArrayList<>();
@@ -83,9 +84,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
      * @param nbEnnemiesToWin le nombre d'ennemis à atteindre l'arrivée pour gagner
      * @throws IOException si le fichier n'existe pas
      */
-    public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin) throws IOException {
+    public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin, boolean useAstar) throws IOException {
         this.simulation = simulation;
         this.limManches = limManches;
+
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
@@ -99,6 +101,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // Nombre d'ennemis qui doivent arriver à la fin pour gagner
         this.nbEnnemiesToWin = nbEnnemiesToWin;
+
+        // Si on utilise ou pas l'algorithme Astar
+        this.useAstar = useAstar;
 
         //lecture des cases
         String ligne = br.readLine();
@@ -163,7 +168,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private void createEnnemies(int nbEnnemies) {
-        createBehaviours(this.getCases());
+        if (useAstar){
+            createBehaviours(this.getCases());
+        }
 
         int nbGiant = 1;
         int nbNinja = 1;
