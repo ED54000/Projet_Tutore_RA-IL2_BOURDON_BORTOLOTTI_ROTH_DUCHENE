@@ -8,7 +8,6 @@ import java.util.List;
 
 public class EnnemyEvolution {
 
-    public final static double distStartEnd = 200; //a enlever
 
     /**
      * Retourne les meilleurs couples d'ennemis pour chaque type
@@ -32,7 +31,7 @@ public class EnnemyEvolution {
             switch (e.getBehavior()){
                 case "Fugitive":
                     // On calcule le score de l'ennemi
-                    double score = e.getDistanceToArrival() + 0.2 * ((double) e.getSurvivalTime() /10);
+                    double score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
                         score += 10000;
@@ -57,7 +56,7 @@ public class EnnemyEvolution {
                     break;
                 case "Normal":
                     // On calcule le score de l'ennemi
-                    score = e.getDistanceToArrival() + 0.2 * ((double) e.getSurvivalTime() /10);
+                    score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
                         score += 10000;
@@ -82,7 +81,7 @@ public class EnnemyEvolution {
                     break;
                 case "Healer":
                     // On calcule le score de l'ennemi
-                    score = e.getDistanceToArrival() + 0.2 * ((double) e.getSurvivalTime() /10);
+                    score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
                         score += 10000;
@@ -108,7 +107,7 @@ public class EnnemyEvolution {
 
                 case "Kamikaze":
                     // On calcule le score de l'ennemi
-                    score = e.getDistanceToArrival() + 0.2 * ((double) e.getSurvivalTime() /10);
+                    score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
                         score += 10000;
@@ -207,6 +206,21 @@ public class EnnemyEvolution {
                 averageStats[i][4] = 0;
             }
         }
+
+        // Si la vie est inférieure à 1, on la met à 50
+        if(averageStats[0][0] < 1){
+            averageStats[0][0] = 50;
+        }
+        if(averageStats[1][0] < 1){
+            averageStats[1][0] = 50;
+        }
+        if(averageStats[2][0] < 1){
+            averageStats[2][0] = 50;
+        }
+        if(averageStats[3][0] < 1){
+            averageStats[3][0] = 50;
+        }
+
         System.out.println("Fugitive : "+averageStats[0][0]+" "+averageStats[0][1]+" "+averageStats[0][2]+" "+averageStats[0][3]+" "+averageStats[0][4]+"" +
                 "Normal : vie : "+averageStats[1][0]+" vitesse : "+averageStats[1][1]+" degats : "+averageStats[1][2]+" attackspeed : "+averageStats[1][3]+" range : "+averageStats[1][4]+"" +
                 "Healer : "+averageStats[2][0]+" "+averageStats[2][1]+" "+averageStats[2][2]+" "+averageStats[2][3]+" "+averageStats[2][4]+"" +

@@ -244,5 +244,6 @@ public abstract class Ennemy extends Entity {
         this.isDead = b;
     }
 
+
 }
 

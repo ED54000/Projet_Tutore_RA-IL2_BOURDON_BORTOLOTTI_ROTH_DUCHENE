@@ -44,6 +44,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private ArrayList<Defense> defensesEndOfManche = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
+    private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
     private int nbArcher, nbCanon, nbBomb = 0;
 
 
@@ -245,7 +246,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
      * @param secondes temps ecoule depuis la derniere mise a jour
      */
     @Override
-    public synchronized  void update(double secondes) {
+    public void update(double secondes) {
         //Vérification de la fin du jeu
         if (this.nbManches == this.limManches) {
             setLogs("Fin du jeu");
@@ -416,11 +417,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si la défense est morte, on la retire de la liste des défenses
             if (d.isDead() && !deadDefenses.contains(d)) {
                 deadDefenses.add(d);
-                System.out.println(deadDefenses);
                 towerIsDestroyed();
                 setLogs("La défense : " + d.getName() + " à été détruite");
-                System.out.println("dead defenses : "+deadDefenses);
-                System.out.println("defenses : "+defenses);
+                //System.out.println("dead defenses : "+deadDefenses);
+                //System.out.println("defenses : "+defenses);
             }
         }
         defenses.removeAll(deadDefenses);
@@ -669,11 +669,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     ennemy.setBehaviorPath(new PathfollowingBehavior(path));
                    BehavioursMap.put(ennemy.getBehavior(),path);
 
-            }
         }
+    }
 
-        public void setStartTime() {
-            this.startTime = System.currentTimeMillis();
-        }
+    public void setStartTime() {
+        this.startTime = System.currentTimeMillis();
+    }
 
 }

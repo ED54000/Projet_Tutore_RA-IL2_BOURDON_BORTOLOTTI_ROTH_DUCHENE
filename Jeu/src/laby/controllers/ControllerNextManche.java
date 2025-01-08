@@ -33,5 +33,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
         laby.setPause(false);
         laby.setNbManches(laby.getNbManches() + 1);
+        System.out.println("Manche " + laby.getNbManches());
     }
 }
