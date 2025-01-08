@@ -71,6 +71,8 @@ public abstract class Entity {
             return 0;
         }
 
+        System.out.println(AttackerType);
+        System.out.println(TargetType);
         switch (AttackerType) {
             case "Fire":
                 if (TargetType.equals("Plant")) {

@@ -1,6 +1,7 @@
 package evolution;
 
 import entites.enemies.Ennemy;
+import laby.ModeleLabyrinth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +32,12 @@ public class EnnemyEvolution {
             switch (e.getBehavior()){
                 case "Fugitive":
                     // On calcule le score de l'ennemi
-                    double score = distStartEnd - e.getDistanceToArrival() + 0.2 * e.getSurvivalTime();
+                    double score = e.getDistanceToArrival() + 0.2 * ((double) e.getSurvivalTime() /10);
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
                         score += 10000;
                     }
+                    System.out.println("score fuyard: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestFugitiveScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -55,11 +57,12 @@ public class EnnemyEvolution {
                     break;
                 case "Normal":
                     // On calcule le score de l'ennemi
-                    score = 1/e.getDistanceToArrival() + 0.2 * e.getSurvivalTime();
+                    score = e.getDistanceToArrival() + 0.2 * ((double) e.getSurvivalTime() /10);
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
                         score += 10000;
                     }
+                    System.out.println("score normal: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestNormalScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -79,11 +82,12 @@ public class EnnemyEvolution {
                     break;
                 case "Healer":
                     // On calcule le score de l'ennemi
-                    score = 1/e.getDistanceToArrival() + 0.2 * e.getSurvivalTime();
+                    score = e.getDistanceToArrival() + 0.2 * ((double) e.getSurvivalTime() /10);
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
                         score += 10000;
                     }
+                    System.out.println("score healer: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestHealerScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -101,13 +105,15 @@ public class EnnemyEvolution {
                         }
                     }
                     break;
+
                 case "Kamikaze":
                     // On calcule le score de l'ennemi
-                    score = 1/e.getDistanceToArrival() + 0.2 * e.getSurvivalTime();
+                    score = e.getDistanceToArrival() + 0.2 * ((double) e.getSurvivalTime() /10);
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
                         score += 10000;
                     }
+                    System.out.println("score kamikaze: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestKamikazeScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -127,7 +133,13 @@ public class EnnemyEvolution {
                     break;
             }
         }
+        /*
+        System.out.println("bestFugitives : "+bestFugitives[0].getSpeed()+" "+bestFugitives[1].getSpeed());
+        System.out.println("bestNormals : "+bestNormals[0].getSpeed()+" "+bestNormals[1].getSpeed());
+        System.out.println("bestHealers : "+bestHealers[0].getSpeed()+" "+bestHealers[1].getSpeed());
+        System.out.println("bestKamikazes : "+bestKamikazes[0].getSpeed()+" "+bestKamikazes[1].getSpeed());
 
+         */
         // On met à jour le tableau des meilleurs couples
         bestCouples[0] = bestFugitives;
         bestCouples[1] = bestNormals;
@@ -146,6 +158,8 @@ public class EnnemyEvolution {
     public static double[][] getAverageStats(List<Ennemy> ennemies) {
         // On récupère les meilleurs couples
         Ennemy[][] bestCouples = getBestCouples(ennemies);
+        System.out.println("bestcouples : Ninja : "+bestCouples[0][0]+" "+bestCouples[0][1]+" Géants :"+bestCouples[1][0]+" "+bestCouples[1][1]+" Druide : "+bestCouples[2][0]+" "+bestCouples[2][1]+" Berserker vitesses : "+bestCouples[3][0].getSpeed());
+
         // On créee un tableau pour les statistiques moyennes
         double[][] averageStats = new double[4][5]; // [0] : fuyarts, [1] : normaux, [2] : soigneurs, [3] : kamikazes
         // [][0] : vie, [][1] : vitesse, [][2] : dégats, [][3] : vitesse d'attaque, [][4] : portée
@@ -199,6 +213,10 @@ public class EnnemyEvolution {
                 averageStats[i][4] = 0;
             }
         }
+        System.out.println("Fugitive : "+averageStats[0][0]+" "+averageStats[0][1]+" "+averageStats[0][2]+" "+averageStats[0][3]+" "+averageStats[0][4]+"" +
+                "Normal : vie : "+averageStats[1][0]+" vitesse : "+averageStats[1][1]+" degats : "+averageStats[1][2]+" attackspeed : "+averageStats[1][3]+" range : "+averageStats[1][4]+"" +
+                "Healer : "+averageStats[2][0]+" "+averageStats[2][1]+" "+averageStats[2][2]+" "+averageStats[2][3]+" "+averageStats[2][4]+"" +
+                "Kamikaze : "+averageStats[3][0]+" "+averageStats[3][1]+" "+averageStats[3][2]+" "+averageStats[3][3]+" "+averageStats[3][4]);
         return averageStats;
     }
 

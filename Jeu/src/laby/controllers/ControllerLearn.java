@@ -46,6 +46,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             laby.refreshEnnemyArrived();
             laby.refreshDeadEnemies();
             laby.refreshEnnemyEndOfManche();
+            laby.refreshEnnemiesToRemove();
 
             laby.refreshDefenseEndOfManche();
             laby.refreshDeadDefenses();
@@ -75,7 +76,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 }
             }
             System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
-
+            laby.createBehaviours(laby.getCases());
             for (Ennemy e : laby.enemies) {
                 if (e.getBehavior().equals("Healer")) {
                   e.setBehaviorPath(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
@@ -83,7 +84,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                     e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
                 }
                 e.setArrived(false);
-                e.setPosition(new Vector2D(laby.getXstartRender() + Math.random()*1.5, laby.getYstartRender() + Math.random()*1.5));
+                e.setPosition(new Vector2D(laby.getXstartRender() + Math.random(), laby.getYstartRender() + Math.random()));
             }
 
 
@@ -103,10 +104,6 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             Button nextManche = new Button("Next Manche");
             nextManche.setOnMouseClicked(new ControllerNextManche(laby));
             parentVBox.getChildren().add(nextManche);
-        }
-        System.out.println("Défenese après évolution : ");
-        for (Defense d : laby.defenses) {
-            System.out.println(d.getName()+" vie :"+d.getHealth());
         }
     }
 }

@@ -33,6 +33,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     // Nombre d'ennemis qui doivent arriver à la fin pour gagner
     public int nbEnnemiesToWin;
     private int nbEnnemiesArrived;
+    private long startTime;
 
 
     //entités
@@ -43,6 +44,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private ArrayList<Defense> defensesEndOfManche = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
+    private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
     private int nbArcher, nbCanon, nbBomb = 0;
 
 
@@ -223,17 +225,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
         ArrayList<Vector2D> aStarNormal =
                 astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0),false);
         BehavioursMap.put(BEHAVIOURS.get(0), aStarNormal);
         ArrayList<Vector2D> aStarFugitive =
                 astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1),false);
         BehavioursMap.put(BEHAVIOURS.get(1), aStarFugitive);
         ArrayList<Vector2D> aStarKamikaze =
                 astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2),false);
         BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
     }
 
@@ -271,9 +273,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
             //on calcule la distance de chaque ennemi à l'arrivée
             int c = 0;
             for (Ennemy e : ennemiesEndOfManche) {
-                e.setDistanceToArrival(astar.aStarSearch(this.getCases(), this.getLength(), this.getLengthY(),
-                        new Vector2D(this.getYstart(), this.getXstart()),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior()));
+                char[][] copyGrid = new char[cases.length][];
+                for (int i = 0; i < cases.length; i++) {
+                    copyGrid[i] = cases[i].clone();
+                }
+                copyGrid[(int) e.getPositionReel().getY()][(int) e.getPositionReel().getX()] = 'S';
+                e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
+                        new Vector2D((int) e.getPositionReel().getY() , (int) e.getPositionReel().getX()),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(),true));
                 System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
                 c++;
             }
@@ -375,6 +382,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             ennemy.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
+                            // On met à jour le temps de survie de l'ennemi
+                            ennemy.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                     }
                 }
@@ -392,6 +401,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         // Si l'ennemi est mort, on set son killerType
                         if (e.isDead() && !deadEnemies.contains(e)) {
                             e.setKillerType(defense.getType());
+                            // Et on met à jour son temps de survie
+                            e.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                         // La défense s'autodétruit après avoir attaqué
                         defense.takeDamage(10000);
@@ -425,7 +436,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         enemies.removeAll(enemiesDead);
 
         //on gère le déplacement des ennemis en vérifiant si ils sont arrivés
-        ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
+        enemiesToRemove = new ArrayList<>();
         Iterator<Ennemy> iterator = this.enemies.iterator();
         while (iterator.hasNext() && !this.pause) {
             Ennemy ennemy = iterator.next();
@@ -654,11 +665,18 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     Astar newAstar = new Astar();
                     ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
                             new Vector2D((int) ennemy.getPositionReel().getY() , (int) ennemy.getPositionReel().getX()),
-                            new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior());
+                            new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(),false);
                     ennemy.setBehaviorPath(new PathfollowingBehavior(path));
                     BehavioursMap.put(ennemy.getBehavior(),path);
 
             }
         }
 
+        public void setStartTime() {
+            this.startTime = System.currentTimeMillis();
+        }
+
+    public void refreshEnnemiesToRemove() {
+        this.enemiesToRemove = new ArrayList<>();
+    }
 }

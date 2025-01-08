@@ -23,7 +23,7 @@ public abstract class Ennemy extends Entity {
     private String behavior;
     private boolean isArrived;
     private boolean isDead;
-    private int survivalTime;
+    private long survivalTime;
     private String name;
     private Vector2D positionReel;
 
@@ -117,7 +117,7 @@ public abstract class Ennemy extends Entity {
         return isArrived;
     }
 
-    public int getSurvivalTime() {
+    public long getSurvivalTime() {
         return survivalTime;
     }
 
@@ -204,6 +204,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
+        System.out.println(vector2DS.size());
         this.distanceStartToArrival = vector2DS.size();
     }
 
@@ -221,6 +222,10 @@ public abstract class Ennemy extends Entity {
 
     public Vector2D getPositionReel() {
         return positionReel;
+    }
+
+    public void setSurvivalTime(long survivalTime) {
+        this.survivalTime = survivalTime;
     }
 
 }
