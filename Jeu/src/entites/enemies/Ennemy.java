@@ -228,5 +228,9 @@ public abstract class Ennemy extends Entity {
         this.survivalTime = survivalTime;
     }
 
+    public  void setDead(boolean dead){
+        this.isDead = dead;
+    }
+
 }
 

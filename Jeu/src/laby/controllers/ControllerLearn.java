@@ -56,7 +56,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             int nbHealer = 0;
             int nbBerserker = 0;
             for(Ennemy e : laby.enemies){
-
+                e.setDead(false);
                 if(e instanceof Ninja){
                     e.setBehavior("Fugitive");
                     nbNinja++;
