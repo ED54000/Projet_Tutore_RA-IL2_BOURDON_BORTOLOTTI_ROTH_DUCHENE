@@ -83,7 +83,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                     e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
                 }
                 e.setArrived(false);
-                e.setPosition(new Vector2D(laby.getXstartRender() + Math.random(), laby.getYstartRender() + Math.random()));
+                e.setPosition(new Vector2D(laby.getXstartRender() + Math.random() * 3, laby.getYstartRender() + Math.random()));
             }
 
 
