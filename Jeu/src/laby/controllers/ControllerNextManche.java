@@ -1,11 +1,15 @@
 package laby.controllers;
 
+import entites.enemies.Ennemy;
+import evolution.EnnemyEvolution;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
+
+import java.util.Map;
 
 public class ControllerNextManche implements EventHandler<MouseEvent> {
 
@@ -32,6 +36,8 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
         laby.setPause(false);
         laby.setNbManches(laby.getNbManches() + 1);
-        System.out.println("Manche " + laby.getNbManches());
+        System.out.println("===========================================");
+        System.out.println("Fin de la manche");
+        System.out.println("Nouvelle manche : " + laby.getNbManches());
     }
 }

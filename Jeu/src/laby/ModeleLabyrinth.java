@@ -2,6 +2,7 @@ package laby;
 
 import entites.defenses.*;
 import entites.enemies.*;
+import evolution.EnnemyEvolution;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -205,6 +206,23 @@ public class ModeleLabyrinth implements Jeu, Subject {
             druide.setDistanceStartToArrival(aStarHealer);
             this.enemies.add(druide);
         }
+
+        // On sauvegarde les statistiques des ennemis
+        EnnemyEvolution.saveStartStats(this.enemies);
+        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : "+this.enemies+"on les affiche");
+        // On parcourt la map pour afficher chaque couple clé valeur
+        Map<Ennemy, double[]> map = EnnemyEvolution.startStats;
+        for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
+            Ennemy enemy = entry.getKey();
+            double[] values = entry.getValue();
+
+            System.out.println("==========================================");
+            System.out.print("Enemy: " + enemy + " -> Values: ");
+            for (double value : values) {
+                System.out.print(value + " ");
+            }
+            System.out.println();
+        }
     }
 
     public ArrayList<Vector2D> getNewHealerAStar(int nbDruides, int nbGiant, int nbBerserker, int nbNinja) {
@@ -247,9 +265,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     @Override
     public void update(double secondes) {
+
         //Vérification de la fin du jeu
         if (this.nbManches == this.limManches) {
-            setLogs("Fin du jeu");
+            setLogs("Fin du jeu car le nombre limite de manches a été atteint");
             this.end = true;
             return;
         }
@@ -470,7 +489,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 setLogs("Le " + ennemy.getName() + " est arrivé");
                 //si les ennemis ont gagné
                 if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) {
-                    setLogs("Fin du jeu les ennemis ont atteint l'arrivée");
+                    setLogs("Fin du jeu car assez d'ennemis ont atteint l'arrivée");
                     this.end = true;
                 }
                 enemiesToRemove.add(ennemy);
