@@ -129,9 +129,9 @@ public class Astar {
         }
         if (comp.equals("Kamikaze") && !evolv) {
             try {
-                double[] newEnd = getNearTower(copyGrid);
-                if (newEnd != null && isValid(copyGrid,new Vector2D(newEnd[0], newEnd[1]))) {
-                    dest = new Vector2D(newEnd[0], newEnd[1]);
+                Vector2D newEnd = getNearTower(copyGrid, src);
+                if (isValid(copyGrid,newEnd)) {
+                    dest = new Vector2D(newEnd.getX(), newEnd.getY());
                     copyGrid[(int) dest.getX()][(int) dest.getY()] = 'E';
                 }
             } catch (Exception e) {
@@ -311,29 +311,33 @@ public class Astar {
         return costGrid[(int) point.getX()][(int) point.getY()];
     }
 
-    private double[] getNearTower(char[][] grid) {
+    private Vector2D getNearTower(char[][] grid, Vector2D posEnnemi) {
         char[] charTowers = {'A', 'B', 'C'};
-        double[] nearest = {Double.MAX_VALUE, Double.MAX_VALUE};
+        Vector2D nearest = null;
         double nearestDistance = Double.MAX_VALUE;
 
         for (char c : charTowers) {
-            try {
-                double[] near = Vector2D.getCloserPairIndex(grid, c);
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[i].length; j++) {
+                    if (grid[i][j] == c) {
+                        // Calcul de la distance entre la position actuelle et la position de l'ennemi
+                        double currentDistance = Math.sqrt(
+                                Math.pow(i - posEnnemi.getX(), 2) + Math.pow(j - posEnnemi.getY(), 2)
+                        );
 
-                double currentDistance = Math.sqrt(Math.pow(near[0], 2) + Math.pow(near[1], 2));
-
-                if (currentDistance < nearestDistance) {
-                    nearestDistance = currentDistance;
-                    nearest = near;
+                        // Mettre à jour si la tour est plus proche
+                        if (currentDistance < nearestDistance) {
+                            nearestDistance = currentDistance;
+                            nearest = new Vector2D(i, j);
+                        }
+                    }
                 }
-            } catch (Exception e) {
-                System.err.println("Defense " + c + " not found: " + e.getMessage());
-
             }
         }
 
         return nearest;
     }
+
 
 
 }
