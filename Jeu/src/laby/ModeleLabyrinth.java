@@ -318,7 +318,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             new Vector2D(posYReel, posXReel),
                             new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
                 }
-                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior());
+                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior()+"survivalTime : "+e.getSurvivalTime());
 
                 c++;
             }
