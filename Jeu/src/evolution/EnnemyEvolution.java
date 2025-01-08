@@ -322,16 +322,22 @@ public class EnnemyEvolution {
             if(!e.isItArrived()) {
                 //double randomDouble = min + (Math.random() * (max - min));
                 // On ajoute des statistiques aléatoires
-                // Vie entre -10 et 10
-                e.setHealth(e.getHealth() + (-5 + (Math.random() * (5 - (-5)))));
-                // Vitesse entre -2 et 2
-                e.setSpeed(e.getSpeed() + (-1 + (Math.random() * (1 - (-1)))));
+                // Vie entre -5 et 5
+                e.setHealth(e.getHealth() + (-5 + (Math.random() * (5 - (-5))))); //<-- avec bruit négatif
+                //e.setHealth (e.getHealth() + (Math.random() * 6)); // sans bruit négatif
+
+                // Vitesse entre -1 et 1
+                e.setSpeed(e.getSpeed() + (-1 + (Math.random() * (1 - (-1))))); //<-- avec bruit négatif
+                //e.setSpeed (e.getSpeed() + (Math.random() * 2)); // sans bruit négatif
                 // Dégats entre -3 et 3
-                e.setDamages(e.getDamages() + (-3 + (Math.random() * (3 - (-3)))));
+                e.setDamages(e.getDamages() + (-3 + (Math.random() * (3 - (-3))))); //<-- avec bruit négatif
+                //e.setSpeed (e.getSpeed() + (Math.random() * 4)); // sans bruit négatif
                 // Vitesse d'attaque entre -1 et 1
-                e.setAttackSpeed(e.getAttackSpeed() + (-1 + (Math.random() * (1 - (-1)))));
+                e.setAttackSpeed(e.getAttackSpeed() + (-1 + (Math.random() * (1 - (-1))))); //<-- avec bruit négatif
+                //e.setAttackSpeed (e.getAttackSpeed() + (Math.random() * 2)); // sans bruit négatif
                 // Portée entre -1 et 1
-                e.setRange(e.getRange() + (-1 + (Math.random() * (1 - (-1)))));
+                e.setRange(e.getRange() + (-1 + (Math.random() * (1 - (-1))))); //<-- avec bruit négatif
+                //e.setRange (e.getRange() + (Math.random() * 2)); // sans bruit négatif
             }
 
             // Si la vitesse est inférieure à 1, on la met à 1
