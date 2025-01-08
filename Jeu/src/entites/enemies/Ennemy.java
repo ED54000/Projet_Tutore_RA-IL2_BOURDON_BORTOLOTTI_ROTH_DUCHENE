@@ -4,10 +4,13 @@ import entites.Entity;
 import entites.defenses.Defense;
 import javafx.scene.image.Image;
 import laby.ModeleLabyrinth;
+import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
+
+import static java.lang.Math.round;
 
 public abstract class Ennemy extends Entity {
 
@@ -99,7 +102,12 @@ public abstract class Ennemy extends Entity {
         //System.out.println(behaviorPath);
         if (behaviorPath != null) {
             Vector2D steeringForce = behaviorPath.calculateForce(this);
-            velocity = velocity.add(steeringForce).normalize().scale(speed);
+            velocity = (velocity.add(steeringForce)).normalize().scale(speed);
+            if (position.add(velocity.scale(AvoidBehavior.getMAX_SEE_AHEAD())).isObstacle()){
+                AvoidBehavior avoid = new AvoidBehavior(position.getClosestCaseCenter());
+                Vector2D avoidanceForce = avoid.calculateForce(this);
+                velocity = (velocity.add(avoidanceForce)).normalize();
+            }
             position = position.add(velocity);
             positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         }
