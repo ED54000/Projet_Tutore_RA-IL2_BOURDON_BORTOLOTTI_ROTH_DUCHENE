@@ -64,6 +64,9 @@ public abstract class Ennemy extends Entity {
 
         // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
         if(currentTime - lastAttackTime >= 1000 / attackSpeed) {
+            if( attackSpeed <= 0 ){
+                attackSpeed = 1;
+            }
             // On met à jour le temps du dernier heal
             lastAttackTime = currentTime;
             // On heal

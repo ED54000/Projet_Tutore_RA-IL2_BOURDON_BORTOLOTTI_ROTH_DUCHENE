@@ -32,10 +32,10 @@ public class EnnemyEvolution {
             switch (e.getBehavior()){
                 case "Fugitive":
                     // On calcule le score de l'ennemi
-                    double score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
+                    double score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
-                        score += 10000;
+                        score += 1000;
                     }
                     System.out.println("score fuyard: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
@@ -57,10 +57,10 @@ public class EnnemyEvolution {
                     break;
                 case "Normal":
                     // On calcule le score de l'ennemi
-                    score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
+                    score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
-                        score += 10000;
+                        score += 1000;
                     }
                     System.out.println("score normal: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
@@ -82,10 +82,10 @@ public class EnnemyEvolution {
                     break;
                 case "Healer":
                     // On calcule le score de l'ennemi
-                    score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
+                    score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
-                        score += 10000;
+                        score += 1000;
                     }
                     System.out.println("score healer: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
@@ -108,10 +108,10 @@ public class EnnemyEvolution {
 
                 case "Kamikaze":
                     // On calcule le score de l'ennemi
-                    score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
+                    score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
-                        score += 10000;
+                        score += 1000;
                     }
                     System.out.println("score kamikaze: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
@@ -371,13 +371,13 @@ public class EnnemyEvolution {
         ennemies = affectStatsToDeadEnnemies(ennemies);
         System.out.println("Stats ennemies après affectation : ");
         for (Ennemy e : ennemies) {
-            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " behavior : " + e.getBehavior());
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived"+e.isItArrived()+" survivaltime: "+e.getSurvivalTime());
         }
 
         System.out.println("Stats ennemies après mutation : ");
         ArrayList<Ennemy> ennemiesMutated = addRandomStats(ennemies);
         for (Ennemy e : ennemiesMutated) {
-            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " behavior : " + e.getBehavior());
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived"+e.isItArrived()+" survivaltime: "+e.getSurvivalTime());
         }
 
         // On ajoute des statistiques aléatoires aux ennemis (mutation)

@@ -315,6 +315,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     posXReel = 0;
                 }
 
+                if(posYReel >= copyGrid.length){
+                    posYReel = copyGrid.length;
+                }
+                if(posXReel >= copyGrid.length){
+                    posXReel = copyGrid.length;
+                }
                 if (copyGrid[posYReel][posXReel] == 'E') {
                     e.setDistanceToArrival(new ArrayList<>());
                 } else {
