@@ -90,8 +90,6 @@ public class Astar {
      */
     private ArrayList<Vector2D> tracePath(Cell[][] cellDetails, Vector2D dest) {
         ArrayList<Vector2D> pathArray = new ArrayList<>();
-        //System.out.println("The Path:  ");
-
         Stack<Vector2D> path = new Stack<>();
 
         double row = dest.getX();
@@ -99,20 +97,13 @@ public class Astar {
 
         Vector2D nextNode;
         do {
-            path.push(new Vector2D(row, col));
             pathArray.addFirst(new Vector2D(col * getTailleCase(), row * getTailleCase()));
             nextNode = cellDetails[(int) row][(int) col].parent;
             row = nextNode.getX();
             col = nextNode.getY();
         } while (cellDetails[(int) row][(int) col].parent != nextNode);
 
-
-        while (!path.empty()) {
-            Vector2D p = path.peek();
-            path.pop();
-            //System.out.println("-> (" + p.getX() / ViewLabyrinth.getTailleCase() + "," + p.getY() / ViewLabyrinth.getTailleCase() + ") ");
-        }
-        //System.out.println(pathArray);
+       // System.out.println(pathArray);
         return pathArray;
     }
 
@@ -215,7 +206,6 @@ public class Astar {
 
                         if (cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f == -1
                                 || cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f > fNew) {
-
                             openList.add(new Details(fNew, neighbour.getX(), neighbour.getY()));
                             cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].g = gNew;
                             cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f = fNew;

@@ -151,7 +151,7 @@ public class EnnemyEvolution {
     public static double[][] getAverageStats(List<Ennemy> ennemies) {
         // On récupère les meilleurs couples
         Ennemy[][] bestCouples = getBestCouples(ennemies);
-        System.out.println("bestcouples : Ninja : "+bestCouples[0][0]+" "+bestCouples[0][1]+" Géants :"+bestCouples[1][0]+" "+bestCouples[1][1]+" Druide : "+bestCouples[2][0]+" "+bestCouples[2][1]+" Berserker vitesses : "+bestCouples[3][0].getSpeed());
+      //  System.out.println("bestcouples : Ninja : "+bestCouples[0][0]+" "+bestCouples[0][1]+" Géants :"+bestCouples[1][0]+" "+bestCouples[1][1]+" Druide : "+bestCouples[2][0]+" "+bestCouples[2][1]+" Berserker vitesses : "+bestCouples[3][0].getSpeed());
 
         // On créee un tableau pour les statistiques moyennes
         double[][] averageStats = new double[4][5]; // [0] : fuyarts, [1] : normaux, [2] : soigneurs, [3] : kamikazes

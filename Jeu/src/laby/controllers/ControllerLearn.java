@@ -23,32 +23,37 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
     }
 
     @Override
-        public void handle(MouseEvent mouseEvent) {
-            // On fait évoluer les ennemis et les défenses
-            laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
-            laby.defenses = laby.getDefenseEndOfManche();
+    public void handle(MouseEvent mouseEvent) {
+        // On remet les ennemis au début pour éviter les attaques
+        for(Ennemy e : laby.getEnnemyEndOfManche()){
+            e.setToStart(laby);
+        }
+        // On fait évoluer les ennemis et les défenses
+        laby.enemies = EnnemyEvolution.evoluer(laby.getEnnemyEndOfManche());
+        laby.defenses = laby.getDefenseEndOfManche();
 
-            //TODO : on remet les valeurs par défaut pour les defenses en attendant de les faire évoluer
-            for (Defense d : laby.defenses) {
-                d.setDead(false);
-                if (d instanceof Canon) {
-                    d.setHealth(300);
-                }
-                if (d instanceof Bomb) {
-                    d.setHealth(1000);
-                }
-                if (d instanceof entites.defenses.Archer) {
-                    d.setHealth(200);
-                }
+
+        //on remet les valeurs par défaut
+        laby.refreshEnnemyArrived();
+        laby.refreshDeadEnemies();
+        laby.refreshEnnemyEndOfManche();
+
+        laby.refreshDefenseEndOfManche();
+        laby.refreshDeadDefenses();
+
+        //TODO : on remet les valeurs par défaut pour les defenses en attendant de les faire évoluer
+        for (Defense d : laby.defenses) {
+            d.setDead(false);
+            if (d instanceof Canon) {
+                d.setHealth(300);
             }
-
-            //on remet les valeurs par défaut
-            laby.refreshEnnemyArrived();
-            laby.refreshDeadEnemies();
-            laby.refreshEnnemyEndOfManche();
-
-            laby.refreshDefenseEndOfManche();
-            laby.refreshDeadDefenses();
+            if (d instanceof Bomb) {
+                d.setHealth(1000);
+            }
+            if (d instanceof entites.defenses.Archer) {
+                d.setHealth(200);
+            }
+        }
 
             // On va compter le nombre d'ennemis pour chaque comportement
             int nbNinja = 0;
@@ -83,7 +88,8 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                     e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
                 }
                 e.setArrived(false);
-                e.setPosition(new Vector2D(laby.getXstartRender() + Math.random() * 3, laby.getYstartRender() + Math.random()));
+                System.out.println("X : " + laby.getXstartRender() + Math.random()*2+ " Y : "+laby.getYstartRender()+Math.random()*5);
+                e.setPosition(new Vector2D(laby.getXstartRender() + Math.random() * 2, laby.getYstartRender() + Math.random()*5));
             }
 
 
