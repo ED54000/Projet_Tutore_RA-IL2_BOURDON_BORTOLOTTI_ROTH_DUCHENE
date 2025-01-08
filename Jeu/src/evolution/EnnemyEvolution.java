@@ -371,13 +371,13 @@ public class EnnemyEvolution {
         ennemies = affectStatsToDeadEnnemies(ennemies);
         System.out.println("Stats ennemies après affectation : ");
         for (Ennemy e : ennemies) {
-            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " behavior : " + e.getBehavior());
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " behavior : " + e.getBehavior()+" is arrived"+e.isItArrived()+" survivaltime: "+e.getSurvivalTime());
         }
 
         System.out.println("Stats ennemies après mutation : ");
         ArrayList<Ennemy> ennemiesMutated = addRandomStats(ennemies);
         for (Ennemy e : ennemiesMutated) {
-            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " behavior : " + e.getBehavior());
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " behavior : " + e.getBehavior()+" is arrived"+e.isItArrived()+" survivaltime: "+e.getSurvivalTime());
         }
 
         // On ajoute des statistiques aléatoires aux ennemis (mutation)
