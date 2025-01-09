@@ -1,8 +1,6 @@
 package entites.enemies;
 
 import entites.Entity;
-import entites.defenses.Defense;
-import javafx.scene.image.Image;
 import laby.ModeleLabyrinth;
 import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
@@ -10,65 +8,58 @@ import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
 
-import static java.lang.Math.round;
-
 public abstract class Ennemy extends Entity {
 
     private double speed;
-    private double attackSpeed;
-    private long lastAttackTime;
+//    private double attackSpeed;
+//    private long lastAttackTime;
     private int distanceToArrival;  //distanceToArrival sera calculé par A* dans le jeu
     private int distanceStartToArrival;
     private String killerType;
-    private double health;
+//    private double health;
     private static int timeSpawn = 0;
     private Behavior behaviorPath;
     private String behavior;
     private boolean isArrived;
-    private boolean isDead;
+//    private boolean isDead;
     private long survivalTime;
-    private String name;
+//    private String name;
     private Vector2D positionReel;
-
     private Vector2D velocity;
 
 
     public Ennemy(Vector2D position, double health, double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
-        super(position, damages, range,sprite);
+        super(position, damages, range, sprite, health, name, attackSpeed);
         this.speed = speed;
         this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
-        this.attackSpeed = attackSpeed;
         this.distanceToArrival = distanceToArrival;
         this.distanceStartToArrival = distanceToArrival;
         this.killerType = null;
-        this.health = health;
         this.isArrived = false;
         this.behaviorPath = null;
         this.behavior = behavior;
         this.velocity = new Vector2D(0, 0);
-        this.name = name;
-        this.lastAttackTime = 0;
         timeSpawn++;
     }
 
-    public void takeDamage(double damage) {
-        health -= damage;
-        if (health <= 0) {
-            isDead = true;
-        }
-    }
+//    public void takeDamage(double damage) {
+//        health -= damage;
+//        if (health <= 0) {
+//            this.setDead(true);
+//        }
+//    }
 
     public void healDamage(Ennemy target, double heal){
         // On récupère le temps actuel en millisecondes
         long currentTime = System.currentTimeMillis();
 
         // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
-        if(currentTime - lastAttackTime >= 1000 / attackSpeed) {
-            if( attackSpeed <= 0 ){
-                attackSpeed = 1;
+        if(currentTime - this.getLastAttackTime() >= 1000 / this.getAttackSpeed()) {
+            if( this.getAttackSpeed() <= 0 ){
+                this.setAttackSpeed(1);
             }
             // On met à jour le temps du dernier heal
-            lastAttackTime = currentTime;
+            this.setLastAttackTime(currentTime);
             // On heal
             target.health += heal;
             System.out.println("Soin de " + this.getName() + " sur " + target.getName());
@@ -78,23 +69,23 @@ public abstract class Ennemy extends Entity {
         }
     }
 
-    public void attack(Defense target){
-        // On récupère le temps actuel en millisecondes
-        long currentTime = System.currentTimeMillis();
-
-        // Si le temps écoulé depuis la dernière attaque est supérieur ou égal à l'attackSpeed
-        if(currentTime - lastAttackTime >= 1000 / attackSpeed) {
-            // On met à jour le temps de la dernière attaque
-            lastAttackTime = currentTime;
-            // On attaque la défense
-            target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
-            System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
-            System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
-            System.out.println("Vie de la défense : " + target.getHealth());
-            System.out.println("=====================================");
-        }
-        // Sinon, on ne fait rien
-    }
+//    public void attack(Defense target){
+//        // On récupère le temps actuel en millisecondes
+//        long currentTime = System.currentTimeMillis();
+//
+//        // Si le temps écoulé depuis la dernière attaque est supérieur ou égal à l'attackSpeed
+//        if(currentTime - lastAttackTime >= 1000 / attackSpeed) {
+//            // On met à jour le temps de la dernière attaque
+//            lastAttackTime = currentTime;
+//            // On attaque la défense
+//            target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
+//            System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
+//            System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
+//            System.out.println("Vie de la défense : " + target.getHealth());
+//            System.out.println("=====================================");
+//        }
+//        // Sinon, on ne fait rien
+//    }
 
     /***
      * methode definissant la nouvelle position de l'agent grace a sa velocite, calculee selon le
@@ -115,10 +106,6 @@ public abstract class Ennemy extends Entity {
         }
     }
 
-    public boolean isDead() {
-        return isDead;
-    }
-
     public int getDistanceToArrival() {
         return distanceToArrival;
     }
@@ -131,10 +118,6 @@ public abstract class Ennemy extends Entity {
         return survivalTime;
     }
 
-    public double getHealth() {
-        return health;
-    }
-
     public double getSpeed() {
         return speed;
     }
@@ -143,24 +126,12 @@ public abstract class Ennemy extends Entity {
         return super.getDamages();
     }
 
-    public double getAttackSpeed() {
-        return attackSpeed;
-    }
-
-    public void setHealth(double health) {
-        this.health = health;
-    }
-
     public void setSpeed(double speed) {
         this.speed = speed;
     }
 
     public void setDamages(double damages) {
         super.setDamages(damages);
-    }
-
-    public void setAttackSpeed(double attackSpeed) {
-        this.attackSpeed = attackSpeed;
     }
 
     public void setRange(double range) {
@@ -177,10 +148,6 @@ public abstract class Ennemy extends Entity {
 
     public void setKillerType(String killerType) {
         this.killerType = killerType;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public boolean isArrived() {
@@ -218,14 +185,6 @@ public abstract class Ennemy extends Entity {
         this.distanceStartToArrival = vector2DS.size();
     }
 
-    public long getLastAttackTime(){
-        return this.lastAttackTime;
-    }
-
-    public void setLastAttackTime(long time){
-        this.lastAttackTime = time;
-    }
-
     public int getDistanceStartToArrival() {
         return distanceStartToArrival;
     }
@@ -246,15 +205,6 @@ public abstract class Ennemy extends Entity {
         double YstartRandom =  Math.random()*1.5;
         this.setPositionReel(new Vector2D(modeleLabyrinth.getXstart() + XstartRandom, modeleLabyrinth.getYstart() + YstartRandom));
         this.setPosition(new Vector2D(modeleLabyrinth.getXstartRender() + XstartRandom, modeleLabyrinth.getYstartRender() + YstartRandom));
-    }
-
-    public void setDead(boolean b) {
-        this.isDead = b;
-    }
-
-
-    public void setName(String s) {
-        this.name = s;
     }
 }
 
