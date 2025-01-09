@@ -326,7 +326,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 if(posXReel >= copyGrid.length){
                     posXReel = copyGrid.length;
                 }
-                if (copyGrid[posYReel][posXReel] == 'E') {
+                if (e.isArrived()) {
                     e.setDistanceToArrival(new ArrayList<>());
                 } else {
                     copyGrid[posYReel][posXReel] = 'S';
@@ -457,7 +457,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // On parcourt les ennemis
                 for (Ennemy e : enemies) {
                     // Si l'ennemi est dans la portée de la défense
-                    if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
+                    if (defense.isInRange(e) && !deadDefenses.contains(defense) && !((PassiveDefense) defense).isAttacked()) {
                         // Cela active la defense
                         // On attaque l'ennemi
                         defense.attack(e);

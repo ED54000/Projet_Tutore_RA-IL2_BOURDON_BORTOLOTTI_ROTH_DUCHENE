@@ -179,7 +179,7 @@ public class EnnemyEvolution {
 
                     // Si l'ennemi existe dans startStats
                     if (startStatsArray != null) {
-                        // Récupération des statistiques en début de manche
+                        // Ajout des statistiques en début de manche
                         healthSum += startStatsArray[0];
                         speedSum += startStatsArray[1];
                         damagesSum += startStatsArray[2];
