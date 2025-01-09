@@ -1,17 +1,25 @@
 Tristan :
+	- Evolution logs
+	- Simulation 
+	- Résolution de bugs
 
 Marin : 
+	- Amélioration des formules de score pour l'évolution
+	- 
 
 Florian : 
+	- Attaque des ennemis sur les défense
+	- Refactoring de la structure du code des entités (ennemis et défenses)
+	- Résolutions de bugs
 
 Eloi : 
 	- Sprites des ennemis
-	- Recalcul du chemin lorsqu'une tour est détruite 
+	- Recalcul du chemin lorsqu'une défense est détruite 
 	- Résolution de bugs
 
 
 À la fin de cette itération, nous pouvons : 
 
-Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, et le nombre d'ennemies qui passe pour gagner.
-Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites. Les ennemis peuvent également attaquer les défenses afin de les détruire. Lorsqu'une défense est détruite, le chemin est recalculé pour chaque agent et donc ils s'adaptent au différentes évolutions dans une partie.
+Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, et le nombre d'ennemies qui doivent passer pour gagner.
+Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites. Les ennemis peuvent également attaquer les défenses afin de les détruire. Lorsqu'une défense est détruite, le chemin est recalculé pour chaque agent et donc ils s'adaptent au changements de l'environnement au cours d'une manche. Voir le déroulement de la manche dans les logs (quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
 Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués jusqu'à la fin du jeu.
