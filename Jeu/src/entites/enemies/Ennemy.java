@@ -253,5 +253,8 @@ public abstract class Ennemy extends Entity {
     }
 
 
+    public void setName(String s) {
+        this.name = s;
+    }
 }
 

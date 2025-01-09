@@ -47,6 +47,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
+    private HashMap<Giant, Double> ennemyScore = new HashMap<>();
+    private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
     private int nbArcher, nbCanon, nbBomb = 0;
 
 
@@ -358,8 +360,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 double score = evolution.getScore(ennemiesEndOfManche.get(0));
                 System.out.println("Score de l'ennemi : "+score);
                 // On sauvegarde les score de l'ennemi dans une map avec l'ennemi comme clé et le score comme valeur
-                Map<Ennemy, Double> ennemyScore = new HashMap<>();
-                ennemyScore.put(ennemiesEndOfManche.get(0), score);
+                //ajoute a la suite de la map
+                System.out.println("On ajout l'ennemi : "+ennemiesEndOfManche.get(0)+" avec le score : "+score);
+                ennemyScore.put((Giant)ennemiesEndOfManche.get(0), score);
 
                 this.end = true;
             }
@@ -763,7 +766,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
         this.simulationEvolution = true;
         this.limManches = 2;
-        //ouvrire le fichier
+        //ouvrir le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
 
@@ -835,16 +838,35 @@ public class ModeleLabyrinth implements Jeu, Subject {
             numLigne++;
             ligne = br.readLine();
         }
+        refresh(numIndividu);
 
+        br.close();
+    }
+
+    public HashMap getScore() {
+        return ennemyScore;
+    }
+
+    public void refresh(int i) {
         createBehaviours(this.getCases());
-
-        Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant "+numIndividu);
-        giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
-        giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
-        this.enemies.add(giant);
-
-        for(Ennemy e : getEnnemyEndOfManche()){
+        System.out.println("ennemies evolved : " + this.ennemiesEvolved);
+        if (this.ennemiesEvolved.isEmpty()) {
+            System.out.println("Liste des ennemies : "+this.enemies);
+            Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant"+i);
+            e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+            e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+            this.enemies.add(e);
+        }
+        else {
+            Giant e = this.ennemiesEvolved.get(i);
+            e.setName(e.getName() + i);
             e.setToStart(this);
+
+            e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(e.getBehavior())));
+            e.setDistanceStartToArrival(this.BehavioursMap.get(e.getBehavior()));
+
+            this.enemies.add(e);
+
         }
 
         refreshEnnemyArrived();
@@ -855,8 +877,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
         refreshDefenseEndOfManche();
 
         this.setPause(false);
-
-        br.close();
     }
 
+    public void setEnnemiesEvolved(ArrayList<Giant> evolve) {
+        this.ennemiesEvolved = evolve;
+    }
+
+    public void refreshEnnemiesScore() {
+        this.ennemyScore = new HashMap<>();
+    }
 }
