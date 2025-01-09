@@ -196,6 +196,10 @@ public abstract class Entity {
         return this.name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public double getAttackSpeed() {
         return attackSpeed;
     }
