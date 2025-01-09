@@ -1,9 +1,5 @@
 package entites.defenses;
 
-import entites.Entity;
-import entites.enemies.Ennemy;
-import laby.ModeleLabyrinth;
-
 public abstract class PassiveDefense extends Defense {
 
     // Si la defense a deja attaqué
