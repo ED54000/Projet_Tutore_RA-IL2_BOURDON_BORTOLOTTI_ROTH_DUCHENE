@@ -346,17 +346,13 @@ public class EnnemyEvolution {
         ennemies = affectStatsToDeadEnnemies(ennemies);
         System.out.println("Stats ennemies après affectation : ");
         for (Ennemy e : ennemies) {
-            if (e instanceof Berserker) {
-                System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
-            }
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
         }
 
         System.out.println("Stats ennemies après mutation : ");
         ArrayList<Ennemy> ennemiesMutated = addRandomStats(ennemies);
         for (Ennemy e : ennemiesMutated) {
-            if (e instanceof Berserker) {
-              System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " Is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
-            }
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " Is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
         }
 
         // On ajoute des statistiques aléatoires aux ennemis (mutation)
