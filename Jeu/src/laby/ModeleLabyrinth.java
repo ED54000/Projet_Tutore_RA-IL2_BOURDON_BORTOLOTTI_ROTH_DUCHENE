@@ -323,7 +323,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 if(posXReel >= copyGrid.length){
                     posXReel = copyGrid.length;
                 }
-                if (copyGrid[posYReel][posXReel] == 'E') {
+                if (e.isArrived()) {
                     e.setDistanceToArrival(new ArrayList<>());
                 } else {
                     copyGrid[posYReel][posXReel] = 'S';
