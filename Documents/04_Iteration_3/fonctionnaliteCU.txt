@@ -1,4 +1,7 @@
 Tristan :
+	- Evolution logs
+	- Simulation 
+	- Résolution de bugs
 
 Marin : 
 	- Amélioration des formules de score pour l'évolution
