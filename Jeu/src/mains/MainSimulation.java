@@ -35,7 +35,6 @@ public class MainSimulation extends Application {
             }
             System.out.println(jeu.getLogs());
             System.out.println("Simulation terminée.");
-            System.out.println(jeu.getLogs());
         }).start();
     }
 

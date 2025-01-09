@@ -409,7 +409,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si c'est une défense active
             if (defense instanceof ActiveDefense) {
                 Ennemy ennemyTarget = ((ActiveDefense) defense).getTarget();
-                //System.out.println("la défense "+defense+" focus : "+ennemyTarget);
                 // Si la defense focus déja un ennemi
                 if (ennemyTarget != null) {
                     // On vérifie si l'ennemi est toujours dans la portée de la défense
@@ -483,8 +482,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (d.isDead() && !deadDefenses.contains(d)) {
                 deadDefenses.add(d);
                 towerIsDestroyed();
-                System.out.println("retire les défenses mortes : " + deadDefenses);
                 setLogs("La défense : " + d.getName() + " à été détruite");
+                System.out.println("La défense : " + d.getName() + " à été détruite");
             }
         }
         defenses.removeAll(deadDefenses);
@@ -521,6 +520,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     setLogs("Fin du jeu car assez d'ennemis ont atteint l'arrivée");
                     this.end = true;
                 }
+                // On met à jour le temps de survie de l'ennemi
+                ennemy.setSurvivalTime(System.currentTimeMillis() - startTime);
                 enemiesToRemove.add(ennemy);
                 ennemiesArrived.add(ennemy);
             }
@@ -673,8 +674,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public ArrayList<Defense> getDefenseEndOfManche() {
-        return new ArrayList<>(defensesEndOfManche);
-        //return defensesEndOfManche;
+        return defensesEndOfManche;
     }
 
     /**
@@ -854,13 +854,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void refresh(int i) {
         createBehaviours(this.getCases());
+        System.out.println("ennemies evolved : " + this.ennemiesEvolved);
         if (this.ennemiesEvolved.isEmpty()) {
+            System.out.println("Liste des ennemies : "+this.enemies);
             Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant"+i);
             e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
             e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
             this.enemies.add(e);
-
-
         }
         else {
             Giant e = this.ennemiesEvolved.get(i);
@@ -880,25 +880,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         refreshDeadDefenses();
         refreshDefenseEndOfManche();
-
-        System.out.println("Défenses : "+this.defenses);
-
-        for (Defense d : this.defenses) {
-            d.setDead(false);
-
-            if (d instanceof Canon) {
-                d.setHealth(300);
-            }
-            if (d instanceof Bomb) {
-                d.setHealth(1000);
-                ((Bomb) d).setAttacked(false);
-            }
-            if (d instanceof entites.defenses.Archer) {
-                d.setHealth(200);
-            }
-        }
-
-
 
         this.setPause(false);
     }
