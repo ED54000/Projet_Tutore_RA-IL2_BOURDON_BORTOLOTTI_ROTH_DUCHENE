@@ -42,6 +42,7 @@ L'application permet de :
 
 Objectif itération 4 :
 	- Réaliser des diagrammes de séquences pour clarifier le fonctionnemment du projet
+	- Réfactoring du code
 	- Adaptation de l'algorithme évolutionnaire v2 à la structure du projet
 	- Tempérer les attaques des ennemies et des défenses en fonction du moteur de jeu et enlever timer
 	- obtenir une simulation fonctionnel
