@@ -6,30 +6,11 @@ import laby.ModeleLabyrinth;
 
 public abstract class PassiveDefense extends Defense {
 
-    //si la defense a deja attaqué
+    // Si la defense a deja attaqué
     private boolean attacked = false;
 
     public PassiveDefense(double x, double y, int damage, double range, double health, String sprite, String name) {
-        super(x, y, damage, range, health, sprite, name, 0);
-    }
-
-    /**
-     * Attaque un ennemi
-     * @param target l'ennemi à attaquer
-     */
-    @Override
-    public void attack(Entity target) {
-        // Si la défense a déjà attaqué, on ne fait rien
-        if(attacked){
-            return;
-        }
-        // Sinon, on attaque l'ennemi
-        System.out.println("Bonus : "+ getBonus(getType(), target.getType()) );
-        target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
-        System.out.println("Attaque de " + this.getName() + " de type : "
-                + this.getType() +" sur " + target.getName() + " de type "+ target.getType()+
-                "\nDégâts infligés : " + this.getDamages() +
-                "\nVie de l'ennemi :  "+ target.getHealth());
+        super(x, y, damage, range, health, sprite, name, 100);
     }
 
     /**

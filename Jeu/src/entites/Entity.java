@@ -136,7 +136,7 @@ public abstract class Entity {
             target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
             System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
             System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
-            System.out.println("Vie de la défense : " + target.getHealth());
+            System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
             System.out.println("=====================================");
         }
         // Sinon, on ne fait rien

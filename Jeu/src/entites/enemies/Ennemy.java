@@ -11,22 +11,16 @@ import java.util.ArrayList;
 public abstract class Ennemy extends Entity {
 
     private double speed;
-//    private double attackSpeed;
-//    private long lastAttackTime;
     private int distanceToArrival;  //distanceToArrival sera calculé par A* dans le jeu
     private int distanceStartToArrival;
     private String killerType;
-//    private double health;
     private static int timeSpawn = 0;
     private Behavior behaviorPath;
     private String behavior;
     private boolean isArrived;
-//    private boolean isDead;
     private long survivalTime;
-//    private String name;
     private Vector2D positionReel;
     private Vector2D velocity;
-
 
     public Ennemy(Vector2D position, double health, double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
         super(position, damages, range, sprite, health, name, attackSpeed);
@@ -41,13 +35,6 @@ public abstract class Ennemy extends Entity {
         this.velocity = new Vector2D(0, 0);
         timeSpawn++;
     }
-
-//    public void takeDamage(double damage) {
-//        health -= damage;
-//        if (health <= 0) {
-//            this.setDead(true);
-//        }
-//    }
 
     public void healDamage(Ennemy target, double heal){
         // On récupère le temps actuel en millisecondes
@@ -68,24 +55,6 @@ public abstract class Ennemy extends Entity {
             System.out.println("=====================================");
         }
     }
-
-//    public void attack(Defense target){
-//        // On récupère le temps actuel en millisecondes
-//        long currentTime = System.currentTimeMillis();
-//
-//        // Si le temps écoulé depuis la dernière attaque est supérieur ou égal à l'attackSpeed
-//        if(currentTime - lastAttackTime >= 1000 / attackSpeed) {
-//            // On met à jour le temps de la dernière attaque
-//            lastAttackTime = currentTime;
-//            // On attaque la défense
-//            target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
-//            System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
-//            System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
-//            System.out.println("Vie de la défense : " + target.getHealth());
-//            System.out.println("=====================================");
-//        }
-//        // Sinon, on ne fait rien
-//    }
 
     /***
      * methode definissant la nouvelle position de l'agent grace a sa velocite, calculee selon le
