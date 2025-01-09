@@ -1,5 +1,6 @@
 package evolution;
 
+import entites.enemies.Berserker;
 import entites.enemies.Ennemy;
 import laby.ModeleLabyrinth;
 
@@ -17,11 +18,12 @@ public class EnnemyEvolution {
      */
     public static Ennemy[][] getBestCouples(List<Ennemy> ennemies) {
         // Inititation des données nécessaires
-        Ennemy[][] bestCouples = {{null, null}, {null, null}, {null, null}, {null, null}}; // [0] : meilleur couple fuyard, [1] : meilleur couple normal, [2] : meilleur couple healer, [3] : meilleur couple kamikaze
+        // [0] : meilleur couple fuyard, [1] : meilleur couple normal, [2] : meilleur couple healer, [3] : meilleur couple kamikaze
         Ennemy[] bestFugitives = {null, null}; // [0] : meilleur ennemi, [1] : deuxième meilleur ennemi
         Ennemy[] bestNormals = {null, null};
         Ennemy[] bestHealers = {null, null};
         Ennemy[] bestKamikazes = {null, null};
+        Ennemy[][] bestCouples = {bestFugitives, bestNormals, bestHealers, bestKamikazes};
         double[] bestFugitiveScores = {0, 0}; //[0] : meilleur score, [1] : deuxième meilleur score
         double[] bestNormalScores = {0, 0};
         double[] bestHealerScores = {0, 0};
@@ -37,7 +39,7 @@ public class EnnemyEvolution {
                     if(e.isItArrived()){
                         score += 1000;
                     }
-                    System.out.println("score fuyard: "+score);
+                    //System.out.println("score fuyard: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestFugitiveScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -62,7 +64,7 @@ public class EnnemyEvolution {
                     if(e.isItArrived()){
                         score += 1000;
                     }
-                    System.out.println("score normal: "+score);
+                    //System.out.println("score normal: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestNormalScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -87,7 +89,7 @@ public class EnnemyEvolution {
                     if(e.isItArrived()){
                         score += 1000;
                     }
-                    System.out.println("score healer: "+score);
+                  //  System.out.println("score healer: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestHealerScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -113,7 +115,7 @@ public class EnnemyEvolution {
                     if(e.isItArrived()){
                         score += 1000;
                     }
-                    System.out.println("score kamikaze: "+score);
+                   // System.out.println("score kamikaze: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestKamikazeScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -155,7 +157,7 @@ public class EnnemyEvolution {
       //  System.out.println("bestcouples : Ninja : "+bestCouples[0][0]+" "+bestCouples[0][1]+" Géants :"+bestCouples[1][0]+" "+bestCouples[1][1]+" Druide : "+bestCouples[2][0]+" "+bestCouples[2][1]+" Berserker vitesses : "+bestCouples[3][0].getSpeed());
 
         // On créee un tableau pour les statistiques moyennes
-        double[][] averageStats = new double[4][5]; // [0] : fuyarts, [1] : normaux, [2] : soigneurs, [3] : kamikazes
+        double[][] averageStats = new double[4][3]; // [0] : fuyarts, [1] : normaux, [2] : soigneurs, [3] : kamikazes
         // [][0] : vie, [][1] : vitesse, [][2] : dégats, [][3] : vitesse d'attaque, [][4] : portée
 
         // On parcourt les couples de meilleurs ennemis
@@ -165,8 +167,6 @@ public class EnnemyEvolution {
             double healthSum = 0;
             double speedSum = 0;
             double damagesSum = 0;
-            double attackSpeedSum = 0;
-            double rangeSum = 0;
             // On parcourt les ennemis de chaque couple
             for (int j = 0; j < bestCouples[i].length; j++) {
                 // Si l'ennemi n'est pas null
@@ -180,14 +180,13 @@ public class EnnemyEvolution {
                     // Si l'ennemi existe dans startStats
                     if (startStatsArray != null) {
                         // Récupération des statistiques en début de manche
-                        healthSum = startStatsArray[0];
-                        speedSum = startStatsArray[1];
-                        damagesSum = startStatsArray[2];
-                        attackSpeedSum = startStatsArray[3];
-                        rangeSum = startStatsArray[4];
+                        healthSum += startStatsArray[0];
+                        speedSum += startStatsArray[1];
+                        damagesSum += startStatsArray[2];
+
                     } else {
                         // Si l'ennemi n'a pas d'entrées dans startStats, on affiche une erreur
-                        System.err.println("Aucune statistique de départ trouvée pour l'ennemi: " + e);
+                      //  System.err.println("Aucune statistique de départ trouvée pour l'ennemi: " + e);
                     }
                 }
             }
@@ -198,8 +197,6 @@ public class EnnemyEvolution {
                 averageStats[i][0] = healthSum / 2;
                 averageStats[i][1] = speedSum / 2;
                 averageStats[i][2] = damagesSum / 2;
-                averageStats[i][3] = attackSpeedSum / 2;
-                averageStats[i][4] = rangeSum / 2;
             }
             // Sinon si il n'y a qu'un ennemi dans le couple
             else if (bestCouples[i][1] == null && bestCouples[i][0] != null) {
@@ -207,16 +204,12 @@ public class EnnemyEvolution {
                 averageStats[i][0] = healthSum;
                 averageStats[i][1] = speedSum;
                 averageStats[i][2] = damagesSum;
-                averageStats[i][3] = attackSpeedSum;
-                averageStats[i][4] = rangeSum;
             }
             else if (bestCouples[i][0] != null) {
                 // Sinon on met les statistiques moyennes à 0
                 averageStats[i][0] = 0;
                 averageStats[i][1] = 0;
                 averageStats[i][2] = 0;
-                averageStats[i][3] = 0;
-                averageStats[i][4] = 0;
             }
         }
 
@@ -234,11 +227,11 @@ public class EnnemyEvolution {
             averageStats[3][0] = 50;
         }
 
-        System.out.println("Fugitive : "+averageStats[0][0]+" "+averageStats[0][1]+" "+averageStats[0][2]+" "+averageStats[0][3]+" "+averageStats[0][4]+"" +
-                "Normal : vie : "+averageStats[1][0]+" vitesse : "+averageStats[1][1]+" degats : "+averageStats[1][2]+" attackspeed : "+averageStats[1][3]+" range : "+averageStats[1][4]+"" +
-                "Healer : "+averageStats[2][0]+" "+averageStats[2][1]+" "+averageStats[2][2]+" "+averageStats[2][3]+" "+averageStats[2][4]+"" +
-                "Kamikaze : "+averageStats[3][0]+" "+averageStats[3][1]+" "+averageStats[3][2]+" "+averageStats[3][3]+" "+averageStats[3][4]);
-        return averageStats;
+//        System.out.println("Fugitive : "+averageStats[0][0]+" "+averageStats[0][1]+" "+averageStats[0][2]+" "+averageStats[0][3]+" "+averageStats[0][4]+"" +
+//                "Normal : vie : "+averageStats[1][0]+" vitesse : "+averageStats[1][1]+" degats : "+averageStats[1][2]+" attackspeed : "+averageStats[1][3]+" range : "+averageStats[1][4]+"" +
+//                "Healer : "+averageStats[2][0]+" "+averageStats[2][1]+" "+averageStats[2][2]+" "+averageStats[2][3]+" "+averageStats[2][4]+"" +
+//                "Kamikaze : "+averageStats[3][0]+" "+averageStats[3][1]+" "+averageStats[3][2]+" "+averageStats[3][3]+" "+averageStats[3][4]);
+           return averageStats;
     }
 
     /**
@@ -252,59 +245,41 @@ public class EnnemyEvolution {
         double[][] averageStats = getAverageStats(ennemies);
         // On parcourt les ennemis morts
         for (Ennemy e : deadEnnemies) {
+            // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
+            if(e.isDead()){
+                // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
+                String newType = e.getKillerType();
+                if (newType == null){
+                    newType = e.getType();
+                }
+                e.setType(newType);
+            }
             // En fonction du comportement de l'ennemi
             switch (e.getBehavior()) {
+
                 case "Fugitive" :
-                    // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
-                    if(e.isDead()){
-                        // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
-                        e.setType(e.getKillerType());
-                    }
                     // On affecte les statistiques moyennes des fuyards
                     e.setHealth(averageStats[0][0]);
                     e.setSpeed(averageStats[0][1]);
                     e.setDamages(averageStats[0][2]);
-                    e.setAttackSpeed(averageStats[0][3]);
-                    e.setRange(averageStats[0][4]);
                     break;
                 case "Normal" :
-                    // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
-                    if(e.isDead()){
-                        // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
-                        e.setType(e.getKillerType());
-                    }
                     // On affecte les statistiques moyennes des normaux
                     e.setHealth(averageStats[1][0]);
                     e.setSpeed(averageStats[1][1]);
                     e.setDamages(averageStats[1][2]);
-                    e.setAttackSpeed(averageStats[1][3]);
-                    e.setRange(averageStats[1][4]);
                     break;
                 case "Healer" :
-                    // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
-                    if(e.isDead()){
-                        // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
-                        e.setType(e.getKillerType());
-                    }
                     // On affecte les statistiques moyennes des soigneurs
                     e.setHealth(averageStats[2][0]);
                     e.setSpeed(averageStats[2][1]);
                     e.setDamages(averageStats[2][2]);
-                    e.setAttackSpeed(averageStats[2][3]);
-                    e.setRange(averageStats[2][4]);
                     break;
                 case "Kamikaze" :
-                    // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
-                    if(e.isDead()){
-                        // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
-                        e.setType(e.getKillerType());
-                    }
                     // On affecte les statistiques moyennes des kamikazes
                     e.setHealth(averageStats[3][0]);
                     e.setSpeed(averageStats[3][1]);
                     e.setDamages(averageStats[3][2]);
-                    e.setAttackSpeed(averageStats[3][3]);
-                    e.setRange(averageStats[3][4]);
                     break;
             }
         }
@@ -332,12 +307,6 @@ public class EnnemyEvolution {
                 // Dégats entre -3 et 3
                 e.setDamages(e.getDamages() + (-3 + (Math.random() * (3 - (-3))))); //<-- avec bruit négatif
                 //e.setSpeed (e.getSpeed() + (Math.random() * 4)); // sans bruit négatif
-                // Vitesse d'attaque entre -1 et 1
-                e.setAttackSpeed(e.getAttackSpeed() + (-1 + (Math.random() * (1 - (-1))))); //<-- avec bruit négatif
-                //e.setAttackSpeed (e.getAttackSpeed() + (Math.random() * 2)); // sans bruit négatif
-                // Portée entre -1 et 1
-                e.setRange(e.getRange() + (-1 + (Math.random() * (1 - (-1))))); //<-- avec bruit négatif
-                //e.setRange (e.getRange() + (Math.random() * 2)); // sans bruit négatif
             }
 
             // Si la vitesse est inférieure à 1, on la met à 1
@@ -377,13 +346,13 @@ public class EnnemyEvolution {
         ennemies = affectStatsToDeadEnnemies(ennemies);
         System.out.println("Stats ennemies après affectation : ");
         for (Ennemy e : ennemies) {
-            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived"+e.isItArrived()+" survivaltime: "+e.getSurvivalTime());
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
         }
 
         System.out.println("Stats ennemies après mutation : ");
         ArrayList<Ennemy> ennemiesMutated = addRandomStats(ennemies);
         for (Ennemy e : ennemiesMutated) {
-            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived"+e.isItArrived()+" survivaltime: "+e.getSurvivalTime());
+            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " Is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
         }
 
         // On ajoute des statistiques aléatoires aux ennemis (mutation)

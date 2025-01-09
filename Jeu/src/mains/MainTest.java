@@ -21,7 +21,7 @@ public class MainTest extends Application {
             //boucle sur le nombre de simulations
             for (int i = 0; i < population; i++) {
                 long lastUpdateTime = System.nanoTime();
-                System.out.println("Jeu fini : " + jeu.etreFini());
+                //System.out.println("Jeu fini : " + jeu.etreFini());
                 while (!jeu.etreFini()) {
                     long currentTime = System.nanoTime();
                     double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
@@ -30,10 +30,13 @@ public class MainTest extends Application {
                     lastUpdateTime = currentTime;
                 }
                 System.out.println("Simulation numéro " + i + " terminée.");
-                System.out.println(jeu.getScore());
+                System.out.println("Défenses en fin de manche: "+jeu.getDefenseEndOfManche());
+                System.out.println("Map Score :"+jeu.getScore()+"\n");
+                jeu.setDefenses(jeu.getDefenseEndOfManche());
+                jeu.refresh(i);
 
                 jeu.setEnd(false);
-                jeu.refresh(i);
+
             }
             System.out.println("Toutes les simulations sont terminées.");
             System.out.println(jeu.getScore());

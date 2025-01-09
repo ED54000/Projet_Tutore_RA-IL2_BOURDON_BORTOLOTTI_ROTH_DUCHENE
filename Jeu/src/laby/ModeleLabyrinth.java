@@ -296,6 +296,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
             this.defensesEndOfManche.addAll(deadDefenses);
             this.defensesEndOfManche.addAll(defenses);
 
+            System.out.println("Defenses morte : " + deadDefenses);
+            System.out.println("Defenses tout court : " + defenses);
+
             //on calcule la distance de chaque ennemi à l'arrivée
             int c = 0;
             for (Ennemy e : ennemiesEndOfManche) {
@@ -358,12 +361,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (this.simulationEvolution){
                 EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
                 double score = evolution.getScore(ennemiesEndOfManche.get(0));
-                System.out.println("Score de l'ennemi : "+score);
+                this.defenses = this.getDefenseEndOfManche();
+                System.out.println("Defenses toutes neuve : "+this.defenses);
                 // On sauvegarde les score de l'ennemi dans une map avec l'ennemi comme clé et le score comme valeur
-                //ajoute a la suite de la map
-                System.out.println("On ajout l'ennemi : "+ennemiesEndOfManche.get(0)+" avec le score : "+score);
                 ennemyScore.put((Giant)ennemiesEndOfManche.get(0), score);
-
                 this.end = true;
             }
         }
@@ -482,8 +483,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 deadDefenses.add(d);
                 towerIsDestroyed();
                 setLogs("La défense : " + d.getName() + " à été détruite");
-                //System.out.println("dead defenses : "+deadDefenses);
-                //System.out.println("defenses : "+defenses);
+                System.out.println("La défense : " + d.getName() + " à été détruite");
             }
         }
         defenses.removeAll(deadDefenses);
@@ -511,12 +511,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 ennemy.setArrived(true);
                 this.nbEnnemiesArrived++;
                 System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
+                System.out.println("Le " + ennemy.getName() + " est arrivé");
+                System.out.println("Liste des ennemis a la fin : " + enemies);
+
                 setLogs("Le " + ennemy.getName() + " est arrivé");
                 //si les ennemis ont gagné
                 if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) {
                     setLogs("Fin du jeu car assez d'ennemis ont atteint l'arrivée");
                     this.end = true;
                 }
+                // On met à jour le temps de survie de l'ennemi
+                ennemy.setSurvivalTime(System.currentTimeMillis() - startTime);
                 enemiesToRemove.add(ennemy);
                 ennemiesArrived.add(ennemy);
             }
@@ -885,5 +890,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void refreshEnnemiesScore() {
         this.ennemyScore = new HashMap<>();
+    }
+
+    public void setDefenses(ArrayList<Defense> defenseEndOfManche) {
+        this.defenses = defenseEndOfManche;
     }
 }
