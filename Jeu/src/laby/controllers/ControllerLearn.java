@@ -58,40 +58,40 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             }
         }
 
-            // On va compter le nombre d'ennemis pour chaque comportement
-            int nbNinja = 0;
-            int nbGiant = 0;
-            int nbHealer = 0;
-            int nbBerserker = 0;
-            for(Ennemy e : laby.enemies){
-                e.setDead(false);
-                if(e instanceof Ninja){
-                    e.setBehavior("Fugitive");
-                    nbNinja++;
-                }
-                if(e instanceof Giant){
-                    e.setBehavior("Normal");
-                    nbGiant++;
-                }
-                if(e instanceof Druide){
-                    e.setBehavior("Healer");
-                    nbHealer++;
-                }
-                if(e instanceof Berserker){
-                    e.setBehavior("Kamikaze");
-                    nbBerserker++;
-                }
+        // On va compter le nombre d'ennemis pour chaque comportement
+        int nbNinja = 0;
+        int nbGiant = 0;
+        int nbHealer = 0;
+        int nbBerserker = 0;
+        for(Ennemy e : laby.enemies){
+            e.setDead(false);
+            if(e instanceof Ninja){
+                e.setBehavior("Fugitive");
+                nbNinja++;
             }
-            System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
-            laby.createBehaviours(laby.getCases());
-            for (Ennemy e : laby.enemies) {
-                if (e.getBehavior().equals("Healer")) {
-                  e.setBehaviorPath(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
-                } else {
-                    e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
-                }
-                e.setArrived(false);
+            if(e instanceof Giant){
+                e.setBehavior("Normal");
+                nbGiant++;
             }
+            if(e instanceof Druide){
+                e.setBehavior("Healer");
+                nbHealer++;
+            }
+            if(e instanceof Berserker){
+                e.setBehavior("Kamikaze");
+                nbBerserker++;
+            }
+        }
+        System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
+        laby.createBehaviours(laby.getCases());
+        for (Ennemy e : laby.enemies) {
+            if (e.getBehavior().equals("Healer")) {
+              e.setBehaviorPath(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
+            } else {
+                e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
+            }
+            e.setArrived(false);
+        }
 
 
         int c = 0;

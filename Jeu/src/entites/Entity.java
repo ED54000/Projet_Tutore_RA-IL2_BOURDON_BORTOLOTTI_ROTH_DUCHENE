@@ -4,9 +4,6 @@ import javafx.scene.image.Image;
 import entites.enemies.Ennemy;
 import steering_astar.Steering.Vector2D;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public abstract class Entity {
 
     protected Vector2D position;
@@ -14,12 +11,20 @@ public abstract class Entity {
     private double damages;
     private double range;
     private Image sprite;
+    protected double health;
+    private boolean isDead = false;
+    private String name;
+    private double attackSpeed;
+    private long lastAttackTime = 0;
 
-    public Entity(Vector2D position, double damages, double range, String sprite) {
+    public Entity(Vector2D position, double damages, double range, String sprite, double health, String name, double attackSpeed) {
         this.position = position;
         this.damages = damages;
         this.range = range;
         this.sprite = new Image(sprite);
+        this.health = health;
+        this.name = name;
+        this.attackSpeed = attackSpeed;
 
         //génère un type aléatoire
         int randomNumber = (int) (Math.random() * 3) + 1;
@@ -70,7 +75,16 @@ public abstract class Entity {
         return 1;
     }
 
-    public abstract void takeDamage(double damage);
+    /**
+     * Prendre des dégâts
+     * @param damage les dégâts à prendre
+     */
+    public void takeDamage(double damage) {
+        health -= damage;
+        if (this.health <= 0) {
+            isDead = true;
+        }
+    }
 
     /**
      * Vérifie si une entite est dans la portée de l'entite courante
@@ -110,6 +124,24 @@ public abstract class Entity {
         return distanceSquared <= rangeInPixelsSquared;
     }
 
+    public void attack(Entity target){
+        // On récupère le temps actuel en millisecondes
+        long currentTime = System.currentTimeMillis();
+
+        // Si le temps écoulé depuis la dernière attaque est supérieur ou égal à l'attackSpeed
+        if(currentTime - lastAttackTime >= 1000 / attackSpeed) {
+            // On met à jour le temps de la dernière attaque
+            lastAttackTime = currentTime;
+            // On attaque la défense
+            target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
+            System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
+            System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
+            System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
+            System.out.println("=====================================");
+        }
+        // Sinon, on ne fait rien
+    }
+
     public String getType() {
         return type;
     }
@@ -143,4 +175,44 @@ public abstract class Entity {
     }
 
     public Image getImage() { return sprite; }
+
+    public double getHealth() {
+        return this.health;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    public boolean isDead() {
+        return this.isDead;
+    }
+
+    public void setDead(boolean b) {
+        this.isDead = b;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getAttackSpeed() {
+        return attackSpeed;
+    }
+
+    public void setAttackSpeed(double attackSpeed) {
+        this.attackSpeed = attackSpeed;
+    }
+
+    public long getLastAttackTime() {
+        return lastAttackTime;
+    }
+
+    public void setLastAttackTime(long lastAttackTime) {
+        this.lastAttackTime = lastAttackTime;
+    }
 }

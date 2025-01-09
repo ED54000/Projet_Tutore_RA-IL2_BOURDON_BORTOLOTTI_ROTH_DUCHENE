@@ -296,6 +296,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
             this.defensesEndOfManche.addAll(deadDefenses);
             this.defensesEndOfManche.addAll(defenses);
 
+            System.out.println("Defenses morte : " + deadDefenses);
+            System.out.println("Defenses tout court : " + defenses);
+
             //on calcule la distance de chaque ennemi à l'arrivée
             int c = 0;
             for (Ennemy e : ennemiesEndOfManche) {
@@ -358,12 +361,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (this.simulationEvolution){
                 EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
                 double score = evolution.getScore(ennemiesEndOfManche.get(0));
-                System.out.println("Score de l'ennemi : "+score);
+                this.defenses = this.getDefenseEndOfManche();
+                System.out.println("Defenses toutes neuve : "+this.defenses);
                 // On sauvegarde les score de l'ennemi dans une map avec l'ennemi comme clé et le score comme valeur
-                //ajoute a la suite de la map
-                System.out.println("On ajout l'ennemi : "+ennemiesEndOfManche.get(0)+" avec le score : "+score);
                 ennemyScore.put((Giant)ennemiesEndOfManche.get(0), score);
-
                 this.end = true;
             }
         }
@@ -388,11 +389,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         ennemi.attack(defense);
                         // le berserker se suicide après avoir attaqué
                         ennemi.takeDamage(1000);
-                        // Si l'ennemi est mort
-                        if(ennemi.isDead()){
-                            // On met à jour son temps de survie
-                            ennemi.setSurvivalTime(System.currentTimeMillis() - this.startTime);
-                        }
                     }
                 }
             }
@@ -427,8 +423,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             ennemyTarget.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
-                            // On met à jour le temps de survie de l'ennemi
-                            ennemyTarget.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                     }
                     // Si l'ennemi n'est plus dans la portée de la défense
@@ -463,7 +457,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // On parcourt les ennemis
                 for (Ennemy e : enemies) {
                     // Si l'ennemi est dans la portée de la défense
-                    if (defense.isInRange(e) && !deadDefenses.contains(defense)) {
+                    if (defense.isInRange(e) && !deadDefenses.contains(defense) && !((PassiveDefense) defense).isAttacked()) {
                         // Cela active la defense
                         // On attaque l'ennemi
                         defense.attack(e);
@@ -476,6 +470,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         }
                         // La défense s'autodétruit après avoir attaqué
                         defense.takeDamage(10000);
+                        setLogs("La défense : " + defense.getType() + " à été détruite");
                     }
                 }
             }
@@ -516,6 +511,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 ennemy.setArrived(true);
                 this.nbEnnemiesArrived++;
                 System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
+                System.out.println("Le " + ennemy.getName() + " est arrivé");
+                System.out.println("Liste des ennemis a la fin : " + enemies);
+
                 setLogs("Le " + ennemy.getName() + " est arrivé");
                 //si les ennemis ont gagné
                 if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) {
@@ -892,5 +890,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void refreshEnnemiesScore() {
         this.ennemyScore = new HashMap<>();
+    }
+
+    public void setDefenses(ArrayList<Defense> defenseEndOfManche) {
+        this.defenses = defenseEndOfManche;
     }
 }
