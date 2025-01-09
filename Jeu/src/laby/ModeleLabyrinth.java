@@ -469,7 +469,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         }
                         // La défense s'autodétruit après avoir attaqué
                         defense.takeDamage(10000);
-                        setLogs("La défense : " + defense.getType() + " à été détruite");
                     }
                 }
             }
@@ -482,8 +481,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 deadDefenses.add(d);
                 towerIsDestroyed();
                 setLogs("La défense : " + d.getName() + " à été détruite");
-                //System.out.println("dead defenses : "+deadDefenses);
-                //System.out.println("defenses : "+defenses);
+                System.out.println("La défense : " + d.getName() + " à été détruite");
             }
         }
         defenses.removeAll(deadDefenses);
