@@ -1,6 +1,18 @@
 Bilan Itération 3 :
 
+Objectifs de l'itération : 
+	- Attaque des ennemis sur les défenses
+	- Évolution des ennemis
+
+
+Validation : 
+
+	- Les objectifs de l'itération sont remplis
+
+
 Le(s) bug(s) restant :
+
+	- 
 
 
 Conformité à l'étude préalable :
@@ -9,7 +21,11 @@ Conformité à l'étude préalable :
 	- Les ennemis attaquent bien les défenses.
 	- Les défenses et ennemis ont des types qui modifient leur dégâts. 
 
+
 Problèmes rencontrés :
+
+	- De nombreux bug ont du être fixés, notamment des confusions entre coordonnées réelles et coordonnées d'affichage.
+	- La structure du code est devenue confuse avec les ajouts des précédentes itérations, ce qui créé de nombreux bug difficiles à corriger.
 
 
 Pour lancer l'application : 
