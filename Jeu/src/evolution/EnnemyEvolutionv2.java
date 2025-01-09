@@ -13,7 +13,12 @@ import java.util.Random;
 public class EnnemyEvolutionv2 {
 
     public double getScore(Ennemy e){
-        double score = e.getDistanceToArrival() + 0.2 * (double) e.getSurvivalTime();
+        //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
+        int bonus = e.isDead() ? -20 : 20;
+        System.out.println("Distance to Arrival : "+e.getDistanceToArrival());
+        System.out.println("Bonus : "+bonus);
+
+        double score = e.getDistanceToArrival() + bonus;
         return score;
     }
 

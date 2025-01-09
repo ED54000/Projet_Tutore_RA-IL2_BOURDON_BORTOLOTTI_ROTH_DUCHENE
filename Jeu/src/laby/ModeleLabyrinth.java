@@ -328,7 +328,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 if(posXReel >= copyGrid.length){
                     posXReel = copyGrid.length;
                 }
-                if (copyGrid[posYReel][posXReel] == 'E') {
+                if (e.isArrived()) {
                     e.setDistanceToArrival(new ArrayList<>());
                 } else {
                     copyGrid[posYReel][posXReel] = 'S';
@@ -391,6 +391,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         ennemi.attack(defense, secondes);
                         // le berserker se suicide après avoir attaqué
                         ennemi.takeDamage(1000);
+                        // On met à jour le temps de survie
+                        ennemi.setSurvivalTime(System.currentTimeMillis() - startTime);
                     }
                 }
             }
@@ -425,6 +427,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             ennemyTarget.setKillerType(defense.getType());
                             // On retire la cible de la défense
                             ((ActiveDefense) defense).setTarget(null);
+                            // On met à jour le temps de survie de l'ennemi
+                            ennemyTarget.setSurvivalTime(System.currentTimeMillis() - startTime);
                         }
                     }
                     // Si l'ennemi n'est plus dans la portée de la défense
@@ -792,7 +796,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.cases = new char[nbLignes][nbColonnes];
 
         // Nombre d'ennemis qui doivent arriver à la fin pour gagner
-        this.nbEnnemiesToWin = nbEnnemiesToWin;
+        this.nbEnnemiesToWin = 50;
 
         //lecture des cases
         String ligne = br.readLine();

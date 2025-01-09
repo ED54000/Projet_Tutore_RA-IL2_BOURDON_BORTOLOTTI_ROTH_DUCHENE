@@ -1,6 +1,18 @@
 Bilan Itération 3 :
 
+Objectifs de l'itération : 
+	- Attaque des ennemis sur les défenses
+	- Évolution des ennemis
+
+
+Validation : 
+
+	- Les objectifs de l'itération sont remplis
+
+
 Le(s) bug(s) restant :
+
+	- 
 
 
 Conformité à l'étude préalable :
@@ -9,7 +21,11 @@ Conformité à l'étude préalable :
 	- Les ennemis attaquent bien les défenses.
 	- Les défenses et ennemis ont des types qui modifient leur dégâts. 
 
+
 Problèmes rencontrés :
+
+	- De nombreux bug ont du être fixés, notamment des confusions entre coordonnées réelles et coordonnées d'affichage.
+	- La structure du code est devenue confuse avec les ajouts des précédentes itérations, ce qui créé de nombreux bug difficiles à corriger.
 
 
 Pour lancer l'application : 
@@ -22,3 +38,12 @@ L'application permet de :
 	- Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites.
 	- Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués jusqu'à la fin du jeu.
 	- Pouvoir lancer l'application sans interface graphique ce qui accélère les vagues
+
+
+Objectif itération 4 :
+	- Réaliser des diagrammes de séquences pour clarifier le fonctionnemment du projet
+	- Réfactoring du code
+	- Adaptation de l'algorithme évolutionnaire v2 à la structure du projet
+	- Tempérer les attaques des ennemies et des défenses en fonction du moteur de jeu et enlever timer
+	- obtenir une simulation fonctionnel
+	- avoir une évolution sur les groupes d'ennemies et non pas sur les ennemies (commencer et sûrement a finaliser en itération 5)
