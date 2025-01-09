@@ -1,0 +1,17 @@
+Tristan :
+
+Marin : 
+
+Florian : 
+
+Eloi : 
+	- Sprites des ennemis
+	- Recalcul du chemin lorsqu'une tour est détruite 
+	- Résolution de bugs
+
+
+À la fin de cette itération, nous pouvons : 
+
+Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, et le nombre d'ennemies qui passe pour gagner.
+Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites. Les ennemis peuvent également attaquer les défenses afin de les détruire. Lorsqu'une défense est détruite, le chemin est recalculé pour chaque agent et donc ils s'adaptent au différentes évolutions dans une partie.
+Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués jusqu'à la fin du jeu.
