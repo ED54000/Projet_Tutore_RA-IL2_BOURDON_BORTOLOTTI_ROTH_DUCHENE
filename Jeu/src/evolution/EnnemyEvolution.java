@@ -344,15 +344,15 @@ public class EnnemyEvolution {
     public static ArrayList<Ennemy> evoluer(ArrayList<Ennemy> ennemies){
         // On affecte les statistiques moyennes des meilleurs ennemis aux ennemis morts (pour chaque comportement)
         ennemies = affectStatsToDeadEnnemies(ennemies);
-        System.out.println("Stats ennemies après affectation : ");
+      //  System.out.println("Stats ennemies après affectation : ");
         for (Ennemy e : ennemies) {
-            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
+      //      System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
         }
 
-        System.out.println("Stats ennemies après mutation : ");
+     //   System.out.println("Stats ennemies après mutation : ");
         ArrayList<Ennemy> ennemiesMutated = addRandomStats(ennemies);
         for (Ennemy e : ennemiesMutated) {
-            System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " Is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
+      //      System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " Is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
         }
 
         // On ajoute des statistiques aléatoires aux ennemis (mutation)

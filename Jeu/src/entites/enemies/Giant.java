@@ -9,7 +9,7 @@ public class Giant extends Ennemy {
                 200 + (Math.random() - 0.5) * 40,
                 2 + (Math.random() - 0.5),
                 30 + (Math.random() - 0.5) * 10,
-                0.5 + (Math.random() - 0.5) * 0.2,
+                500,
                 1.5, 1, name,"/giant.png", "Normal");
     }
 

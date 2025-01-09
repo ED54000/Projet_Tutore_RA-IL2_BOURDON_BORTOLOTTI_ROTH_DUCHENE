@@ -2,6 +2,7 @@ package entites;
 
 import javafx.scene.image.Image;
 import entites.enemies.Ennemy;
+import laby.ModeleLabyrinth;
 import steering_astar.Steering.Vector2D;
 
 public abstract class Entity {
@@ -15,7 +16,7 @@ public abstract class Entity {
     private boolean isDead = false;
     private String name;
     private double attackSpeed;
-    private long lastAttackTime = 0;
+    private long lastAttackCount = 0;
 
     public Entity(Vector2D position, double damages, double range, String sprite, double health, String name, double attackSpeed) {
         this.position = position;
@@ -124,15 +125,14 @@ public abstract class Entity {
         return distanceSquared <= rangeInPixelsSquared;
     }
 
-    public void attack(Entity target){
+    public synchronized void attack(Entity target, double speedTime){
         // On récupère le temps actuel en millisecondes
-        long currentTime = System.currentTimeMillis();
-
         // Si le temps écoulé depuis la dernière attaque est supérieur ou égal à l'attackSpeed
-        if(currentTime - lastAttackTime >= 1000 / attackSpeed) {
+        if(lastAttackCount >= attackSpeed * speedTime ) {
             // On met à jour le temps de la dernière attaque
-            lastAttackTime = currentTime;
+            lastAttackCount = 0;
             // On attaque la défense
+            System.out.println("=====================================");
             target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
             System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
             System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
@@ -208,11 +208,11 @@ public abstract class Entity {
         this.attackSpeed = attackSpeed;
     }
 
-    public long getLastAttackTime() {
-        return lastAttackTime;
+    public long getLastAttackCount() {
+        return lastAttackCount;
     }
 
-    public void setLastAttackTime(long lastAttackTime) {
-        this.lastAttackTime = lastAttackTime;
+    public void setLastAttackCount(long lastAttackCount) {
+        this.lastAttackCount = lastAttackCount;
     }
 }

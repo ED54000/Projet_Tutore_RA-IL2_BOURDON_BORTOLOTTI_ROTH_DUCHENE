@@ -3,6 +3,7 @@ module com.example.moteurjeu {
     requires javafx.fxml;
     requires java.desktop;
     requires jdk.unsupported.desktop;
+    requires java.sql;
 
 
     opens moteur to javafx.fxml;

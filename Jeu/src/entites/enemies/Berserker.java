@@ -9,7 +9,7 @@ public class Berserker extends Ennemy {
                 75 + (Math.random() - 0.5) * 10,
                 3 + (Math.random() - 0.5),
                 75 + (Math.random() - 0.5) * 10,
-                1 + (Math.random() - 0.5) * 0.2,
+                1000,
                 0.75, 1, name, "/berserker.png", "Kamikaze");
     }
 }

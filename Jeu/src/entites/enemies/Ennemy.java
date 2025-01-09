@@ -36,17 +36,16 @@ public abstract class Ennemy extends Entity {
         timeSpawn++;
     }
 
-    public void healDamage(Ennemy target, double heal){
+    public void healDamage(Ennemy target, double heal, double speedTime){
         // On récupère le temps actuel en millisecondes
-        long currentTime = System.currentTimeMillis();
 
         // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
-        if(currentTime - this.getLastAttackTime() >= 1000 / this.getAttackSpeed()) {
+        if(this.getLastAttackCount() >=  this.getAttackSpeed() * speedTime) {
             if( this.getAttackSpeed() <= 0 ){
                 this.setAttackSpeed(1);
             }
             // On met à jour le temps du dernier heal
-            this.setLastAttackTime(currentTime);
+            this.setLastAttackCount(0);
             // On heal
             target.health += heal;
             System.out.println("Soin de " + this.getName() + " sur " + target.getName());

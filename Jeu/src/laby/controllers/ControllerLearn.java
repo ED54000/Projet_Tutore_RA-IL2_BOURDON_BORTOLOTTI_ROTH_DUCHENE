@@ -12,10 +12,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
 import steering_astar.Steering.PathfollowingBehavior;
-import steering_astar.Steering.Vector2D;
-
-import java.util.Arrays;
-import java.util.Map;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
@@ -46,6 +42,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
         //TODO : on remet les valeurs par défaut pour les defenses en attendant de les faire évoluer
         for (Defense d : laby.defenses) {
+            d.setLastAttackCount(0);
             d.setDead(false);
             if (d instanceof Canon) {
                 d.setHealth(300);
@@ -85,6 +82,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
         laby.createBehaviours(laby.getCases());
         for (Ennemy e : laby.enemies) {
+            e.setLastAttackCount(0);
             if (e.getBehavior().equals("Healer")) {
               e.setBehaviorPath(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
             } else {
@@ -116,19 +114,6 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
         // On sauvegarde les statistiques des ennemis
         EnnemyEvolution.saveStartStats(laby.enemies);
-        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : "+laby.enemies+"on les affiche");
-        // On parcourt la map pour afficher chaque couple clé valeur
-        Map<Ennemy, double[]> map = EnnemyEvolution.startStats;
-        for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
-            Ennemy enemy = entry.getKey();
-            double[] values = entry.getValue();
 
-            System.out.println("==========================================");
-            System.out.print("Enemy: " + enemy + " -> Values: ");
-            for (double value : values) {
-                System.out.print(value + " ");
-            }
-            System.out.println();
-        }
     }
 }
