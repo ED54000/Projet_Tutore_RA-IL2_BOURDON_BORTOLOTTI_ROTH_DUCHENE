@@ -10,6 +10,7 @@ Marin :
 
 Florian : 
 	- Attaque des ennemis sur les défense
+	- Ajout comportement pour éviter les obstacles dans steering behaviors
 	- Refactoring de la structure du code des entités (ennemis et défenses)
 	- Résolutions de bugs
 
