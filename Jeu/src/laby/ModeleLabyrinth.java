@@ -389,6 +389,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         ennemi.attack(defense);
                         // le berserker se suicide après avoir attaqué
                         ennemi.takeDamage(1000);
+                        // On met à jour le temps de survie
+                        ennemi.setSurvivalTime(System.currentTimeMillis() - startTime);
                     }
                 }
             }

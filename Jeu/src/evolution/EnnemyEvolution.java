@@ -37,7 +37,7 @@ public class EnnemyEvolution {
                     double score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
-                        score += 1000;
+                        score += 1500;
                     }
                     //System.out.println("score fuyard: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
@@ -62,7 +62,7 @@ public class EnnemyEvolution {
                     score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
-                        score += 1000;
+                        score += 1500;
                     }
                     //System.out.println("score normal: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
@@ -87,7 +87,7 @@ public class EnnemyEvolution {
                     score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
-                        score += 1000;
+                        score += 1500;
                     }
                   //  System.out.println("score healer: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
@@ -113,7 +113,7 @@ public class EnnemyEvolution {
                     score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
                     if(e.isItArrived()){
-                        score += 1000;
+                        score += 1500;
                     }
                    // System.out.println("score kamikaze: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
