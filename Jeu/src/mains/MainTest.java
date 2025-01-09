@@ -20,6 +20,8 @@ public class MainTest extends Application {
         for (int y = 0; y < 5; y++) {
             //boucle sur le nombre de simulations
             for (int i = 0; i < population; i++) {
+                jeu.setStartTime();
+
                 long lastUpdateTime = System.nanoTime();
                 //System.out.println("Jeu fini : " + jeu.etreFini());
                 while (!jeu.etreFini()) {
@@ -29,9 +31,11 @@ public class MainTest extends Application {
                     jeu.update(elapsedTimeInSeconds);
                     lastUpdateTime = currentTime;
                 }
+
+
                 System.out.println("Simulation numéro " + i + " terminée.");
-                System.out.println("Défenses en fin de manche: "+jeu.getDefenseEndOfManche());
                 System.out.println("Map Score :"+jeu.getScore()+"\n");
+                System.out.println("Défenses en fin de manche: "+jeu.getDefenseEndOfManche());
                 jeu.setDefenses(jeu.getDefenseEndOfManche());
                 jeu.refresh(i);
 
