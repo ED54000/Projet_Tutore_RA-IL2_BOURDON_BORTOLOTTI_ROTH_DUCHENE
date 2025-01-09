@@ -38,3 +38,11 @@ L'application permet de :
 	- Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites.
 	- Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués jusqu'à la fin du jeu.
 	- Pouvoir lancer l'application sans interface graphique ce qui accélère les vagues
+
+
+Objectif itération 4 :
+	- Réaliser des diagrammes de séquences pour clarifier le fonctionnemment du projet
+	- Adaptation de l'algorithme évolutionnaire v2 à la structure du projet
+	- Tempérer les attaques des ennemies et des défenses en fonction du moteur de jeu et enlever timer
+	- obtenir une simulation fonctionnel
+	- avoir une évolution sur les groupes d'ennemies et non pas sur les ennemies (commencer et sûrement a finaliser en itération 5)
