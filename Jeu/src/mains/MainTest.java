@@ -21,6 +21,7 @@ public class MainTest extends Application {
             //boucle sur le nombre de simulations
             for (int i = 0; i < population; i++) {
                 jeu.setStartTime();
+                System.out.println("Start Time : "+jeu.getStartTime());
 
                 long lastUpdateTime = System.nanoTime();
                 //System.out.println("Jeu fini : " + jeu.etreFini());
