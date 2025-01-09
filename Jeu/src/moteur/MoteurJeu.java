@@ -135,8 +135,8 @@ public class MoteurJeu extends Application {
         nbEnnemiesToWinField.setText("70");
 
         // CheckBox avec ou sans Astar
-        CheckBox avecOuSansAstarBox = new CheckBox();
-        avecOuSansAstarBox.setSelected(true);
+        CheckBox avecAstarBox = new CheckBox();
+        avecAstarBox.setSelected(true);
 
         HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
         // Champ pour le nombre de manches
@@ -147,7 +147,7 @@ public class MoteurJeu extends Application {
         enemiesField.setId("enemiesField");
         roundsField.setId("roundsField");
         nbEnnemiesToWinField.setId("ennemiesToWinField");
-        avecOuSansAstarBox.setId("avecOuSansAstarBox");
+        avecAstarBox.setId("avecOuSansAstarBox");
 
         // Création du contrôleur avec les références des champs
         //ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField, nbEnnemiesToWinField);
@@ -155,7 +155,7 @@ public class MoteurJeu extends Application {
 
         HBox roundsBox = new HBox(10, new Label("Nombre de manches :"), roundsField);
         HBox ennemiesToWinBox = new HBox(10, new Label("Objectif :"), nbEnnemiesToWinField);
-        HBox noAstar = new HBox(10, new Label("Avec ou sans Astar ? "), avecOuSansAstarBox);
+        HBox noAstar = new HBox(10, new Label("Avec Astar ? "), avecAstarBox);
         // Bouton Start
         Button startButton = new Button("Start");
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -172,7 +172,7 @@ public class MoteurJeu extends Application {
                 }
                 dialogStage.close();
                 try {
-                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()), avecOuSansAstarBox.isSelected());
+                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()), avecAstarBox.isSelected());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

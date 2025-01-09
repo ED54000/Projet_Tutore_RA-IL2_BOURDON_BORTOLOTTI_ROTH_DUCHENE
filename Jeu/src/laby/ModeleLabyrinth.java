@@ -10,6 +10,7 @@ import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import moteur.Jeu;
 import steering_astar.Steering.PathfollowingBehavior;
+import steering_astar.Steering.SeekBehavior;
 import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
 
@@ -183,22 +184,34 @@ public class ModeleLabyrinth implements Jeu, Subject {
             switch (random) {
                 case 0:
                     Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant " + nbGiant);
-                    giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
-                    giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+                    if (useAstar){
+                        giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+                        giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+                    } else {
+                        giant.setBehaviorPath(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                    }
                     this.enemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
                     Ninja ninja = new Ninja(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Ninja " + nbNinja);
-                    ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
-                    ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
+                    if (useAstar){
+                        ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
+                        ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
+                    } else {
+                        ninja.setBehaviorPath(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                    }
                     this.enemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
                     Berserker berserker = new Berserker(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Berseker " + nbBerserker);
-                    berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
-                    berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
+                    if (useAstar){
+                        berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
+                        berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
+                    } else {
+                        berserker.setBehaviorPath(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                    }
                     this.enemies.add(berserker);
                     nbBerserker++;
                     break;
@@ -209,9 +222,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
         for (int i = 1; i < nbDruides; i++) {
             Druide druide = new Druide(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Druide " + i);
-            ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-            druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
-            druide.setDistanceStartToArrival(aStarHealer);
+            if (useAstar){
+                ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
+                druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
+                druide.setDistanceStartToArrival(aStarHealer);
+            } else {
+                druide.setBehaviorPath(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+            }
             this.enemies.add(druide);
         }
 
@@ -729,7 +746,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
 
             copyGrid[ennemiPosY][ennemyPosX] = 'S';
-            if(!(ennemiPosY==YArrival && ennemyPosX==XArrival)) {
+            if(!(ennemiPosY==YArrival && ennemyPosX==XArrival) && useAstar) {
                 Astar newAstar = new Astar();
                 ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
                         new Vector2D(ennemiPosY, ennemyPosX),
@@ -754,5 +771,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public long getEndTime() {
         return this.endTime;
+    }
+
+    public boolean getUseAstar() {
+        return useAstar;
     }
 }
