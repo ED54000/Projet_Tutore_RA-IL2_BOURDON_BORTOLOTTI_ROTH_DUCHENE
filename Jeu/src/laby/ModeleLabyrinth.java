@@ -38,7 +38,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private long startTime;
     private long endTime;
 
-    private boolean useAstar;
+    private static boolean useAstar;
 
     //entités
     public ArrayList<Ennemy> enemies = new ArrayList<>();
@@ -773,7 +773,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return this.endTime;
     }
 
-    public boolean getUseAstar() {
+    public static boolean getUseAstar() {
         return useAstar;
     }
 }

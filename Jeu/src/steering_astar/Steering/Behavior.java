@@ -13,7 +13,7 @@ public abstract class Behavior {
     protected final double ACCELERATION_DIVISER = 0.15;
 
     private Vector2D target;
-    /*private double weight;*/
+    private double weight;
 
     /***
      * methode servant a calculer la force de mouvement selon un comportement
@@ -33,13 +33,12 @@ public abstract class Behavior {
     public static double getTargetRadius() {
         return TARGET_RADIUS;
     }
-/*
     public double getWeight() {
         return weight;
     }
 
     public void setWeight(double weight) {
         this.weight = weight;
-    }*/
+    }
 }
 
