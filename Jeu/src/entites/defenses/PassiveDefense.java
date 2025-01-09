@@ -23,7 +23,7 @@ public abstract class PassiveDefense extends Defense {
             return;
         }
         // Sinon, on attaque l'ennemi
-        System.out.println("Bonus : "+ getBonus(getType(), target.getType()) );
+        //System.out.println("Bonus : "+ getBonus(getType(), target.getType()) );
         target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
         System.out.println("Attaque de " + this.getName() + " de type : "
                 + this.getType() +" sur " + target.getName() + " de type "+ target.getType()+
