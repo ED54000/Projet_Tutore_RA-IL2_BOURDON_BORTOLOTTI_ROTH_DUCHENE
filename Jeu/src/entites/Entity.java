@@ -36,35 +36,6 @@ public abstract class Entity {
         }
     }
 
-//    private final Map<String,Map<String,Integer>> avantagesTypes = Map.of(
-//            "Fire", Map.of(
-//                    "Plant", 1,
-//                    "Fire", 0,
-//                    "Water",-1
-//            ),
-//            "Plant", Map.of(
-//                    "Water", 1,
-//                    "Plant", 0,
-//                    "Fire",-1
-//            ),
-//            "Water", Map.of(
-//                    "Fire", 1,
-//                    "Water", 0,
-//                    "Plant",-1
-//            )
-//    );
-//
-//    public double test(String AttackerType, String TargetType){
-//        int value = avantagesTypes.get(AttackerType).get(TargetType);
-//        if (value == 1){
-//            return 1.3;
-//        } else if (value == -1){
-//            return 0.7;
-//        } else {
-//            return 1.0;
-//        }
-//    }
-
     //retourne le bonus de dégâts en fonction des types
     public double getBonus(String AttackerType, String TargetType) {
         if (AttackerType != null && TargetType != null) {
@@ -98,6 +69,7 @@ public abstract class Entity {
         }
         return 1;
     }
+
     public abstract void takeDamage(double damage);
 
     /**
@@ -133,8 +105,6 @@ public abstract class Entity {
         double distanceSquared = deltaX * deltaX + deltaY * deltaY;
 
         double rangeInPixelsSquared = this.getRange() * this.getRange();
-//        System.out.println(this + " : distanceSquared: " + distanceSquared + ", "
-//                + target + " : rangeInPixelsSquared " + rangeInPixelsSquared);
 
         // Vérification si l'ennemi est dans la portée
         return distanceSquared <= rangeInPixelsSquared;
