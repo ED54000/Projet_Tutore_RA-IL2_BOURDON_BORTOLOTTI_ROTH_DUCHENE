@@ -1,0 +1,24 @@
+Bilan Itération 3 :
+
+Le(s) bug(s) restant :
+
+
+Conformité à l'étude préalable :
+
+	- Les défenses attaquent bien les ennemis.
+	- Les ennemis attaquent bien les défenses.
+	- Les défenses et ennemis ont des types qui modifient leur dégâts. 
+
+Problèmes rencontrés :
+
+
+Pour lancer l'application : 
+ 	- Lancer le fichier MainLaby.java situé dans le chemin suivant src/mains/MainLaby.java pour une version graphique
+	- Lancer le fichier MainSimulation.java situé dans le chemin suivant src/mains/MainSimulation.java pour une version sans affichage
+
+
+L'application permet de : 
+	- Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, et le nombre d'ennemies qui passe pour gagner.
+	- Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites.
+	- Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués jusqu'à la fin du jeu.
+	- Pouvoir lancer l'application sans interface graphique ce qui accélère les vagues
