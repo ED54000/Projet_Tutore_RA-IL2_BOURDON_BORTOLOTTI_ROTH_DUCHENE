@@ -1,8 +1,8 @@
 package entites.enemies;
 
 import entites.Entity;
-import entites.defenses.Defense;
-import javafx.scene.image.Image;
+import laby.ModeleLabyrinth;
+import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
@@ -11,44 +11,47 @@ import java.util.ArrayList;
 public abstract class Ennemy extends Entity {
 
     private double speed;
-    private double attackSpeed;
     private int distanceToArrival;  //distanceToArrival sera calculé par A* dans le jeu
     private int distanceStartToArrival;
     private String killerType;
-    private double health;
     private static int timeSpawn = 0;
     private Behavior behaviorPath;
     private String behavior;
     private boolean isArrived;
-    private int survivalTime;
-    private String name;
-    //private String sprite;
+    private long survivalTime;
+    private Vector2D positionReel;
     private Vector2D velocity;
 
-    public Ennemy(Vector2D position, double health,double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name) {
-        super(position, damages, range);
+    public Ennemy(Vector2D position, double health, double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
+        super(position, damages, range, sprite, health, name, attackSpeed);
         this.speed = speed;
-        this.attackSpeed = attackSpeed;
+        this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         this.distanceToArrival = distanceToArrival;
         this.distanceStartToArrival = distanceToArrival;
         this.killerType = null;
-        this.health = health;
         this.isArrived = false;
         this.behaviorPath = null;
-        this.behavior = "Normal";
+        this.behavior = behavior;
         this.velocity = new Vector2D(0, 0);
-        this.name = name;
-        //this.sprite = sprite;
         timeSpawn++;
     }
 
-    public void takeDamage(double damage) {
-        health -= damage;
-    }
+    public void healDamage(Ennemy target, double heal, double speedTime){
+        // On récupère le temps actuel en millisecondes
 
-    public void attack(Defense target) {
-        if (target != null) {
-            target.takeDamage(getDamages()*getBonus(getType(), target.getType()));
+        // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
+        if(this.getLastAttackCount() >=  this.getAttackSpeed() * speedTime) {
+            if( this.getAttackSpeed() <= 0 ){
+                this.setAttackSpeed(1);
+            }
+            // On met à jour le temps du dernier heal
+            this.setLastAttackCount(0);
+            // On heal
+            target.health += heal;
+            System.out.println("Soin de " + this.getName() + " sur " + target.getName());
+            System.out.println("Montant de soin : " + heal);
+            System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
+            System.out.println("=====================================");
         }
     }
 
@@ -60,13 +63,15 @@ public abstract class Ennemy extends Entity {
         //System.out.println(behaviorPath);
         if (behaviorPath != null) {
             Vector2D steeringForce = behaviorPath.calculateForce(this);
-            velocity = velocity.add(steeringForce).normalize().scale(speed);
+            velocity = (velocity.add(steeringForce)).normalize().scale(speed);
+            if (position.add(velocity.scale(AvoidBehavior.getMAX_SEE_AHEAD())).isObstacle()){
+                AvoidBehavior avoid = new AvoidBehavior(position.getClosestCaseCenter());
+                Vector2D avoidanceForce = avoid.calculateForce(this);
+                velocity = (velocity.add(avoidanceForce)).normalize();
+            }
             position = position.add(velocity);
+            positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         }
-    }
-
-    public boolean isDead() {
-        return health <= 0;
     }
 
     public int getDistanceToArrival() {
@@ -77,12 +82,8 @@ public abstract class Ennemy extends Entity {
         return isArrived;
     }
 
-    public int getSurvivalTime() {
+    public long getSurvivalTime() {
         return survivalTime;
-    }
-
-    public double getHealth() {
-        return health;
     }
 
     public double getSpeed() {
@@ -93,24 +94,12 @@ public abstract class Ennemy extends Entity {
         return super.getDamages();
     }
 
-    public double getAttackSpeed() {
-        return attackSpeed;
-    }
-
-    public void setHealth(double health) {
-        this.health = health;
-    }
-
     public void setSpeed(double speed) {
         this.speed = speed;
     }
 
     public void setDamages(double damages) {
         super.setDamages(damages);
-    }
-
-    public void setAttackSpeed(double attackSpeed) {
-        this.attackSpeed = attackSpeed;
     }
 
     public void setRange(double range) {
@@ -127,10 +116,6 @@ public abstract class Ennemy extends Entity {
 
     public void setKillerType(String killerType) {
         this.killerType = killerType;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public boolean isArrived() {
@@ -164,6 +149,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
+   //     System.out.println(vector2DS.size());
         this.distanceStartToArrival = vector2DS.size();
     }
 
@@ -171,11 +157,22 @@ public abstract class Ennemy extends Entity {
         return distanceStartToArrival;
     }
 
-    /*
-    public String getImage() {
-        return sprite;
+    public Vector2D getPositionReel() {
+        return positionReel;
     }
 
-     */
+    public void setPositionReel(Vector2D positionReel) {
+        this.positionReel = positionReel;
+    }
+    public void setSurvivalTime(long survivalTime) {
+        this.survivalTime = survivalTime;
+    }
+
+    public void setToStart(ModeleLabyrinth modeleLabyrinth){
+        double XstartRandom =  Math.random()*1.5;
+        double YstartRandom =  Math.random()*1.5;
+        this.setPositionReel(new Vector2D(modeleLabyrinth.getXstart() + XstartRandom, modeleLabyrinth.getYstart() + YstartRandom));
+        this.setPosition(new Vector2D(modeleLabyrinth.getXstartRender() + XstartRandom, modeleLabyrinth.getYstartRender() + YstartRandom));
+    }
 }
 

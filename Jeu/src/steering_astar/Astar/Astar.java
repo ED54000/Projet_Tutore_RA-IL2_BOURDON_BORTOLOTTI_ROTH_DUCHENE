@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import laby.views.ViewLabyrinth;
 import steering_astar.Steering.Vector2D;
 
 import java.util.*;
+
+import static laby.ModeleLabyrinth.getTailleCase;
+
 
 /***
  * Classe Astar qui choisi le chemin le plus court avec l'algorithme A*
@@ -45,10 +47,10 @@ public class Astar {
      * @return true si le point peut être traversé, false sinon
      */
     boolean isUnblocked(char[][] grid, Vector2D point) {
-        Vector2D pointDivide = new Vector2D(point.getX() / ViewLabyrinth.getTailleCase(), point.getY() / ViewLabyrinth.getTailleCase());
+        Vector2D pointDivide = new Vector2D(point.getX(), point.getY());
         if (isValid(grid, pointDivide)) {
             char cell = grid[(int) point.getX()][(int) point.getY()];
-            return cell == '.' || cell == 'E' || cell == 'S';
+            return cell == '.' || cell == 'E' || cell == 'S' || cell == 'B';
         }
 
         return false;
@@ -74,8 +76,8 @@ public class Astar {
      * @return La distance euclidienne entre les deux points
      */
     double calculateHValue(Vector2D src, Vector2D dest) {
-        return Math.sqrt(Math.pow((src.getX() / ViewLabyrinth.getTailleCase() - dest.getX() / ViewLabyrinth.getTailleCase()), 2.0)
-                + Math.pow((src.getY() / ViewLabyrinth.getTailleCase() - dest.getY() / ViewLabyrinth.getTailleCase()), 2.0));
+        return Math.sqrt(Math.pow((src.getX() - dest.getX()), 2.0)
+                + Math.pow((src.getY() - dest.getY()), 2.0));
     }
 
     /***
@@ -88,8 +90,6 @@ public class Astar {
      */
     private ArrayList<Vector2D> tracePath(Cell[][] cellDetails, Vector2D dest) {
         ArrayList<Vector2D> pathArray = new ArrayList<>();
-        System.out.println("The Path:  ");
-
         Stack<Vector2D> path = new Stack<>();
 
         double row = dest.getX();
@@ -97,19 +97,13 @@ public class Astar {
 
         Vector2D nextNode;
         do {
-            path.push(new Vector2D(row * ViewLabyrinth.getTailleCase(), col * ViewLabyrinth.getTailleCase()));
-            pathArray.addFirst(new Vector2D(col * ViewLabyrinth.getTailleCase(), row * ViewLabyrinth.getTailleCase()));
+            pathArray.addFirst(new Vector2D(col * getTailleCase(), row * getTailleCase()));
             nextNode = cellDetails[(int) row][(int) col].parent;
             row = nextNode.getX();
             col = nextNode.getY();
         } while (cellDetails[(int) row][(int) col].parent != nextNode);
 
-
-        while (!path.empty()) {
-            Vector2D p = path.peek();
-            path.pop();
-            //System.out.println("-> (" + p.getX() / ViewLabyrinth.getTailleCase() + "," + p.getY() / ViewLabyrinth.getTailleCase() + ") ");
-        }
+       // System.out.println(pathArray);
         return pathArray;
     }
 
@@ -127,34 +121,34 @@ public class Astar {
      *     - Le comportement "Kamikaze" considère la tour la plus proche comme son arrivée
      * @return Le chemin le plus court
      */
-    public ArrayList<Vector2D> aStarSearch(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest, String comp) {
+    public ArrayList<Vector2D> aStarSearch(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest, String comp, Boolean evolv ) {
         double[][] costGrid = createTowerAvoidanceCostGrid(grid, comp);
         char[][] copyGrid = new char[grid.length][];
         for (int i = 0; i < grid.length; i++) {
             copyGrid[i] = grid[i].clone();
         }
-        if (comp.equals("Kamikaze")) {
+        if (comp.equals("Kamikaze") && !evolv) {
             try {
-                double[] newEnd = getNearTower(copyGrid);
-                dest = new Vector2D(newEnd[0] * ViewLabyrinth.getTailleCase(), newEnd[1] * ViewLabyrinth.getTailleCase());
-                copyGrid[(int) dest.getX() / ViewLabyrinth.getTailleCase()][(int) dest.getY() / ViewLabyrinth.getTailleCase()] = 'E';
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
+                Vector2D newEnd = getNearTower(copyGrid, src);
+                if (isValid(copyGrid,newEnd)) {
+                    dest = new Vector2D(newEnd.getX(), newEnd.getY());
+                    copyGrid[(int) dest.getX()][(int) dest.getY()] = 'E';
+                }
+            } catch (Exception _) {
             }
         }
-        Vector2D destDivide = new Vector2D(dest.getX() / ViewLabyrinth.getTailleCase(), dest.getY() / ViewLabyrinth.getTailleCase());
-        Vector2D srcDivide = new Vector2D(src.getX() / ViewLabyrinth.getTailleCase(), src.getY() / ViewLabyrinth.getTailleCase());
 
-        if (!isValid(copyGrid, srcDivide)) {
+
+        if (!isValid(copyGrid, src)) {
             System.err.println("Source is invalid...");
             return null;
         }
-        if (!isValid(copyGrid, destDivide)) {
+        if (!isValid(copyGrid, dest)) {
             System.err.println("Destination is invalid...");
             return null;
         }
-        if (!isUnblocked(copyGrid, srcDivide)
-                || !isUnblocked(copyGrid, destDivide)) {
+        if (!isUnblocked(copyGrid, src)
+                || !isUnblocked(copyGrid, dest)) {
             System.err.println("Source or destination is blocked...");
             return null;
         }
@@ -169,8 +163,8 @@ public class Astar {
 
         double i, j;
 
-        i = src.getX() / ViewLabyrinth.getTailleCase();
-        j = src.getY() / ViewLabyrinth.getTailleCase();
+        i = src.getX();
+        j = src.getY();
         cellDetails[(int) i][(int) j] = new Cell();
         cellDetails[(int) i][(int) j].f = 0.0;
         cellDetails[(int) i][(int) j].g = 0.0;
@@ -198,15 +192,15 @@ public class Astar {
                         cellDetails[(int) neighbour.getX()][(int) neighbour.getY()] = new Cell();
                     }
 
-                    if (isDestination(neighbour, destDivide)) {
+                    if (isDestination(neighbour, dest)) {
                         cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].parent = new Vector2D(i, j);
-                        System.out.println("The destination cell is found");
-                        return tracePath(cellDetails, destDivide);
+                        //System.out.println("The destination cell is found");
+                        return tracePath(cellDetails, dest);
                     } else if (!closedList[(int) neighbour.getX()][(int) neighbour.getY()]
                             && isUnblocked(grid, neighbour)) {
                         double gNew, hNew, fNew;
                         gNew = cellDetails[(int) i][(int) j].g + 1.0;
-                        hNew = calculateHValue(neighbour, destDivide) + getTowerPenalty(costGrid, neighbour);
+                        hNew = calculateHValue(neighbour, dest) + getTowerPenalty(costGrid, neighbour);
                         fNew = gNew + hNew;
 
                         if (cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].f == -1
@@ -316,29 +310,33 @@ public class Astar {
         return costGrid[(int) point.getX()][(int) point.getY()];
     }
 
-    private double[] getNearTower(char[][] grid) {
-            char[] charTowers = {'A', 'B', 'C'};
-            double[] nearest = {Double.MAX_VALUE, Double.MAX_VALUE};
-            double nearestDistance = Double.MAX_VALUE;
+    private Vector2D getNearTower(char[][] grid, Vector2D posEnnemi) {
+        char[] charTowers = {'A', 'B', 'C'};
+        Vector2D nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
 
-            for (char c : charTowers) {
-                try {
-                    double[] near = Vector2D.getCloserPairIndex(grid, c);
+        for (char c : charTowers) {
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[i].length; j++) {
+                    if (grid[i][j] == c) {
+                        // Calcul de la distance entre la position actuelle et la position de l'ennemi
+                        double currentDistance = Math.sqrt(
+                                Math.pow(i - posEnnemi.getX(), 2) + Math.pow(j - posEnnemi.getY(), 2)
+                        );
 
-                    double currentDistance = Math.sqrt(Math.pow(near[0], 2) + Math.pow(near[1], 2));
-
-                    if (currentDistance < nearestDistance) {
-                        nearestDistance = currentDistance;
-                        nearest = near;
+                        // Mettre à jour si la tour est plus proche
+                        if (currentDistance < nearestDistance) {
+                            nearestDistance = currentDistance;
+                            nearest = new Vector2D(i, j);
+                        }
                     }
-                } catch (Exception e) {
-                    System.err.println("Defense " + c + " not found: " + e.getMessage());
-
                 }
             }
-
-            return nearest;
         }
 
-
+        return nearest;
     }
+
+
+
+}

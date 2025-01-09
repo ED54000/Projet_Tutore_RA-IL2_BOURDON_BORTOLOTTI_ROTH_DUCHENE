@@ -1,7 +1,9 @@
 package entites.defenses;
 
 public class Archer extends ActiveDefense {
-    public Archer(double x, double y) {
-        super(x, y, 80, 8, 3.5, 2);
+    public Archer(double x, double y, String name) {
+
+        super(x, y, 200, 10, 3.5, 200,"/archerClash.png", name);
+
     }
 }

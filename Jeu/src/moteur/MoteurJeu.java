@@ -2,6 +2,8 @@ package moteur;
 //squelette adapté et modifié du moteur de Zeldiablo inspiré de :
 //https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 
+import entites.enemies.Ennemy;
+import evolution.EnnemyEvolution;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -18,14 +20,15 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import laby.ModeleLabyrinth;
-import laby.controllers.ControllerLearn;
-import laby.controllers.ControllerStart;
+
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static laby.ModeleLabyrinth.getScreenSize;
 
 
 // copied from: https://gist.github.com/james-d/8327842
@@ -123,12 +126,12 @@ public class MoteurJeu extends Application {
         // Champ pour le nombre d'ennemis
         TextField enemiesField = new TextField();
         enemiesField.setPromptText("Nombre d'ennemis");
-        enemiesField.setText("5");
+        enemiesField.setText("30");
 
         // Champ pour le nombre d'ennemis qui doivent atteindre la ligne d'arrivée
         TextField nbEnnemiesToWinField = new TextField();
         nbEnnemiesToWinField.setPromptText("Nombre d'ennemis qui doivent atteindre la ligne d'arrivée");
-        nbEnnemiesToWinField.setText("5");
+        nbEnnemiesToWinField.setText("70");
 
         HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
         // Champ pour le nombre de manches
@@ -141,7 +144,7 @@ public class MoteurJeu extends Application {
         nbEnnemiesToWinField.setId("ennemiesToWinField");
 
         // Création du contrôleur avec les références des champs
-        ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField, nbEnnemiesToWinField);
+        //ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField, nbEnnemiesToWinField);
 
 
         HBox roundsBox = new HBox(10, new Label("Nombre de manches :"), roundsField);
@@ -151,6 +154,7 @@ public class MoteurJeu extends Application {
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent MouseEvent) {
+                laby.setStartTime();
                 switch (labyrinthComboBox.getValue()) {
                     case "Petit":
                         break;
@@ -184,7 +188,7 @@ public class MoteurJeu extends Application {
     }
 
     public void startJeu(Stage primaryStage) {
-        canvas.setWidth((ViewLabyrinth.getScreenSize().width/7.0)*6);
+        canvas.setWidth((getScreenSize().width/7.0)*6);
         canvas.widthProperty().bind(canvasContainer.widthProperty());
         canvas.heightProperty().bind(canvasContainer.heightProperty());
 
@@ -194,12 +198,17 @@ public class MoteurJeu extends Application {
         title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         VBox logs = new VBox();
-        logs.setPrefWidth(ViewLabyrinth.getScreenSize().width/7.0);
+        logs.setPrefWidth(getScreenSize().width/7.0);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
         logs.getChildren().add(new Label("Manche 1"));
 
-        ContainerLogs.getChildren().addAll(title, logs);
+        //Ajout d'un scrollPane
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setPrefSize(getScreenSize().width/6.8, getScreenSize().height);
+        scrollPane.setContent(logs);
+
+        ContainerLogs.getChildren().addAll(title, scrollPane);
 
         //TODO : création des controleurs
         //ControllerStart controllerStart = new ControllerStart(laby);
@@ -241,7 +250,7 @@ public class MoteurJeu extends Application {
             @Override
             public void handle(long timestamp) {
                 //fin du jeu
-                if (jeu.etreFini()) {
+                if (Platform.isFxApplicationThread() && jeu.etreFini()) {
                     this.stop();
                     return;
                 }

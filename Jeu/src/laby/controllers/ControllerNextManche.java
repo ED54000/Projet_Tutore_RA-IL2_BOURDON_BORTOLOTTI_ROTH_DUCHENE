@@ -1,11 +1,15 @@
 package laby.controllers;
 
+import entites.enemies.Ennemy;
+import evolution.EnnemyEvolution;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
+
+import java.util.Map;
 
 public class ControllerNextManche implements EventHandler<MouseEvent> {
 
@@ -17,18 +21,23 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent mouseEvent) {
+        // On met à jour le time de départ de la manche
+        laby.setStartTime();
 
-        // On clear la liste des ennemis morts dans le modèle
-        laby.clearDeadEnemies();
+        //clear les logs si on est pas en simulation
+        if (!laby.estSimulation()) {
+            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+            parentVBox.getChildren().clear();
 
-        //clear les logs
-        VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+            int nbManches = laby.getNbManches()+1;
+            parentVBox.getChildren().add(new Label("Manche " + nbManches));
 
-        parentVBox.getChildren().clear();
-        int nbManches = laby.getNbManches()+1;
-        parentVBox.getChildren().add(new Label("Manche " + nbManches));
-        //TODO : faire la prochaine manche
+        }
+
         laby.setPause(false);
         laby.setNbManches(laby.getNbManches() + 1);
+        System.out.println("===========================================");
+        System.out.println("Fin de la manche");
+        System.out.println("Nouvelle manche : " + laby.getNbManches());
     }
 }

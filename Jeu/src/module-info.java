@@ -2,11 +2,14 @@ module com.example.moteurjeu {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
+    requires jdk.unsupported.desktop;
+    requires java.sql;
 
 
     opens moteur to javafx.fxml;
     exports moteur;
-    exports steering_astar.Steering;
-    exports entites.enemies;
-    exports steering_astar.Astar;
+
+    exports mains;
+    opens mains to javafx.fxml;
+
 }

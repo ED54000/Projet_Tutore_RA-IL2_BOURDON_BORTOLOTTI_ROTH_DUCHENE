@@ -1,6 +1,12 @@
 package steering_astar.Steering;
 
+import laby.ModeleLabyrinth;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static java.lang.Math.round;
+
 
 /***
  * classe definissant des coordonnees reelles x,y
@@ -63,6 +69,16 @@ public class Vector2D {
      */
     public Vector2D scale(double scalar) {
         return new Vector2D(this.x * scalar, this.y * scalar);
+    }
+
+    /***
+     * methode effectuer une division de coordonnees
+     * @param diviser reel par lequel on va diviser les coordonnees courantes
+     * @return de nouvelles coordonnees correspondant a la division des
+     * coordonnees courantes et du parametre diviser
+     */
+    public Vector2D divide(double diviser) {
+        return new Vector2D(this.x / diviser, this.y / diviser);
     }
 
     /***
@@ -152,6 +168,33 @@ public class Vector2D {
                 "x=" + x +
                 ", y=" + y +
                 '}';
+    }
+
+    public int[] getCaseFromVector(Vector2D vector) {
+        int x = (int) round(vector.x / ModeleLabyrinth.getTailleCase());
+        int y = (int) round(vector.y / ModeleLabyrinth.getTailleCase());
+        return new int[]{x, y};
+    }
+
+    public boolean isObstacle(){
+        int[] coordCase = getCaseFromVector(this);
+        char theCase;
+        ModeleLabyrinth m = new ModeleLabyrinth();
+        int length = m.getCases().length;
+        if (coordCase[0] > 0 && coordCase[1] > 0 && length > coordCase[1]) {
+            theCase = m.getCase(coordCase[1],coordCase[0]);
+        } else {
+            theCase = 'ඞ';
+        }
+        if (theCase == '#' || theCase == 'A' || theCase == 'C'){
+            return true;
+        }
+        return false;
+    }
+
+    public Vector2D getClosestCaseCenter(){
+        int[] coordCase = getCaseFromVector(this);
+        return new Vector2D(coordCase[0] * ModeleLabyrinth.getTailleCase(), coordCase[1] * ModeleLabyrinth.getTailleCase());
     }
 }
 

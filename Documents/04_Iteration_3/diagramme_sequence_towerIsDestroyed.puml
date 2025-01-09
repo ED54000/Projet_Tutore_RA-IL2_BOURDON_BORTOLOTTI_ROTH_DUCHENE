@@ -1,0 +1,49 @@
+@startuml towerIsDestroyed
+skinparam sequenceMessageAlign center
+participant "ModeleLabyrinth:laby" as laby
+participant "Defense:defense" as d
+participant "Ennemy:ennemy" as e
+participant "Astar:astar" as astar
+
+     -> laby : update()
+     activate laby
+laby -> laby : towerIsDestroyed()
+
+loop defense in deadDefense
+    laby -> d : getPosition()
+    activate d 
+    d --> laby : Vector2D : position
+    deactivate d
+    note left 
+    "On tranforme dans la grille 
+    la defense par un chemin ('.') "
+    end note
+end
+
+loop ennemy in enemies
+
+    laby -> e : getPositionReel()
+    activate e
+    e --> laby : Vector2D : position
+    deactivate e
+     note left 
+    "On tranforme dans la grille 
+    la position de l'ennemi
+    par un nouveau depart ('S') "
+    end note
+
+end
+
+laby -> astar : aStarSearch() 
+activate astar
+astar --> laby : ArrayList<Vector2D> : chemin
+deactivate astar
+laby -> e : setBehaviourPath()
+activate e
+e --> laby
+deactivate e 
+ <-- laby
+
+
+
+@enduml
