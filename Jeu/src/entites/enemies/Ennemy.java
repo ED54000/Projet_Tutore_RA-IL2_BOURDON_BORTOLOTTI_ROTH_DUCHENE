@@ -21,10 +21,12 @@ public abstract class Ennemy extends Entity {
     private long survivalTime;
     private Vector2D positionReel;
     private Vector2D velocity;
+    private final double healthBase;
 
     public Ennemy(Vector2D position, double health, double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
         super(position, damages, range, sprite, health, name, attackSpeed);
         this.speed = speed;
+        this.healthBase = health;
         this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         this.distanceToArrival = distanceToArrival;
         this.distanceStartToArrival = distanceToArrival;
@@ -41,17 +43,21 @@ public abstract class Ennemy extends Entity {
 
         // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
         if(this.getLastAttackCount() >=  this.getAttackSpeed() * speedTime) {
-            if( this.getAttackSpeed() <= 0 ){
+            if (this.getAttackSpeed() <= 0) {
                 this.setAttackSpeed(1);
             }
+
             // On met à jour le temps du dernier heal
             this.setLastAttackCount(0);
-            // On heal
-            target.health += heal;
-            System.out.println("Soin de " + this.getName() + " sur " + target.getName());
-            System.out.println("Montant de soin : " + heal);
-            System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
-            System.out.println("=====================================");
+            if (target.health + heal <= target.healthBase) {
+                // On heal
+                target.health += heal;
+                System.out.println("Soin de " + this.getName() + " sur " + target.getName());
+                System.out.println("Montant de soin : " + heal);
+                System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
+                System.out.println("Vie de base de " + target.getName() + " : " + target.healthBase);
+                System.out.println("=====================================");
+            }
         }
     }
 

@@ -379,7 +379,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 for (Ennemy ennemiTarget : enemies) {
                     // Tous les ennemis a portée sont soignés
                     if (ennemi.isInRange(ennemiTarget) && !this.isPause()) {
-                        ennemi.healDamage(ennemiTarget, ennemi.getDamages(), secondes);
+                        ennemi.healDamage(ennemiTarget, ennemi.getDamages(), ennemi.getLastAttackCount());
                     }
                 }
             }
@@ -388,7 +388,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 for (Defense defense : defenses) {
                     if (ennemi.isInRange(defense)) {
                         // On l'attaque
-                        ennemi.attack(defense, secondes);
+                        ennemi.attack(defense, ennemi.getLastAttackCount());
                         // le berserker se suicide après avoir attaqué
                         ennemi.takeDamage(1000);
                         // On met à jour le temps de survie
@@ -402,7 +402,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 for (Defense defense : defenses) {
                     if (ennemi.isInRange(defense)) {
                         // On l'attaque
-                        ennemi.attack(defense, secondes);
+                        ennemi.attack(defense, ennemi.getLastAttackCount());
                     }
                 }
             }
@@ -420,7 +420,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         // Si l'ennemi n'est pas mort
                         if (!ennemyTarget.isDead()) {
                             // On l'attaque
-                            defense.attack(ennemyTarget, secondes);
+                            defense.attack(ennemyTarget, defense.getLastAttackCount());
                         }
                         // Si l'ennemi est mort on set son killerType
                         if (ennemyTarget.isDead() && !deadEnemies.contains(ennemyTarget)) {
@@ -444,7 +444,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Si on a trouvé un ennemi et qu'il est dans la range de la défense
                     if (ennemy != null && defense.isInRange(ennemy)) {
                         // On l'attaque
-                        defense.attack(ennemy, secondes);
+                        defense.attack(ennemy, defense.getLastAttackCount());
                         // On set la cible de la défense
                         ((ActiveDefense) defense).setTarget(ennemy);
                         // Si l'ennemi est mort, on set son killerType
@@ -466,7 +466,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     if (defense.isInRange(e) && !deadDefenses.contains(defense) && !((PassiveDefense) defense).isAttacked()) {
                         // Cela active la defense
                         // On attaque l'ennemi
-                        defense.attack(e, secondes);
+                        defense.attack(e, defense.getLastAttackCount());
                         ((PassiveDefense) defense).setAttacked(true);
                         // Si l'ennemi est mort, on set son killerType
                         if (e.isDead() && !deadEnemies.contains(e)) {
