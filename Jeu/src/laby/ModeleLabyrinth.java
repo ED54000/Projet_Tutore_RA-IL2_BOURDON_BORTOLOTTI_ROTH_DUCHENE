@@ -163,11 +163,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             numLigne++;
             ligne = br.readLine();
         }
-        createEnnemies(nbEnnemies);
         br.close();
     }
 
-    private void createEnnemies(int nbEnnemies) {
+    public void createEnnemies(int nbEnnemies) {
         createBehaviours(this.getCases());
 
         int nbGiant = 1;

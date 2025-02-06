@@ -166,6 +166,7 @@ public class MoteurJeu extends Application {
                 dialogStage.close();
                 try {
                     laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
+                    laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
