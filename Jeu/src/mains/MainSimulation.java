@@ -17,6 +17,7 @@ public class MainSimulation extends Application {
         ModeleLabyrinth jeu = new ModeleLabyrinth();
         jeu.setSimulation(true);
         jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", 50, 1000, 1200);
+        jeu.createEnnemies(50);
 
         // Lancer la simulation dans un thread séparé
         new Thread(() -> {
@@ -37,6 +38,4 @@ public class MainSimulation extends Application {
             System.out.println("Simulation terminée.");
         }).start();
     }
-
-
 }
