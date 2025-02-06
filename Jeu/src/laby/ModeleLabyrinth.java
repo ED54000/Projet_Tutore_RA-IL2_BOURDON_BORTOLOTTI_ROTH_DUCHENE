@@ -49,7 +49,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
     private HashMap<Giant, Double> ennemyScore = new HashMap<>();
     private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
-    private int nbArcher, nbCanon, nbBomb = 0;
+    private int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
 
 
     //si le jeu est avec le main simulation
@@ -72,7 +72,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private boolean end = false;
     private Astar astar = new Astar();
     private long endTime;
-    private ArrayList<Vector2D> aStarHealer;
+    //private ArrayList<Vector2D> aStarHealerPath;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -191,8 +191,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
             }
             if (e instanceof Druide){
-                e.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
-                e.setDistanceStartToArrival(aStarHealer);
+                ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
+
+                e.setBehaviorPath(new PathfollowingBehavior(aStarHealerPath));
+                e.setDistanceStartToArrival(aStarHealerPath);
             }
         }
     }
@@ -200,11 +202,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
         ArrayList<Ennemy> ennemies = new ArrayList<>();
         //createBehaviours(this.getCases());
-
-        int nbGiant = 1;
-        int nbNinja = 1;
-        int nbBerserker = 1;
-        int nbDruides = 1;
 
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
@@ -239,7 +236,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         for (int i = 1; i < nbDruides; i++) {
             Druide druide = new Druide(new Vector2D(0, 0), "Druide " + i);
             //ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-            this.aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
+            //this.aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
+            //System.out.println("aStarHealer : " + aStarHealerPath);
             //druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
             //druide.setDistanceStartToArrival(aStarHealer);
             ennemies.add(druide);
