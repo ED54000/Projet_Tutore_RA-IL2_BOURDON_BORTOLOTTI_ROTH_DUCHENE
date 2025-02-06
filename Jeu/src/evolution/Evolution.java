@@ -28,7 +28,7 @@ public class Evolution {
             ennemy.setDamages(startStats.get(ennemy)[2]);
             ennemy.setAttackSpeed(startStats.get(ennemy)[3]);
 
-            System.out.println("Ennemis après simu :" + ennemy.getHealth() + " " + ennemy.getSpeed() + " " + ennemy.getDamages() + " " + ennemy.getAttackSpeed());
+            //System.out.println("Ennemis après simu :" + ennemy.getHealth() + " " + ennemy.getSpeed() + " " + ennemy.getDamages() + " " + ennemy.getAttackSpeed());
         }
 
         return stats;
@@ -54,16 +54,18 @@ public class Evolution {
             lastUpdateTime = currentTime;
         }
         // On retourne le score
+        //System.out.println("Distance arrivée de "+jeu.getEnnemyEndOfManche().get(0).getName()+": "+jeu.getEnnemyEndOfManche().get(0).getDistanceToArrival()+" vie : "+jeu.getEnnemyEndOfManche().get(0).getHealth()+" temps de survie : "+jeu.getEnnemyEndOfManche().get(0).getSurvivalTime());
         return getScore(jeu.getEnnemyEndOfManche().get(0));
     }
 
-    public double getScore(Ennemy e){
+    public double getScore(Ennemy e) {
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
-        int bonus = e.isDead() ? -20 : 20;
-        System.out.println("Survival time : "+e.getSurvivalTime());
+        int bonus = e.isDead() ? -1000 : 1000;
+        System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
+        System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Bonus : "+bonus);
 
-        double score = ((double) e.getSurvivalTime() /1000000) + bonus;
+        double score = ((double) e.getSurvivalTime() /1000000) + bonus - e.getDistanceToArrival()*10;
         return score;
     }
 
@@ -98,7 +100,7 @@ public class Evolution {
         nouvellePopulation.addAll(enfants);
 
         // 5. Appliquer une mutation sur la nouvelle population
-        nouvellePopulation = mutate(nouvellePopulation);
+        //nouvellePopulation = mutate(nouvellePopulation);
 
         return nouvellePopulation;
     }

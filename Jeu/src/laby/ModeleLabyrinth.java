@@ -353,7 +353,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             new Vector2D(posYReel, posXReel),
                             new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
                 }
-                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior() + "survivalTime : " + e.getSurvivalTime());
+                //System.out.println("Distance de l'ennemi " + e.getName() + " à l'arrivée : " + e.getDistanceToArrival());
+                //System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior() + "survivalTime : " + e.getSurvivalTime());
 
                 c++;
             }
@@ -386,6 +387,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 ennemyScore.put((Giant) ennemiesEndOfManche.get(0), score);
                 this.end = true;
             }
+            System.out.println("Fin de la manche bitch");
         }
 
         // On gère les attaques des ennemis

@@ -26,7 +26,7 @@ public class MainSimu extends Application {
             System.out.println("Manche "+i);
             for (Ennemy ennemy : ennemies) {
                 System.out.println("Ennemy avant évolution: "+ ennemy.getName());
-                System.out.println("Vie : "+ennemy.getHealth());
+                System.out.println("Vie : "+ennemy.getHealth()+" Dégats : "+ennemy.getDamages()+" Vitesse : "+ennemy.getSpeed()+" Attaque : "+ennemy.getAttackSpeed());
             }
 
             //création d'une HashMap avec pour cléf l'ennemi et pour valeur son score
@@ -41,7 +41,7 @@ public class MainSimu extends Application {
             System.out.println("Nouvelle population : ");
             for (Ennemy ennemy : ennemies) {
                 System.out.println("Ennemy après evolution"+ennemy.getName());
-                System.out.println("Vie : "+ennemy.getHealth());
+                System.out.println("Vie : "+ennemy.getHealth()+" Dégats : "+ennemy.getDamages()+" Vitesse : "+ennemy.getSpeed()+" Attaque : "+ennemy.getAttackSpeed());
             }
 
         }
