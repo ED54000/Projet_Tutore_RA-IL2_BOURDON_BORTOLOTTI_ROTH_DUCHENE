@@ -44,7 +44,7 @@ public class Evolution {
             lastUpdateTime = currentTime;
         }
         // On retourne le score
-        return getScore(jeu.enemies.get(0));
+        return getScore(jeu.getEnnemyEndOfManche().get(0));
     }
 
     public double getScore(Ennemy e){
