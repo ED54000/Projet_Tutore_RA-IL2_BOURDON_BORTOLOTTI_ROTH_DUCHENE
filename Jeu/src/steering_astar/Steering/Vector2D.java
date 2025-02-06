@@ -181,7 +181,7 @@ public class Vector2D {
         char theCase;
         ModeleLabyrinth m = new ModeleLabyrinth();
         int length = m.getCases().length;
-        if (coordCase[0] > 0 && coordCase[1] > 0 && length > coordCase[1]) {
+        if (coordCase[0] > 0 && coordCase[1] > 0 && length > coordCase[1] && length > coordCase[0]) {
             theCase = m.getCase(coordCase[1],coordCase[0]);
         } else {
             theCase = 'ඞ';
