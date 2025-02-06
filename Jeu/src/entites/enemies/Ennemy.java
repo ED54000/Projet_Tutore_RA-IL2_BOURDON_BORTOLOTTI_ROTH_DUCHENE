@@ -27,7 +27,7 @@ public abstract class Ennemy extends Entity {
         super(position, damages, range, sprite, health, name, attackSpeed);
         this.speed = speed;
         this.healthBase = health;
-        this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
+        //this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         this.distanceToArrival = distanceToArrival;
         this.distanceStartToArrival = distanceToArrival;
         this.killerType = null;

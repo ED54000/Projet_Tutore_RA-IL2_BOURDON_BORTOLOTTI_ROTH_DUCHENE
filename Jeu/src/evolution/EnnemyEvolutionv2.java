@@ -60,7 +60,6 @@ public class EnnemyEvolutionv2 {
      * À personnaliser en fonction des propriétés des géants.
      */
     private Giant croiser(Giant parent1, Giant parent2) {
-        // Exemple de croisement (à adapter selon la structure de Giant)
         Giant giant = new Giant(new Vector2D(0, 0), "Giant");
 
         giant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
