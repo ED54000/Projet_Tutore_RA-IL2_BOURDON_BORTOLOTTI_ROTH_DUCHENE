@@ -13,8 +13,7 @@ import java.util.Random;
 
 public class Evolution {
 
-    public void evaluate(HashMap<Ennemy, Double> stats) throws IOException {
-        /* ===== EVOLUTION DES ENNEMIS ===== */
+    public HashMap<Ennemy, Double> evaluate(HashMap<Ennemy, Double> stats) throws IOException {
         // On boucle sur les agents de la map
         for (Ennemy ennemy : stats.keySet()) {
             // On crée un environnement pour l'agent
@@ -25,7 +24,7 @@ public class Evolution {
             stats.put(ennemy, simulate(jeu));
         }
 
-        /* ===== EVOLUTION DES DEFENSES ===== */
+        return stats;
     }
 
     /**
@@ -88,7 +87,38 @@ public class Evolution {
         nouvellePopulation.addAll(meilleurs);
         nouvellePopulation.addAll(enfants);
 
+        // 5. Appliquer une mutation sur la nouvelle population
+        nouvellePopulation = mutate(nouvellePopulation);
+
         return nouvellePopulation;
+    }
+
+    /**
+     * Méthode pour appliquer une mutation sur une population de géants
+     * @param nouvellePopulation
+     * @return
+     */
+    private ArrayList<Giant> mutate(ArrayList<Giant> nouvellePopulation) {
+
+        // On boucle sur les géants de la population
+        for (Giant giant : nouvellePopulation) {
+            // On applique une mutation sur chaque géant
+            giant.setHealth(mutateValue(giant.getHealth()));
+            giant.setSpeed(mutateValue(giant.getSpeed()));
+            giant.setDamages(mutateValue(giant.getDamages()));
+            giant.setAttackSpeed(mutateValue(giant.getAttackSpeed()));
+        }
+
+        return nouvellePopulation;
+    }
+
+    /**
+     * Méthode pour muter une valeur (ajouter un peu de bruit, 5% ici)
+     * @param value la valeur à muter
+     * @return la valeur mutée
+     */
+    private double mutateValue(double value) {
+        return value * (1 + (Math.random() * 0.10 - 0.05));
     }
 
     /**
