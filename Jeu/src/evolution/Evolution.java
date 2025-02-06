@@ -2,15 +2,51 @@ package evolution;
 
 import entites.enemies.Ennemy;
 import entites.enemies.Giant;
-import steering_astar.Steering.PathfollowingBehavior;
+import laby.ModeleLabyrinth;
 import steering_astar.Steering.Vector2D;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class EnnemyEvolutionv2 {
+public class Evolution {
+
+    public void evaluate(HashMap<Ennemy, Double> stats) throws IOException {
+        /* ===== EVOLUTION DES ENNEMIS ===== */
+        // On boucle sur les agents de la map
+        for (Ennemy ennemy : stats.keySet()) {
+            // On crée un environnement pour l'agent
+            ModeleLabyrinth jeu = new ModeleLabyrinth();
+            ArrayList<Ennemy> ennemies = new ArrayList<>();
+            ennemies.add(ennemy);
+            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", ennemies, 1000, 1200);
+            stats.put(ennemy, simulate(jeu));
+        }
+
+        /* ===== EVOLUTION DES DEFENSES ===== */
+    }
+
+    /**
+     * Simule une manche
+     * @param jeu le jeu à simuler
+     * @return le score de l'agent après la simulation
+     */
+    public double simulate(ModeleLabyrinth jeu){
+        double score = 0;
+        long lastUpdateTime = System.nanoTime();
+        // Tant que la manche est en cours
+        while (!jeu.isPause()) {
+            long currentTime = System.nanoTime();
+            double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
+
+            jeu.update(elapsedTimeInSeconds);
+            lastUpdateTime = currentTime;
+        }
+        // On retourne le score
+        return getScore(jeu.enemies.get(0));
+    }
 
     public double getScore(Ennemy e){
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
@@ -60,6 +96,7 @@ public class EnnemyEvolutionv2 {
      * À personnaliser en fonction des propriétés des géants.
      */
     private Giant croiser(Giant parent1, Giant parent2) {
+        // Exemple de croisement (à adapter selon la structure de Giant)
         Giant giant = new Giant(new Vector2D(0, 0), "Giant");
 
         giant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
