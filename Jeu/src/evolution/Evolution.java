@@ -14,15 +14,37 @@ import java.util.Random;
 public class Evolution {
 
     public HashMap<Ennemy, Double> evaluate(HashMap<Ennemy, Double> stats) throws IOException {
+
+        Map<Ennemy, Double> scores = new HashMap<>();
         // On boucle sur les agents de la map
         for (Ennemy ennemy : stats.keySet()) {
+            //on crée une copie de l'ennemy
+            //Ennemy ennemyOriginal = ennemy.clone();
+
             // On crée un environnement pour l'agent
             ModeleLabyrinth jeu = new ModeleLabyrinth();
             ArrayList<Ennemy> ennemies = new ArrayList<>();
             ennemies.add(ennemy);
+            System.out.println("Ennemy avant simulate: "+ennemy.getName());
+            System.out.println("Stats : ");
+            System.out.println("Vie :"+ennemy.getHealth());
+            System.out.println("SurvivalTime :"+ennemy.getSurvivalTime());
+            //stats.put(ennemy, 0.0);
             jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", ennemies, 1000, 1200);
-            stats.put(ennemy, simulate(jeu));
+            double score = simulate(jeu);
+
+            // On met à jour le score de l'agent
+            stats.put(ennemy, score);
         }
+        //ajout des scores à la hashmap
+        // Ajout des scores à la HashMap stats sans modifier les clés
+        for (Map.Entry<Ennemy, Double> entry : scores.entrySet()) {
+            stats.put(entry.getKey(), entry.getValue());
+        }
+        System.out.println("Premier ennemy après: "+stats.keySet().iterator().next().getName());
+        System.out.println("Stats : ");
+        System.out.println("Vie :"+stats.keySet().iterator().next().getHealth());
+        System.out.println("SurvivalTime :"+stats.keySet().iterator().next().getSurvivalTime());
 
         return stats;
     }
@@ -58,6 +80,15 @@ public class Evolution {
     }
 
     public ArrayList<Ennemy> evolve(HashMap<Ennemy, Double> giants) {
+        /*System.out.println("Hashmap des ennemies à évoluer: "+giants);
+        System.out.println("Leurs stats : ");
+        for (Map.Entry<Ennemy, Double> entry : giants.entrySet()) {
+            System.out.println("Ennemy : "+entry.getKey().getName());
+            System.out.println("Health : "+entry.getKey().getHealth());
+            System.out.println("Speed : "+entry.getKey().getSpeed());
+        }
+
+         */
         // 1. Trier les géants par score décroissant
         ArrayList<Map.Entry<Ennemy, Double>> giantsTries = new ArrayList<>(giants.entrySet());
         giantsTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
