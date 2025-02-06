@@ -6,45 +6,30 @@ import laby.ModeleLabyrinth;
 import steering_astar.Steering.Vector2D;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Evolution {
 
-    public HashMap<Ennemy, Double> evaluate(HashMap<Ennemy, Double> stats) throws IOException {
+    // On stocke les statistiques des ennemis au départ de la manche
+    public static final Map<Ennemy, double[]> startStats = Collections.synchronizedMap(new HashMap<>());
 
-        Map<Ennemy, Double> scores = new HashMap<>();
+    public HashMap<Ennemy, Double> evaluate(HashMap<Ennemy, Double> stats) throws IOException {
         // On boucle sur les agents de la map
         for (Ennemy ennemy : stats.keySet()) {
-            //on crée une copie de l'ennemy
-            //Ennemy ennemyOriginal = ennemy.clone();
-
             // On crée un environnement pour l'agent
             ModeleLabyrinth jeu = new ModeleLabyrinth();
             ArrayList<Ennemy> ennemies = new ArrayList<>();
             ennemies.add(ennemy);
-            System.out.println("Ennemy avant simulate: "+ennemy.getName());
-            System.out.println("Stats : ");
-            System.out.println("Vie :"+ennemy.getHealth());
-            System.out.println("SurvivalTime :"+ennemy.getSurvivalTime());
-            //stats.put(ennemy, 0.0);
             jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", ennemies, 1000, 1200);
-            double score = simulate(jeu);
+            stats.put(ennemy, simulate(jeu));
+            // Une fois le score calculé, on remet les statistiques de départ
+            ennemy.setHealth(startStats.get(ennemy)[0]);
+            ennemy.setSpeed(startStats.get(ennemy)[1]);
+            ennemy.setDamages(startStats.get(ennemy)[2]);
+            ennemy.setAttackSpeed(startStats.get(ennemy)[3]);
 
-            // On met à jour le score de l'agent
-            stats.put(ennemy, score);
+            System.out.println("Ennemis après simu :" + ennemy.getHealth() + " " + ennemy.getSpeed() + " " + ennemy.getDamages() + " " + ennemy.getAttackSpeed());
         }
-        //ajout des scores à la hashmap
-        // Ajout des scores à la HashMap stats sans modifier les clés
-        for (Map.Entry<Ennemy, Double> entry : scores.entrySet()) {
-            stats.put(entry.getKey(), entry.getValue());
-        }
-        System.out.println("Premier ennemy après: "+stats.keySet().iterator().next().getName());
-        System.out.println("Stats : ");
-        System.out.println("Vie :"+stats.keySet().iterator().next().getHealth());
-        System.out.println("SurvivalTime :"+stats.keySet().iterator().next().getSurvivalTime());
 
         return stats;
     }
@@ -55,6 +40,9 @@ public class Evolution {
      * @return le score de l'agent après la simulation
      */
     public double simulate(ModeleLabyrinth jeu){
+        // On sauvegarde les statistiques de départ des ennemis
+        saveStartStats(jeu.enemies);
+
         double score = 0;
         long lastUpdateTime = System.nanoTime();
         // Tant que la manche est en cours
@@ -75,20 +63,11 @@ public class Evolution {
         System.out.println("Survival time : "+e.getSurvivalTime());
         System.out.println("Bonus : "+bonus);
 
-        double score = e.getSurvivalTime() + bonus;
+        double score = ((double) e.getSurvivalTime() /1000000) + bonus;
         return score;
     }
 
     public ArrayList<Ennemy> evolve(HashMap<Ennemy, Double> giants) {
-        /*System.out.println("Hashmap des ennemies à évoluer: "+giants);
-        System.out.println("Leurs stats : ");
-        for (Map.Entry<Ennemy, Double> entry : giants.entrySet()) {
-            System.out.println("Ennemy : "+entry.getKey().getName());
-            System.out.println("Health : "+entry.getKey().getHealth());
-            System.out.println("Speed : "+entry.getKey().getSpeed());
-        }
-
-         */
         // 1. Trier les géants par score décroissant
         ArrayList<Map.Entry<Ennemy, Double>> giantsTries = new ArrayList<>(giants.entrySet());
         giantsTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
@@ -173,5 +152,18 @@ public class Evolution {
      */
     private <T> T randomChoice(T option1, T option2) {
         return new Random().nextBoolean() ? option1 : option2;
+    }
+
+    /**
+     * Sauvegarde les statistiques de départ des ennemis
+     * @param ennemies Liste des ennemis
+     */
+    public static void saveStartStats(List<Ennemy> ennemies) {
+        synchronized (startStats) {
+            for (Ennemy e : ennemies) {
+                double[] stats = {e.getHealth(), e.getSpeed(), e.getDamages(), e.getAttackSpeed(), e.getRange()};
+                startStats.put(e, stats);
+            }
+        }
     }
 }
