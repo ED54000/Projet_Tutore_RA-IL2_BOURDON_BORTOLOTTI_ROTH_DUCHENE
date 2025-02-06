@@ -19,7 +19,9 @@ public class Evolution {
         for (Ennemy ennemy : stats.keySet()) {
             // On crée un environnement pour l'agent
             ModeleLabyrinth jeu = new ModeleLabyrinth();
-            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", 50, 1000, 1200);
+            ArrayList<Ennemy> ennemies = new ArrayList<>();
+            ennemies.add(ennemy);
+            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", ennemies, 1000, 1200);
             stats.put(ennemy, simulate(jeu));
         }
 
