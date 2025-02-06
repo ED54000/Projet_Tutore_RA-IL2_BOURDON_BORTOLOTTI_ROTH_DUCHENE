@@ -17,7 +17,6 @@ import steering_astar.Astar.*;
 import java.awt.*;
 import java.io.*;
 
-import java.sql.Time;
 import java.util.*;
 
 public class ModeleLabyrinth implements Jeu, Subject {
@@ -50,7 +49,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
     private HashMap<Giant, Double> ennemyScore = new HashMap<>();
     private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
-    private int nbArcher, nbCanon, nbBomb = 0;
+    private int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
 
 
     //si le jeu est avec le main simulation
@@ -73,6 +72,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private boolean end = false;
     private Astar astar = new Astar();
     private long endTime;
+    //private ArrayList<Vector2D> aStarHealerPath;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -84,12 +84,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
      * Crée un labyrinthe à partir d'un fichier
      *
      * @param fichier         le fichier contenant le labyrinthe
-     * @param nbEnnemies      le nombre d'ennemis
+     * @param ennemies      le nombre d'ennemis
      * @param limManches      le nombre de manches
      * @param nbEnnemiesToWin le nombre d'ennemis à atteindre l'arrivée pour gagner
      * @throws IOException si le fichier n'existe pas
      */
-    public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin) throws IOException {
+    public void creerLabyrinthe(String fichier, ArrayList<Ennemy> ennemies, int limManches, int nbEnnemiesToWin) throws IOException {
+        this.enemies = ennemies;
+
         this.limManches = limManches;
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
@@ -163,58 +165,68 @@ public class ModeleLabyrinth implements Jeu, Subject {
             numLigne++;
             ligne = br.readLine();
         }
-        createEnnemies(nbEnnemies);
+        setAllEnnemiesStats(this.enemies);
         br.close();
     }
 
-    private void createEnnemies(int nbEnnemies) {
+    private void setAllEnnemiesStats(ArrayList<Ennemy> ennemies) {
         createBehaviours(this.getCases());
+        for (Ennemy e : ennemies) {
+            e.setPositionReel(e.getPosition().divide(ModeleLabyrinth.getTailleCase()));
 
-        int nbGiant = 1;
-        int nbNinja = 1;
-        int nbBerserker = 1;
-        int nbDruides = 1;
+            e.setToStart(this);
+            if (e instanceof Giant){
+                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+            }
+            if (e instanceof Ninja){
+                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
+                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
+            }
+            if (e instanceof Berserker){
+                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
+                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
+            }
+            if (e instanceof Druide){
+                ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
 
+                e.setBehaviorPath(new PathfollowingBehavior(aStarHealerPath));
+                e.setDistanceStartToArrival(aStarHealerPath);
+            }
+        }
+    }
+
+    public ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
+        ArrayList<Ennemy> ennemies = new ArrayList<>();
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant " + nbGiant);
-                    giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
-                    giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
-                    this.enemies.add(giant);
+                    Giant giant = new Giant(new Vector2D(0, 0), "Giant " + nbGiant);
+                    ennemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Ninja " + nbNinja);
-                    ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
-                    ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
-                    this.enemies.add(ninja);
+                    Ninja ninja = new Ninja(new Vector2D(0,0), "Ninja " + nbNinja);
+                    ennemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Berseker " + nbBerserker);
-                    berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
-                    berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
-                    this.enemies.add(berserker);
+                    Berserker berserker = new Berserker(new Vector2D(0, 0), "Berseker " + nbBerserker);
+                    ennemies.add(berserker);
                     nbBerserker++;
                     break;
                 case 3:
+                    Druide druide = new Druide(new Vector2D(0, 0), "Druide " + nbDruides);
+                    ennemies.add(druide);
                     nbDruides++;
                     break;
             }
         }
-        for (int i = 1; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Druide " + i);
-            ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-            druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
-            druide.setDistanceStartToArrival(aStarHealer);
-            this.enemies.add(druide);
-        }
 
         // On sauvegarde les statistiques des ennemis
-        EnnemyEvolution.saveStartStats(this.enemies);
+        EnnemyEvolution.saveStartStats(ennemies);
         System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
         Map<Ennemy, double[]> map = EnnemyEvolution.startStats;
@@ -229,6 +241,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
             System.out.println();
         }
+        return ennemies;
     }
 
     public ArrayList<Vector2D> getNewHealerAStar(int nbDruides, int nbGiant, int nbBerserker, int nbNinja) {
@@ -336,7 +349,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         posXReel = newCoord[1];
                     }
                     copyGrid[posYReel][posXReel] = 'S';
-
                     e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
                             new Vector2D(posYReel, posXReel),
                             new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
@@ -531,7 +543,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 System.out.println("Le " + ennemy.getName() + " est arrivé");
                 System.out.println("Liste des ennemis a la fin : " + enemies);
                 setLogs("Le " + ennemy.getName() + " est arrivé");
-                ennemy.setPosition(new Vector2D(getXArrival(), getYArrival()));
                 //si les ennemis ont gagné
                 if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) {
                     setLogs("Fin du jeu car assez d'ennemis ont atteint l'arrivée");

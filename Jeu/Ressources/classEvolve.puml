@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+participant MainTest
+
+
+ModeleLaby -> Evolution: getScore()
+activate Evolution
+Evolution -> Ennemy : getAttribus()
+activate Ennemy
+Ennemy --> Evolution : Attribus
+deactivate Ennemy
+Evolution --> ModeleLaby : score
+deactivate Evolution
+
+MainTest -> Evolution: evolve(ModeleLaby.getMap())
+
+
+
+
+@enduml
