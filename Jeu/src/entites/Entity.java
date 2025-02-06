@@ -81,7 +81,7 @@ public abstract class Entity {
      * @param damage les dégâts à prendre
      */
     public void takeDamage(double damage) {
-        health -= damage;
+        health -= Math.abs(damage);
         if (this.health <= 0) {
             isDead = true;
         }

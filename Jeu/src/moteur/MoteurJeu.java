@@ -25,6 +25,7 @@ import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -165,8 +166,10 @@ public class MoteurJeu extends Application {
                 }
                 dialogStage.close();
                 try {
-                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), Integer.parseInt(enemiesField.getText()), Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
-                    laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
+                    ArrayList<Ennemy> ennemies = laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
+                    System.out.println("Les ennemies : " + ennemies.size());
+                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
+
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

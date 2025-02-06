@@ -16,8 +16,7 @@ public class MainSimulation extends Application {
     public void start(Stage stage) throws Exception {
         ModeleLabyrinth jeu = new ModeleLabyrinth();
         jeu.setSimulation(true);
-        jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", 50, 1000, 1200);
-        jeu.createEnnemies(50);
+        jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", jeu.createEnnemies(50), 1000, 1200);
 
         // Lancer la simulation dans un thread séparé
         new Thread(() -> {
@@ -34,8 +33,11 @@ public class MainSimulation extends Application {
                 // Mettre à jour le temps de la dernière mise à jour
                 lastUpdateTime = currentTime;
             }
+
             System.out.println(jeu.getLogs());
             System.out.println("Simulation terminée.");
         }).start();
     }
+
+
 }
