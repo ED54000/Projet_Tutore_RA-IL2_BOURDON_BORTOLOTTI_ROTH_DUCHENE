@@ -166,9 +166,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             numLigne++;
             ligne = br.readLine();
         }
-        //createEnnemies(nbEnnemies);
         setAllEnnemiesStats(this.enemies);
-
         br.close();
     }
 
@@ -201,46 +199,31 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
         ArrayList<Ennemy> ennemies = new ArrayList<>();
-        //createBehaviours(this.getCases());
-
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
                     Giant giant = new Giant(new Vector2D(0, 0), "Giant " + nbGiant);
-                    //giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
-                    //giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
                     ennemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
                     Ninja ninja = new Ninja(new Vector2D(0,0), "Ninja " + nbNinja);
-                    //ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
-                    //ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
                     ennemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
                     Berserker berserker = new Berserker(new Vector2D(0, 0), "Berseker " + nbBerserker);
-                    //berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
-                    //berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
                     ennemies.add(berserker);
                     nbBerserker++;
                     break;
                 case 3:
+                    Druide druide = new Druide(new Vector2D(0, 0), "Druide " + nbDruides);
+                    ennemies.add(druide);
                     nbDruides++;
                     break;
             }
-        }
-        for (int i = 1; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(0, 0), "Druide " + i);
-            //ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-            //this.aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-            //System.out.println("aStarHealer : " + aStarHealerPath);
-            //druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
-            //druide.setDistanceStartToArrival(aStarHealer);
-            ennemies.add(druide);
         }
 
         // On sauvegarde les statistiques des ennemis

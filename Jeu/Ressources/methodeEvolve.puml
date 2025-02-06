@@ -1,5 +1,0 @@
-@startuml
-
-MainTest -> ModeleLaby: create
-
-@enduml

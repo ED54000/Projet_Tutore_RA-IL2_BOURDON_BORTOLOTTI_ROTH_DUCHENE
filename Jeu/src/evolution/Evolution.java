@@ -57,33 +57,33 @@ public class Evolution {
         return score;
     }
 
-    public ArrayList<Giant> evolve(HashMap<Giant, Double> giants) {
+    public ArrayList<Ennemy> evolve(HashMap<Ennemy, Double> giants) {
         // 1. Trier les géants par score décroissant
-        ArrayList<Map.Entry<Giant, Double>> giantsTries = new ArrayList<>(giants.entrySet());
+        ArrayList<Map.Entry<Ennemy, Double>> giantsTries = new ArrayList<>(giants.entrySet());
         giantsTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
 
         // 2. Sélectionner la moitié des meilleurs géants
         int moitié = giantsTries.size() / 2;
-        ArrayList<Giant> meilleurs = new ArrayList<>();
+        ArrayList<Ennemy> meilleurs = new ArrayList<>();
         for (int i = 0; i < moitié; i++) {
             meilleurs.add(giantsTries.get(i).getKey());
         }
 
         // 3. Générer les enfants via le croisement
-        ArrayList<Giant> enfants = new ArrayList<>();
+        ArrayList<Ennemy> enfants = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < moitié; i++) {
             // Sélectionner deux parents aléatoires parmi les meilleurs
-            Giant parent1 = meilleurs.get(random.nextInt(meilleurs.size()));
-            Giant parent2 = meilleurs.get(random.nextInt(meilleurs.size()));
+            Ennemy parent1 = meilleurs.get(random.nextInt(meilleurs.size()));
+            Ennemy parent2 = meilleurs.get(random.nextInt(meilleurs.size()));
 
             // Créer un enfant en croisant les parents
-            Giant enfant = croiser(parent1, parent2);
+            Ennemy enfant = croiser(parent1, parent2);
             enfants.add(enfant);
         }
 
         // 4. Combiner les meilleurs géants et les enfants
-        ArrayList<Giant> nouvellePopulation = new ArrayList<>();
+        ArrayList<Ennemy> nouvellePopulation = new ArrayList<>();
         nouvellePopulation.addAll(meilleurs);
         nouvellePopulation.addAll(enfants);
 
@@ -98,10 +98,10 @@ public class Evolution {
      * @param nouvellePopulation
      * @return
      */
-    private ArrayList<Giant> mutate(ArrayList<Giant> nouvellePopulation) {
+    private ArrayList<Ennemy> mutate(ArrayList<Ennemy> nouvellePopulation) {
 
         // On boucle sur les géants de la population
-        for (Giant giant : nouvellePopulation) {
+        for (Ennemy giant : nouvellePopulation) {
             // On applique une mutation sur chaque géant
             giant.setHealth(mutateValue(giant.getHealth()));
             giant.setSpeed(mutateValue(giant.getSpeed()));
@@ -125,7 +125,7 @@ public class Evolution {
      * Méthode pour croiser deux géants et générer un enfant.
      * À personnaliser en fonction des propriétés des géants.
      */
-    private Giant croiser(Giant parent1, Giant parent2) {
+    private Ennemy croiser(Ennemy parent1, Ennemy parent2) {
         // Exemple de croisement (à adapter selon la structure de Giant)
         Giant giant = new Giant(new Vector2D(0, 0), "Giant");
 
