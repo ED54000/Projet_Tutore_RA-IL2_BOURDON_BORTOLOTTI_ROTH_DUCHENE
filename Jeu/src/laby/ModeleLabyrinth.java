@@ -216,7 +216,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // On sauvegarde les statistiques des ennemis
         EnnemyEvolution.saveStartStats(this.enemies);
-        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : "+this.enemies+"on les affiche");
+        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
         Map<Ennemy, double[]> map = EnnemyEvolution.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
@@ -298,8 +298,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
             this.defensesEndOfManche.addAll(deadDefenses);
             this.defensesEndOfManche.addAll(defenses);
 
-         //   System.out.println("Defenses morte : " + deadDefenses);
-         //   System.out.println("Defenses tout court : " + defenses);
+            //   System.out.println("Defenses morte : " + deadDefenses);
+            //   System.out.println("Defenses tout court : " + defenses);
 
             //on calcule la distance de chaque ennemi à l'arrivée
             int c = 0;
@@ -315,17 +315,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 int posYReel = (int) Math.ceil(e.getPositionReel().getY());
                 int posXReel = (int) Math.ceil(e.getPositionReel().getX());
-                if ( posYReel < 0){
+                if (posYReel < 0) {
                     posYReel = 0;
                 }
-                if ( posXReel < 0){
+                if (posXReel < 0) {
                     posXReel = 0;
                 }
 
-                if(posYReel >= copyGrid.length){
+                if (posYReel >= copyGrid.length) {
                     posYReel = copyGrid.length;
                 }
-                if(posXReel >= copyGrid.length){
+                if (posXReel >= copyGrid.length) {
                     posXReel = copyGrid.length;
                 }
                 if (e.isArrived()) {
@@ -336,7 +336,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                             new Vector2D(posYReel, posXReel),
                             new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
                 }
-                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior()+"survivalTime : "+e.getSurvivalTime());
+                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior() + "survivalTime : " + e.getSurvivalTime());
 
                 c++;
             }
@@ -360,13 +360,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 new ControllerNextManche(this).handle(fakeClickEvent);
             }
 
-            if (this.simulationEvolution){
+            if (this.simulationEvolution) {
                 EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
                 double score = evolution.getScore(ennemiesEndOfManche.get(0));
                 this.defenses = this.getDefenseEndOfManche();
-                System.out.println("Defenses toutes neuve : "+this.defenses);
+                System.out.println("Defenses toutes neuve : " + this.defenses);
                 // On sauvegarde les score de l'ennemi dans une map avec l'ennemi comme clé et le score comme valeur
-                ennemyScore.put((Giant)ennemiesEndOfManche.get(0), score);
+                ennemyScore.put((Giant) ennemiesEndOfManche.get(0), score);
                 this.end = true;
             }
         }
@@ -379,16 +379,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 for (Ennemy ennemiTarget : enemies) {
                     // Tous les ennemis a portée sont soignés
                     if (ennemi.isInRange(ennemiTarget) && !this.isPause()) {
-                        ennemi.healDamage(ennemiTarget, ennemi.getDamages(), ennemi.getLastAttackCount());
+                        ennemi.healDamage(ennemiTarget, ennemi.getDamages(), secondes);
                     }
                 }
-            }
-            if (ennemi instanceof Berserker) {
+            } else if (ennemi instanceof Berserker) {
                 // On vérifie si une défense est dans la portée de l'ennemi
                 for (Defense defense : defenses) {
                     if (ennemi.isInRange(defense)) {
                         // On l'attaque
-                        ennemi.attack(defense, ennemi.getLastAttackCount());
+                        ennemi.attack(defense, secondes);
                         // le berserker se suicide après avoir attaqué
                         ennemi.takeDamage(1000);
                         // On met à jour le temps de survie
@@ -402,7 +401,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 for (Defense defense : defenses) {
                     if (ennemi.isInRange(defense)) {
                         // On l'attaque
-                        ennemi.attack(defense, ennemi.getLastAttackCount());
+                        ennemi.attack(defense, secondes);
                     }
                 }
             }
@@ -420,7 +419,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         // Si l'ennemi n'est pas mort
                         if (!ennemyTarget.isDead()) {
                             // On l'attaque
-                            defense.attack(ennemyTarget, defense.getLastAttackCount());
+                            defense.attack(ennemyTarget, secondes);
                         }
                         // Si l'ennemi est mort on set son killerType
                         if (ennemyTarget.isDead() && !deadEnemies.contains(ennemyTarget)) {
@@ -444,7 +443,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Si on a trouvé un ennemi et qu'il est dans la range de la défense
                     if (ennemy != null && defense.isInRange(ennemy)) {
                         // On l'attaque
-                        defense.attack(ennemy, defense.getLastAttackCount());
+                        defense.attack(ennemy, secondes);
                         // On set la cible de la défense
                         ((ActiveDefense) defense).setTarget(ennemy);
                         // Si l'ennemi est mort, on set son killerType
@@ -466,7 +465,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     if (defense.isInRange(e) && !deadDefenses.contains(defense) && !((PassiveDefense) defense).isAttacked()) {
                         // Cela active la defense
                         // On attaque l'ennemi
-                        defense.attack(e, defense.getLastAttackCount());
+                        defense.attack(e, secondes);
                         ((PassiveDefense) defense).setAttacked(true);
                         // Si l'ennemi est mort, on set son killerType
                         if (e.isDead() && !deadEnemies.contains(e)) {
@@ -504,11 +503,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
         enemies.removeAll(enemiesDead);
 
         for (Ennemy e : enemies) {
-            e.setLastAttackCount(e.getLastAttackCount()+1);
+            e.setLastAttackCount(e.getLastAttackCount() + 1);
         }
 
         for (Defense d : defenses) {
-            d.setLastAttackCount(d.getLastAttackCount()+1);
+            d.setLastAttackCount(d.getLastAttackCount() + 1);
         }
 
         //on gère le déplacement des ennemis en vérifiant si ils sont arrivés
@@ -747,15 +746,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
         for (Ennemy ennemy : enemies) {
             int ennemiPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
             int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
-            if ( ennemiPosY < 0){
+            if (ennemiPosY < 0) {
                 ennemiPosY = 0;
             }
-            if ( ennemyPosX < 0){
+            if (ennemyPosX < 0) {
                 ennemyPosX = 0;
             }
 
             copyGrid[ennemiPosY][ennemyPosX] = 'S';
-            if(!(ennemiPosY==YArrival && ennemyPosX==XArrival)) {
+            if (!(ennemiPosY == YArrival && ennemyPosX == XArrival)) {
                 Astar newAstar = new Astar();
                 ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
                         new Vector2D(ennemiPosY, ennemyPosX),
@@ -781,6 +780,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public long getEndTime() {
         return this.endTime;
     }
+
     public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
         this.simulationEvolution = true;
         this.limManches = 2;
@@ -869,13 +869,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
         createBehaviours(this.getCases());
         System.out.println("ennemies evolved : " + this.ennemiesEvolved);
         if (this.ennemiesEvolved.isEmpty()) {
-            System.out.println("Liste des ennemies : "+this.enemies);
-            Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant"+i);
+            System.out.println("Liste des ennemies : " + this.enemies);
+            Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant" + i);
             e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
             e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
             this.enemies.add(e);
-        }
-        else {
+        } else {
             Giant e = this.ennemiesEvolved.get(i);
             e.setName(e.getName() + i);
             e.setToStart(this);
