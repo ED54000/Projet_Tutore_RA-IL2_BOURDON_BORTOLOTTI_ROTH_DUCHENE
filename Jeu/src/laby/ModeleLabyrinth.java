@@ -772,6 +772,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public long getEndTime() {
         return this.endTime;
     }
+
     public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
         this.simulationEvolution = true;
         this.limManches = 2;
