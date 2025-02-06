@@ -103,7 +103,7 @@ public class Astar {
             col = nextNode.getY();
         } while (cellDetails[(int) row][(int) col].parent != nextNode);
 
-       // System.out.println(pathArray);
+        // System.out.println(pathArray);
         return pathArray;
     }
 
@@ -121,7 +121,7 @@ public class Astar {
      *     - Le comportement "Kamikaze" considère la tour la plus proche comme son arrivée
      * @return Le chemin le plus court
      */
-    public ArrayList<Vector2D> aStarSearch(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest, String comp, Boolean evolv ) {
+    public ArrayList<Vector2D> aStarSearch(char[][] grid, int rows, int cols, Vector2D src, Vector2D dest, String comp, Boolean evolv) {
         double[][] costGrid = createTowerAvoidanceCostGrid(grid, comp);
         char[][] copyGrid = new char[grid.length][];
         for (int i = 0; i < grid.length; i++) {
@@ -130,7 +130,7 @@ public class Astar {
         if (comp.equals("Kamikaze") && !evolv) {
             try {
                 Vector2D newEnd = getNearTower(copyGrid, src);
-                if (isValid(copyGrid,newEnd)) {
+                if (isValid(copyGrid, newEnd)) {
                     dest = new Vector2D(newEnd.getX(), newEnd.getY());
                     copyGrid[(int) dest.getX()][(int) dest.getY()] = 'E';
                 }
@@ -216,6 +216,9 @@ public class Astar {
             }
         }
         System.err.println("Failed to find the Destination Cell");
+        System.err.println(src);
+        System.err.println(dest);
+        System.err.println(comp);
         return null;
     }
 
@@ -337,6 +340,36 @@ public class Astar {
         return nearest;
     }
 
+    public int[] findClosestValidPoint(char[][] grid, int startY, int startX) {
+        Queue<int[]> queue = new LinkedList<>();
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
 
+        queue.add(new int[]{startY, startX});
+        visited[startY][startX] = true;
+
+        while (!queue.isEmpty()) {
+            int[] point = queue.poll();
+            int x = point[0];
+            int y = point[1];
+
+            if (grid[x][y] == '.') {
+                return new int[]{x, y};
+            }
+
+            int[] dx = {0, 1, 0, -1};
+            int[] dy = {1, 0, -1, 0};
+
+            for (int i = 0; i < 4; i++) {
+                int newX = x + dx[i];
+                int newY = y + dy[i];
+
+                if (isValid(grid, new Vector2D(newX, newY)) && !visited[newX][newY]) {
+                    queue.add(new int[]{newX, newY});
+                    visited[newX][newY] = true;
+                }
+            }
+        }
+        return null;
+    }
 
 }

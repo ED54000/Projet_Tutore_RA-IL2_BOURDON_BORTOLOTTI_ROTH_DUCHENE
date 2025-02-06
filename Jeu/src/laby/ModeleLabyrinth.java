@@ -90,7 +90,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
      * @throws IOException si le fichier n'existe pas
      */
     public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin) throws IOException {
-        this.simulation = simulation;
         this.limManches = limManches;
         //ouvrire le fichier
         FileReader fr = new FileReader(fichier);
@@ -331,7 +330,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 if (e.isArrived()) {
                     e.setDistanceToArrival(new ArrayList<>());
                 } else {
+                    if (copyGrid[posYReel][posXReel] == '#') {
+                        moveEnemyToClosestValidPoint(copyGrid, posXReel, posYReel);
+                    }
                     copyGrid[posYReel][posXReel] = 'S';
+
                     e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
                             new Vector2D(posYReel, posXReel),
                             new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
@@ -525,8 +528,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
                 System.out.println("Le " + ennemy.getName() + " est arrivé");
                 System.out.println("Liste des ennemis a la fin : " + enemies);
-
                 setLogs("Le " + ennemy.getName() + " est arrivé");
+                ennemy.setPosition(new Vector2D(getXArrival(), getYArrival()));
                 //si les ennemis ont gagné
                 if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) {
                     setLogs("Fin du jeu car assez d'ennemis ont atteint l'arrivée");
@@ -734,30 +737,40 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void towerIsDestroyed() {
         System.out.println("La défense  est morte !");
-        char[][] copyGrid = new char[cases.length][];
-        for (int i = 0; i < cases.length; i++) {
-            copyGrid[i] = cases[i].clone();
-        }
-        for (Defense defense : deadDefenses) {
-            Vector2D position = defense.getPosition();
-            copyGrid[(int) position.getY()][(int) position.getX()] = '.';
 
-        }
         for (Ennemy ennemy : enemies) {
-            int ennemiPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
+            char[][] copyGrid = new char[cases.length][];
+            for (int i = 0; i < cases.length; i++) {
+                copyGrid[i] = cases[i].clone();
+            }
+            for (Defense defense : deadDefenses) {
+                Vector2D position = defense.getPosition();
+                copyGrid[(int) position.getY()][(int) position.getX()] = '.';
+
+            }
+            int ennemyPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
             int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
-            if (ennemiPosY < 0) {
-                ennemiPosY = 0;
+            if (ennemyPosY < 0) {
+                ennemyPosY = 0;
             }
             if (ennemyPosX < 0) {
                 ennemyPosX = 0;
             }
-
-            copyGrid[ennemiPosY][ennemyPosX] = 'S';
-            if (!(ennemiPosY == YArrival && ennemyPosX == XArrival)) {
+            if (ennemyPosX > copyGrid[0].length - 1) {
+                ennemyPosX = copyGrid[0].length - 1;
+            }
+            if (ennemyPosY > copyGrid.length - 1) {
+                ennemyPosY = copyGrid.length - 1;
+            }
+            char charCourant = copyGrid[ennemyPosY][ennemyPosX];
+            if (charCourant == '#') {
+                moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
+            }
+            copyGrid[ennemyPosY][ennemyPosX] = 'S';
+            if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
                 Astar newAstar = new Astar();
                 ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
-                        new Vector2D(ennemiPosY, ennemyPosX),
+                        new Vector2D(ennemyPosY, ennemyPosX),
                         new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
                 ennemy.setBehaviorPath(new PathfollowingBehavior(path));
                 BehavioursMap.put(ennemy.getBehavior(), path);
@@ -906,5 +919,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void setDefenses(ArrayList<Defense> defenseEndOfManche) {
         this.defenses = defenseEndOfManche;
+    }
+
+    public void moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
+        if (grid[ennemiPosY][ennemiPosX] == '#') {
+            int[] closestPoint = astar.findClosestValidPoint(grid, ennemiPosY, ennemiPosX);
+            if (closestPoint != null) {
+                ennemiPosX = closestPoint[0];
+                ennemiPosY = closestPoint[1];
+            }
+        }
     }
 }

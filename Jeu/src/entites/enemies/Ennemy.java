@@ -49,11 +49,11 @@ public abstract class Ennemy extends Entity {
 
             // On met à jour le temps du dernier heal
             this.setLastAttackCount(0);
-            if (target.health + heal <= target.healthBase) {
+            if (target.health + Math.abs(heal) <= target.healthBase) {
                 // On heal
-                target.health += heal;
+                target.health += Math.abs(heal);
                 System.out.println("Soin de " + this.getName() + " sur " + target.getName());
-                System.out.println("Montant de soin : " + heal);
+                System.out.println("Montant de soin : " + Math.abs(heal));
                 System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
                 System.out.println("Vie de base de " + target.getName() + " : " + target.healthBase);
                 System.out.println("=====================================");
