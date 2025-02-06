@@ -6,12 +6,12 @@ import laby.ModeleLabyrinth;
 import steering_astar.Steering.Vector2D;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Evolution {
+
+    // On stocke les statistiques des ennemis au départ de la manche
+    public static final Map<Ennemy, double[]> startStats = Collections.synchronizedMap(new HashMap<>());
 
     public HashMap<Ennemy, Double> evaluate(HashMap<Ennemy, Double> stats) throws IOException {
         // On boucle sur les agents de la map
@@ -22,6 +22,13 @@ public class Evolution {
             ennemies.add(ennemy);
             jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", ennemies, 1000, 1200);
             stats.put(ennemy, simulate(jeu));
+            // Une fois le score calculé, on remet les statistiques de départ
+            ennemy.setHealth(startStats.get(ennemy)[0]);
+            ennemy.setSpeed(startStats.get(ennemy)[1]);
+            ennemy.setDamages(startStats.get(ennemy)[2]);
+            ennemy.setAttackSpeed(startStats.get(ennemy)[3]);
+
+            System.out.println("Ennemis après simu :" + ennemy.getHealth() + " " + ennemy.getSpeed() + " " + ennemy.getDamages() + " " + ennemy.getAttackSpeed());
         }
 
         return stats;
@@ -33,6 +40,9 @@ public class Evolution {
      * @return le score de l'agent après la simulation
      */
     public double simulate(ModeleLabyrinth jeu){
+        // On sauvegarde les statistiques de départ des ennemis
+        saveStartStats(jeu.enemies);
+
         double score = 0;
         long lastUpdateTime = System.nanoTime();
         // Tant que la manche est en cours
@@ -53,7 +63,7 @@ public class Evolution {
         System.out.println("Survival time : "+e.getSurvivalTime());
         System.out.println("Bonus : "+bonus);
 
-        double score = e.getSurvivalTime() + bonus;
+        double score = ((double) e.getSurvivalTime() /1000000) + bonus;
         return score;
     }
 
@@ -142,5 +152,18 @@ public class Evolution {
      */
     private <T> T randomChoice(T option1, T option2) {
         return new Random().nextBoolean() ? option1 : option2;
+    }
+
+    /**
+     * Sauvegarde les statistiques de départ des ennemis
+     * @param ennemies Liste des ennemis
+     */
+    public static void saveStartStats(List<Ennemy> ennemies) {
+        synchronized (startStats) {
+            for (Ennemy e : ennemies) {
+                double[] stats = {e.getHealth(), e.getSpeed(), e.getDamages(), e.getAttackSpeed(), e.getRange()};
+                startStats.put(e, stats);
+            }
+        }
     }
 }

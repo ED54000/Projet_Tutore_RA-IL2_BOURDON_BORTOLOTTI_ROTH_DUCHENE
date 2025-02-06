@@ -27,18 +27,14 @@ public class MainSimu extends Application {
             //création d'une HashMap avec pour cléf l'ennemi et pour valeur son score
             HashMap<Ennemy, Double> stats = new HashMap<>();
             for (Ennemy ennemy : ennemies) {
-                System.out.println("Ennemy : "+ennemy.getName());
-                System.out.println("Stats : ");
-                System.out.println("Vie :"+ennemy.getHealth());
-                System.out.println("SurvivalTime :"+ennemy.getSurvivalTime());
-                System.out.println("Damage :"+ennemy.getDamages());
-                System.out.println("Speed : "+ennemy.getSpeed());
                 stats.put(ennemy, 0.0);
             }
             //on évalue
             Evolution evolution = new Evolution();
             ArrayList<Ennemy> newPopulation = evolution.evolve(evolution.evaluate(stats));
-            System.out.println("New population : " + newPopulation);
+            for (Ennemy ennemy : ennemies) {
+                stats.put(ennemy, 0.0);
+            }
         }
     }
 }
