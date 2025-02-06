@@ -331,7 +331,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     e.setDistanceToArrival(new ArrayList<>());
                 } else {
                     if (copyGrid[posYReel][posXReel] == '#') {
-                        moveEnemyToClosestValidPoint(copyGrid, posXReel, posYReel);
+                        int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, posXReel, posYReel);
+                        posYReel = newCoord[0];
+                        posXReel = newCoord[1];
                     }
                     copyGrid[posYReel][posXReel] = 'S';
 
@@ -763,9 +765,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 ennemyPosY = copyGrid.length - 1;
             }
             char charCourant = copyGrid[ennemyPosY][ennemyPosX];
+
             if (charCourant == '#') {
-                moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
+                int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
+                ennemyPosY = newCoord[0];
+                ennemyPosX = newCoord[1];
             }
+
             copyGrid[ennemyPosY][ennemyPosX] = 'S';
             if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
                 Astar newAstar = new Astar();
@@ -921,13 +927,26 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.defenses = defenseEndOfManche;
     }
 
-    public void moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
-        if (grid[ennemiPosY][ennemiPosX] == '#') {
-            int[] closestPoint = astar.findClosestValidPoint(grid, ennemiPosY, ennemiPosX);
-            if (closestPoint != null) {
-                ennemiPosX = closestPoint[0];
-                ennemiPosY = closestPoint[1];
+    public int[] moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
+        int[] direction = {-1,0,1};
+
+        int currentX = ennemiPosX;
+        int currentY = ennemiPosY;
+
+        while(currentX == ennemiPosX && currentY == ennemiPosY) {
+            for (int i = 0; i < direction.length; i++) {
+                for (int j = 0; j < direction.length; j++) {
+                    if (grid[Math.abs(ennemiPosY + direction[i])][Math.abs(ennemiPosX + direction[j])] == '.'){
+                        ennemiPosY = Math.abs(ennemiPosY + direction[i]);
+                        ennemiPosX = Math.abs(ennemiPosX + direction[j]);
+                    }
+                }
+            }
+            if (currentX == ennemiPosX && currentY == ennemiPosY){
+                direction[0] -= 1;
+                direction[2] += 1;
             }
         }
+        return new int[]{ennemiPosY,ennemiPosX};
     }
 }
