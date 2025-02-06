@@ -771,6 +771,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public long getEndTime() {
         return this.endTime;
     }
+
     public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
         this.simulationEvolution = true;
         this.limManches = 2;
@@ -786,7 +787,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.cases = new char[nbLignes][nbColonnes];
 
         // Nombre d'ennemis qui doivent arriver à la fin pour gagner
-        this.nbEnnemiesToWin = nbEnnemiesToWin;
+        this.nbEnnemiesToWin = 50;
 
         //lecture des cases
         String ligne = br.readLine();
