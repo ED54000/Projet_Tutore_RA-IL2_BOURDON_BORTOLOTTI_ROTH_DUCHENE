@@ -114,7 +114,7 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
-        labyrinthMap.put("test1", "Ressources/Laby_test.txt");
+        labyrinthMap.put("test1", "Ressources/Labyrinthe4.txt");
         labyrinthMap.put("test2", "Ressources/Laby_test2.txt");
 
         // Initialisation de la ComboBox avec les noms lisibles
