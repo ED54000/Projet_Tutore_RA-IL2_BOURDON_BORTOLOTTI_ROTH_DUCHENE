@@ -1,6 +1,5 @@
 package laby.views;
 
-import entites.enemies.Ennemy;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -29,7 +28,7 @@ public class ViewLogs implements Observer {
             VBox vbox = (VBox) scrollPane.getContent();
             vbox.getChildren().add(label);
 
-            if (laby.isPause() && laby.getLogs().matches("Manche \\d+ terminée")) {
+            if (laby.getPause() && laby.getLogs().matches("Manche \\d+ terminée")) {
                 Button button = new Button("Learn");
                 button.setOnMouseClicked(new ControllerLearn(laby)); // a cérer dans le moteur avec les vues ?
                 vbox.getChildren().add(button);

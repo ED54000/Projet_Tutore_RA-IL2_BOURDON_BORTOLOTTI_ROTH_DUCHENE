@@ -1,11 +1,7 @@
 package laby.views;
 
-import entites.defenses.Bomb;
-import entites.defenses.Canon;
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
-import entites.enemies.Ninja;
-import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -13,11 +9,9 @@ import javafx.scene.paint.Color;
 import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
-import moteur.FrameStats;
 import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,25 +78,25 @@ public class ViewLabyrinth implements Observer {
 
             if (defense instanceof entites.defenses.Canon) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-                if (!defense.isDead()) {
+                if (!defense.getIsDead()) {
                     gc.drawImage(defense.getImage(), x, y, getTailleCase(), getTailleCase());
                 }
             }
             if (defense instanceof entites.defenses.Archer) {
                 gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
-                if (!defense.isDead()) {
+                if (!defense.getIsDead()) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
             }
             if (defense instanceof entites.defenses.Bomb) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-                if (!defense.isDead()) {
+                if (!defense.getIsDead()) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
             }
 
             // dessiner la range des défenses
-            if (!defense.isDead()) {
+            if (!defense.getIsDead()) {
                 x = defense.getPosition().getX() * getTailleCase();
                 y = defense.getPosition().getY() * getTailleCase();
                 double range = defense.getRange() * getTailleCase();

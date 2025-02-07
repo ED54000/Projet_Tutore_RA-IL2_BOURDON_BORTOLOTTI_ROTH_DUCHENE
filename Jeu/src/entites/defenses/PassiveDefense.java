@@ -10,19 +10,18 @@ public abstract class PassiveDefense extends Defense {
     }
 
     /**
+     * Retourne si la défense a déjà attaqué ou non
+     * @return true si la défense a déjà attaqué, false sinon
+     */
+    public boolean getAttacked() {
+        return this.attacked;
+    }
+
+    /**
      * Appliques si la défense a déjà attaqué ou non
      * @param attacked true si la défense a déjà attaqué, false sinon
      */
     public void setAttacked(boolean attacked) {
         this.attacked = attacked;
     }
-
-    /**
-     * Retourne si la défense a déjà attaqué ou non
-     * @return true si la défense a déjà attaqué, false sinon
-     */
-    public boolean isAttacked() {
-        return this.attacked;
-    }
-
 }
