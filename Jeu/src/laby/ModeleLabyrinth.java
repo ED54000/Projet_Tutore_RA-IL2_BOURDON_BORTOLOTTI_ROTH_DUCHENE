@@ -11,11 +11,13 @@ import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import moteur.Jeu;
 import steering_astar.Steering.PathfollowingBehavior;
+import steering_astar.Steering.SeekBehavior;
 import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
 
 import java.awt.*;
 import java.io.*;
+
 import java.util.*;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private int nbEnnemiesArrived;
     private long startTime;
 
+    private static boolean useAstar;
 
     //entités
     public ArrayList<Ennemy> enemies = new ArrayList<>();
@@ -107,6 +110,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
         // Nombre d'ennemis qui doivent arriver à la fin pour gagner
         this.nbEnnemiesToWin = nbEnnemiesToWin;
 
+        // Si on utilise ou pas l'algorithme Astar
+        this.useAstar = useAstar;
+
         //lecture des cases
         String ligne = br.readLine();
 
@@ -170,28 +176,46 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private void setAllEnnemiesStats(ArrayList<Ennemy> ennemies) {
-        createBehaviours(this.getCases());
+        if (useAstar){
+            createBehaviours(this.getCases());
+        }
+
         for (Ennemy e : ennemies) {
             e.setPositionReel(e.getPosition().divide(ModeleLabyrinth.getTailleCase()));
 
             e.setToStart(this);
             if (e instanceof Giant) {
-                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
-                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+                if (useAstar){
+                    e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+                    e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+                } else {
+                    e.setBehaviorPath(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                }
             }
             if (e instanceof Ninja) {
-                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
-                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
+                if (useAstar){
+                    e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
+                    e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
+                } else {
+                    e.setBehaviorPath(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                }
             }
             if (e instanceof Berserker) {
-                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
-                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
+                if (useAstar){
+                    e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
+                    e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
+                } else {
+                    e.setBehaviorPath(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                }
             }
             if (e instanceof Druide) {
-                ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-
-                e.setBehaviorPath(new PathfollowingBehavior(aStarHealerPath));
-                e.setDistanceStartToArrival(aStarHealerPath);
+                if (useAstar){
+                    ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
+                    e.setBehaviorPath(new PathfollowingBehavior(aStarHealerPath));
+                    e.setDistanceStartToArrival(aStarHealerPath);
+                } else {
+                    e.setBehaviorPath(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                }
             }
         }
     }
@@ -1005,5 +1029,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void setDefenses(ArrayList<Defense> defenseEndOfManche) {
         this.defenses = defenseEndOfManche;
+    }
+
+    public static boolean getUseAstar() {
+        return useAstar;
+    }
+
+    public void setUseAstar(boolean useAstar) {
+        this.useAstar = useAstar;
     }
 }
