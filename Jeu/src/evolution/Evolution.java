@@ -22,6 +22,7 @@ public class Evolution {
             ennemies.add(ennemy);
             jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", ennemies, 1000, 1200);
             stats.put(ennemy, simulate(jeu));
+            jeu = null;
         }
 
         // Après évaluation, on réaffecte les statistiques de départ aux ennemis
@@ -49,13 +50,6 @@ public class Evolution {
     public double simulate(ModeleLabyrinth jeu){
         // On sauvegarde les statistiques de départ des ennemis
         saveStartStats(jeu.enemies);
-        System.out.println("Stats sauvegardées en début de manche : ");
-        for (Ennemy e : startStats.keySet()) {
-            System.out.println(e.getName() + " : " + Arrays.toString(startStats.get(e)));
-        }
-        System.out.println("========================================");
-
-        double score = 0;
         long lastUpdateTime = System.nanoTime();
         // Tant que la manche est en cours
         while (!jeu.getPause()) {
@@ -86,7 +80,8 @@ public class Evolution {
         giantsTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
 
         // 2. Sélectionner la moitié des meilleurs géants
-        int moitié = giantsTries.size() / 2;
+        int size = giantsTries.size();
+        int moitié = (int)Math.ceil(giantsTries.size() / 10);
         ArrayList<Ennemy> meilleurs = new ArrayList<>();
         for (int i = 0; i < moitié; i++) {
             meilleurs.add(giantsTries.get(i).getKey());
@@ -95,7 +90,7 @@ public class Evolution {
         // 3. Générer les enfants via le croisement
         ArrayList<Ennemy> enfants = new ArrayList<>();
         Random random = new Random();
-        for (int i = 0; i < moitié; i++) {
+        for (int i = 0; i < size-moitié; i++) {
             // Sélectionner deux parents aléatoires parmi les meilleurs
             Ennemy parent1 = meilleurs.get(random.nextInt(meilleurs.size()));
             Ennemy parent2 = meilleurs.get(random.nextInt(meilleurs.size()));
@@ -149,6 +144,7 @@ public class Evolution {
     private Ennemy croiser(Ennemy parent1, Ennemy parent2) {
         // Exemple de croisement (à adapter selon la structure de Giant)
         Giant giant = new Giant(new Vector2D(0, 0), "Giant");
+        giant.setSprite(null);
 
         giant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
         giant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
