@@ -1,7 +1,6 @@
 package evolution;
 
-import entites.enemies.Ennemy;
-import entites.enemies.Giant;
+import entites.enemies.*;
 import laby.ModeleLabyrinth;
 import steering_astar.Steering.Vector2D;
 
@@ -66,31 +65,35 @@ public class Evolution {
     public double getScore(Ennemy e) {
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
         int bonus = e.getIsDead() ? -1000 : 1000;
-        System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
-        System.out.println("Distance to arrival: "+e.getDistanceToArrival());
-        System.out.println("Bonus : "+bonus);
+        //System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
+        //System.out.println("Distance to arrival: "+e.getDistanceToArrival());
+        //System.out.println("Bonus : "+bonus);
 
         double score = ((double) e.getSurvivalTime() /1000000) + bonus - e.getDistanceToArrival()*10;
         return score;
     }
 
     public ArrayList<Ennemy> evolve(HashMap<Ennemy, Double> giants) {
-        // 1. Trier les géants par score décroissant
-        ArrayList<Map.Entry<Ennemy, Double>> giantsTries = new ArrayList<>(giants.entrySet());
-        giantsTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
+        //Trier les géants par score décroissant
+        ArrayList<Map.Entry<Ennemy, Double>> ennemiesTries = new ArrayList<>(giants.entrySet());
+        ennemiesTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
 
-        // 2. Sélectionner la moitié des meilleurs géants
-        int size = giantsTries.size();
-        int moitié = (int)Math.ceil(giantsTries.size() / 10);
+        System.out.println("Ennemies triés : "+ennemiesTries);
+        //Sélectionner la moitié des meilleurs géants
+        int size = ennemiesTries.size();
+        //int moitié = (int)Math.ceil(ennemiesTries.size() / 10);
+        int moitie = size / 2;
+        System.out.println("Moitié : "+moitie);
         ArrayList<Ennemy> meilleurs = new ArrayList<>();
-        for (int i = 0; i < moitié; i++) {
-            meilleurs.add(giantsTries.get(i).getKey());
+        for (int i = 0; i < moitie; i++) {
+            meilleurs.add(ennemiesTries.get(i).getKey());
         }
+        System.out.println("Meilleurs ennemies : "+meilleurs);
 
-        // 3. Générer les enfants via le croisement
+        //Générer les enfants via le croisement
         ArrayList<Ennemy> enfants = new ArrayList<>();
         Random random = new Random();
-        for (int i = 0; i < size-moitié; i++) {
+        for (int i = 0; i < size-moitie; i++) {
             // Sélectionner deux parents aléatoires parmi les meilleurs
             Ennemy parent1 = meilleurs.get(random.nextInt(meilleurs.size()));
             Ennemy parent2 = meilleurs.get(random.nextInt(meilleurs.size()));
@@ -100,12 +103,12 @@ public class Evolution {
             enfants.add(enfant);
         }
 
-        // 4. Combiner les meilleurs géants et les enfants
+        //Combiner les meilleurs géants et les enfants
         ArrayList<Ennemy> nouvellePopulation = new ArrayList<>();
         nouvellePopulation.addAll(meilleurs);
         nouvellePopulation.addAll(enfants);
 
-        // 5. Appliquer une mutation sur la nouvelle population
+        //Appliquer une mutation sur la nouvelle population
         return mutate(nouvellePopulation);
     }
 
@@ -143,15 +146,25 @@ public class Evolution {
      */
     private Ennemy croiser(Ennemy parent1, Ennemy parent2) {
         // Exemple de croisement (à adapter selon la structure de Giant)
-        Giant giant = new Giant(new Vector2D(0, 0), "Giant");
-        giant.setSprite(null);
+        Ennemy enfant = null;
+        if (parent1 instanceof Giant) {
+            enfant = new Giant(new Vector2D(0, 0), "GiantEnfant");
+        } else if (parent1 instanceof Ninja) {
+            enfant = new Ninja(new Vector2D(0, 0), "NinjaEnfant");
+        } else if (parent1 instanceof Druide) {
+            enfant = new Druide(new Vector2D(0, 0), "DruideEnfant");
+        } else if (parent1 instanceof Berserker) {
+            enfant = new Berserker(new Vector2D(0, 0), "BerserkerEnfant");
+        }
 
-        giant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
-        giant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
-        giant.setDamages(randomChoice(parent1.getDamages(), parent2.getDamages()));
-        giant.setAttackSpeed(randomChoice(parent1.getAttackSpeed(), parent2.getAttackSpeed()));
+        //enfant.setSprite(null);
+
+        enfant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
+        enfant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
+        enfant.setDamages(randomChoice(parent1.getDamages(), parent2.getDamages()));
+        enfant.setAttackSpeed(randomChoice(parent1.getAttackSpeed(), parent2.getAttackSpeed()));
         // Ajouter ici les propriétés spécifiques à croiser
-        return giant;
+        return enfant;
     }
 
     /**

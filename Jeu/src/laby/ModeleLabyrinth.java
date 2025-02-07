@@ -4,6 +4,7 @@ import entites.defenses.*;
 import entites.enemies.*;
 import evolution.EnnemyEvolution;
 import evolution.EnnemyEvolutionv2;
+import evolution.Evolution;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -226,10 +227,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
 
         // On sauvegarde les statistiques des ennemis
-        EnnemyEvolution.saveStartStats(ennemies);
+        Evolution.saveStartStats(ennemies);
         System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
-        Map<Ennemy, double[]> map = EnnemyEvolution.startStats;
+        Map<Ennemy, double[]> map = Evolution.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
             Ennemy enemy = entry.getKey();
             double[] values = entry.getValue();
@@ -336,7 +337,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void updateEnemyPositions() {
         Iterator<Ennemy> enemyIterator = enemies.iterator();
-        while (enemyIterator.hasNext()) {
+        while (enemyIterator.hasNext() && !this.pause) {
             Ennemy enemy = enemyIterator.next();
             if (hasReachedArrival(enemy)) {
                 handleEnemyArrival(enemy);
@@ -525,9 +526,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         System.out.println("Ennemis en fin de manche : " + ennemiesEndOfManche);
         setLogs("Manche " + nbManches + " terminée");
-
         //dans le cas ou on est en simulation
-        if (this.simulation || this.simulationEvolution) {
+        if (this.estSimulation()) {
             handleSimulation();
         }
 

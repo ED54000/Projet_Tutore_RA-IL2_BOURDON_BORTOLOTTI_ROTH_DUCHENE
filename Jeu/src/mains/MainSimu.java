@@ -17,14 +17,14 @@ public class MainSimu extends Application {
     public void start(Stage stage) throws Exception {
         //initialisation avec une liste d'ennemies
         ArrayList<Ennemy> ennemies = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 5; i++) {
             Giant giant = new Giant(new Vector2D(0, 0), "Giant "+i);
             giant.setSprite(null);
             ennemies.add(giant);
         }
 
         //Boucle sur le nombre de manche avec une population d'ennemies évoluer à chaque fois
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             System.out.println("Manche "+i);
             for (Ennemy ennemy : ennemies) {
                 System.out.println("Ennemy avant évolution: "+ ennemy.getName());
