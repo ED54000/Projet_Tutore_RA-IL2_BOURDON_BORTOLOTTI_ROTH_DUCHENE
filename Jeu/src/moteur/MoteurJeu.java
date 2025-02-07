@@ -137,7 +137,7 @@ public class MoteurJeu extends Application {
 
         // CheckBox avec ou sans Astar
         CheckBox avecAstarBox = new CheckBox();
-        avecAstarBox.setSelected(true);
+        avecAstarBox.setSelected(false);
 
         HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
         // Champ pour le nombre de manches
@@ -189,7 +189,7 @@ public class MoteurJeu extends Application {
         //startButton.setOnMouseClicked(controllerStart);
 
         // Configure la scène de la fenêtre
-        Scene dialogScene = new Scene(root, 400, 200);
+        Scene dialogScene = new Scene(root, 400, 230);
         dialogStage.setScene(dialogScene);
         // Configure la fenêtre en tant que modale
         dialogStage.initOwner(primaryStage);
