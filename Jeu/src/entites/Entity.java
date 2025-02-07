@@ -137,6 +137,7 @@ public abstract class Entity {
             System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
             System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
             System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
+            System.out.println("Target mort : "+ target.isDead());
             System.out.println("=====================================");
         }
         // Sinon, on ne fait rien

@@ -13,11 +13,8 @@ import moteur.Jeu;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
-
 import java.awt.*;
 import java.io.*;
-
-import java.sql.Time;
 import java.util.*;
 
 public class ModeleLabyrinth implements Jeu, Subject {
@@ -45,11 +42,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Ennemy> deadEnemies = new ArrayList<>();
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
     private ArrayList<Defense> defensesEndOfManche = new ArrayList<>();
-    private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
-    private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
+    private ArrayList<Ennemy> enemiesEndOfManche = new ArrayList<>();
+    private ArrayList<Ennemy> enemiesArrived = new ArrayList<>();
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
-    private HashMap<Giant, Double> ennemyScore = new HashMap<>();
-    private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
+    private HashMap<Giant, Double> enemyScore = new HashMap<>();
+    private ArrayList<Giant> enemiesEvolved = new ArrayList<>();
     private int nbArcher, nbCanon, nbBomb = 0;
 
 
@@ -91,7 +88,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin) throws IOException {
         this.limManches = limManches;
-        //ouvrire le fichier
+        //ouvrir le fichier
         FileReader fr = new FileReader(fichier);
         BufferedReader br = new BufferedReader(fr);
 
@@ -213,9 +210,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
             this.enemies.add(druide);
         }
 
-        // On sauvegarde les statistiques des ennemis
+        // On sauvegarde les statistiques des enemys
         EnnemyEvolution.saveStartStats(this.enemies);
-        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
+        System.out.println("on a sauvegardé les stats au start de la liste d'enemys suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
         Map<Ennemy, double[]> map = EnnemyEvolution.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
@@ -223,7 +220,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             double[] values = entry.getValue();
 
             System.out.println("==========================================");
-            System.out.print("Enemy: " + enemy + " -> Values: ");
+            System.out.print("Ennemi: " + enemy + " -> Values: ");
             for (double value : values) {
                 System.out.print(value + " ");
             }
@@ -271,219 +268,90 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     @Override
     public void update(double secondes) {
-
-        //System.out.println(this.enemies);
         //Vérification de la fin du jeu
         if (this.nbManches == this.limManches) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
             this.end = true;
             return;
         }
-
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pause) {
-            System.out.println("Fin de la manche " + nbManches);
-            this.pause = true;
-            // On réactive toutes les défenses passives
-            for (Defense defense : defenses) {
-                if (defense instanceof PassiveDefense) {
-                    ((PassiveDefense) defense).setAttacked(false);
-                }
+            handleEndOfManche();
+            return;
+        }
+        updateCombat(secondes);
+        removeDeadEntities();
+        for (Ennemy e : enemies) {
+            e.setLastAttackCount(e.getLastAttackCount() + 1);
+        }
+        for (Defense d : defenses) {
+            d.setLastAttackCount(d.getLastAttackCount() + 1);
+        }
+        //on gère le déplacement des ennemis en vérifiant s ils sont arrivés
+        updateEnemyPositions();
+        notifyObserver();
+    }
+
+    private void updateEnemyPositions() {
+        ArrayList<Ennemy> enemiesCopy = new ArrayList<>(enemies);
+        for (Ennemy enemy : enemiesCopy) {
+            if (hasReachedArrival(enemy)) {
+                handleEnemyArrival(enemy);
+                enemies.remove(enemy);
+            } else {
+                enemy.update();
             }
-            //On ajoute les ennemis de la manche dans une liste
-            this.ennemiesEndOfManche.addAll(deadEnemies);
-            this.ennemiesEndOfManche.addAll(ennemiesArrived);
-            //On ajoute les defenses de la manche dans une liste
-            this.defensesEndOfManche.addAll(deadDefenses);
-            this.defensesEndOfManche.addAll(defenses);
+        }
+    }
 
-            //   System.out.println("Defenses morte : " + deadDefenses);
-            //   System.out.println("Defenses tout court : " + defenses);
-
-            //on calcule la distance de chaque ennemi à l'arrivée
-            int c = 0;
-            for (Ennemy e : ennemiesEndOfManche) {
-                char[][] copyGrid = new char[cases.length][];
-                for (int i = 0; i < cases.length; i++) {
-                    copyGrid[i] = cases[i].clone();
-                    for (int j = 0; j < copyGrid.length; j++) {
-                        if (copyGrid[i][j] == 'B' || copyGrid[i][j] == 'C' || copyGrid[i][j] == 'A') {
-                            copyGrid[i][j] = '.';
-                        }
-                    }
-                }
-                int posYReel = (int) Math.ceil(e.getPositionReel().getY());
-                int posXReel = (int) Math.ceil(e.getPositionReel().getX());
-                if (posYReel < 0) {
-                    posYReel = 0;
-                }
-                if (posXReel < 0) {
-                    posXReel = 0;
-                }
-
-                if (posYReel >= copyGrid.length) {
-                    posYReel = copyGrid.length;
-                }
-                if (posXReel >= copyGrid.length) {
-                    posXReel = copyGrid.length;
-                }
-                if (e.isArrived()) {
-                    e.setDistanceToArrival(new ArrayList<>());
-                } else {
-                    if (copyGrid[posYReel][posXReel] == '#') {
-                        moveEnemyToClosestValidPoint(copyGrid, posXReel, posYReel);
-                    }
-                    copyGrid[posYReel][posXReel] = 'S';
-
-                    e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
-                            new Vector2D(posYReel, posXReel),
-                            new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
-                }
-                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior() + "survivalTime : " + e.getSurvivalTime());
-
-                c++;
-            }
-            System.out.println("ennemis en fin de manche : " + ennemiesEndOfManche);
-            setLogs("Manche " + nbManches + " terminée");
-
-            //dans le cas ou on est en simulation
-            if (this.simulation) {
-                //simuler un appui sur le bouton learn
-                MouseEvent fakeClickEvent = new MouseEvent(
-                        MouseEvent.MOUSE_CLICKED,
-                        0, 0,
-                        0, 0,
-                        MouseButton.PRIMARY,
-                        1,
-                        false, false, false, false,
-                        false, false, false, false,
-                        false, false, null
-                );
-                new ControllerLearn(this).handle(fakeClickEvent);
-                new ControllerNextManche(this).handle(fakeClickEvent);
-            }
-
-            if (this.simulationEvolution) {
-                EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
-                double score = evolution.getScore(ennemiesEndOfManche.get(0));
-                this.defenses = this.getDefenseEndOfManche();
-                System.out.println("Defenses toutes neuve : " + this.defenses);
-                // On sauvegarde les score de l'ennemi dans une map avec l'ennemi comme clé et le score comme valeur
-                ennemyScore.put((Giant) ennemiesEndOfManche.get(0), score);
-                this.end = true;
+    private void updateCombat(double secondes) {
+        // Gestion de l'attaque des ennemis
+        for (Ennemy enemy : new ArrayList<>(enemies)) {
+            if (enemy instanceof Druide) {
+                handleDruideCombat(enemy, secondes);
+            } else if (enemy instanceof Berserker) {
+                handleBerserkerCombat(enemy, secondes);
+            } else {
+                handleNormalEnemyCombat(enemy, secondes);
             }
         }
 
-        // On gère les attaques des ennemis
-        for (Ennemy ennemi : enemies) {
-            // Si l'ennemi est un druide
-            if (ennemi instanceof Druide) {
-                // On vérifie pour chaque ennemi si il est a portée du druide
-                for (Ennemy ennemiTarget : enemies) {
-                    // Tous les ennemis a portée sont soignés
-                    if (ennemi.isInRange(ennemiTarget) && !this.isPause()) {
-                        ennemi.healDamage(ennemiTarget, ennemi.getDamages(), secondes);
-                    }
-                }
-            } else if (ennemi instanceof Berserker) {
-                // On vérifie si une défense est dans la portée de l'ennemi
-                for (Defense defense : defenses) {
-                    if (ennemi.isInRange(defense)) {
-                        // On l'attaque
-                        ennemi.attack(defense, secondes);
-                        // le berserker se suicide après avoir attaqué
-                        ennemi.takeDamage(1000);
-                        // On met à jour le temps de survie
-                        ennemi.setSurvivalTime(System.currentTimeMillis() - startTime);
-                    }
-                }
-            }
-            // Sinon
-            else {
-                // On vérifie si une défense est dans la portée de l'ennemi
-                for (Defense defense : defenses) {
-                    if (ennemi.isInRange(defense)) {
-                        // On l'attaque
-                        ennemi.attack(defense, secondes);
-                    }
-                }
-            }
-        }
-
-        // On gère les attaques des défenses
-        for (Defense defense : defenses) {
-            // Si c'est une défense active
+        // Gestion de l'attaque des defenses
+        for (Defense defense : new ArrayList<>(defenses)) {
             if (defense instanceof ActiveDefense) {
-                Ennemy ennemyTarget = ((ActiveDefense) defense).getTarget();
-                // Si la defense focus déja un ennemi
-                if (ennemyTarget != null) {
-                    // On vérifie si l'ennemi est toujours dans la portée de la défense
-                    if (defense.isInRange(ennemyTarget)) {
-                        // Si l'ennemi n'est pas mort
-                        if (!ennemyTarget.isDead()) {
-                            // On l'attaque
-                            defense.attack(ennemyTarget, secondes);
-                        }
-                        // Si l'ennemi est mort on set son killerType
-                        if (ennemyTarget.isDead() && !deadEnemies.contains(ennemyTarget)) {
-                            ennemyTarget.setKillerType(defense.getType());
-                            // On retire la cible de la défense
-                            ((ActiveDefense) defense).setTarget(null);
-                            // On met à jour le temps de survie de l'ennemi
-                            ennemyTarget.setSurvivalTime(System.currentTimeMillis() - startTime);
-                        }
-                    }
-                    // Si l'ennemi n'est plus dans la portée de la défense
-                    else {
-                        // On retire la cible de la défense
-                        ((ActiveDefense) defense).setTarget(null);
-                    }
-                }
-                // Si la défense n'a pas de cible
-                else {
-                    // On cherche un ennemi à attaquer
-                    Ennemy ennemy = getCloserEnnemy((ActiveDefense) defense);
-                    // Si on a trouvé un ennemi et qu'il est dans la range de la défense
-                    if (ennemy != null && defense.isInRange(ennemy)) {
-                        // On l'attaque
-                        defense.attack(ennemy, secondes);
-                        // On set la cible de la défense
-                        ((ActiveDefense) defense).setTarget(ennemy);
-                        // Si l'ennemi est mort, on set son killerType
-                        if (ennemy.isDead() && !deadEnemies.contains(ennemy)) {
-                            ennemy.setKillerType(defense.getType());
-                            // On retire la cible de la défense
-                            ((ActiveDefense) defense).setTarget(null);
-                            // On met à jour le temps de survie de l'ennemi
-                            ennemy.setSurvivalTime(System.currentTimeMillis() - startTime);
-                        }
-                    }
-                }
-            }
-            // Si la defense est passive
-            else {
-                // On parcourt les ennemis
-                for (Ennemy e : enemies) {
-                    // Si l'ennemi est dans la portée de la défense
-                    if (defense.isInRange(e) && !deadDefenses.contains(defense) && !((PassiveDefense) defense).isAttacked()) {
-                        // Cela active la defense
-                        // On attaque l'ennemi
-                        defense.attack(e, secondes);
-                        ((PassiveDefense) defense).setAttacked(true);
-                        // Si l'ennemi est mort, on set son killerType
-                        if (e.isDead() && !deadEnemies.contains(e)) {
-                            e.setKillerType(defense.getType());
-                            // Et on met à jour son temps de survie
-                            e.setSurvivalTime(System.currentTimeMillis() - startTime);
-                        }
-                        // La défense s'autodétruit après avoir attaqué
-                        defense.takeDamage(10000);
-                        setLogs("La défense : " + defense.getType() + " à été détruite");
-                    }
-                }
+                handleActiveDefenseCombat((ActiveDefense) defense, secondes);
+            } else {
+                handlePassiveDefenseCombat((PassiveDefense) defense, secondes);
             }
         }
+    }
 
+    private boolean hasReachedArrival(Ennemy enemy) {
+        return Math.abs(enemy.getPosition().getX() - XArrivalRender) <= 10 &&
+                Math.abs(enemy.getPosition().getY() - YArrivalRender) <= 10 &&
+                !enemy.isArrived() &&
+                !deadEnemies.contains(enemy);
+    }
+
+    private void handleEnemyArrival(Ennemy enemy) {
+        enemy.setArrived(true);
+        nbEnnemiesArrived++;
+        enemy.setPosition(new Vector2D(XArrival, YArrival));
+        enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
+        System.out.println("Nombre d'enemys arrivés : " + this.nbEnnemiesArrived);
+        System.out.println("Le " + enemy.getName() + " est arrivé");
+        System.out.println("Liste des enemys a la fin : " + enemies);
+        setLogs("Le " + enemy.getName() + " est arrivé");
+        enemiesArrived.add(enemy);
+        enemies.remove(enemy);
+
+        if (nbEnnemiesArrived >= nbEnnemiesToWin + 1) {
+            setLogs("Fin du jeu car assez d'enemys ont atteint l'arrivée");
+            this.end = true;
+        }
+    }
+
+    private void removeDeadEntities() {
         //On retire les défenses mortes
         for (Defense d : defenses) {
             // Si la défense est morte, on la retire de la liste des défenses
@@ -494,7 +362,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
         defenses.removeAll(deadDefenses);
-        // On retire les ennemis morts
+        // On retire les enemys morts
         ArrayList<Ennemy> enemiesDead = new ArrayList<>();
         for (Ennemy e : enemies) {
             if (e.isDead() && !deadEnemies.contains(e)) {
@@ -505,46 +373,207 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
         enemies.removeAll(enemiesDead);
 
-        for (Ennemy e : enemies) {
-            e.setLastAttackCount(e.getLastAttackCount() + 1);
-        }
+    }
 
-        for (Defense d : defenses) {
-            d.setLastAttackCount(d.getLastAttackCount() + 1);
-        }
-
-        //on gère le déplacement des ennemis en vérifiant si ils sont arrivés
-        ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
-        Iterator<Ennemy> iterator = this.enemies.iterator();
-        while (iterator.hasNext() && !this.pause) {
-            Ennemy ennemy = iterator.next();
-            //vérification d'arrivée
-            if ((int) (ennemy.getPosition().getX()) >= XArrivalRender - 10 && (int) (ennemy.getPosition().getX()) <= XArrivalRender + 10 &&
-                    (int) (ennemy.getPosition().getY()) >= YArrivalRender - 10 && (int) (ennemy.getPosition().getY()) <= YArrivalRender + 10 &&
-                    !ennemy.isArrived() && !deadEnemies.contains(ennemy)
-            ) {
-                ennemy.setArrived(true);
-                this.nbEnnemiesArrived++;
-                System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
-                System.out.println("Le " + ennemy.getName() + " est arrivé");
-                System.out.println("Liste des ennemis a la fin : " + enemies);
-                setLogs("Le " + ennemy.getName() + " est arrivé");
-                ennemy.setPosition(new Vector2D(getXArrival(), getYArrival()));
-                //si les ennemis ont gagné
-                if (this.nbEnnemiesArrived == this.nbEnnemiesToWin + 1) {
-                    setLogs("Fin du jeu car assez d'ennemis ont atteint l'arrivée");
-                    this.end = true;
-                }
-                // On met à jour le temps de survie de l'ennemi
-                ennemy.setSurvivalTime(System.currentTimeMillis() - startTime);
-                enemiesToRemove.add(ennemy);
-                ennemiesArrived.add(ennemy);
+    private void handleDruideCombat(Ennemy enemy, double secondes) {
+        for (Ennemy enemyTarget : enemies) {
+            // Tous les ennemis a portée sont soignés
+            if (enemy.isInRange(enemyTarget) && !this.isPause()) {
+                enemy.healDamage(enemyTarget, enemy.getDamages(), secondes);
             }
-            ennemy.update();
-            notifyObserver();
         }
-        this.enemies.removeAll(enemiesToRemove);
-        notifyObserver();
+    }
+
+    private void handleBerserkerCombat(Ennemy enemy, double secondes) {
+        for (Defense defense : defenses) {
+            if (enemy.isInRange(defense)) {
+                // On l'attaque
+                enemy.attack(defense, secondes);
+                // le berserker se suicide après avoir attaqué
+                enemy.takeDamage(1000);
+                // On met à jour le temps de survie
+                enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
+            }
+        }
+    }
+
+    private void handleNormalEnemyCombat(Ennemy enemy, double secondes) {
+        for (Defense defense : defenses) {
+            if (enemy.isInRange(defense)) {
+                // On l'attaque
+                enemy.attack(defense, secondes);
+            }
+        }
+    }
+
+    private void handleActiveDefenseCombat(ActiveDefense defense, double secondes) {
+        Ennemy enemyTarget = defense.getTarget();
+        // Si la defense focus déja un enemy
+        if (enemyTarget != null) {
+            // On vérifie si l'ennemi est toujours dans la portée de la défense
+            if (defense.isInRange(enemyTarget)) {
+                // Si l'ennemi n'est pas mort
+                if (!enemyTarget.isDead()) {
+                    // On l'attaque
+                    defense.attack(enemyTarget, secondes);
+                }
+                // Si l'ennemi est mort on set son killerType
+                if (enemyTarget.isDead() && !deadEnemies.contains(enemyTarget)) {
+                    enemyTarget.setKillerType(defense.getType());
+                    // On retire la cible de la défense
+                    defense.setTarget(null);
+                    // On met à jour le temps de survie de l'enemy
+                    enemyTarget.setSurvivalTime(System.currentTimeMillis() - startTime);
+                }
+            }
+            // Si l'ennemi n'est plus dans la portée de la défense
+            else {
+                // On retire la cible de la défense
+                defense.setTarget(null);
+            }
+        }
+        // Si la défense n'a pas de cible
+        else {
+            // On cherche un ennemi à attaquer
+            Ennemy enemy = getCloserEnnemy(defense);
+            // Si on a trouvé un ennemi et qu'il est dans la range de la défense
+            if (enemy != null && defense.isInRange(enemy)) {
+                // On l'attaque
+                defense.attack(enemy, secondes);
+                // On set la cible de la défense
+                defense.setTarget(enemy);
+                // Si l'enemy est mort, on set son killerType
+                if (enemy.isDead() && !deadEnemies.contains(enemy)) {
+                    enemy.setKillerType(defense.getType());
+                    // On retire la cible de la défense
+                    defense.setTarget(null);
+                    // On met à jour le temps de survie de l'enemy
+                    enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
+                }
+            }
+        }
+    }
+
+    private void handlePassiveDefenseCombat(PassiveDefense defense, double secondes) {
+        // On parcourt les enemys
+        for (Ennemy e : enemies) {
+            // Si l'enemy est dans la portée de la défense
+            if (defense.isInRange(e) && !deadDefenses.contains(defense) && !((PassiveDefense) defense).isAttacked()) {
+                // Cela active la defense
+                // On attaque l'enemy
+                defense.attack(e, secondes);
+                defense.setAttacked(true);
+                // Si l'enemy est mort, on set son killerType
+                if (e.isDead() && !deadEnemies.contains(e)) {
+                    e.setKillerType(defense.getType());
+                    // Et on met à jour son temps de survie
+                    e.setSurvivalTime(System.currentTimeMillis() - startTime);
+                }
+                // La défense s'autodétruit après avoir attaqué
+                defense.takeDamage(10000);
+                setLogs("La défense : " + defense.getType() + " à été détruite");
+            }
+        }
+    }
+
+    private void handleEndOfManche() {
+        System.out.println("Fin de la manche " + nbManches);
+        this.pause = true;
+        // On réactive toutes les défenses passives
+        for (Defense defense : defenses) {
+            if (defense instanceof PassiveDefense) {
+                ((PassiveDefense) defense).setAttacked(false);
+            }
+        }
+
+        //On ajoute les enemys de la manche dans une liste
+        this.enemiesEndOfManche.addAll(deadEnemies);
+        this.enemiesEndOfManche.addAll(enemiesArrived);
+        //On ajoute les defenses de la manche dans une liste
+        this.defensesEndOfManche.addAll(deadDefenses);
+        this.defensesEndOfManche.addAll(defenses);
+        //on calcule la distance de chaque enemy à l'arrivée
+        calculateFinalDistances();
+
+        System.out.println("Ennemis en fin de manche : " + enemiesEndOfManche);
+        setLogs("Manche " + nbManches + " terminée");
+
+        //dans le cas ou on est en simulation
+        if (this.simulation || this.simulationEvolution) {
+            handleSimulation();
+        }
+
+    }
+
+    private void handleSimulation() {
+        if (this.simulation) {
+            //simuler un appui sur le bouton learn
+            MouseEvent fakeClickEvent = new MouseEvent(
+                    MouseEvent.MOUSE_CLICKED,
+                    0, 0,
+                    0, 0,
+                    MouseButton.PRIMARY,
+                    1,
+                    false, false, false, false,
+                    false, false, false, false,
+                    false, false, null
+            );
+            new ControllerLearn(this).handle(fakeClickEvent);
+            new ControllerNextManche(this).handle(fakeClickEvent);
+        } else if (this.simulationEvolution) {
+            EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
+            double score = evolution.getScore(enemiesEndOfManche.get(0));
+            this.defenses = this.getDefenseEndOfManche();
+            System.out.println("Defenses toutes neuve : " + this.defenses);
+            // On sauvegarde les score de l'enemy dans une map avec l'enemy comme clé et le score comme valeur
+            enemyScore.put((Giant) enemiesEndOfManche.get(0), score);
+            this.end = true;
+        }
+    }
+
+    private void calculateFinalDistances() {
+        int c = 0;
+        for (Ennemy e : enemiesEndOfManche) {
+            char[][] copyGrid = new char[cases.length][];
+            for (int i = 0; i < cases.length; i++) {
+                copyGrid[i] = cases[i].clone();
+                for (int j = 0; j < copyGrid.length; j++) {
+                    if (copyGrid[i][j] == 'B' || copyGrid[i][j] == 'C' || copyGrid[i][j] == 'A') {
+                        copyGrid[i][j] = '.';
+                    }
+                }
+            }
+            int posYReel = (int) Math.ceil(e.getPositionReel().getY());
+            int posXReel = (int) Math.ceil(e.getPositionReel().getX());
+            if (posYReel < 0) {
+                posYReel = 0;
+            }
+            if (posXReel < 0) {
+                posXReel = 0;
+            }
+
+            if (posYReel >= copyGrid.length) {
+                posYReel = copyGrid.length;
+            }
+            if (posXReel >= copyGrid.length) {
+                posXReel = copyGrid.length;
+            }
+            if (e.isArrived()) {
+                e.setDistanceToArrival(new ArrayList<>());
+            } else {
+                if (copyGrid[posYReel][posXReel] == '#') {
+                    moveEnemyToClosestValidPoint(copyGrid, posXReel, posYReel);
+                }
+                copyGrid[posYReel][posXReel] = 'S';
+
+                e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
+                        new Vector2D(posYReel, posXReel),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
+            }
+            System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior() + "survivalTime : " + e.getSurvivalTime());
+
+            c++;
+        }
     }
 
     @Override
@@ -638,15 +667,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public Ennemy getCloserEnnemy(ActiveDefense defense) {
         Ennemy closerEnnemy = null;
         double minDistance = Double.MAX_VALUE;
-        for (Ennemy ennemy : enemies) {
-            double ennemyX = ennemy.getPositionReel().getX();
-            double ennemyY = ennemy.getPositionReel().getY();
+        for (Ennemy enemy : enemies) {
+            double enemyX = enemy.getPositionReel().getX();
+            double enemyY = enemy.getPositionReel().getY();
             Vector2D defensePosition = defense.getPosition();
-            double distance = Math.sqrt(Math.pow(ennemyX - defensePosition.getX(), 2)
-                    - Math.pow(ennemyY - defensePosition.getY(), 2));
+            double distance = Math.sqrt(Math.pow(enemyX - defensePosition.getX(), 2)
+                    - Math.pow(enemyY - defensePosition.getY(), 2));
             if (distance < minDistance) {
                 minDistance = distance;
-                closerEnnemy = ennemy;
+                closerEnnemy = enemy;
             }
         }
         return closerEnnemy;
@@ -685,7 +714,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public ArrayList<Ennemy> getEnnemyEndOfManche() {
-        return ennemiesEndOfManche;
+        return enemiesEndOfManche;
     }
 
     public ArrayList<Defense> getDefenseEndOfManche() {
@@ -704,7 +733,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void refreshEnnemyEndOfManche() {
-        this.ennemiesEndOfManche = new ArrayList<>();
+        this.enemiesEndOfManche = new ArrayList<>();
     }
 
     public void refreshDefenseEndOfManche() {
@@ -721,7 +750,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void refreshEnnemyArrived() {
         this.nbEnnemiesArrived = 0;
-        this.ennemiesArrived = new ArrayList<>();
+        this.enemiesArrived = new ArrayList<>();
     }
 
     public void setSimulation(boolean b) {
@@ -737,8 +766,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void towerIsDestroyed() {
         System.out.println("La défense  est morte !");
-
-        for (Ennemy ennemy : enemies) {
+        for (Ennemy enemy : enemies) {
             char[][] copyGrid = new char[cases.length][];
             for (int i = 0; i < cases.length; i++) {
                 copyGrid[i] = cases[i].clone();
@@ -748,32 +776,32 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 copyGrid[(int) position.getY()][(int) position.getX()] = '.';
 
             }
-            int ennemyPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
-            int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
-            if (ennemyPosY < 0) {
-                ennemyPosY = 0;
+            int enemyPosY = (int) Math.ceil(enemy.getPositionReel().getY());
+            int enemyPosX = (int) Math.ceil(enemy.getPositionReel().getX());
+            if (enemyPosY < 0) {
+                enemyPosY = 0;
             }
-            if (ennemyPosX < 0) {
-                ennemyPosX = 0;
+            if (enemyPosX < 0) {
+                enemyPosX = 0;
             }
-            if (ennemyPosX > copyGrid[0].length - 1) {
-                ennemyPosX = copyGrid[0].length - 1;
+            if (enemyPosX > copyGrid[0].length - 1) {
+                enemyPosX = copyGrid[0].length - 1;
             }
-            if (ennemyPosY > copyGrid.length - 1) {
-                ennemyPosY = copyGrid.length - 1;
+            if (enemyPosY > copyGrid.length - 1) {
+                enemyPosY = copyGrid.length - 1;
             }
-            char charCourant = copyGrid[ennemyPosY][ennemyPosX];
+            char charCourant = copyGrid[enemyPosY][enemyPosX];
             if (charCourant == '#') {
-                moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
+                moveEnemyToClosestValidPoint(copyGrid, enemyPosX, enemyPosY);
             }
-            copyGrid[ennemyPosY][ennemyPosX] = 'S';
-            if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
+            copyGrid[enemyPosY][enemyPosX] = 'S';
+            if (!(enemyPosY == YArrival && enemyPosX == XArrival)) {
                 Astar newAstar = new Astar();
                 ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
-                        new Vector2D(ennemyPosY, ennemyPosX),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
-                ennemy.setBehaviorPath(new PathfollowingBehavior(path));
-                BehavioursMap.put(ennemy.getBehavior(), path);
+                        new Vector2D(enemyPosY, enemyPosX),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), enemy.getBehavior(), false);
+                enemy.setBehaviorPath(new PathfollowingBehavior(path));
+                BehavioursMap.put(enemy.getBehavior(), path);
             }
         }
     }
@@ -808,7 +836,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         //création du labyrinthe vide
         this.cases = new char[nbLignes][nbColonnes];
 
-        // Nombre d'ennemis qui doivent arriver à la fin pour gagner
+        // Nombre d'enemys qui doivent arriver à la fin pour gagner
         this.nbEnnemiesToWin = 50;
 
         //lecture des cases
@@ -875,20 +903,20 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public HashMap getScore() {
-        return ennemyScore;
+        return enemyScore;
     }
 
     public void refresh(int i) {
         createBehaviours(this.getCases());
-        System.out.println("ennemies evolved : " + this.ennemiesEvolved);
-        if (this.ennemiesEvolved.isEmpty()) {
-            System.out.println("Liste des ennemies : " + this.enemies);
+        System.out.println("enemyes evolved : " + this.enemiesEvolved);
+        if (this.enemiesEvolved.isEmpty()) {
+            System.out.println("Liste des enemyes : " + this.enemies);
             Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant" + i);
             e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
             e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
             this.enemies.add(e);
         } else {
-            Giant e = this.ennemiesEvolved.get(i);
+            Giant e = this.enemiesEvolved.get(i);
             e.setName(e.getName() + i);
             e.setToStart(this);
 
@@ -910,23 +938,23 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void setEnnemiesEvolved(ArrayList<Giant> evolve) {
-        this.ennemiesEvolved = evolve;
+        this.enemiesEvolved = evolve;
     }
 
     public void refreshEnnemiesScore() {
-        this.ennemyScore = new HashMap<>();
+        this.enemyScore = new HashMap<>();
     }
 
     public void setDefenses(ArrayList<Defense> defenseEndOfManche) {
         this.defenses = defenseEndOfManche;
     }
 
-    public void moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
-        if (grid[ennemiPosY][ennemiPosX] == '#') {
-            int[] closestPoint = astar.findClosestValidPoint(grid, ennemiPosY, ennemiPosX);
+    public void moveEnemyToClosestValidPoint(char[][] grid, int enemyPosX, int enemyPosY) {
+        if (grid[enemyPosY][enemyPosX] == '#') {
+            int[] closestPoint = astar.findClosestValidPoint(grid, enemyPosY, enemyPosX);
             if (closestPoint != null) {
-                ennemiPosX = closestPoint[0];
-                ennemiPosY = closestPoint[1];
+                enemyPosX = closestPoint[0];
+                enemyPosY = closestPoint[1];
             }
         }
     }
