@@ -31,7 +31,7 @@ public class ViewLogs implements Observer {
             if (laby.getPause() && laby.getLogs().matches("Manche \\d+ terminée")) {
                 System.out.println("Simulation ? : " + laby.estSimulation());
                 Button button = new Button("Learn");
-                button.setOnMouseClicked(new ControllerLearn(laby)); // a cérer dans le moteur avec les vues ?
+                button.setOnMouseClicked(new ControllerLearn(laby)); // a créer dans le moteur avec les vues ?
                 vbox.getChildren().add(button);
             }
             laby.setLogs("");
