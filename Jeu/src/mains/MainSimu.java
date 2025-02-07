@@ -17,8 +17,10 @@ public class MainSimu extends Application {
     public void start(Stage stage) throws Exception {
         //initialisation avec une liste d'ennemies
         ArrayList<Ennemy> ennemies = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            ennemies.add(new Giant(new Vector2D(0, 0), "Giant "+i));
+        for (int i = 0; i < 50; i++) {
+            Giant giant = new Giant(new Vector2D(0, 0), "Giant "+i);
+            giant.setSprite(null);
+            ennemies.add(giant);
         }
 
         //Boucle sur le nombre de manche avec une population d'ennemies évoluer à chaque fois
@@ -26,7 +28,7 @@ public class MainSimu extends Application {
             System.out.println("Manche "+i);
             for (Ennemy ennemy : ennemies) {
                 System.out.println("Ennemy avant évolution: "+ ennemy.getName());
-                System.out.println("Vie : "+ennemy.getHealth()+" Dégats : "+ennemy.getDamages()+" Vitesse : "+ennemy.getSpeed()+" Attaque : "+ennemy.getAttackSpeed());
+                System.out.println("Vie : "+ennemy.getHealth()+" Dégats : "+ennemy.getDamages()+" Vitesse : "+ennemy.getSpeed());
             }
 
             //création d'une HashMap avec pour clé l'ennemi et pour valeur son score
@@ -42,8 +44,9 @@ public class MainSimu extends Application {
             System.out.println("Nouvelle population : ");
             for (Ennemy ennemy : ennemies) {
                 System.out.println("Ennemy après evolution"+ennemy.getName());
-                System.out.println("Vie : "+ennemy.getHealth()+" Dégats : "+ennemy.getDamages()+" Vitesse : "+ennemy.getSpeed()+" AttaqueSpeed : "+ennemy.getAttackSpeed());
+                System.out.println("Vie : "+ennemy.getHealth()+" Dégats : "+ennemy.getDamages()+" Vitesse : "+ennemy.getSpeed());
             }
         }
+        System.out.println("Fin de la simulation");
     }
 }

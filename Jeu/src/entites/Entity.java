@@ -216,4 +216,8 @@ public abstract class Entity {
     public void setLastAttackCount(long lastAttackCount) {
         this.lastAttackCount = lastAttackCount;
     }
+
+    public void setSprite(Object o) {
+        this.sprite = (Image) o;
+    }
 }
