@@ -16,6 +16,7 @@ import steering_astar.Astar.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 public class ModeleLabyrinth implements Jeu, Subject {
 
@@ -969,23 +970,23 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public int[] moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
-        int[] direction = {-1,0,1};
+        List<Integer> direction = Arrays.asList(-1,0,1);
 
         int currentX = ennemiPosX;
         int currentY = ennemiPosY;
 
         while(currentX == ennemiPosX && currentY == ennemiPosY) {
-            for (int i = 0; i < direction.length; i++) {
-                for (int j = 0; j < direction.length; j++) {
-                    if (grid[Math.abs(ennemiPosY + direction[i])][Math.abs(ennemiPosX + direction[j])] == '.'){
-                        ennemiPosY = Math.abs(ennemiPosY + direction[i]);
-                        ennemiPosX = Math.abs(ennemiPosX + direction[j]);
+            for (int i = 0; i < direction.size(); i++) {
+                for (int j = 0; j < direction.size(); j++) {
+                    if (grid[Math.abs(ennemiPosY + direction.get(i))][Math.abs(ennemiPosX + direction.get(j))] == '.'){
+                        ennemiPosY = Math.abs(ennemiPosY + direction.get(i));
+                        ennemiPosX = Math.abs(ennemiPosX + direction.get(j));
                     }
                 }
             }
             if (currentX == ennemiPosX && currentY == ennemiPosY){
-                direction[0] -= 1;
-                direction[2] += 1;
+                direction.addFirst(direction.getFirst()-1);
+                direction.addLast(direction.getLast()+1);
             }
         }
         return new int[]{ennemiPosY,ennemiPosX};
