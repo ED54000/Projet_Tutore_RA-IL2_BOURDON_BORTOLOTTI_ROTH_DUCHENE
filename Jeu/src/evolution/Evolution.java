@@ -22,15 +22,22 @@ public class Evolution {
             ennemies.add(ennemy);
             jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", ennemies, 1000, 1200);
             stats.put(ennemy, simulate(jeu));
-            // Une fois le score calculé, on remet les statistiques de départ
-            ennemy.setHealth(startStats.get(ennemy)[0]);
-            ennemy.setSpeed(startStats.get(ennemy)[1]);
-            ennemy.setDamages(startStats.get(ennemy)[2]);
-            ennemy.setAttackSpeed(startStats.get(ennemy)[3]);
-
-            //System.out.println("Ennemis après simu :" + ennemy.getHealth() + " " + ennemy.getSpeed() + " " + ennemy.getDamages() + " " + ennemy.getAttackSpeed());
         }
 
+        // Après évaluation, on réaffecte les statistiques de départ aux ennemis
+        for (Ennemy ennemy : stats.keySet()) {
+            double[] statsStart = startStats.get(ennemy);
+            if (statsStart != null) {
+                ennemy.setHealth(statsStart[0]);
+                ennemy.setSpeed(statsStart[1]);
+                ennemy.setDamages(statsStart[2]);
+                ennemy.setAttackSpeed(statsStart[3]);
+            } else {
+                System.err.println("Aucune stats sauvegardée pour " + ennemy.getName());
+            }
+        }
+
+        // On retourne la map des ennemy|score
         return stats;
     }
 
@@ -42,11 +49,16 @@ public class Evolution {
     public double simulate(ModeleLabyrinth jeu){
         // On sauvegarde les statistiques de départ des ennemis
         saveStartStats(jeu.enemies);
+        System.out.println("Stats sauvegardées en début de manche : ");
+        for (Ennemy e : startStats.keySet()) {
+            System.out.println(e.getName() + " : " + Arrays.toString(startStats.get(e)));
+        }
+        System.out.println("========================================");
 
         double score = 0;
         long lastUpdateTime = System.nanoTime();
         // Tant que la manche est en cours
-        while (!jeu.isPause()) {
+        while (!jeu.getPause()) {
             long currentTime = System.nanoTime();
             double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
 
@@ -54,13 +66,12 @@ public class Evolution {
             lastUpdateTime = currentTime;
         }
         // On retourne le score
-        //System.out.println("Distance arrivée de "+jeu.getEnnemyEndOfManche().get(0).getName()+": "+jeu.getEnnemyEndOfManche().get(0).getDistanceToArrival()+" vie : "+jeu.getEnnemyEndOfManche().get(0).getHealth()+" temps de survie : "+jeu.getEnnemyEndOfManche().get(0).getSurvivalTime());
         return getScore(jeu.getEnnemyEndOfManche().get(0));
     }
 
     public double getScore(Ennemy e) {
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
-        int bonus = e.isDead() ? -1000 : 1000;
+        int bonus = e.getIsDead() ? -1000 : 1000;
         System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Bonus : "+bonus);
@@ -100,9 +111,7 @@ public class Evolution {
         nouvellePopulation.addAll(enfants);
 
         // 5. Appliquer une mutation sur la nouvelle population
-        //nouvellePopulation = mutate(nouvellePopulation);
-
-        return nouvellePopulation;
+        return mutate(nouvellePopulation);
     }
 
     /**

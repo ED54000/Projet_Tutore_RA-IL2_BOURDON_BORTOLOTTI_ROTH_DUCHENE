@@ -84,7 +84,7 @@ public abstract class Ennemy extends Entity {
         return distanceToArrival;
     }
 
-    public boolean isItArrived() {
+    public boolean getIsArrived() {
         return isArrived;
     }
 
@@ -122,10 +122,6 @@ public abstract class Ennemy extends Entity {
 
     public void setKillerType(String killerType) {
         this.killerType = killerType;
-    }
-
-    public boolean isArrived() {
-        return isArrived;
     }
 
     public void setArrived(boolean res) {
@@ -170,6 +166,7 @@ public abstract class Ennemy extends Entity {
     public void setPositionReel(Vector2D positionReel) {
         this.positionReel = positionReel;
     }
+
     public void setSurvivalTime(long survivalTime) {
         this.survivalTime = survivalTime;
     }

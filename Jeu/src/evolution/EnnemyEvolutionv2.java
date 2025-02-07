@@ -2,7 +2,6 @@ package evolution;
 
 import entites.enemies.Ennemy;
 import entites.enemies.Giant;
-import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class EnnemyEvolutionv2 {
 
     public double getScore(Ennemy e){
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
-        int bonus = e.isDead() ? -20 : 20;
+        int bonus = e.getIsDead() ? -20 : 20;
         System.out.println("Survival time : "+e.getSurvivalTime());
         System.out.println("Bonus : "+bonus);
 
