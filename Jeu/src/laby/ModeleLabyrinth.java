@@ -13,6 +13,7 @@ import moteur.Jeu;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
+
 import java.awt.*;
 import java.io.*;
 import java.util.*;
@@ -186,7 +187,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
                 e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
             }
-            if (e instanceof Druide){
+            if (e instanceof Druide) {
                 ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
 
                 e.setBehaviorPath(new PathfollowingBehavior(aStarHealerPath));
@@ -207,7 +208,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(0,0), "Ninja " + nbNinja);
+                    Ninja ninja = new Ninja(new Vector2D(0, 0), "Ninja " + nbNinja);
                     ennemies.add(ninja);
                     nbNinja++;
                     break;
@@ -306,6 +307,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         updateEnemyPositions();
         notifyObserver();
     }
+
     private void updateCombat(double secondes) {
         // Gestion de l'attaque des ennemis
         Iterator<Ennemy> enemyIterator = enemies.iterator();
@@ -340,11 +342,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 handleEnemyArrival(enemy);
                 enemyIterator.remove();
                 System.out.println("Liste des ennemis a la fin : " + enemies);
-                System.out.println("Taille de la liste : " + enemies.size());
-                System.out.println("Nb arrives : " + nbEnnemiesArrived + " Nb morts :" + deadEnemies.size());
-                for (Ennemy d : enemies) {
-                    System.out.println("Valeurs des ennemis restant : " + d.getPositionReel() + " Nom : " + d.getName() + " Mort : " + d.getIsDead());
-                }
             } else {
                 enemy.update();
             }
@@ -359,17 +356,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private void handleEnemyArrival(Ennemy enemy) {
-            enemy.setArrived(true);
-            nbEnnemiesArrived++;
+        enemy.setArrived(true);
+        nbEnnemiesArrived++;
 
-            enemy.setPosition(new Vector2D(XArrival, YArrival));
-            enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
+        enemy.setPosition(new Vector2D(XArrival, YArrival));
+        enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
 
-            System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
-            System.out.println("Le " + enemy.getName() + " est arrivé");
-            setLogs("Le " + enemy.getName() + " est arrivé");
+        System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
+        System.out.println("Le " + enemy.getName() + " est arrivé");
+        setLogs("Le " + enemy.getName() + " est arrivé");
 
-            ennemiesArrived.add(enemy);
+        ennemiesArrived.add(enemy);
 
         if (nbEnnemiesArrived >= nbEnnemiesToWin + 1) {
             setLogs("Fin du jeu car assez d'ennemis ont atteint l'arrivée");
@@ -397,14 +394,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 deadEnemies.add(e);
                 //enemies.remove(e);
                 enemyIterator.remove();
-                System.out.println(e.getName()+ " est mort !");
+                System.out.println(e.getName() + " est mort !");
                 setLogs(e.getName() + " est mort. Coup dur !");
                 System.out.println("Liste des ennemis a la fin : " + enemies);
-                System.out.println("Taille de la liste : "+ enemies.size());
-                System.out.println("Nb arrives : "+ nbEnnemiesArrived + " Nb morts :"+ deadEnemies.size() );
-                for (Ennemy d : enemies) {
-                    System.out.println("Valeurs des ennemis restant : " + d.getPositionReel() + " Nom : "+ d.getName() + " Mort : " + d.getIsDead());
-                }
             }
         }
     }
@@ -588,21 +580,21 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 posXReel = 0;
             }
 
-                if (posYReel >= copyGrid.length) {
-                    posYReel = copyGrid.length;
+            if (posYReel >= copyGrid.length) {
+                posYReel = copyGrid.length;
+            }
+            if (posXReel >= copyGrid.length) {
+                posXReel = copyGrid.length;
+            }
+            if (e.getIsArrived()) {
+                e.setDistanceToArrival(new ArrayList<>());
+            } else {
+                if (copyGrid[posYReel][posXReel] == '#') {
+                    int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, posXReel, posYReel);
+                    posYReel = newCoord[0];
+                    posXReel = newCoord[1];
                 }
-                if (posXReel >= copyGrid.length) {
-                    posXReel = copyGrid.length;
-                }
-                if (e.getIsArrived()) {
-                    e.setDistanceToArrival(new ArrayList<>());
-                } else {
-                    if (copyGrid[posYReel][posXReel] == '#') {
-                        int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, posXReel, posYReel);
-                        posYReel = newCoord[0];
-                        posXReel = newCoord[1];
-                    }
-                    copyGrid[posYReel][posXReel] = 'S';
+                copyGrid[posYReel][posXReel] = 'S';
 
                 e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
                         new Vector2D(posYReel, posXReel),
@@ -840,28 +832,28 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public int[] moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
-        List<Integer> direction = Arrays.asList(-1,0,1);
+        List<Integer> direction = Arrays.asList(-1, 0, 1);
 
         int currentX = ennemiPosX;
         int currentY = ennemiPosY;
 
-        while(currentX == ennemiPosX && currentY == ennemiPosY) {
+        while (currentX == ennemiPosX && currentY == ennemiPosY) {
             for (int i = 0; i < direction.size(); i++) {
                 for (int j = 0; j < direction.size(); j++) {
                     int absY = Math.abs(ennemiPosY + direction.get(i));
                     int absX = Math.abs(ennemiPosX + direction.get(j));
-                    if (grid[absY][absX] == '.'){
+                    if (grid[absY][absX] == '.') {
                         ennemiPosY = absY;
                         ennemiPosX = absX;
                     }
                 }
             }
-            if (currentX == ennemiPosX && currentY == ennemiPosY){
-                direction.addFirst(direction.getFirst()-1);
-                direction.addLast(direction.getLast()+1);
+            if (currentX == ennemiPosX && currentY == ennemiPosY) {
+                direction.addFirst(direction.getFirst() - 1);
+                direction.addLast(direction.getLast() + 1);
             }
         }
-        return new int[]{ennemiPosY,ennemiPosX};
+        return new int[]{ennemiPosY, ennemiPosX};
     }
 
     public static Dimension getScreenSize() {

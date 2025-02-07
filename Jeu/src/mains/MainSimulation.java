@@ -1,9 +1,7 @@
 package mains;
 
-import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
 
@@ -17,7 +15,7 @@ public class MainSimulation extends Application {
         ModeleLabyrinth jeu = new ModeleLabyrinth();
         jeu.setSimulation(true);
         jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", jeu.createEnnemies(50), 1000, 1200);
-
+        Platform.exit();
         // Lancer la simulation dans un thread séparé
         new Thread(() -> {
             long lastUpdateTime = System.nanoTime();
@@ -37,7 +35,7 @@ public class MainSimulation extends Application {
             System.out.println(jeu.getLogs());
             System.out.println("Simulation terminée.");
         }).start();
-    }
 
+    }
 
 }
