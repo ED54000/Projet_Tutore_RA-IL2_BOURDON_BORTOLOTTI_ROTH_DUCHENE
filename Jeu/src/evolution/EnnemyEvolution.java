@@ -311,6 +311,9 @@ public class EnnemyEvolution {
             if(e.getSpeed() < 1){
                 e.setSpeed(1);
             }
+            if(e.getSpeed() > 5){
+                e.setSpeed(5);
+            }
         }
         return ennemies;
     }
