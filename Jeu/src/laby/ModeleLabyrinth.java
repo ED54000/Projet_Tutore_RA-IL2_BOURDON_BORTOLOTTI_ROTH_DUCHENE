@@ -520,7 +520,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         //On ajoute les defenses de la manche dans une liste
         this.defensesEndOfManche.addAll(deadDefenses);
         this.defensesEndOfManche.addAll(defenses);
-        //on calcule la distance de chaque enemy à l'arrivée
+        //on calcule la distance de chaque ennemi à l'arrivée
         calculateFinalDistances();
 
         System.out.println("Ennemis en fin de manche : " + ennemiesEndOfManche);
@@ -553,7 +553,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             double score = evolution.getScore(ennemiesEndOfManche.get(0));
             this.defenses = this.getDefenseEndOfManche();
             System.out.println("Defenses toutes neuve : " + this.defenses);
-            // On sauvegarde les score de l'enemy dans une map avec l'enemy comme clé et le score comme valeur
+            // On sauvegarde les score de l'ennemi dans une map avec l'ennemi comme clé et le score comme valeur
             ennemyScore.put((Giant) ennemiesEndOfManche.get(0), score);
             this.end = true;
         }
