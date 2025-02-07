@@ -15,10 +15,10 @@ public class EnnemyEvolutionv2 {
     public double getScore(Ennemy e){
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
         int bonus = e.isDead() ? -20 : 20;
-        System.out.println("Distance to Arrival : "+e.getDistanceToArrival());
+        System.out.println("Survival time : "+e.getSurvivalTime());
         System.out.println("Bonus : "+bonus);
 
-        double score = e.getDistanceToArrival() + bonus;
+        double score = e.getSurvivalTime() + bonus;
         return score;
     }
 
@@ -60,7 +60,6 @@ public class EnnemyEvolutionv2 {
      * À personnaliser en fonction des propriétés des géants.
      */
     private Giant croiser(Giant parent1, Giant parent2) {
-        // Exemple de croisement (à adapter selon la structure de Giant)
         Giant giant = new Giant(new Vector2D(0, 0), "Giant");
 
         giant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));

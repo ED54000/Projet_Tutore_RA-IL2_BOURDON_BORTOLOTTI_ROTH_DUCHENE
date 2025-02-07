@@ -42,12 +42,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Ennemy> deadEnemies = new ArrayList<>();
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
     private ArrayList<Defense> defensesEndOfManche = new ArrayList<>();
-    private ArrayList<Ennemy> enemiesEndOfManche = new ArrayList<>();
-    private ArrayList<Ennemy> enemiesArrived = new ArrayList<>();
+    private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
+    private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
-    private HashMap<Giant, Double> enemyScore = new HashMap<>();
-    private ArrayList<Giant> enemiesEvolved = new ArrayList<>();
-    private int nbArcher, nbCanon, nbBomb = 0;
+    private HashMap<Giant, Double> ennemyScore = new HashMap<>();
+    private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
+    private int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
 
 
     //si le jeu est avec le main simulation
@@ -70,6 +70,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private boolean end = false;
     private Astar astar = new Astar();
     private long endTime;
+    //private ArrayList<Vector2D> aStarHealerPath;
 
     //constructeur vide
     public ModeleLabyrinth() {
@@ -81,12 +82,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
      * Crée un labyrinthe à partir d'un fichier
      *
      * @param fichier         le fichier contenant le labyrinthe
-     * @param nbEnnemies      le nombre d'ennemis
+     * @param ennemies      le nombre d'ennemis
      * @param limManches      le nombre de manches
      * @param nbEnnemiesToWin le nombre d'ennemis à atteindre l'arrivée pour gagner
      * @throws IOException si le fichier n'existe pas
      */
-    public void creerLabyrinthe(String fichier, int nbEnnemies, int limManches, int nbEnnemiesToWin) throws IOException {
+    public void creerLabyrinthe(String fichier, ArrayList<Ennemy> ennemies, int limManches, int nbEnnemiesToWin) throws IOException {
+        this.enemies = ennemies;
+
         this.limManches = limManches;
         //ouvrir le fichier
         FileReader fr = new FileReader(fichier);
@@ -160,59 +163,69 @@ public class ModeleLabyrinth implements Jeu, Subject {
             numLigne++;
             ligne = br.readLine();
         }
-        createEnnemies(nbEnnemies);
+        setAllEnnemiesStats(this.enemies);
         br.close();
     }
 
-    private void createEnnemies(int nbEnnemies) {
+    private void setAllEnnemiesStats(ArrayList<Ennemy> ennemies) {
         createBehaviours(this.getCases());
+        for (Ennemy e : ennemies) {
+            e.setPositionReel(e.getPosition().divide(ModeleLabyrinth.getTailleCase()));
 
-        int nbGiant = 1;
-        int nbNinja = 1;
-        int nbBerserker = 1;
-        int nbDruides = 1;
+            e.setToStart(this);
+            if (e instanceof Giant){
+                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+            }
+            if (e instanceof Ninja){
+                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
+                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
+            }
+            if (e instanceof Berserker){
+                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
+                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
+            }
+            if (e instanceof Druide){
+                ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
 
+                e.setBehaviorPath(new PathfollowingBehavior(aStarHealerPath));
+                e.setDistanceStartToArrival(aStarHealerPath);
+            }
+        }
+    }
+
+    public ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
+        ArrayList<Ennemy> ennemies = new ArrayList<>();
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
             int random = (int) (Math.random() * 4);
             switch (random) {
                 case 0:
-                    Giant giant = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant " + nbGiant);
-                    giant.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
-                    giant.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
-                    this.enemies.add(giant);
+                    Giant giant = new Giant(new Vector2D(0, 0), "Giant " + nbGiant);
+                    ennemies.add(giant);
                     nbGiant++;
                     break;
                 case 1:
-                    Ninja ninja = new Ninja(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Ninja " + nbNinja);
-                    ninja.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
-                    ninja.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
-                    this.enemies.add(ninja);
+                    Ninja ninja = new Ninja(new Vector2D(0,0), "Ninja " + nbNinja);
+                    ennemies.add(ninja);
                     nbNinja++;
                     break;
                 case 2:
-                    Berserker berserker = new Berserker(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Berseker " + nbBerserker);
-                    berserker.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
-                    berserker.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
-                    this.enemies.add(berserker);
+                    Berserker berserker = new Berserker(new Vector2D(0, 0), "Berseker " + nbBerserker);
+                    ennemies.add(berserker);
                     nbBerserker++;
                     break;
                 case 3:
+                    Druide druide = new Druide(new Vector2D(0, 0), "Druide " + nbDruides);
+                    ennemies.add(druide);
                     nbDruides++;
                     break;
             }
         }
-        for (int i = 1; i < nbDruides; i++) {
-            Druide druide = new Druide(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Druide " + i);
-            ArrayList<Vector2D> aStarHealer = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-            druide.setBehaviorPath(new PathfollowingBehavior(aStarHealer));
-            druide.setDistanceStartToArrival(aStarHealer);
-            this.enemies.add(druide);
-        }
 
-        // On sauvegarde les statistiques des enemys
-        EnnemyEvolution.saveStartStats(this.enemies);
-        System.out.println("on a sauvegardé les stats au start de la liste d'enemys suivante : " + this.enemies + "on les affiche");
+        // On sauvegarde les statistiques des ennemis
+        EnnemyEvolution.saveStartStats(ennemies);
+        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
         Map<Ennemy, double[]> map = EnnemyEvolution.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
@@ -220,12 +233,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
             double[] values = entry.getValue();
 
             System.out.println("==========================================");
-            System.out.print("Ennemi: " + enemy + " -> Values: ");
+            System.out.print("Enemy: " + enemy + " -> Values: ");
             for (double value : values) {
                 System.out.print(value + " ");
             }
             System.out.println();
         }
+        return ennemies;
     }
 
     public ArrayList<Vector2D> getNewHealerAStar(int nbDruides, int nbGiant, int nbBerserker, int nbNinja) {
@@ -342,7 +356,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         System.out.println("Le " + enemy.getName() + " est arrivé");
         System.out.println("Liste des enemys a la fin : " + enemies);
         setLogs("Le " + enemy.getName() + " est arrivé");
-        enemiesArrived.add(enemy);
+        ennemiesArrived.add(enemy);
         enemies.remove(enemy);
 
         if (nbEnnemiesArrived >= nbEnnemiesToWin + 1) {
@@ -487,15 +501,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
 
         //On ajoute les enemys de la manche dans une liste
-        this.enemiesEndOfManche.addAll(deadEnemies);
-        this.enemiesEndOfManche.addAll(enemiesArrived);
+        this.ennemiesEndOfManche.addAll(deadEnemies);
+        this.ennemiesEndOfManche.addAll(ennemiesArrived);
         //On ajoute les defenses de la manche dans une liste
         this.defensesEndOfManche.addAll(deadDefenses);
         this.defensesEndOfManche.addAll(defenses);
         //on calcule la distance de chaque enemy à l'arrivée
         calculateFinalDistances();
 
-        System.out.println("Ennemis en fin de manche : " + enemiesEndOfManche);
+        System.out.println("Ennemis en fin de manche : " + ennemiesEndOfManche);
         setLogs("Manche " + nbManches + " terminée");
 
         //dans le cas ou on est en simulation
@@ -522,18 +536,18 @@ public class ModeleLabyrinth implements Jeu, Subject {
             new ControllerNextManche(this).handle(fakeClickEvent);
         } else if (this.simulationEvolution) {
             EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
-            double score = evolution.getScore(enemiesEndOfManche.get(0));
+            double score = evolution.getScore(ennemiesEndOfManche.get(0));
             this.defenses = this.getDefenseEndOfManche();
             System.out.println("Defenses toutes neuve : " + this.defenses);
             // On sauvegarde les score de l'enemy dans une map avec l'enemy comme clé et le score comme valeur
-            enemyScore.put((Giant) enemiesEndOfManche.get(0), score);
+            ennemyScore.put((Giant) ennemiesEndOfManche.get(0), score);
             this.end = true;
         }
     }
 
     private void calculateFinalDistances() {
         int c = 0;
-        for (Ennemy e : enemiesEndOfManche) {
+        for (Ennemy e : ennemiesEndOfManche) {
             char[][] copyGrid = new char[cases.length][];
             for (int i = 0; i < cases.length; i++) {
                 copyGrid[i] = cases[i].clone();
@@ -552,25 +566,27 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 posXReel = 0;
             }
 
-            if (posYReel >= copyGrid.length) {
-                posYReel = copyGrid.length;
-            }
-            if (posXReel >= copyGrid.length) {
-                posXReel = copyGrid.length;
-            }
-            if (e.isArrived()) {
-                e.setDistanceToArrival(new ArrayList<>());
-            } else {
-                if (copyGrid[posYReel][posXReel] == '#') {
-                    moveEnemyToClosestValidPoint(copyGrid, posXReel, posYReel);
+                if (posYReel >= copyGrid.length) {
+                    posYReel = copyGrid.length;
                 }
-                copyGrid[posYReel][posXReel] = 'S';
+                if (posXReel >= copyGrid.length) {
+                    posXReel = copyGrid.length;
+                }
+                if (e.isArrived()) {
+                    e.setDistanceToArrival(new ArrayList<>());
+                } else {
+                    if (copyGrid[posYReel][posXReel] == '#') {
+                        int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, posXReel, posYReel);
+                        posYReel = newCoord[0];
+                        posXReel = newCoord[1];
+                    }
+                    copyGrid[posYReel][posXReel] = 'S';
 
-                e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
-                        new Vector2D(posYReel, posXReel),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
-            }
-            System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior() + "survivalTime : " + e.getSurvivalTime());
+                    e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
+                            new Vector2D(posYReel, posXReel),
+                            new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
+                }
+                System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior() + "survivalTime : " + e.getSurvivalTime());
 
             c++;
         }
@@ -667,15 +683,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public Ennemy getCloserEnnemy(ActiveDefense defense) {
         Ennemy closerEnnemy = null;
         double minDistance = Double.MAX_VALUE;
-        for (Ennemy enemy : enemies) {
-            double enemyX = enemy.getPositionReel().getX();
-            double enemyY = enemy.getPositionReel().getY();
+        for (Ennemy ennemy : enemies) {
+            double ennemyX = ennemy.getPositionReel().getX();
+            double ennemyY = ennemy.getPositionReel().getY();
             Vector2D defensePosition = defense.getPosition();
-            double distance = Math.sqrt(Math.pow(enemyX - defensePosition.getX(), 2)
-                    - Math.pow(enemyY - defensePosition.getY(), 2));
+            double distance = Math.sqrt(Math.pow(ennemyX - defensePosition.getX(), 2)
+                    - Math.pow(ennemyY - defensePosition.getY(), 2));
             if (distance < minDistance) {
                 minDistance = distance;
-                closerEnnemy = enemy;
+                closerEnnemy = ennemy;
             }
         }
         return closerEnnemy;
@@ -714,7 +730,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public ArrayList<Ennemy> getEnnemyEndOfManche() {
-        return enemiesEndOfManche;
+        return ennemiesEndOfManche;
     }
 
     public ArrayList<Defense> getDefenseEndOfManche() {
@@ -733,7 +749,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void refreshEnnemyEndOfManche() {
-        this.enemiesEndOfManche = new ArrayList<>();
+        this.ennemiesEndOfManche = new ArrayList<>();
     }
 
     public void refreshDefenseEndOfManche() {
@@ -750,7 +766,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void refreshEnnemyArrived() {
         this.nbEnnemiesArrived = 0;
-        this.enemiesArrived = new ArrayList<>();
+        this.ennemiesArrived = new ArrayList<>();
     }
 
     public void setSimulation(boolean b) {
@@ -766,7 +782,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void towerIsDestroyed() {
         System.out.println("La défense  est morte !");
-        for (Ennemy enemy : enemies) {
+
+        for (Ennemy ennemy : enemies) {
             char[][] copyGrid = new char[cases.length][];
             for (int i = 0; i < cases.length; i++) {
                 copyGrid[i] = cases[i].clone();
@@ -776,32 +793,34 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 copyGrid[(int) position.getY()][(int) position.getX()] = '.';
 
             }
-            int enemyPosY = (int) Math.ceil(enemy.getPositionReel().getY());
-            int enemyPosX = (int) Math.ceil(enemy.getPositionReel().getX());
-            if (enemyPosY < 0) {
-                enemyPosY = 0;
+            int ennemyPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
+            int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
+            if (ennemyPosY < 0) {
+                ennemyPosY = 0;
             }
-            if (enemyPosX < 0) {
-                enemyPosX = 0;
+            if (ennemyPosX < 0) {
+                ennemyPosX = 0;
             }
-            if (enemyPosX > copyGrid[0].length - 1) {
-                enemyPosX = copyGrid[0].length - 1;
+            if (ennemyPosX > copyGrid[0].length - 1) {
+                ennemyPosX = copyGrid[0].length - 1;
             }
-            if (enemyPosY > copyGrid.length - 1) {
-                enemyPosY = copyGrid.length - 1;
+            if (ennemyPosY > copyGrid.length - 1) {
+                ennemyPosY = copyGrid.length - 1;
             }
-            char charCourant = copyGrid[enemyPosY][enemyPosX];
+            char charCourant = copyGrid[ennemyPosY][ennemyPosX];
             if (charCourant == '#') {
-                moveEnemyToClosestValidPoint(copyGrid, enemyPosX, enemyPosY);
+                int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
+                ennemyPosY = newCoord[0];
+                ennemyPosX = newCoord[1];
             }
-            copyGrid[enemyPosY][enemyPosX] = 'S';
-            if (!(enemyPosY == YArrival && enemyPosX == XArrival)) {
+            copyGrid[ennemyPosY][ennemyPosX] = 'S';
+            if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
                 Astar newAstar = new Astar();
                 ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
-                        new Vector2D(enemyPosY, enemyPosX),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), enemy.getBehavior(), false);
-                enemy.setBehaviorPath(new PathfollowingBehavior(path));
-                BehavioursMap.put(enemy.getBehavior(), path);
+                        new Vector2D(ennemyPosY, ennemyPosX),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
+                ennemy.setBehaviorPath(new PathfollowingBehavior(path));
+                BehavioursMap.put(ennemy.getBehavior(), path);
             }
         }
     }
@@ -836,7 +855,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         //création du labyrinthe vide
         this.cases = new char[nbLignes][nbColonnes];
 
-        // Nombre d'enemys qui doivent arriver à la fin pour gagner
+        // Nombre d'ennemis qui doivent arriver à la fin pour gagner
         this.nbEnnemiesToWin = 50;
 
         //lecture des cases
@@ -903,20 +922,20 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public HashMap getScore() {
-        return enemyScore;
+        return ennemyScore;
     }
 
     public void refresh(int i) {
         createBehaviours(this.getCases());
-        System.out.println("enemyes evolved : " + this.enemiesEvolved);
-        if (this.enemiesEvolved.isEmpty()) {
-            System.out.println("Liste des enemyes : " + this.enemies);
+        System.out.println("ennemies evolved : " + this.ennemiesEvolved);
+        if (this.ennemiesEvolved.isEmpty()) {
+            System.out.println("Liste des ennemies : " + this.enemies);
             Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant" + i);
             e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
             e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
             this.enemies.add(e);
         } else {
-            Giant e = this.enemiesEvolved.get(i);
+            Giant e = this.ennemiesEvolved.get(i);
             e.setName(e.getName() + i);
             e.setToStart(this);
 
@@ -938,24 +957,37 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void setEnnemiesEvolved(ArrayList<Giant> evolve) {
-        this.enemiesEvolved = evolve;
+        this.ennemiesEvolved = evolve;
     }
 
     public void refreshEnnemiesScore() {
-        this.enemyScore = new HashMap<>();
+        this.ennemyScore = new HashMap<>();
     }
 
     public void setDefenses(ArrayList<Defense> defenseEndOfManche) {
         this.defenses = defenseEndOfManche;
     }
 
-    public void moveEnemyToClosestValidPoint(char[][] grid, int enemyPosX, int enemyPosY) {
-        if (grid[enemyPosY][enemyPosX] == '#') {
-            int[] closestPoint = astar.findClosestValidPoint(grid, enemyPosY, enemyPosX);
-            if (closestPoint != null) {
-                enemyPosX = closestPoint[0];
-                enemyPosY = closestPoint[1];
+    public int[] moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
+        int[] direction = {-1,0,1};
+
+        int currentX = ennemiPosX;
+        int currentY = ennemiPosY;
+
+        while(currentX == ennemiPosX && currentY == ennemiPosY) {
+            for (int i = 0; i < direction.length; i++) {
+                for (int j = 0; j < direction.length; j++) {
+                    if (grid[Math.abs(ennemiPosY + direction[i])][Math.abs(ennemiPosX + direction[j])] == '.'){
+                        ennemiPosY = Math.abs(ennemiPosY + direction[i]);
+                        ennemiPosX = Math.abs(ennemiPosX + direction[j]);
+                    }
+                }
+            }
+            if (currentX == ennemiPosX && currentY == ennemiPosY){
+                direction[0] -= 1;
+                direction[2] += 1;
             }
         }
+        return new int[]{ennemiPosY,ennemiPosX};
     }
 }

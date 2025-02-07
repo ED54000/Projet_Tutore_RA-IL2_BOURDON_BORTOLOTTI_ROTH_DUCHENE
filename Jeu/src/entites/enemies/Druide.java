@@ -9,7 +9,7 @@ public class Druide extends Ennemy {
                 100 + (Math.random() - 0.5) * 20,
                 3 + (Math.random() - 0.5),
                 10 + (Math.random() - 0.5) * 2,
-                1 + (Math.random() - 0.5) * 0.2,
+                300+ (Math.random() - 0.5) * 0.2,
                 2.5, 1,name,"/druide.png", "Healer");
     }
 }
