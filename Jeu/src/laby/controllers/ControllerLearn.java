@@ -43,7 +43,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         //TODO : on remet les valeurs par défaut pour les defenses en attendant de les faire évoluer
         for (Defense d : laby.defenses) {
             d.setLastAttackCount(0);
-            d.setDead(false);
+            d.setIsDead(false);
             if (d instanceof Canon) {
                 d.setHealth(300);
             }
@@ -61,7 +61,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         int nbHealer = 0;
         int nbBerserker = 0;
         for(Ennemy e : laby.enemies){
-            e.setDead(false);
+            e.setIsDead(false);
             if(e instanceof Ninja){
                 e.setBehavior("Fugitive");
                 nbNinja++;

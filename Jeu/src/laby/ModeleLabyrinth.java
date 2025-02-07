@@ -344,7 +344,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private boolean hasReachedArrival(Ennemy enemy) {
         return Math.abs(enemy.getPosition().getX() - XArrivalRender) <= 10 &&
                 Math.abs(enemy.getPosition().getY() - YArrivalRender) <= 10 &&
-                !enemy.isArrived() &&
+                !enemy.getIsArrived() &&
                 !deadEnemies.contains(enemy);
     }
 
@@ -370,7 +370,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         //On retire les défenses mortes
         for (Defense d : defenses) {
             // Si la défense est morte, on la retire de la liste des défenses
-            if (d.isDead() && !deadDefenses.contains(d)) {
+            if (d.getIsDead() && !deadDefenses.contains(d)) {
                 deadDefenses.add(d);
                 towerIsDestroyed();
                 setLogs("La défense : " + d.getName() + " à été détruite");
@@ -380,7 +380,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         // On retire les enemys morts
         ArrayList<Ennemy> enemiesDead = new ArrayList<>();
         for (Ennemy e : enemies) {
-            if (e.isDead() && !deadEnemies.contains(e)) {
+            if (e.getIsDead() && !deadEnemies.contains(e)) {
                 deadEnemies.add(e);
                 enemiesDead.add(e);
                 setLogs(e.getName() + " est mort. Coup dur !");
@@ -393,7 +393,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private void handleDruideCombat(Ennemy enemy, double secondes) {
         for (Ennemy enemyTarget : enemies) {
             // Tous les ennemis a portée sont soignés
-            if (enemy.isInRange(enemyTarget) && !this.isPause()) {
+            if (enemy.isInRange(enemyTarget) && !this.getPause()) {
                 enemy.healDamage(enemyTarget, enemy.getDamages(), secondes);
             }
         }
@@ -428,12 +428,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // On vérifie si l'ennemi est toujours dans la portée de la défense
             if (defense.isInRange(enemyTarget)) {
                 // Si l'ennemi n'est pas mort
-                if (!enemyTarget.isDead()) {
+                if (!enemyTarget.getIsDead()) {
                     // On l'attaque
                     defense.attack(enemyTarget, secondes);
                 }
                 // Si l'ennemi est mort on set son killerType
-                if (enemyTarget.isDead() && !deadEnemies.contains(enemyTarget)) {
+                if (enemyTarget.getIsDead() && !deadEnemies.contains(enemyTarget)) {
                     enemyTarget.setKillerType(defense.getType());
                     // On retire la cible de la défense
                     defense.setTarget(null);
@@ -458,7 +458,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // On set la cible de la défense
                 defense.setTarget(enemy);
                 // Si l'enemy est mort, on set son killerType
-                if (enemy.isDead() && !deadEnemies.contains(enemy)) {
+                if (enemy.getIsDead() && !deadEnemies.contains(enemy)) {
                     enemy.setKillerType(defense.getType());
                     // On retire la cible de la défense
                     defense.setTarget(null);
@@ -473,13 +473,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
         // On parcourt les enemys
         for (Ennemy e : enemies) {
             // Si l'enemy est dans la portée de la défense
-            if (defense.isInRange(e) && !deadDefenses.contains(defense) && !((PassiveDefense) defense).isAttacked()) {
+            if (defense.isInRange(e) && !deadDefenses.contains(defense) && !((PassiveDefense) defense).getAttacked()) {
                 // Cela active la defense
                 // On attaque l'enemy
                 defense.attack(e, secondes);
                 defense.setAttacked(true);
                 // Si l'enemy est mort, on set son killerType
-                if (e.isDead() && !deadEnemies.contains(e)) {
+                if (e.getIsDead() && !deadEnemies.contains(e)) {
                     e.setKillerType(defense.getType());
                     // Et on met à jour son temps de survie
                     e.setSurvivalTime(System.currentTimeMillis() - startTime);
@@ -573,7 +573,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 if (posXReel >= copyGrid.length) {
                     posXReel = copyGrid.length;
                 }
-                if (e.isArrived()) {
+                if (e.getIsArrived()) {
                     e.setDistanceToArrival(new ArrayList<>());
                 } else {
                     if (copyGrid[posYReel][posXReel] == '#') {
@@ -639,42 +639,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return tailleCase - taskbarSize;
     }
 
-    public static Dimension getScreenSize() {
-        return screenSize;
-    }
-
-    public static int getLength() {
-        return cases.length;
-    }
-
-    public static int getLengthY() {
-        return cases[0].length;
-    }
-
-    public char getCase(int x, int y) {
-        return cases[x][y];
-    }
-
-    public char[][] getCases() {
-        return this.cases;
-    }
-
-    public void setLogs(String log) {
-        logs = log;
-    }
-
-    public String getLogs() {
-        return logs;
-    }
-
-    public boolean isPause() {
-        return this.pause;
-    }
-
-    public void setPause(boolean pause) {
-        this.pause = pause;
-    }
-
     /**
      * Retourne l'ennemi le plus proche d'une défense
      *
@@ -696,6 +660,223 @@ public class ModeleLabyrinth implements Jeu, Subject {
             }
         }
         return closerEnnemy;
+    }
+
+    public void towerIsDestroyed() {
+        System.out.println("La défense  est morte !");
+
+        for (Ennemy ennemy : enemies) {
+            char[][] copyGrid = new char[cases.length][];
+            for (int i = 0; i < cases.length; i++) {
+                copyGrid[i] = cases[i].clone();
+            }
+            for (Defense defense : deadDefenses) {
+                Vector2D position = defense.getPosition();
+                copyGrid[(int) position.getY()][(int) position.getX()] = '.';
+
+            }
+            int ennemyPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
+            int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
+            if (ennemyPosY < 0) {
+                ennemyPosY = 0;
+            }
+            if (ennemyPosX < 0) {
+                ennemyPosX = 0;
+            }
+            if (ennemyPosX > copyGrid[0].length - 1) {
+                ennemyPosX = copyGrid[0].length - 1;
+            }
+            if (ennemyPosY > copyGrid.length - 1) {
+                ennemyPosY = copyGrid.length - 1;
+            }
+            char charCourant = copyGrid[ennemyPosY][ennemyPosX];
+            if (charCourant == '#') {
+                int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
+                ennemyPosY = newCoord[0];
+                ennemyPosX = newCoord[1];
+            }
+            copyGrid[ennemyPosY][ennemyPosX] = 'S';
+            if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
+                Astar newAstar = new Astar();
+                ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
+                        new Vector2D(ennemyPosY, ennemyPosX),
+                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
+                ennemy.setBehaviorPath(new PathfollowingBehavior(path));
+                BehavioursMap.put(ennemy.getBehavior(), path);
+            }
+        }
+    }
+
+    public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
+        this.simulationEvolution = true;
+        this.limManches = 2;
+        //ouvrir le fichier
+        FileReader fr = new FileReader(fichier);
+        BufferedReader br = new BufferedReader(fr);
+
+        int nbLignes, nbColonnes;
+        nbLignes = Integer.parseInt(br.readLine());
+        nbColonnes = Integer.parseInt(br.readLine());
+
+        //création du labyrinthe vide
+        this.cases = new char[nbLignes][nbColonnes];
+
+        // Nombre d'ennemis qui doivent arriver à la fin pour gagner
+        this.nbEnnemiesToWin = 50;
+
+        //lecture des cases
+        String ligne = br.readLine();
+
+        //stocke les indices
+        int numLigne = 0;
+
+        //parcours le fichier
+        while (ligne != null) {
+            for (int colonne = 0; colonne < ligne.length(); colonne++) {
+                char c = ligne.charAt(colonne);
+                switch (c) {
+                    case TREE:
+                        //ajouter un mur
+                        this.cases[numLigne][colonne] = TREE;
+                        break;
+                    case ROAD:
+                        // ajouter une route
+                        this.cases[numLigne][colonne] = ROAD;
+                        break;
+                    case START:
+                        //ajouter le point de départ
+                        this.cases[numLigne][colonne] = START;
+                        this.Xstart = colonne;
+                        this.Ystart = numLigne;
+                        this.XstartRender = colonne * getTailleCase();
+                        this.YstartRender = numLigne * getTailleCase();
+                        break;
+                    case END:
+                        //ajouter le point d'arrivée
+                        this.cases[numLigne][colonne] = END;
+                        this.XArrival = colonne;
+                        this.YArrival = numLigne;
+                        this.XArrivalRender = colonne * getTailleCase();
+                        this.YArrivalRender = numLigne * getTailleCase();
+                        break;
+                    case CANON:
+                        //ajouter un canon
+                        this.cases[numLigne][colonne] = CANON;
+                        this.defenses.add(new Canon(colonne, numLigne, "Canon" + this.nbCanon));
+                        this.nbCanon++;
+                        break;
+                    case BOMB:
+                        //ajouter une bombe
+                        this.cases[numLigne][colonne] = BOMB;
+                        this.defenses.add(new Bomb(colonne, numLigne, "Bomb" + this.nbBomb));
+                        this.nbBomb++;
+                        break;
+                    case ARCHER:
+                        //ajouter un archer
+                        this.cases[numLigne][colonne] = ARCHER;
+                        this.defenses.add(new Archer(colonne, numLigne, "Archer" + this.nbArcher));
+                        this.nbArcher++;
+                        break;
+                }
+            }
+            numLigne++;
+            ligne = br.readLine();
+        }
+        refresh(numIndividu);
+
+        br.close();
+    }
+
+    public void refresh(int i) {
+        createBehaviours(this.getCases());
+        System.out.println("ennemies evolved : " + this.ennemiesEvolved);
+        if (this.ennemiesEvolved.isEmpty()) {
+            System.out.println("Liste des ennemies : " + this.enemies);
+            Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant" + i);
+            e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+            e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+            this.enemies.add(e);
+        } else {
+            Giant e = this.ennemiesEvolved.get(i);
+            e.setName(e.getName() + i);
+            e.setToStart(this);
+
+            e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(e.getBehavior())));
+            e.setDistanceStartToArrival(this.BehavioursMap.get(e.getBehavior()));
+
+            this.enemies.add(e);
+
+        }
+
+        refreshEnnemyArrived();
+        refreshDeadEnemies();
+        refreshEnnemyEndOfManche();
+
+        refreshDeadDefenses();
+        refreshDefenseEndOfManche();
+
+        this.setPause(false);
+    }
+
+    public int[] moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
+        List<Integer> direction = Arrays.asList(-1,0,1);
+
+        int currentX = ennemiPosX;
+        int currentY = ennemiPosY;
+
+        while(currentX == ennemiPosX && currentY == ennemiPosY) {
+            for (int i = 0; i < direction.size(); i++) {
+                for (int j = 0; j < direction.size(); j++) {
+                    int absY = Math.abs(ennemiPosY + direction.get(i));
+                    int absX = Math.abs(ennemiPosX + direction.get(j));
+                    if (grid[absY][absX] == '.'){
+                        ennemiPosY = absY;
+                        ennemiPosX = absX;
+                    }
+                }
+            }
+            if (currentX == ennemiPosX && currentY == ennemiPosY){
+                direction.addFirst(direction.getFirst()-1);
+                direction.addLast(direction.getLast()+1);
+            }
+        }
+        return new int[]{ennemiPosY,ennemiPosX};
+    }
+
+    public static Dimension getScreenSize() {
+        return screenSize;
+    }
+
+    public static int getLength() {
+        return cases.length;
+    }
+
+    public static int getLengthY() {
+        return cases[0].length;
+    }
+
+    public char getCase(int x, int y) {
+        return cases[x][y];
+    }
+
+    public char[][] getCases() {
+        return this.cases;
+    }
+
+    public String getLogs() {
+        return logs;
+    }
+
+    public void setLogs(String log) {
+        logs = log;
+    }
+
+    public boolean getPause() {
+        return this.pause;
+    }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
     }
 
     public double getXstart() {
@@ -781,180 +962,24 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return false;
     }
 
-    public void towerIsDestroyed() {
-        System.out.println("La défense  est morte !");
-
-        for (Ennemy ennemy : enemies) {
-            char[][] copyGrid = new char[cases.length][];
-            for (int i = 0; i < cases.length; i++) {
-                copyGrid[i] = cases[i].clone();
-            }
-            for (Defense defense : deadDefenses) {
-                Vector2D position = defense.getPosition();
-                copyGrid[(int) position.getY()][(int) position.getX()] = '.';
-
-            }
-            int ennemyPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
-            int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
-            if (ennemyPosY < 0) {
-                ennemyPosY = 0;
-            }
-            if (ennemyPosX < 0) {
-                ennemyPosX = 0;
-            }
-            if (ennemyPosX > copyGrid[0].length - 1) {
-                ennemyPosX = copyGrid[0].length - 1;
-            }
-            if (ennemyPosY > copyGrid.length - 1) {
-                ennemyPosY = copyGrid.length - 1;
-            }
-            char charCourant = copyGrid[ennemyPosY][ennemyPosX];
-            if (charCourant == '#') {
-                int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
-                ennemyPosY = newCoord[0];
-                ennemyPosX = newCoord[1];
-            }
-            copyGrid[ennemyPosY][ennemyPosX] = 'S';
-            if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
-                Astar newAstar = new Astar();
-                ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
-                        new Vector2D(ennemyPosY, ennemyPosX),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
-                ennemy.setBehaviorPath(new PathfollowingBehavior(path));
-                BehavioursMap.put(ennemy.getBehavior(), path);
-            }
-        }
+    public long getStartTime() {
+        return this.startTime;
     }
 
     public void setStartTime() {
         this.startTime = System.currentTimeMillis();
     }
 
-    public long getStartTime() {
-        return this.startTime;
+    public long getEndTime() {
+        return this.endTime;
     }
 
     public void setEndTime() {
         this.endTime = System.currentTimeMillis();
     }
 
-    public long getEndTime() {
-        return this.endTime;
-    }
-
-    public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
-        this.simulationEvolution = true;
-        this.limManches = 2;
-        //ouvrir le fichier
-        FileReader fr = new FileReader(fichier);
-        BufferedReader br = new BufferedReader(fr);
-
-        int nbLignes, nbColonnes;
-        nbLignes = Integer.parseInt(br.readLine());
-        nbColonnes = Integer.parseInt(br.readLine());
-
-        //création du labyrinthe vide
-        this.cases = new char[nbLignes][nbColonnes];
-
-        // Nombre d'ennemis qui doivent arriver à la fin pour gagner
-        this.nbEnnemiesToWin = 50;
-
-        //lecture des cases
-        String ligne = br.readLine();
-
-        //stocke les indices
-        int numLigne = 0;
-
-        //parcours le fichier
-        while (ligne != null) {
-            for (int colonne = 0; colonne < ligne.length(); colonne++) {
-                char c = ligne.charAt(colonne);
-                switch (c) {
-                    case TREE:
-                        //ajouter un mur
-                        this.cases[numLigne][colonne] = TREE;
-                        break;
-                    case ROAD:
-                        // ajouter une route
-                        this.cases[numLigne][colonne] = ROAD;
-                        break;
-                    case START:
-                        //ajouter le point de départ
-                        this.cases[numLigne][colonne] = START;
-                        this.Xstart = colonne;
-                        this.Ystart = numLigne;
-                        this.XstartRender = colonne * getTailleCase();
-                        this.YstartRender = numLigne * getTailleCase();
-                        break;
-                    case END:
-                        //ajouter le point d'arrivée
-                        this.cases[numLigne][colonne] = END;
-                        this.XArrival = colonne;
-                        this.YArrival = numLigne;
-                        this.XArrivalRender = colonne * getTailleCase();
-                        this.YArrivalRender = numLigne * getTailleCase();
-                        break;
-                    case CANON:
-                        //ajouter un canon
-                        this.cases[numLigne][colonne] = CANON;
-                        this.defenses.add(new Canon(colonne, numLigne, "Canon" + this.nbCanon));
-                        this.nbCanon++;
-                        break;
-                    case BOMB:
-                        //ajouter une bombe
-                        this.cases[numLigne][colonne] = BOMB;
-                        this.defenses.add(new Bomb(colonne, numLigne, "Bomb" + this.nbBomb));
-                        this.nbBomb++;
-                        break;
-                    case ARCHER:
-                        //ajouter un archer
-                        this.cases[numLigne][colonne] = ARCHER;
-                        this.defenses.add(new Archer(colonne, numLigne, "Archer" + this.nbArcher));
-                        this.nbArcher++;
-                        break;
-                }
-            }
-            numLigne++;
-            ligne = br.readLine();
-        }
-        refresh(numIndividu);
-
-        br.close();
-    }
-
     public HashMap getScore() {
         return ennemyScore;
-    }
-
-    public void refresh(int i) {
-        createBehaviours(this.getCases());
-        System.out.println("ennemies evolved : " + this.ennemiesEvolved);
-        if (this.ennemiesEvolved.isEmpty()) {
-            System.out.println("Liste des ennemies : " + this.enemies);
-            Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant" + i);
-            e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
-            e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
-            this.enemies.add(e);
-        } else {
-            Giant e = this.ennemiesEvolved.get(i);
-            e.setName(e.getName() + i);
-            e.setToStart(this);
-
-            e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(e.getBehavior())));
-            e.setDistanceStartToArrival(this.BehavioursMap.get(e.getBehavior()));
-
-            this.enemies.add(e);
-
-        }
-
-        refreshEnnemyArrived();
-        refreshDeadEnemies();
-        refreshEnnemyEndOfManche();
-
-        refreshDeadDefenses();
-        refreshDefenseEndOfManche();
-
-        this.setPause(false);
     }
 
     public void setEnnemiesEvolved(ArrayList<Giant> evolve) {
@@ -967,28 +992,5 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void setDefenses(ArrayList<Defense> defenseEndOfManche) {
         this.defenses = defenseEndOfManche;
-    }
-
-    public int[] moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
-        List<Integer> direction = Arrays.asList(-1,0,1);
-
-        int currentX = ennemiPosX;
-        int currentY = ennemiPosY;
-
-        while(currentX == ennemiPosX && currentY == ennemiPosY) {
-            for (int i = 0; i < direction.size(); i++) {
-                for (int j = 0; j < direction.size(); j++) {
-                    if (grid[Math.abs(ennemiPosY + direction.get(i))][Math.abs(ennemiPosX + direction.get(j))] == '.'){
-                        ennemiPosY = Math.abs(ennemiPosY + direction.get(i));
-                        ennemiPosX = Math.abs(ennemiPosX + direction.get(j));
-                    }
-                }
-            }
-            if (currentX == ennemiPosX && currentY == ennemiPosY){
-                direction.addFirst(direction.getFirst()-1);
-                direction.addLast(direction.getLast()+1);
-            }
-        }
-        return new int[]{ennemiPosY,ennemiPosX};
     }
 }

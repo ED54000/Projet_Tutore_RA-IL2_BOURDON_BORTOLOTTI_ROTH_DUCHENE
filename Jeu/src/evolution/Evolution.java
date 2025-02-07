@@ -46,7 +46,7 @@ public class Evolution {
         double score = 0;
         long lastUpdateTime = System.nanoTime();
         // Tant que la manche est en cours
-        while (!jeu.isPause()) {
+        while (!jeu.getPause()) {
             long currentTime = System.nanoTime();
             double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
 
@@ -60,7 +60,7 @@ public class Evolution {
 
     public double getScore(Ennemy e) {
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
-        int bonus = e.isDead() ? -1000 : 1000;
+        int bonus = e.getIsDead() ? -1000 : 1000;
         System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Bonus : "+bonus);

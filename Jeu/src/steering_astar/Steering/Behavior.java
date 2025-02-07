@@ -22,12 +22,12 @@ public abstract class Behavior {
      */
     public abstract Vector2D calculateForce(Ennemy ennemy);
 
-    public void setTarget(Vector2D target) {
-        this.target = target;
+    public Vector2D getTarget() {
+        return this.target;
     }
 
-    public Vector2D getTarget() {
-         return this.target;
+    public void setTarget(Vector2D target) {
+        this.target = target;
     }
 
     public static double getTargetRadius() {

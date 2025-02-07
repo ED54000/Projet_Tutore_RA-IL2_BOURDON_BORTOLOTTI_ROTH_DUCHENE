@@ -2,7 +2,6 @@ package entites;
 
 import javafx.scene.image.Image;
 import entites.enemies.Ennemy;
-import laby.ModeleLabyrinth;
 import steering_astar.Steering.Vector2D;
 
 public abstract class Entity {
@@ -137,7 +136,7 @@ public abstract class Entity {
             System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
             System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
             System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
-            System.out.println("Target mort : "+ target.isDead());
+            System.out.println("Target mort : "+ target.getIsDead());
             System.out.println("=====================================");
         }
         // Sinon, on ne fait rien
@@ -145,6 +144,10 @@ public abstract class Entity {
 
     public String getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Vector2D getPosition() {
@@ -159,20 +162,16 @@ public abstract class Entity {
         return damages;
     }
 
-    public double getRange() {
-        return range;
-    }
-
     protected void setDamages(double damages) {
         this.damages = damages;
     }
 
-    public void setRange(double range) {
-        this.range = range;
+    public double getRange() {
+        return range;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setRange(double range) {
+        this.range = range;
     }
 
     public Image getImage() { return sprite; }
@@ -185,11 +184,11 @@ public abstract class Entity {
         this.health = health;
     }
 
-    public boolean isDead() {
+    public boolean getIsDead() {
         return this.isDead;
     }
 
-    public void setDead(boolean b) {
+    public void setIsDead(boolean b) {
         this.isDead = b;
     }
 
