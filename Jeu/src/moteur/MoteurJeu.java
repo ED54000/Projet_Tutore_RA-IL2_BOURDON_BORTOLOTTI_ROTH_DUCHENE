@@ -202,6 +202,7 @@ public class MoteurJeu extends Application {
         title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         VBox logs = new VBox();
+        logs.setMinWidth(350);
         logs.setPrefWidth(getScreenSize().width/7.0);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
@@ -209,6 +210,8 @@ public class MoteurJeu extends Application {
 
         //Ajout d'un scrollPane
         ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setFitToWidth(false); // Permet au ScrollPane de scroller horizontalement
         scrollPane.setPrefSize(getScreenSize().width/6.8, getScreenSize().height);
         scrollPane.setContent(logs);
 

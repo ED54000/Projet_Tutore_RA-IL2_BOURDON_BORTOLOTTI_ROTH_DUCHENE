@@ -1,5 +1,6 @@
 package laby.controllers;
 
+import entites.defenses.Archer;
 import entites.defenses.Bomb;
 import entites.defenses.Canon;
 import entites.defenses.Defense;
@@ -9,6 +10,7 @@ import evolution.Evolution;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
@@ -31,8 +33,13 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent mouseEvent) {
-        // On fait évoluer les ennemis et les défenses
-        //création d'une HashMap avec pour clé l'ennemi et pour valeur son score
+        // a optimiser pour par répéter la condition
+        VBox parentVBox = null;
+        if (!laby.estSimulation()){
+            parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+            parentVBox.getChildren().clear();
+        }
+
         // On fait évoluer les ennemis par type
         Evolution evolution = new Evolution();
 
@@ -40,10 +47,8 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 .stream()
                 .collect(Collectors.groupingBy(Ennemy::getClass));
 
-        //System.out.println("Ennemis par type : " + ennemisParType);
 
         for (Map.Entry<Class<? extends Ennemy>, List<Ennemy>> entry : ennemisParType.entrySet()) {
-
             List<Ennemy> ennemisType = entry.getValue();
 
             // Création d'une HashMap contenant uniquement ce type d'ennemi
@@ -51,13 +56,86 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             for (Ennemy ennemy : ennemisType) {
                 stats.put(ennemy, evolution.getScore(ennemy));
             }
+            //Après évaluation, on réaffecte les statistiques de départ aux ennemis
+            for (Ennemy ennemy : stats.keySet()) {
+                double[] statsStart = Evolution.startStats.get(ennemy);
+                if (statsStart != null) {
+                    ennemy.setHealth(statsStart[0]);
+                    ennemy.setSpeed(statsStart[1]);
+                    ennemy.setDamages(statsStart[2]);
+                    ennemy.setAttackSpeed(statsStart[3]);
+                } else {
+                    System.err.println("Aucune stats sauvegardée pour " + ennemy.getName());
+                }
+            }
 
             // Évolution pour ce type d'ennemi
             ArrayList<Ennemy> newPopulation = evolution.evolve(stats);
 
             laby.enemies.addAll(newPopulation);
-            System.out.println("Nouvelle population : "+laby.enemies);
+
+            // En-tête
+            Label giantEvolutionHeader = new Label("Détails de l'évolution des : " + newPopulation.get(0).getClass().getSimpleName());
+            giantEvolutionHeader.setStyle("""
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 5 0 3 0;
+""");
+            parentVBox.getChildren().add(giantEvolutionHeader);
+
+// Configurer le style du VBox parent
+            parentVBox.setStyle("""
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 5;
+    -fx-spacing: 3;
+""");
+
+// Afficher l'évolution pour chaque Géant
+            for(int i = 0; i < newPopulation.size(); i++) {
+                Ennemy e = newPopulation.get(i);
+                Ennemy ancien = ennemisType.get(i);
+
+                Label detailGiant = new Label(String.format(
+                        "%s - Santé: %.0f→%.0f | Vitesse: %.1f→%.1f | Dégâts: %.0f→%.0f",
+                        e.getName(),
+                        ancien.getHealth(), e.getHealth(),
+                        ancien.getSpeed(), e.getSpeed(),
+                        ancien.getDamages(), e.getDamages()
+                ));
+                detailGiant.setStyle("""
+        -fx-padding: 3 8;
+        -fx-background-color: white;
+        -fx-background-radius: 3;
+        -fx-border-color: #e0e0e0;
+        -fx-border-radius: 3;
+        -fx-font-family: 'Segoe UI', sans-serif;
+        -fx-font-size: 11px;
+    """);
+                detailGiant.setMaxWidth(Double.MAX_VALUE);
+                parentVBox.getChildren().add(detailGiant);
+            }
         }
+        if (!laby.estSimulation()) {
+            // Bouton pour la prochaine manche
+            Button nextManche = new Button("Next Manche");
+            nextManche.setStyle("""
+                -fx-background-color: #4CAF50;
+                -fx-text-fill: white;
+                -fx-font-size: 11px;
+                -fx-padding: 3 10;
+                -fx-background-radius: 3;
+                -fx-cursor: hand;
+            """);
+
+            nextManche.setOnMouseEntered(e ->
+                    nextManche.setStyle(nextManche.getStyle() + "-fx-background-color: #45a049;"));
+            nextManche.setOnMouseExited(e ->
+                    nextManche.setStyle(nextManche.getStyle() + "-fx-background-color: #4CAF50;"));
+
+            nextManche.setOnMouseClicked(new ControllerNextManche(laby));
+            parentVBox.getChildren().add(nextManche);
+        }
+
         //on replace les ennemis au début
         for(Ennemy e : laby.enemies){
             e.setToStart(laby);
@@ -81,7 +159,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             if (d instanceof Bomb) {
                 d.setHealth(1000);
             }
-            if (d instanceof entites.defenses.Archer) {
+            if (d instanceof Archer) {
                 d.setHealth(200);
             }
         }
@@ -126,49 +204,6 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             if (e.getHealth() < 0 ){
                 e.setHealth(e.getHealth()*-1);
             }
-        }
-
-        //clear les logs si ce n'est pas une simulation
-        // À l'intérieur de la méthode handle, avant de vider les logs
-        if (!laby.estSimulation()) {
-            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
-            parentVBox.getChildren().clear();
-
-            parentVBox.getChildren().add(new Label("Learned"));
-
-            // En-tête pour l'évolution des Géants
-            Label giantEvolutionHeader = new Label("Détails de l'évolution des Géants :");
-            giantEvolutionHeader.setStyle("-fx-font-weight: bold;");
-            parentVBox.getChildren().add(giantEvolutionHeader);
-
-            // Mémoriser les anciennes statistiques des Géants
-            Map<Ennemy, Double> anciensGiants = new HashMap<>();
-            for (Ennemy e : Evolution.startStats.keySet()) {
-                if (e instanceof Giant) {
-                    anciensGiants.put(e, e.getHealth());
-                }
-            }
-
-            // Afficher l'évolution de la santé pour chaque Géant
-            for (Ennemy e : laby.enemies) {
-                if (e instanceof Giant) {
-                    Double ancienneSante = anciensGiants.get(e);
-
-                    if (ancienneSante != null) {
-                        Label detailGiant = new Label(String.format(
-                                "Géant - Santé initiale : %.0f -> Nouvelle santé : %.0f",
-                                ancienneSante,
-                                e.getHealth()
-                        ));
-                        parentVBox.getChildren().add(detailGiant);
-                    }
-                }
-            }
-
-            // Bouton pour la prochaine manche
-            Button nextManche = new Button("Prochaine Manche");
-            nextManche.setOnMouseClicked(new ControllerNextManche(laby));
-            parentVBox.getChildren().add(nextManche);
         }
 
         // On sauvegarde les statistiques des ennemis
