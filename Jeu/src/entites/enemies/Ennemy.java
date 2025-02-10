@@ -70,7 +70,7 @@ public abstract class Ennemy extends Entity {
         if (behaviorPath != null) {
             Vector2D steeringForce = behaviorPath.calculateForce(this);
             velocity = (velocity.add(steeringForce)).normalize().scale(speed);
-            if (position.add(velocity.scale(AvoidBehavior.getMAX_SEE_AHEAD())).isObstacle()){
+            if (position.add(velocity.normalize().scale(AvoidBehavior.getMAX_SEE_AHEAD())).isObstacle()){
                 AvoidBehavior avoid = new AvoidBehavior(position.getClosestCaseCenter());
                 Vector2D avoidanceForce = avoid.calculateForce(this);
                 velocity = (velocity.add(avoidanceForce)).normalize();

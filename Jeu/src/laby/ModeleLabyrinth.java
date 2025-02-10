@@ -64,6 +64,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
 
     //labyrinthe
+    private static ModeleLabyrinth instance;
     private static char[][] cases;
     private int Xstart, Ystart, XArrival, YArrival, XstartRender, YstartRender, XArrivalRender, YArrivalRender;
     private Map<String, ArrayList<Vector2D>> BehavioursMap = new HashMap<>();
@@ -109,9 +110,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // Nombre d'ennemis qui doivent arriver à la fin pour gagner
         this.nbEnnemiesToWin = nbEnnemiesToWin;
-
-        // Si on utilise ou pas l'algorithme Astar
-        this.useAstar = useAstar;
 
         //lecture des cases
         String ligne = br.readLine();
@@ -362,6 +360,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Iterator<Ennemy> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
             Ennemy enemy = enemyIterator.next();
+         /*   System.out.println(enemy.getName());
+            System.out.println(enemy.getPosition());
+            System.out.println(enemy.getPositionReel());
+            System.out.println("============================");*/
             if (hasReachedArrival(enemy)) {
                 handleEnemyArrival(enemy);
                 enemyIterator.remove();
@@ -1039,5 +1041,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void setUseAstar(boolean useAstar) {
         this.useAstar = useAstar;
+    }
+
+    /**
+     * Obtient l'instance unique du labyrinthe (pattern Singleton)
+     *
+     * @return l'instance unique du ModeleLabyrinth
+     */
+    public static ModeleLabyrinth getLabyrinth() {
+        if (instance == null) {
+            instance = new ModeleLabyrinth();
+        }
+        return instance;
     }
 }
