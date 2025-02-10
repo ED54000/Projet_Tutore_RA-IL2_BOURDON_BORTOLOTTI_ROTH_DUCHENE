@@ -49,6 +49,7 @@ public class Evolution {
     public double simulate(ModeleLabyrinth jeu){
         // On sauvegarde les statistiques de départ des ennemis
         saveStartStats(jeu.enemies);
+
         long lastUpdateTime = System.nanoTime();
         // Tant que la manche est en cours
         while (!jeu.getPause()) {
@@ -123,7 +124,7 @@ public class Evolution {
         for (Ennemy giant : nouvellePopulation) {
             // On applique une mutation sur chaque géant
             giant.setHealth(mutateValue(giant.getHealth()));
-            giant.setSpeed(mutateValue(giant.getSpeed()));
+            //giant.setSpeed(mutateValue(giant.getSpeed()));
             giant.setDamages(mutateValue(giant.getDamages()));
             giant.setAttackSpeed(mutateValue(giant.getAttackSpeed()));
         }
@@ -160,7 +161,7 @@ public class Evolution {
         //enfant.setSprite(null);
 
         enfant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
-        enfant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
+        //enfant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
         enfant.setDamages(randomChoice(parent1.getDamages(), parent2.getDamages()));
         enfant.setAttackSpeed(randomChoice(parent1.getAttackSpeed(), parent2.getAttackSpeed()));
         // Ajouter ici les propriétés spécifiques à croiser
