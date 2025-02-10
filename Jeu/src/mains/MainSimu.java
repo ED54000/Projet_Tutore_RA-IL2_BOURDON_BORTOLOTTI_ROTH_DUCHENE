@@ -17,10 +17,10 @@ public class MainSimu extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         // Fichier de sortie pour les logs
-        String fileName = "evolution_stats.csv";
+        String fileName = "Ressources/evolution_stats.csv";
+
         try (FileWriter writer = new FileWriter(fileName)) {
-            // Écriture de l'en-tête du fichier CSV
-            writer.write("Manche,Nom,Vie,Dégâts,Vitesse\n");
+            writer.write("Manche;Nom;Vie;Dégâts;Vitesse\n");
 
             // Initialisation avec une liste d'ennemis
             ArrayList<Ennemy> ennemies = new ArrayList<>();
@@ -31,7 +31,7 @@ public class MainSimu extends Application {
             }
 
             // Boucle sur le nombre de manches avec une population d'ennemis évoluée à chaque fois
-            for (int manche = 0; manche < 150; manche++) {
+            for (int manche = 0; manche < 100; manche++) {
                 System.out.println("Manche " + manche);
 
                 // Création d'une HashMap avec pour clé l'ennemi et pour valeur son score
@@ -41,7 +41,7 @@ public class MainSimu extends Application {
                 }
 
                 // Écriture des stats avant l'évolution
-                logStats(writer, manche, ennemies);
+                //logStats(writer, manche, ennemies);
 
                 // On évolue
                 Evolution evolution = new Evolution();
@@ -59,7 +59,10 @@ public class MainSimu extends Application {
 
     private void logStats(FileWriter writer, int manche, ArrayList<Ennemy> ennemies) throws IOException {
         for (Ennemy ennemy : ennemies) {
-            writer.write(manche + "," + ennemy.getName() + "," + ennemy.getHealth() + "," + ennemy.getDamages() + "," + ennemy.getSpeed() + "\n");
+            writer.write(manche + ";" + ennemy.getName() + ";" +
+                    String.format("%.2f", ennemy.getHealth()) + ";" +
+                    String.format("%.2f", ennemy.getDamages()) + ";" +
+                    String.format("%.2f", ennemy.getSpeed()) + "\n");
         }
     }
 }

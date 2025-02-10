@@ -66,9 +66,9 @@ public class Evolution {
     public double getScore(Ennemy e) {
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
         int bonus = e.getIsDead() ? -1000 : 1000;
-        //System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
-        //System.out.println("Distance to arrival: "+e.getDistanceToArrival());
-        //System.out.println("Bonus : "+bonus);
+        System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
+        System.out.println("Distance to arrival: "+e.getDistanceToArrival());
+        System.out.println("Bonus : "+bonus);
 
         double score = ((double) e.getSurvivalTime() /1000000) + bonus - e.getDistanceToArrival()*10;
         return score;
@@ -79,7 +79,7 @@ public class Evolution {
         ArrayList<Map.Entry<Ennemy, Double>> ennemiesTries = new ArrayList<>(giants.entrySet());
         ennemiesTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
 
-        System.out.println("Ennemies triés : "+ennemiesTries);
+        //System.out.println("Ennemies triés : "+ennemiesTries);
         //Sélectionner la moitié des meilleurs géants
         int size = ennemiesTries.size();
         //int moitié = (int)Math.ceil(ennemiesTries.size() / 10);
@@ -89,7 +89,7 @@ public class Evolution {
         for (int i = 0; i < moitie; i++) {
             meilleurs.add(ennemiesTries.get(i).getKey());
         }
-        System.out.println("Meilleurs ennemies : "+meilleurs);
+        //System.out.println("Meilleurs ennemies : "+meilleurs);
 
         //Générer les enfants via le croisement
         ArrayList<Ennemy> enfants = new ArrayList<>();
