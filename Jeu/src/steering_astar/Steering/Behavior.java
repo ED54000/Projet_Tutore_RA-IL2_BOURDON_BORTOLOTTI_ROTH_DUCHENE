@@ -33,6 +33,7 @@ public abstract class Behavior {
     public static double getTargetRadius() {
         return TARGET_RADIUS;
     }
+
     public double getWeight() {
         return weight;
     }

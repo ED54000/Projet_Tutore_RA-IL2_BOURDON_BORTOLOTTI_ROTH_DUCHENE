@@ -183,7 +183,11 @@ public class ViewLabyrinth implements Observer {
         gc.fillOval(xCoord + ennemiSize / 2 - velocityPointSize / 2, yCoord + ennemiSize / 2 - velocityPointSize / 2, velocityPointSize, velocityPointSize);
 
         //ennemi
-        gc.drawImage(ennemi.getImage(), xCoordEnnemi, yCoordEnnemi, getTailleCase(), getTailleCase());
+        gc.drawImage(ennemi.getImage(),
+                xCoordEnnemi - ennemiSize / 2.0 - 0.5,
+                yCoordEnnemi - ennemiSize / 2.0,
+                getTailleCase(), getTailleCase());
+
 
         //range des ennemis
         gc.setStroke(Color.BLACK);

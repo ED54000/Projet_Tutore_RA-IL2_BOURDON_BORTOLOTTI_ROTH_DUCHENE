@@ -24,11 +24,11 @@ public class SeekBehavior extends Behavior {
     @Override
     public Vector2D calculateForce(Ennemy ennemy) {
         Vector2D desired = this.getTarget().subtract(ennemy.getPosition()).normalize().scale(ennemy.getMaxSpeed());
-        (desired.subtract(ennemy.getVelocity())).scale(ACCELERATION_DIVISER);
+        desired = desired.subtract(ennemy.getVelocity()).scale(ACCELERATION_DIVISER);
         if (!ModeleLabyrinth.getUseAstar()){
-            desired.scale(this.getWeight());
+            desired = desired.scale(this.getWeight());
         }
-        return desired.normalize();
+        return desired;
     }
 }
 

@@ -25,7 +25,7 @@ public class Astar {
      * @param point Le point (coordonnées) à valider
      * @return true si le point est à l'intérieur des limites de la grille, false sinon
      */
-    boolean isValid(char[][] grid, Vector2D point) {
+    public boolean isValid(char[][] grid, Vector2D point) {
         if (grid.length > 0 && grid[0].length > 0)
             return (point.getX() >= 0) && (point.getX()) < grid.length
                     && (point.getY() >= 0)

@@ -710,36 +710,38 @@ public class ModeleLabyrinth implements Jeu, Subject {
             for (Defense defense : deadDefenses) {
                 Vector2D position = defense.getPosition();
                 copyGrid[(int) position.getY()][(int) position.getX()] = '.';
+            }
 
-            }
-            int ennemyPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
-            int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
-            if (ennemyPosY < 0) {
-                ennemyPosY = 0;
-            }
-            if (ennemyPosX < 0) {
-                ennemyPosX = 0;
-            }
-            if (ennemyPosX > copyGrid[0].length - 1) {
-                ennemyPosX = copyGrid[0].length - 1;
-            }
-            if (ennemyPosY > copyGrid.length - 1) {
-                ennemyPosY = copyGrid.length - 1;
-            }
-            char charCourant = copyGrid[ennemyPosY][ennemyPosX];
-            if (charCourant == '#') {
-                int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
-                ennemyPosY = newCoord[0];
-                ennemyPosX = newCoord[1];
-            }
-            copyGrid[ennemyPosY][ennemyPosX] = 'S';
-            if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
-                Astar newAstar = new Astar();
-                ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
+            if (useAstar) {
+                int ennemyPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
+                int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
+                if (ennemyPosY < 0) {
+                    ennemyPosY = 0;
+                }
+                if (ennemyPosX < 0) {
+                    ennemyPosX = 0;
+                }
+                if (ennemyPosX > copyGrid[0].length - 1) {
+                    ennemyPosX = copyGrid[0].length - 1;
+                }
+                if (ennemyPosY > copyGrid.length - 1) {
+                    ennemyPosY = copyGrid.length - 1;
+                }
+                char charCourant = copyGrid[ennemyPosY][ennemyPosX];
+                if (charCourant == '#') {
+                    int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
+                    ennemyPosY = newCoord[0];
+                    ennemyPosX = newCoord[1];
+                }
+                copyGrid[ennemyPosY][ennemyPosX] = 'S';
+                if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
+                    Astar newAstar = new Astar();
+                    ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
                         new Vector2D(ennemyPosY, ennemyPosX),
                         new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
-                ennemy.setBehaviorPath(new PathfollowingBehavior(path));
-                BehavioursMap.put(ennemy.getBehavior(), path);
+                    ennemy.setBehaviorPath(new PathfollowingBehavior(path));
+                    BehavioursMap.put(ennemy.getBehavior(), path);
+                }
             }
         }
     }

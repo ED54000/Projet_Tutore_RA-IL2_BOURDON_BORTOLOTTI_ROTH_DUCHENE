@@ -2,11 +2,13 @@ package steering_astar.Steering;
 
 import entites.enemies.Ennemy;
 import laby.ModeleLabyrinth;
+import steering_astar.Astar.Astar;
+import steering_astar.Steering.Vector2D;
 
 public class AvoidBehavior extends Behavior {
 
-    private static final double MAX_SEE_AHEAD = 1.15;
-    private static final double BASE_AVOID_WEIGHT = 3;
+    private static final double MAX_SEE_AHEAD = 25.0;
+    public static final double BASE_AVOID_WEIGHT = 5;
 
     /***
      * constructeur de la classe
@@ -25,11 +27,11 @@ public class AvoidBehavior extends Behavior {
     @Override
     public Vector2D calculateForce(Ennemy ennemy) {
         Vector2D desired = ennemy.getVelocity().subtract(this.getTarget());
-        (desired.normalize()).scale(ACCELERATION_DIVISER);
+        desired = desired.normalize().scale(ACCELERATION_DIVISER);
         if (!ModeleLabyrinth.getUseAstar()){
-            desired.scale(this.getWeight());
+            desired = desired.scale(this.getWeight());
         }
-        return desired.normalize();
+        return desired;
     }
 
     public static double getMAX_SEE_AHEAD(){
