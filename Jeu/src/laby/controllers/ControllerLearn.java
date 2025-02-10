@@ -63,19 +63,19 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         for(Ennemy e : laby.enemies){
             e.setIsDead(false);
             if(e instanceof Ninja){
-                e.setBehavior("Fugitive");
+                e.setBehaviorString("Fugitive");
                 nbNinja++;
             }
             if(e instanceof Giant){
-                e.setBehavior("Normal");
+                e.setBehaviorString("Normal");
                 nbGiant++;
             }
             if(e instanceof Druide){
-                e.setBehavior("Healer");
+                e.setBehaviorString("Healer");
                 nbHealer++;
             }
             if(e instanceof Berserker){
-                e.setBehavior("Kamikaze");
+                e.setBehaviorString("Kamikaze");
                 nbBerserker++;
             }
         }
@@ -83,10 +83,10 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         laby.createBehaviours(laby.getCases());
         for (Ennemy e : laby.enemies) {
             e.setLastAttackCount(0);
-            if (e.getBehavior().equals("Healer")) {
-              e.setBehaviorPath(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
+            if (e.getBehaviorString().equals("Healer")) {
+              e.setBehavior(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
             } else {
-                e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
+                e.setBehavior(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehaviorString())));
             }
             e.setArrived(false);
         }
@@ -101,7 +101,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         }
 
         //clear les logs si ce n'est pas une simulation
-        if (!laby.estSimulation()) {
+        if (!laby.getSimulation()) {
             VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
             parentVBox.getChildren().clear();
 

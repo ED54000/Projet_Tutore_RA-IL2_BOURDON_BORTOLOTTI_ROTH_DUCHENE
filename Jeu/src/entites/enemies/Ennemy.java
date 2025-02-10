@@ -7,6 +7,7 @@ import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Ennemy extends Entity {
 
@@ -15,13 +16,13 @@ public abstract class Ennemy extends Entity {
     private int distanceStartToArrival;
     private String killerType;
     private static int timeSpawn = 0;
-    private Behavior behaviorPath;
-    private String behavior;
+    private String behaviorString;
     private boolean isArrived;
     private long survivalTime;
     private Vector2D positionReel;
     private Vector2D velocity;
     private final double healthBase;
+    private List<Behavior> listBehaviors = new ArrayList<>();
 
     public Ennemy(Vector2D position, double health, double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
         super(position, damages, range, sprite, health, name, attackSpeed);
@@ -32,14 +33,13 @@ public abstract class Ennemy extends Entity {
         this.distanceStartToArrival = distanceToArrival;
         this.killerType = null;
         this.isArrived = false;
-        this.behaviorPath = null;
-        this.behavior = behavior;
+        this.behaviorString = behavior;
+        this.listBehaviors.add(new AvoidBehavior(new Vector2D(0, 0)));
         this.velocity = new Vector2D(0, 0);
         timeSpawn++;
     }
 
     public void healDamage(Ennemy target, double heal, double speedTime){
-        // On récupère le temps actuel en millisecondes
 
         // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
         if(this.getLastAttackCount() >=  this.getAttackSpeed() * speedTime) {
@@ -66,19 +66,20 @@ public abstract class Ennemy extends Entity {
      * comportement de l'agent
      */
     public void update() {
-        //System.out.println(behaviorPath);
-        if (behaviorPath != null) {
-            Vector2D steeringForce = behaviorPath.calculateForce(this);
-            velocity = (velocity.add(steeringForce)).normalize().scale(speed);
-            if (position.add(velocity.normalize().scale(AvoidBehavior.getMAX_SEE_AHEAD())).isObstacle()){
-                AvoidBehavior avoid = new AvoidBehavior(position.getClosestCaseCenter());
-                Vector2D avoidanceForce = avoid.calculateForce(this);
-                velocity = (velocity.add(avoidanceForce)).normalize();
-            }
-            position = position.add(velocity);
-            positionReel = position.divide(ModeleLabyrinth.getTailleCase());
+        Vector2D totalForce = new Vector2D(0, 0);
+
+        for (Behavior behavior : listBehaviors) {
+            Vector2D steeringForce = behavior.calculateForce(this).scale(behavior.getWeight());
+            totalForce = totalForce.add(steeringForce);
         }
+
+        velocity = velocity.add(totalForce).normalize().scale(speed);
+
+        position = position.add(velocity);
+        positionReel = position.scale(ModeleLabyrinth.getTailleCase());
     }
+
+
 
     public int getDistanceToArrival() {
         return distanceToArrival;
@@ -132,18 +133,18 @@ public abstract class Ennemy extends Entity {
 
     public double getMaxSpeed() { return speed; }
 
-    public Behavior getBehaviorPath() { return behaviorPath; }
+    public List<Behavior> getBehaviors() { return this.listBehaviors; }
 
-    public void setBehaviorPath(Behavior behaviorPath) {
-        this.behaviorPath = behaviorPath;
+    public void setBehavior(Behavior behavior) {
+        this.listBehaviors.add(behavior);
     }
 
-    public String getBehavior() {
-        return behavior;
+    public String getBehaviorString() {
+        return behaviorString;
     }
 
-    public void setBehavior(String behavior) {
-        this.behavior = behavior;
+    public void setBehaviorString(String behavior) {
+        this.behaviorString = behavior;
     }
 
     public void setDistanceToArrival(ArrayList<Vector2D> vector2DS) {

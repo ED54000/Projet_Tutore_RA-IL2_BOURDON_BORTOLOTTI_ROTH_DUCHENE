@@ -29,7 +29,7 @@ public class EnnemyEvolution {
 
         // On parcourt la liste des ennemis :
         for (Ennemy e : ennemies) {
-            switch (e.getBehavior()){
+            switch (e.getBehaviorString()){
                 case "Fugitive":
                     // On calcule le score de l'ennemi
                     double score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
@@ -253,7 +253,7 @@ public class EnnemyEvolution {
                 e.setType(newType);
             }
             // En fonction du comportement de l'ennemi
-            switch (e.getBehavior()) {
+            switch (e.getBehaviorString()) {
 
                 case "Fugitive" :
                     // On affecte les statistiques moyennes des fuyards

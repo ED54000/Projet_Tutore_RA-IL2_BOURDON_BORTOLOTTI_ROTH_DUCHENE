@@ -25,9 +25,6 @@ public class SeekBehavior extends Behavior {
     public Vector2D calculateForce(Ennemy ennemy) {
         Vector2D desired = this.getTarget().subtract(ennemy.getPosition()).normalize().scale(ennemy.getMaxSpeed());
         desired = desired.subtract(ennemy.getVelocity()).scale(ACCELERATION_DIVISER);
-        if (!ModeleLabyrinth.getUseAstar()){
-            desired = desired.scale(this.getWeight());
-        }
         return desired;
     }
 }
