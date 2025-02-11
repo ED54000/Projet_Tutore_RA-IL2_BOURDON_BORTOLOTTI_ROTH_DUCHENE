@@ -122,12 +122,12 @@ public class Evolution {
                 ennemy.setSpeed(4);
             else
                 ennemy.setSpeed(mutateValue(ennemy.getSpeed()));
-            if(mutateValue(ennemy.getHealth()) > 500)
-                ennemy.setHealth(500);
+            if(mutateValue(ennemy.getHealth()) > 300)
+                ennemy.setHealth(300);
             else
                 ennemy.setHealth(mutateValue(ennemy.getHealth()));
-            if(mutateValue(ennemy.getDamages()) > 100)
-                ennemy.setDamages(100);
+            if(mutateValue(ennemy.getDamages()) > 50)
+                ennemy.setDamages(50);
             else
                 ennemy.setDamages(mutateValue(ennemy.getDamages()));
         }
@@ -141,7 +141,9 @@ public class Evolution {
      * @return
      */
     private double mutateValue(double value) {
-        return value * (1 + (Math.random() * 0.10 - 0.05));
+        return value * (1 + (Math.random() * 0.07 - 0.02));
+
+
     }
 
     /**
