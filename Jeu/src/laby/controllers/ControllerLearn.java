@@ -34,7 +34,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
     @Override
     public void handle(MouseEvent mouseEvent) {
         // a optimiser pour par répéter la condition
-        VBox parentVBox = null;
+        VBox parentVBox = new VBox();
         if (!laby.estSimulation()){
             parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
             parentVBox.getChildren().clear();
@@ -73,36 +73,36 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             ArrayList<Ennemy> newPopulation = evolution.evolve(stats);
 
             laby.enemies.addAll(newPopulation);
-
-            // En-tête
-            Label giantEvolutionHeader = new Label("Détails de l'évolution des : " + newPopulation.get(0).getClass().getSimpleName());
-            giantEvolutionHeader.setStyle("""
+if (!ModeleLabyrinth.estSimulation()) {
+    // En-tête
+    Label giantEvolutionHeader = new Label("Détails de l'évolution des : " + newPopulation.get(0).getClass().getSimpleName());
+    giantEvolutionHeader.setStyle("""
     -fx-font-weight: bold;
     -fx-font-size: 12px;
     -fx-padding: 5 0 3 0;
-""");
-            parentVBox.getChildren().add(giantEvolutionHeader);
+            """);
+    parentVBox.getChildren().add(giantEvolutionHeader);
 
 // Configurer le style du VBox parent
-            parentVBox.setStyle("""
+    parentVBox.setStyle("""
     -fx-background-color: #f5f5f5;
     -fx-padding: 5;
     -fx-spacing: 3;
-""");
+            """);
 
 // Afficher l'évolution pour chaque Géant
-            for(int i = 0; i < newPopulation.size(); i++) {
-                Ennemy e = newPopulation.get(i);
-                Ennemy ancien = ennemisType.get(i);
+    for (int i = 0; i < newPopulation.size(); i++) {
+        Ennemy e = newPopulation.get(i);
+        Ennemy ancien = ennemisType.get(i);
 
-                Label detailGiant = new Label(String.format(
-                        "%s - Santé: %.0f→%.0f | Vitesse: %.1f→%.1f | Dégâts: %.0f→%.0f",
-                        e.getName(),
-                        ancien.getHealth(), e.getHealth(),
-                        ancien.getSpeed(), e.getSpeed(),
-                        ancien.getDamages(), e.getDamages()
-                ));
-                detailGiant.setStyle("""
+        Label detailGiant = new Label(String.format(
+                "%s - Santé: %.0f→%.0f | Vitesse: %.1f→%.1f | Dégâts: %.0f→%.0f",
+                e.getName(),
+                ancien.getHealth(), e.getHealth(),
+                ancien.getSpeed(), e.getSpeed(),
+                ancien.getDamages(), e.getDamages()
+        ));
+        detailGiant.setStyle("""
         -fx-padding: 3 8;
         -fx-background-color: white;
         -fx-background-radius: 3;
@@ -110,9 +110,10 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         -fx-border-radius: 3;
         -fx-font-family: 'Segoe UI', sans-serif;
         -fx-font-size: 11px;
-    """);
+                    """);
                 detailGiant.setMaxWidth(Double.MAX_VALUE);
                 parentVBox.getChildren().add(detailGiant);
+            }
             }
         }
         if (!laby.estSimulation()) {

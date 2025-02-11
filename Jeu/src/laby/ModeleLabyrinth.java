@@ -54,8 +54,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
 
     //si le jeu est avec le main simulation
-    private boolean simulation = false;
-    private boolean simulationEvolution = false;
+    private static boolean simulation = false;
+    private static boolean simulationEvolution = false;
 
 
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -968,8 +968,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.simulation = b;
     }
 
-    public boolean estSimulation() {
-        if (this.simulation || this.simulationEvolution) {
+    public static boolean estSimulation() {
+        if (simulation || simulationEvolution) {
             return true;
         }
         return false;

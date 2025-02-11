@@ -1,41 +1,47 @@
 package mains;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
 
-public class MainSimulation extends Application {
-    private double FPS = 100;
-    private double dureeFPS = 1000 / (FPS + 1);
+import java.io.IOException;
 
+public class MainSimulation {
+    private static final double FPS = 100;
+    private static final double dureeFPS = 1000 / (FPS + 1);
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        ModeleLabyrinth jeu = new ModeleLabyrinth();
-        jeu.setSimulation(true);
-        jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", jeu.createEnnemies(50), 1000, 45);
-        Platform.exit();
-        // Lancer la simulation dans un thread séparé
-        new Thread(() -> {
-            long lastUpdateTime = System.nanoTime();
+    public static void main(String[] args) {
+        try {
+            ModeleLabyrinth jeu = new ModeleLabyrinth();
+            jeu.setSimulation(true);
+            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", jeu.createEnnemies(50), 1000, 45);
 
-            while (!jeu.etreFini()) {
-                // Calculer le temps écoulé depuis la dernière mise à jour
-                long currentTime = System.nanoTime();
-                double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
+            // Lancer la simulation dans un thread séparé
+            Thread simulationThread = new Thread(() -> {
+                long lastUpdateTime = System.nanoTime();
 
-                // Mettre à jour la simulation
-                jeu.update(elapsedTimeInSeconds);
+                while (!jeu.etreFini()) {
+                    long currentTime = System.nanoTime();
+                    double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
 
-                // Mettre à jour le temps de la dernière mise à jour
-                lastUpdateTime = currentTime;
-            }
+                    jeu.update(elapsedTimeInSeconds);
+                    lastUpdateTime = currentTime;
 
-            System.out.println(jeu.getLogs());
-            System.out.println("Simulation terminée.");
-        }).start();
+                    // Ajouter un petit délai pour éviter une consommation excessive du CPU
+                    try {
+                        Thread.sleep((long) dureeFPS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        System.err.println("Simulation interrompue.");
+                        return;
+                    }
+                }
 
+                System.out.println(jeu.getLogs());
+                System.out.println("Simulation terminée.");
+            });
+
+            simulationThread.start();
+        }catch (IOException e){
+            System.err.println(e.getMessage());
+        }
     }
-
 }
