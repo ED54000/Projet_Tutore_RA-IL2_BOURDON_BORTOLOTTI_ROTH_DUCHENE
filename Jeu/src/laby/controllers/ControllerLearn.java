@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
 import steering_astar.Steering.PathfollowingBehavior;
+import steering_astar.Steering.Vector2D;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
     public void handle(MouseEvent mouseEvent) {
         // a optimiser pour par répéter la condition
         VBox parentVBox = new VBox();
-        if (!laby.estSimulation()){
+        if (!ModeleLabyrinth.getSimulation()){
             parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
             parentVBox.getChildren().clear();
         }
@@ -73,7 +74,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             ArrayList<Ennemy> newPopulation = evolution.evolve(stats);
 
             laby.enemies.addAll(newPopulation);
-if (!ModeleLabyrinth.estSimulation()) {
+if (!ModeleLabyrinth.getSimulation()) {
     // En-tête
     Label giantEvolutionHeader = new Label("Détails de l'évolution des : " + newPopulation.get(0).getClass().getSimpleName());
     giantEvolutionHeader.setStyle("""
@@ -116,7 +117,7 @@ if (!ModeleLabyrinth.estSimulation()) {
             }
             }
         }
-        if (!laby.estSimulation()) {
+        if (!ModeleLabyrinth.getSimulation()) {
             // Bouton pour la prochaine manche
             Button nextManche = new Button("Next Manche");
             nextManche.setStyle("""
@@ -190,13 +191,12 @@ if (!ModeleLabyrinth.estSimulation()) {
             }
         }
         System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
-        laby.createBehaviours(laby.getCases());
         for (Ennemy e : laby.enemies) {
             e.setLastAttackCount(0);
             if (e.getBehaviorString().equals("Healer")) {
-              e.setBehavior(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
+              e.setBehavior(new PathfollowingBehavior(laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja)));
             } else {
-                e.setBehavior(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehaviorString())));
+                e.setBehavior(new PathfollowingBehavior(e.calculerChemin(ModeleLabyrinth.getCases(),new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart()))));
             }
             e.setArrived(false);
         }
@@ -211,7 +211,7 @@ if (!ModeleLabyrinth.estSimulation()) {
         }
 
         //clear les logs si ce n'est pas une simulation
-        if (!laby.getSimulation()) {
+        if (!ModeleLabyrinth.getSimulation()) {
             VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
             parentVBox.getChildren().clear();
 

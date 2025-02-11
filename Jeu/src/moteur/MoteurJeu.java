@@ -121,7 +121,7 @@ public class MoteurJeu extends Application {
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
         labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2","testSteering");
-        labyrinthComboBox.setValue("testSteering");
+        labyrinthComboBox.setValue("Large");
 
         // Définit "Petit" comme valeur par défaut
         HBox labyrinthBox = new HBox(10, new Label("Choisir le labyrinthe :"), labyrinthComboBox);
@@ -137,7 +137,7 @@ public class MoteurJeu extends Application {
 
         // CheckBox avec ou sans Astar
         CheckBox avecAstarBox = new CheckBox();
-        avecAstarBox.setSelected(false);
+        avecAstarBox.setSelected(true);
 
         HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
         // Champ pour le nombre de manches
@@ -173,10 +173,10 @@ public class MoteurJeu extends Application {
                 }
                 dialogStage.close();
                 try {
+                    laby.setUseAstar(avecAstarBox.isSelected());
                     ArrayList<Ennemy> ennemies = laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
                     System.out.println("Les ennemies : " + ennemies.size());
                     laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
-
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

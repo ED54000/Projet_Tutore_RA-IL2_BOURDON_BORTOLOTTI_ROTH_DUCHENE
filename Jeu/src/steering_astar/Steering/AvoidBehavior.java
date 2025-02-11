@@ -4,13 +4,18 @@ import entites.enemies.Ennemy;
 import laby.ModeleLabyrinth;
 
 public class AvoidBehavior extends Behavior {
+
     private static final double MAX_SEE_AHEAD = 1.25;
-    private static final double BASE_AVOID_WEIGHT = 5;
+    private static final double BASE_AVOID_WEIGHT = 4;
     private static final int NUM_FEELERS = 3;
 
     public AvoidBehavior(Vector2D target) {
         this.setTarget(target);
-        this.setWeight(BASE_AVOID_WEIGHT);
+        if (ModeleLabyrinth.getLabyrinth().getUseAstar()){
+            this.setWeight(BASE_AVOID_WEIGHT/4);
+        } else {
+            this.setWeight(BASE_AVOID_WEIGHT);
+        }
     }
 
     @Override
@@ -64,8 +69,8 @@ public class AvoidBehavior extends Behavior {
         feelers[0] = position.add(normalized.scale(MAX_SEE_AHEAD));
 
         double angleOffset = Math.PI / 4;
-        feelers[1] = position.add(rotateVector(normalized, angleOffset).scale(MAX_SEE_AHEAD * 0.75));
-        feelers[2] = position.add(rotateVector(normalized, -angleOffset).scale(MAX_SEE_AHEAD * 0.75));
+        feelers[1] = position.add(rotateVector(normalized, angleOffset).scale(MAX_SEE_AHEAD));
+        feelers[2] = position.add(rotateVector(normalized, -angleOffset).scale(MAX_SEE_AHEAD));
 
         return feelers;
     }
@@ -87,9 +92,5 @@ public class AvoidBehavior extends Behavior {
         Vector2D awayFromObstacle = position.subtract(obstaclePoint);
         Vector2D perpendicularVector = new Vector2D(-velocity.getY(), velocity.getX()).normalize();
         return awayFromObstacle.normalize().add(perpendicularVector).normalize();
-    }
-
-    public static double getMAX_SEE_AHEAD() {
-        return MAX_SEE_AHEAD;
     }
 }

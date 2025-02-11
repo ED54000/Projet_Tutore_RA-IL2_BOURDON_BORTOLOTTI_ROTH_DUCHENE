@@ -66,7 +66,7 @@ public class ViewLogs implements Observer {
         """);
 
             if (laby.getPause() && laby.getLogs().matches("Manche \\d+ terminée")) {
-                System.out.println("Simulation ? : " + laby.estSimulation());
+                System.out.println("Simulation ? : " + laby.getSimulation());
                 Button button = new Button("Learn");
                 button.setStyle("""
                 -fx-background-color: #4CAF50;

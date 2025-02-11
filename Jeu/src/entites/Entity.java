@@ -23,7 +23,7 @@ public abstract class Entity {
         this.damages = damages;
         this.range = range;
         this.sprite = null;
-        if(!ModeleLabyrinth.estSimulation()) {
+        if(!ModeleLabyrinth.getSimulation()) {
             this.sprite = new Image(sprite);
         }
         this.health = health;
@@ -103,6 +103,7 @@ public abstract class Entity {
         if (this instanceof Ennemy) {
             entityX = ((Ennemy) this).getPositionReel().getX();
             entityY = ((Ennemy) this).getPositionReel().getY();
+           //System.out.println("Ennemy : "+((Ennemy) this).getPositionReel());
             if (target instanceof Ennemy) {
                 targetX = ((Ennemy) target).getPositionReel().getX();
                 targetY = ((Ennemy) target).getPositionReel().getY();
