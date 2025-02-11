@@ -31,7 +31,7 @@ public class MainSimu extends Application {
             }
 
             // Boucle sur le nombre de manches avec une population d'ennemis évoluée à chaque fois
-            for (int manche = 0; manche < 50; manche++) {
+            for (int manche = 0; manche < 30; manche++) {
                 System.out.println("Manche " + manche);
 
                 // Création d'une HashMap avec pour clé l'ennemi et pour valeur son score
@@ -39,9 +39,6 @@ public class MainSimu extends Application {
                 for (Ennemy ennemy : ennemies) {
                     stats.put(ennemy, 0.0);
                 }
-
-                // Écriture des stats avant l'évolution
-                //logStats(writer, manche, ennemies);
 
                 // On évolue
                 Evolution evolution = new Evolution();

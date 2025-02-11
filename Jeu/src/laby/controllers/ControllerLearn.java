@@ -211,16 +211,16 @@ if (!ModeleLabyrinth.getSimulation()) {
         }
 
         //clear les logs si ce n'est pas une simulation
-        if (!ModeleLabyrinth.getSimulation()) {
-            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
-            parentVBox.getChildren().clear();
-
-            parentVBox.getChildren().add(new Label("Learned"));
-
-            Button nextManche = new Button("Next Manche");
-            nextManche.setOnMouseClicked(new ControllerNextManche(laby));
-            parentVBox.getChildren().add(nextManche);
-        }
+//        if (!ModeleLabyrinth.getSimulation()) {
+//            VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
+//            parentVBox.getChildren().clear();
+//
+//            parentVBox.getChildren().add(new Label("Learned"));
+//
+//            Button nextManche = new Button("Next Manche");
+//            nextManche.setOnMouseClicked(new ControllerNextManche(laby));
+//            parentVBox.getChildren().add(nextManche);
+//        }
 
         // On sauvegarde les statistiques des ennemis
         EnnemyEvolution.saveStartStats(laby.enemies);

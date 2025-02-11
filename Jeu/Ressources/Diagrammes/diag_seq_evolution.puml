@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title Evolution
+activate Main
+Main -> Main : List <Ennemy> ennemies
+loop nombre d'ennemies
+    Main -> Ennemy  : new
+    Ennemy --> Main  : e
+end
+Main -> Main : HashMap<Ennemy, double> stats
+loop ennemies
+    Main -> Main : stats.put(e, 0)
+end loop
+
+Main -> Evolution : evaluate(stats)
+deactivate Main
+activate Evolution
+loop stats
+Evolution -> ModeleLabyrinthe : new
+activate ModeleLabyrinthe
+Evolution -> ModeleLabyrinthe : creerLabyrinthe(e)
+ModeleLabyrinthe --> Evolution : jeu
+deactivate ModeleLabyrinthe
+Evolution -> Evolution : scoreSimu = simuler(jeu)
+Evolution -> Evolution : stats.add(e, scoreSimu)
+end
+Evolution --> Main
+deactivate Evolution
+activate Main
+Main -> Evolution : evolve(stats)
+deactivate Main
+activate Evolution
+Evolution --> Main : List<Ennemy> ennemiesEvolved
+deactivate Evolution
+
+@enduml

@@ -11,7 +11,7 @@ public abstract class Entity {
     private String type;
     private double damages;
     private double range;
-    private Image sprite;
+    private Image sprite = null;
     protected double health;
     private boolean isDead = false;
     private String name;
@@ -22,7 +22,6 @@ public abstract class Entity {
         this.position = position;
         this.damages = damages;
         this.range = range;
-        this.sprite = null;
         if(!ModeleLabyrinth.getSimulation()) {
             this.sprite = new Image(sprite);
         }
@@ -103,7 +102,6 @@ public abstract class Entity {
         if (this instanceof Ennemy) {
             entityX = ((Ennemy) this).getPositionReel().getX();
             entityY = ((Ennemy) this).getPositionReel().getY();
-           //System.out.println("Ennemy : "+((Ennemy) this).getPositionReel());
             if (target instanceof Ennemy) {
                 targetX = ((Ennemy) target).getPositionReel().getX();
                 targetY = ((Ennemy) target).getPositionReel().getY();

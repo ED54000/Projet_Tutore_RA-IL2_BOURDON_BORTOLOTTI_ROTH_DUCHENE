@@ -32,7 +32,6 @@ public class Evolution {
                 ennemy.setSpeed(statsStart[1]);
                 ennemy.setDamages(statsStart[2]);
                 ennemy.setAttackSpeed(statsStart[3]);
-                ennemy.setRange(statsStart[4]);
             } else {
                 System.err.println("Aucune stats sauvegardée pour " + ennemy.getName());
             }
@@ -66,7 +65,7 @@ public class Evolution {
 
     public double getScore(Ennemy e) {
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
-        int bonus = e.getIsDead() ? -1000 : 1000;
+        int bonus = e.getIsDead() ? -10000 : 10000;
         System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Bonus : "+bonus);
@@ -119,12 +118,10 @@ public class Evolution {
     private ArrayList<Ennemy> mutate(ArrayList<Ennemy> nouvellePopulation) {
         for (Ennemy ennemy : nouvellePopulation) {
             // On est obligés de fixer des valeurs maximales pour ne pas avoir des géants trop puissants
-            System.out.println("Vitesse avant mutation : "+ennemy.getSpeed());
             if (mutateValue(ennemy.getSpeed()) > 4)
                 ennemy.setSpeed(4);
             else
                 ennemy.setSpeed(mutateValue(ennemy.getSpeed()));
-            System.out.println("Vitesse après mutation : "+ennemy.getSpeed());
             if(mutateValue(ennemy.getHealth()) > 500)
                 ennemy.setHealth(500);
             else
@@ -134,6 +131,7 @@ public class Evolution {
             else
                 ennemy.setDamages(mutateValue(ennemy.getDamages()));
         }
+
         return nouvellePopulation;
     }
 
@@ -143,7 +141,7 @@ public class Evolution {
      * @return
      */
     private double mutateValue(double value) {
-        return value * (1 + (Math.random() * 0.03 + 0.02)); // Mutation entre +2% et +5%
+        return value * (1 + (Math.random() * 0.10 - 0.05));
     }
 
     /**
@@ -166,7 +164,7 @@ public class Evolution {
         //enfant.setSprite(null);
 
         enfant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
-        //enfant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
+        enfant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
         enfant.setDamages(randomChoice(parent1.getDamages(), parent2.getDamages()));
         enfant.setAttackSpeed(randomChoice(parent1.getAttackSpeed(), parent2.getAttackSpeed()));
         // Ajouter ici les propriétés spécifiques à croiser

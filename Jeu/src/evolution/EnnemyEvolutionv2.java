@@ -62,7 +62,7 @@ public class EnnemyEvolutionv2 {
         Giant giant = new Giant(new Vector2D(0, 0), "Giant");
 
         giant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
-        giant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
+        //giant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
         giant.setDamages(randomChoice(parent1.getDamages(), parent2.getDamages()));
         giant.setAttackSpeed(randomChoice(parent1.getAttackSpeed(), parent2.getAttackSpeed()));
         // Ajouter ici les propriétés spécifiques à croiser
