@@ -1,0 +1,36 @@
+@startuml towerIsDestroyed
+skinparam sequenceMessageAlign center
+participant "Ennemy:druide" as d
+participant "Ennemy:target" as e
+
+
+     ->  d : healDamage(target, heal, speedTime)
+     activate d
+        d -> e : getHealth()
+        activate e
+        e --> d : double : health
+        deactivate e
+        d -> e : getHealthBase()
+        activate e
+        e --> d : double : healthBase
+        deactivate e
+
+        note left of d
+            Ici heal + health > healthBase
+        end note
+
+        
+        d -> e : setHealth(heal + health)
+        activate e
+        e --> d : 
+        deactivate e
+        <-- d : 
+        deactivate d
+
+
+
+
+
+
+
+@enduml

@@ -2,6 +2,7 @@ package entites;
 
 import javafx.scene.image.Image;
 import entites.enemies.Ennemy;
+import laby.ModeleLabyrinth;
 import steering_astar.Steering.Vector2D;
 
 public abstract class Entity {
@@ -21,7 +22,10 @@ public abstract class Entity {
         this.position = position;
         this.damages = damages;
         this.range = range;
-        this.sprite = new Image(sprite);
+        this.sprite = null;
+        if(!ModeleLabyrinth.estSimulation()) {
+            this.sprite = new Image(sprite);
+        }
         this.health = health;
         this.name = name;
         this.attackSpeed = attackSpeed;
