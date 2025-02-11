@@ -65,27 +65,23 @@ class ModeleLabyrinth {
   + refreshEnnemyEndOfManche(): void
   + refresh(int): void
   + update(double): void
-  + isPause(): boolean
   + refreshDeadEnemies(): void
-  + getEnnemyEndOfManche(): ArrayList<Ennemy>
   + refreshEnnemyArrived(): void
   + registerObserver(Observer): void
   + etreFini(): boolean
   + refreshEnnemiesScore(): void
-  + createBehaviours(char[][]): void
   + init(Canvas): void
-  + getXstart(): double
   + refreshDeadDefenses(): void
-  + getDefenseEndOfManche(): ArrayList<Defense>
   + notifyObserver(): void
-  + getNewHealerAStar(int, int, int, int): ArrayList<Vector2D>
+  + getNewHealerAStar(int, int, int): ArrayList<Vector2D>
   + creerLabyrinthe(String, int, int, int): void
   + getCloserEnnemy(ActiveDefense): Ennemy
-  + estSimulation(): boolean
   + refreshDefenseEndOfManche(): void
+
 }
 
-
+hide ModeleLabyrinth attributes
+hide ModeleLabyrinth methods
 
 interface Observer << interface >> {
   + update(Subject): void
@@ -112,6 +108,9 @@ class ViewLabyrinth {
   - renderEnnemi(GraphicsContext, Ennemy, ArrayList<Vector2D>, Color): void
   + update(Subject): void
 }
+
+hide ViewLabyrinth attributes
+
 class ViewLogs {
   - laby: ModeleLabyrinth
   - logs: VBox
@@ -121,8 +120,6 @@ class ViewLogs {
 ControllerLearn       -[dashed]->  ControllerNextManche : "«create»"
 ControllerLearn      "1" *--> "laby\n1" ModeleLabyrinth      
 ControllerNextManche "1" *--> "laby\n1" ModeleLabyrinth      
-ModeleLabyrinth       -[dashed]->  ControllerLearn      : "«create»"
-ModeleLabyrinth       -[dashed]->  ControllerNextManche : "«create»"
 ModeleLabyrinth      "1" *--> "observateurs\n*" Observer             
 ModeleLabyrinth       -[dashed]-^  Subject              
 ViewLabyrinth        "1" *---> "laby\n1" ModeleLabyrinth      
