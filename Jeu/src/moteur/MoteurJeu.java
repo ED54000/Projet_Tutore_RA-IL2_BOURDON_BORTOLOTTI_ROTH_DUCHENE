@@ -173,10 +173,10 @@ public class MoteurJeu extends Application {
                 }
                 dialogStage.close();
                 try {
+                    laby.setUseAstar(avecAstarBox.isSelected());
                     ArrayList<Ennemy> ennemies = laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
                     System.out.println("Les ennemies : " + ennemies.size());
                     laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
-
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

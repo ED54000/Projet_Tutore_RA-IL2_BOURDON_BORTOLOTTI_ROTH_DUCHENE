@@ -175,9 +175,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void setAllEnnemiesStats(ArrayList<Ennemy> ennemies) {
         if (useAstar){
-            createBehaviours(this.getCases());
+            createBehaviours(getCases());
         }
-
         for (Ennemy e : ennemies) {
             e.setPositionReel(e.getPosition().divide(ModeleLabyrinth.getTailleCase()));
 
@@ -282,17 +281,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void createBehaviours(char[][] grid) {
         ArrayList<Vector2D> aStarNormal =
-                astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
+                astar.aStarSearch(grid, getLength(), getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(0), false);
         BehavioursMap.put(BEHAVIOURS.get(0), aStarNormal);
         ArrayList<Vector2D> aStarFugitive =
-                astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
+                astar.aStarSearch(grid, getLength(), getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(1), false);
         BehavioursMap.put(BEHAVIOURS.get(1), aStarFugitive);
         ArrayList<Vector2D> aStarKamikaze =
-                astar.aStarSearch(grid, this.getLength(), this.getLengthY(),
+                astar.aStarSearch(grid, getLength(), getLengthY(),
                         new Vector2D(this.getYstart(), this.getXstart()),
                         new Vector2D(this.getYArrival(), this.getXArrival()), BEHAVIOURS.get(2), false);
         BehavioursMap.put(BEHAVIOURS.get(2), aStarKamikaze);
@@ -900,8 +899,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return cases[x][y];
     }
 
-    public char[][] getCases() {
-        return this.cases;
+    public static char[][] getCases() {
+        return cases;
     }
 
     public String getLogs() {
@@ -1032,7 +1031,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.defenses = defenseEndOfManche;
     }
 
-    public static boolean getUseAstar() {
+    public boolean getUseAstar() {
         return useAstar;
     }
 
