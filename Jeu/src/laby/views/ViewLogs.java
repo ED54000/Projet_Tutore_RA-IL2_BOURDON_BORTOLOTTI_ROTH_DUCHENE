@@ -1,8 +1,10 @@
 package laby.views;
 
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
 import laby.Observer;
@@ -12,11 +14,13 @@ import laby.controllers.ControllerLearn;
 public class ViewLogs implements Observer {
     private ModeleLabyrinth laby;
     private VBox logs;
+    private ControllerLearn controllerLearn;
 
     public ViewLogs(ModeleLabyrinth laby, VBox logs) {
         this.laby = laby;
         //this.logs = (VBox)(logs.getChildren().get(1));
         this.logs = logs;
+        this.controllerLearn = new ControllerLearn(laby);
     }
 
     @Override
@@ -82,7 +86,7 @@ public class ViewLogs implements Observer {
                 button.setOnMouseExited(e ->
                         button.setStyle(button.getStyle() + "-fx-background-color: #4CAF50;"));
 
-                button.setOnMouseClicked(new ControllerLearn(laby));
+                button.setOnMouseClicked(controllerLearn);
                 vbox.getChildren().add(button);
             }
             laby.setLogs("");

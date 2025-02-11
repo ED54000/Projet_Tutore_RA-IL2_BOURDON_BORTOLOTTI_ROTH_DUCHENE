@@ -17,6 +17,7 @@ import steering_astar.Astar.*;
 
 import java.awt.*;
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
     private HashMap<Giant, Double> ennemyScore = new HashMap<>();
     private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
-    private int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
+    private static int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
 
 
     //si le jeu est avec le main simulation
@@ -197,7 +198,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
     }
 
-    public ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
+    public static ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
         ArrayList<Ennemy> ennemies = new ArrayList<>();
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
@@ -228,7 +229,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // On sauvegarde les statistiques des ennemis
         Evolution.saveStartStats(ennemies);
-        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
+        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + ennemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
         Map<Ennemy, double[]> map = Evolution.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
@@ -342,7 +343,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (hasReachedArrival(enemy)) {
                 handleEnemyArrival(enemy);
                 enemyIterator.remove();
-                System.out.println("Liste des ennemis a la fin : " + enemies);
             } else {
                 enemy.update();
             }
@@ -363,8 +363,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
         enemy.setPosition(new Vector2D(XArrival, YArrival));
         enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
 
-        System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
-        System.out.println("Le " + enemy.getName() + " est arrivé");
         setLogs("Le " + enemy.getName() + " est arrivé");
 
         ennemiesArrived.add(enemy);
@@ -397,7 +395,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 enemyIterator.remove();
                 System.out.println(e.getName() + " est mort !");
                 setLogs(e.getName() + " est mort. Coup dur !");
-                System.out.println("Liste des ennemis a la fin : " + enemies);
             }
         }
     }
@@ -506,7 +503,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private void handleEndOfManche() {
-        System.out.println("Fin de la manche " + nbManches);
         this.pause = true;
         // On réactive toutes les défenses passives
         for (Defense defense : defenses) {
@@ -600,8 +596,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         new Vector2D(posYReel, posXReel),
                         new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
             }
-            System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior() + "survivalTime : " + e.getSurvivalTime());
-
             c++;
         }
     }

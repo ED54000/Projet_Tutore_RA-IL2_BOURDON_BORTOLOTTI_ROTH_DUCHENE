@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static laby.ModeleLabyrinth.createEnnemies;
+
 public class MainSimu extends Application {
 
     @Override
@@ -19,40 +21,59 @@ public class MainSimu extends Application {
         // Fichier de sortie pour les logs
         String fileName = "Ressources/evolution_stats.csv";
 
-        try (FileWriter writer = new FileWriter(fileName)) {
+        try {
+            FileWriter writer = new FileWriter(fileName);
             writer.write("Manche;Nom;Vie;Dégâts;Vitesse\n");
 
             // Initialisation avec une liste d'ennemis
-            ArrayList<Ennemy> ennemies = new ArrayList<>();
-            for (int i = 0; i < 50; i++) {
-                Giant giant = new Giant(new Vector2D(0, 0), "Giant " + i);
-                giant.setSprite(null);
-                ennemies.add(giant);
+            //ArrayList<Ennemy> ennemies = new ArrayList<>();
+            ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
+            for (int i = 0; i < 10; i++) { // 50 groupes
+                groupes.add(createEnnemies(10)); // Chaque groupe contient 5 ennemis
             }
 
+
             // Boucle sur le nombre de manches avec une population d'ennemis évoluée à chaque fois
-            for (int manche = 0; manche < 100; manche++) {
+            for (int manche = 0; manche < 15; manche++) {
                 System.out.println("Manche " + manche);
 
                 // Création d'une HashMap avec pour clé l'ennemi et pour valeur son score
-                HashMap<Ennemy, Double> stats = new HashMap<>();
-                for (Ennemy ennemy : ennemies) {
-                    stats.put(ennemy, 0.0);
+                HashMap<ArrayList<Ennemy>, Double> stats = new HashMap<>();
+                for (ArrayList<Ennemy> groupe : groupes) {
+                    stats.put(groupe, 0.0);
                 }
 
                 // Écriture des stats avant l'évolution
                 //logStats(writer, manche, ennemies);
+                //Avant l'évolution
+                System.out.println("Avant l'évolution");
+                for (ArrayList<Ennemy> groupe : groupes) {
+                    System.out.println("Groupe : ");
+                    for (Ennemy ennemy : groupe) {
+                        System.out.println(ennemy.getName() + " : " + ennemy.getHealth() + " " + ennemy.getDamages() + " " + ennemy.getSpeed());
+                    }
+                }
 
                 // On évolue
                 Evolution evolution = new Evolution();
-                ennemies = evolution.evolve(evolution.evaluate(stats));
+                groupes = evolution.evolve(evolution.evaluate(stats));
+
+                //après l'évolution
+                System.out.println("Après l'évolution");
+                for (ArrayList<Ennemy> groupe : groupes) {
+                    System.out.println("Groupe : ");
+                    for (Ennemy ennemy : groupe) {
+                        System.out.println(ennemy.getName() + " : " + ennemy.getHealth() + " " + ennemy.getDamages() + " " + ennemy.getSpeed());
+                    }
+                }
+
 
                 // Écriture des stats après l'évolution
-                logStats(writer, manche + 1, ennemies);
+                //TODO : A réadapter pour les groupes
+                logStats(writer, manche + 1, groupes.get(0));
             }
-
             System.out.println("Fin de la simulation. Données enregistrées dans " + fileName);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

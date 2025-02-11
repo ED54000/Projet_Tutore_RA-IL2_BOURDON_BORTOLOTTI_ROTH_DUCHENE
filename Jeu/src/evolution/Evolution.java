@@ -12,34 +12,43 @@ public class Evolution {
     // On stocke les statistiques des ennemis au départ de la manche
     public static final Map<Ennemy, double[]> startStats = Collections.synchronizedMap(new HashMap<>());
 
-    public HashMap<Ennemy, Double> evaluate(HashMap<Ennemy, Double> stats) throws IOException {
-        // On boucle sur les agents de la map
-        for (Ennemy ennemy : stats.keySet()) {
-            // On crée un environnement pour l'agent
+    public HashMap<ArrayList<Ennemy>, Double> evaluate(HashMap<ArrayList<Ennemy>, Double> stats) throws IOException {
+        // Créer une nouvelle map pour stocker les résultats
+        HashMap<ArrayList<Ennemy>, Double> newStats = new HashMap<>();
+        // On boucle sur la map, mais on ne modifie pas la map pendant l'itération
+        for (ArrayList<Ennemy> groupe : stats.keySet()) {
             ModeleLabyrinth jeu = new ModeleLabyrinth();
-            ArrayList<Ennemy> ennemies = new ArrayList<>();
-            ennemies.add(ennemy);
-            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", ennemies, 1000, 1200);
-            stats.put(ennemy, simulate(jeu));
-            jeu = null;
-        }
+            //crée une copie de groupe
+            ArrayList<Ennemy> copieGroupe = new ArrayList<>();
+            for (Ennemy ennemy : groupe) {
+                refreshEnnemiesAndAdd(ennemy, jeu, copieGroupe);
+            }
 
-        // Après évaluation, on réaffecte les statistiques de départ aux ennemis
-        for (Ennemy ennemy : stats.keySet()) {
-            double[] statsStart = startStats.get(ennemy);
-            if (statsStart != null) {
-                ennemy.setHealth(statsStart[0]);
-                ennemy.setSpeed(statsStart[1]);
-                ennemy.setDamages(statsStart[2]);
-                ennemy.setAttackSpeed(statsStart[3]);
-            } else {
-                System.err.println("Aucune stats sauvegardée pour " + ennemy.getName());
+            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, 1200);
+            double score = simulate(jeu);
+            System.out.println("le Score : "+score);
+            // On stocke le score pour ce groupe
+            newStats.put(groupe, score);
+            jeu = null;
+            // Après évaluation, réaffecter les statistiques de départ
+            for (Ennemy ennemies : groupe) {
+                double[] statsStart = startStats.get(ennemies);
+                if (statsStart != null) {
+                    ennemies.setHealth(statsStart[0]);
+                    ennemies.setSpeed(statsStart[1]);
+                    ennemies.setDamages(statsStart[2]);
+                    ennemies.setAttackSpeed(statsStart[3]);
+                } else {
+                    System.err.println("Aucune stats sauvegardée pour " + ennemies.getName());
+                }
             }
         }
+        // Remplacer les anciens scores avec les nouveaux
+        stats.putAll(newStats);
 
-        // On retourne la map des ennemy|score
         return stats;
     }
+
 
     /**
      * Simule une manche
@@ -49,7 +58,6 @@ public class Evolution {
     public double simulate(ModeleLabyrinth jeu){
         // On sauvegarde les statistiques de départ des ennemis
         saveStartStats(jeu.enemies);
-
         long lastUpdateTime = System.nanoTime();
         // Tant que la manche est en cours
         while (!jeu.getPause()) {
@@ -60,52 +68,67 @@ public class Evolution {
             lastUpdateTime = currentTime;
         }
         // On retourne le score
-        return getScore(jeu.getEnnemyEndOfManche().get(0));
+        return getScore(jeu.getEnnemyEndOfManche());
     }
 
-    public double getScore(Ennemy e) {
-        //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
-        int bonus = e.getIsDead() ? -1000 : 1000;
-        System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
-        System.out.println("Distance to arrival: "+e.getDistanceToArrival());
-        System.out.println("Bonus : "+bonus);
+    public double getScore(ArrayList<Ennemy> e) {
+        //calcul du score pour un groupe d'ennemis
+        double score = 0;
+        for (Ennemy ennemy : e) {
+            score += getScoreOneEnnemy(ennemy);
+        }
 
-        double score = ((double) e.getSurvivalTime() /1000000) + bonus - e.getDistanceToArrival()*10;
+        //TODO : Utiliser le temp que le grp a mit pour arriver
+
         return score;
     }
 
-    public ArrayList<Ennemy> evolve(HashMap<Ennemy, Double> giants) {
-        //Trier les géants par score décroissant
-        ArrayList<Map.Entry<Ennemy, Double>> ennemiesTries = new ArrayList<>(giants.entrySet());
-        ennemiesTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
+    public double getScoreOneEnnemy(Ennemy e) {
+        //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
+        int bonus = e.getIsDead() ? -1000 : 1000;
+        //System.out.println("Survival time : "+(double)e.getSurvivalTime() /1000000);
+        //System.out.println("Distance to arrival: "+e.getDistanceToArrival());
+        //System.out.println("Bonus : "+bonus);
 
-        //System.out.println("Ennemies triés : "+ennemiesTries);
-        //Sélectionner la moitié des meilleurs géants
-        int size = ennemiesTries.size();
-        //int moitié = (int)Math.ceil(ennemiesTries.size() / 10);
+        double score = ((double) e.getSurvivalTime() /1000000) + bonus - e.getDistanceToArrival()*10;
+
+        return score;
+    }
+
+    public ArrayList<ArrayList<Ennemy>> evolve(HashMap<ArrayList<Ennemy>, Double> ennemies) {
+        //Trier les ennemies par score décroissant
+        ArrayList<Map.Entry<ArrayList<Ennemy>, Double>> groupeTries = new ArrayList<>(ennemies.entrySet());
+        groupeTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
+
+        System.out.println("Meilleur groupe : "+groupeTries.get(0).getKey());
+
+        //Sélectionner la moitié des meilleurs groupes
+        int size = groupeTries.size();
+        //int moitié = (int)Math.ceil(groupeTries.size() / 10);
         int moitie = size / 2;
-        System.out.println("Moitié : "+moitie);
-        ArrayList<Ennemy> meilleurs = new ArrayList<>();
+        //System.out.println("Moitié : "+moitie);
+        ArrayList<ArrayList<Ennemy>> meilleurs = new ArrayList<>();
         for (int i = 0; i < moitie; i++) {
-            meilleurs.add(ennemiesTries.get(i).getKey());
+            meilleurs.add(groupeTries.get(i).getKey());
         }
-        //System.out.println("Meilleurs ennemies : "+meilleurs);
+
+        //System.out.println("Meilleurs groupes : "+meilleurs);
 
         //Générer les enfants via le croisement
-        ArrayList<Ennemy> enfants = new ArrayList<>();
+        ArrayList<ArrayList<Ennemy>> enfants = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < size-moitie; i++) {
             // Sélectionner deux parents aléatoires parmi les meilleurs
-            Ennemy parent1 = meilleurs.get(random.nextInt(meilleurs.size()));
-            Ennemy parent2 = meilleurs.get(random.nextInt(meilleurs.size()));
+            ArrayList<Ennemy> parent1 = meilleurs.get(random.nextInt(meilleurs.size()));
+            ArrayList<Ennemy> parent2 = meilleurs.get(random.nextInt(meilleurs.size()));
 
             // Créer un enfant en croisant les parents
-            Ennemy enfant = croiser(parent1, parent2);
+            ArrayList<Ennemy> enfant = croiserGroupes(parent1, parent2);
             enfants.add(enfant);
         }
 
-        //Combiner les meilleurs géants et les enfants
-        ArrayList<Ennemy> nouvellePopulation = new ArrayList<>();
+        //Combiner les meilleurs et les enfants
+        ArrayList<ArrayList<Ennemy>> nouvellePopulation = new ArrayList<>();
         nouvellePopulation.addAll(meilleurs);
         nouvellePopulation.addAll(enfants);
 
@@ -118,15 +141,19 @@ public class Evolution {
      * @param nouvellePopulation
      * @return
      */
-    private ArrayList<Ennemy> mutate(ArrayList<Ennemy> nouvellePopulation) {
-
-        // On boucle sur les géants de la population
-        for (Ennemy giant : nouvellePopulation) {
-            // On applique une mutation sur chaque géant
-            giant.setHealth(mutateValue(giant.getHealth()));
-            //giant.setSpeed(mutateValue(giant.getSpeed()));
-            giant.setDamages(mutateValue(giant.getDamages()));
-            giant.setAttackSpeed(mutateValue(giant.getAttackSpeed()));
+    private ArrayList<ArrayList<Ennemy>> mutate(ArrayList<ArrayList<Ennemy>> nouvellePopulation) {
+        // On boucle sur la population
+        for (ArrayList<Ennemy> groupe : nouvellePopulation) {
+            // On applique une mutation sur chaque ennemy
+            for (Ennemy ennemy : groupe) {
+                ennemy.setHealth(mutateValue(ennemy.getHealth()));
+                //on set la speed si < 4
+                double newSpeed = mutateValue(ennemy.getSpeed());
+                ennemy.setSpeed(newSpeed > 4 ? 4 : newSpeed);
+                //System.out.println("Speed : "+ennemy.getSpeed());
+                ennemy.setDamages(mutateValue(ennemy.getDamages()));
+                //ennemy.setAttackSpeed(mutateValue(ennemy.getAttackSpeed()));
+            }
         }
 
         return nouvellePopulation;
@@ -142,11 +169,11 @@ public class Evolution {
     }
 
     /**
-     * Méthode pour croiser deux géants et générer un enfant.
+     * Méthode pour croiser deux ennemis et générer un enfant.
      * À personnaliser en fonction des propriétés des géants.
      */
     private Ennemy croiser(Ennemy parent1, Ennemy parent2) {
-        // Exemple de croisement (à adapter selon la structure de Giant)
+        // Exemple de croisement (à adapter selon la structure de l'ennemy)
         Ennemy enfant = null;
         if (parent1 instanceof Giant) {
             enfant = new Giant(new Vector2D(0, 0), "GiantEnfant");
@@ -168,6 +195,27 @@ public class Evolution {
         return enfant;
     }
 
+    ArrayList<Ennemy> croiserGroupes(ArrayList<Ennemy> g1, ArrayList<Ennemy> g2) {
+        ArrayList<Ennemy> enfant = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < g1.size(); i++) {
+            //on vérifie que la liste ne contient pas déjà l'ennemi sinon on en ajoute un autre
+            Ennemy e = randomChoice(
+                    g1.get(random.nextInt(g1.size())),
+                    g2.get(random.nextInt(g2.size()))
+            );
+            while (enfant.contains(e)) {
+                e = randomChoice(
+                        g1.get(random.nextInt(g1.size())),
+                        g2.get(random.nextInt(g2.size()))
+                );
+            }
+            enfant.add(e);
+        }
+        return enfant;
+    }
+
+
     /**
      * Méthode pour choisir aléatoirement une propriété entre deux options.
      */
@@ -187,4 +235,28 @@ public class Evolution {
             }
         }
     }
+
+    public static void refreshEnnemiesAndAdd(Ennemy ennemy, ModeleLabyrinth jeu, List<Ennemy> copieGroupe) {
+        // Réinitialisation des attributs de base
+        ennemy.setLastAttackCount(0);
+        ennemy.setKillerType(null);
+        ennemy.setIsDead(false);
+        ennemy.setToStart(jeu);
+        ennemy.setArrived(false);
+
+        // Réinitialisation des stats
+        double[] statsStart = Evolution.startStats.get(ennemy);
+        if (statsStart != null) {
+            ennemy.setHealth(statsStart[0]);
+            ennemy.setSpeed(statsStart[1]);
+            ennemy.setDamages(statsStart[2]);
+            ennemy.setAttackSpeed(statsStart[3]);
+        } else {
+            System.err.println("Aucune stats sauvegardée pour " + ennemy.getName());
+        }
+
+        // Ajout à la copie du groupe
+        copieGroupe.add(ennemy);
+    }
+
 }
