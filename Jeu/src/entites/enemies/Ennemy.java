@@ -44,11 +44,12 @@ public abstract class Ennemy extends Entity {
         Astar astar = Astar.getAStar();
         return astar.aStarSearch(grid, grid.length, grid[0].length,
                 startCoordinate,
-                new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()), this.getBehaviorString(), false);
+                new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()),
+                this.getBehaviorString(), 
+                false);
     }
 
     public void healDamage(Ennemy target, double heal, double speedTime){
-
         // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
         if(this.getLastAttackCount() >=  this.getAttackSpeed() * speedTime) {
             if (this.getAttackSpeed() <= 0) {
