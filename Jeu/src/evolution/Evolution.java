@@ -70,8 +70,7 @@ public class Evolution {
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Bonus : "+bonus);
 
-        double score = ((double) e.getSurvivalTime() /1000000) + bonus - e.getDistanceToArrival()*10;
-        return score;
+        return ((double) e.getSurvivalTime() /1000000) + bonus - e.getDistanceToArrival()*10;
     }
 
     public ArrayList<Ennemy> evolve(HashMap<Ennemy, Double> giants) {
@@ -89,6 +88,7 @@ public class Evolution {
         for (int i = 0; i < moitie; i++) {
             meilleurs.add(ennemiesTries.get(i).getKey());
         }
+        //System.out.println("Meilleurs ennemies : "+meilleurs);
 
         //Générer les enfants via le croisement
         ArrayList<Ennemy> enfants = new ArrayList<>();
@@ -113,43 +113,35 @@ public class Evolution {
     }
 
     /**
-     * Méthode pour appliquer une mutation sur une population de géants
-     * @param nouvellePopulation
-     * @return
+     * Applique une mutation sur une population de géants en augmentant progressivement leurs statistiques.
      */
     private ArrayList<Ennemy> mutate(ArrayList<Ennemy> nouvellePopulation) {
-
-        // On boucle sur les géants de la population
-        for (Ennemy giant : nouvellePopulation) {
-            // On applique une mutation sur chaque géant
-            if (mutateValue(giant.getHealth()) > 500)
-                giant.setHealth(500);
+        for (Ennemy ennemy : nouvellePopulation) {
+            // On est obligés de fixer des valeurs maximales pour ne pas avoir des géants trop puissants
+            if (mutateValue(ennemy.getSpeed()) > 4)
+                ennemy.setSpeed(4);
             else
-                giant.setHealth(mutateValue(giant.getHealth()));
-
-            if (mutateValue(giant.getSpeed()) > 4){
-                giant.setSpeed(4);
-            } else {
-                giant.setSpeed(mutateValue(giant.getSpeed()));
-            }
-
-            if (mutateValue(giant.getDamages()) > 100)
-                giant.setDamages(100);
+                ennemy.setSpeed(mutateValue(ennemy.getSpeed()));
+            if(mutateValue(ennemy.getHealth()) > 500)
+                ennemy.setHealth(500);
             else
-                giant.setDamages(mutateValue(giant.getDamages()));
-            //giant.setAttackSpeed(mutateValue(giant.getAttackSpeed()));
+                ennemy.setHealth(mutateValue(ennemy.getHealth()));
+            if(mutateValue(ennemy.getDamages()) > 100)
+                ennemy.setDamages(100);
+            else
+                ennemy.setDamages(mutateValue(ennemy.getDamages()));
         }
 
         return nouvellePopulation;
     }
 
     /**
-     * Méthode pour muter une valeur (ajouter un peu de bruit, 5% ici)
-     * @param value la valeur à muter
-     * @return la valeur mutée
+     * Applique une mutation sur une valeur.
+     * @param value
+     * @return
      */
     private double mutateValue(double value) {
-        return value * (1 + (Math.random() * 0.20 - 0.10));
+        return value * (1 + (Math.random() * 0.10 - 0.05));
     }
 
     /**
