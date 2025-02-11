@@ -383,6 +383,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si la défense est morte, on la retire de la liste des défenses
             if (d.getIsDead() && !deadDefenses.contains(d)) {
                 deadDefenses.add(d);
+                defenseIterator.remove();
                 towerIsDestroyed();
                 setLogs("La défense : " + d.getName() + " à été détruite");
             }
