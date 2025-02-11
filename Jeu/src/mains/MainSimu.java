@@ -24,14 +24,14 @@ public class MainSimu extends Application {
 
             // Initialisation avec une liste d'ennemis
             ArrayList<Ennemy> ennemies = new ArrayList<>();
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 20; i++) {
                 Giant giant = new Giant(new Vector2D(0, 0), "Giant " + i);
                 giant.setSprite(null);
                 ennemies.add(giant);
             }
 
             // Boucle sur le nombre de manches avec une population d'ennemis évoluée à chaque fois
-            for (int manche = 0; manche < 100; manche++) {
+            for (int manche = 0; manche < 50; manche++) {
                 System.out.println("Manche " + manche);
 
                 // Création d'une HashMap avec pour clé l'ennemi et pour valeur son score
