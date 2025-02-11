@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
 import steering_astar.Steering.PathfollowingBehavior;
+import steering_astar.Steering.Vector2D;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
@@ -80,13 +81,12 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             }
         }
         System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
-        laby.createBehaviours(laby.getCases());
         for (Ennemy e : laby.enemies) {
             e.setLastAttackCount(0);
             if (e.getBehaviorString().equals("Healer")) {
-              e.setBehavior(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
+              e.setBehavior(new PathfollowingBehavior(laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja)));
             } else {
-                e.setBehavior(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehaviorString())));
+                e.setBehavior(new PathfollowingBehavior(e.calculerChemin(ModeleLabyrinth.getCases(),new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart()))));
             }
             e.setArrived(false);
         }

@@ -13,7 +13,11 @@ public class SeekBehavior extends Behavior {
      */
     public SeekBehavior(Vector2D target) {
         this.setTarget(target);
-        this.setWeight(BASE_SEEK_WEIGHT);
+        if (ModeleLabyrinth.getLabyrinth().getUseAstar()){
+            this.setWeight(BASE_SEEK_WEIGHT*2);
+        } else {
+            this.setWeight(BASE_SEEK_WEIGHT);
+        }
     }
 
     /***

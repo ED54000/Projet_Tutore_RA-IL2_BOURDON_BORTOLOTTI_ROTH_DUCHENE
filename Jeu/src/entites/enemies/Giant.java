@@ -12,5 +12,4 @@ public class Giant extends Ennemy {
                 500,
                 1.5, 1, name,"/giant.png", "Normal");
     }
-
 }

@@ -18,6 +18,8 @@ import static laby.ModeleLabyrinth.getTailleCase;
  * */
 public class Astar {
 
+    private static Astar instance = null;
+
     /***
      * Vérifie si un point donné est valide dans une grille bidimensionnelle.
      * Un point est considéré comme valide s'il est situé à l'intérieur des limites de la grille.
@@ -147,6 +149,7 @@ public class Astar {
             System.err.println("Destination is invalid...");
             return null;
         }
+
         if (!isUnblocked(copyGrid, src)
                 || !isUnblocked(copyGrid, dest)) {
             System.err.println("Source or destination is blocked...");
@@ -370,6 +373,14 @@ public class Astar {
             }
         }
         return null;
+    }
+
+
+    public static Astar getAStar(){
+        if (instance == null){
+            instance = new Astar();
+        }
+        return instance;
     }
 
 }

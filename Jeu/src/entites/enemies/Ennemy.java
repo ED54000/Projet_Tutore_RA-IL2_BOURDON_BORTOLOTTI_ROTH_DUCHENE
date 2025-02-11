@@ -2,6 +2,7 @@ package entites.enemies;
 
 import entites.Entity;
 import laby.ModeleLabyrinth;
+import steering_astar.Astar.Astar;
 import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
@@ -37,6 +38,13 @@ public abstract class Ennemy extends Entity {
         this.listBehaviors.add(new AvoidBehavior(new Vector2D(0, 0)));
         this.velocity = new Vector2D(0, 0);
         timeSpawn++;
+    }
+
+    public ArrayList<Vector2D> calculerChemin(char[][] grid, Vector2D startCoordinate) {
+        Astar astar = Astar.getAStar();
+        return astar.aStarSearch(grid, grid.length, grid[0].length,
+                startCoordinate,
+                new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()), this.getBehaviorString(), false);
     }
 
     public void healDamage(Ennemy target, double heal, double speedTime){
@@ -76,7 +84,7 @@ public abstract class Ennemy extends Entity {
         velocity = velocity.add(totalForce).normalize().scale(speed);
 
         position = position.add(velocity);
-        positionReel = position.scale(ModeleLabyrinth.getTailleCase());
+        positionReel = position.divide(ModeleLabyrinth.getTailleCase());
     }
 
 
