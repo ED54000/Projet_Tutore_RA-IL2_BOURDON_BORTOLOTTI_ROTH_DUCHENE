@@ -72,15 +72,16 @@ class Vector2D {
   + magnitude(): double
 }
 
-Astar                  ->  Cell                  : "«create»"
-Astar                  ->  Details               : "«create»"
-Astar                  -[dashed]->  Vector2D              : "«create»"
-AvoidBehavior          --^  Behavior              
-Behavior              "1" *--> "target\n1" Vector2D              
-Cell                   ->  Vector2D              : "«create»"
-Cell                  "1" *--> "parent\n1" Vector2D              
-PathfollowingBehavior  --^  Behavior              
-PathfollowingBehavior  ->  SeekBehavior          : "«create»"
-PathfollowingBehavior "1" *-> "checkpoints\n*" Vector2D              
-SeekBehavior           --^  Behavior              
+Cell      <--   Astar : "«create»"
+Vector2D  <-   Cell  : "«create»"
+Vector2D  "parent\n1" <--*  "1" Cell
+Astar     -->  Details : "«create»"
+Behavior  ^--  SeekBehavior
+Behavior  ^--  AvoidBehavior
+Vector2D "target\n1" <--* "1" Behavior
+Vector2D  <-[dashed] Astar: "«create»"
+Behavior  ^--  PathfollowingBehavior
+PathfollowingBehavior ->  SeekBehavior : "«create»"
+PathfollowingBehavior "1" *-> "checkpoints\n*" Vector2D
+
 @enduml
