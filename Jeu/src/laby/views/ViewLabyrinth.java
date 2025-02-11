@@ -167,9 +167,11 @@ public class ViewLabyrinth implements Observer {
         //points de passage
         gc.setFill(pathColor);
         gc.setStroke(pathColor);
-        for (Vector2D point : checkpoint) {
-            gc.fillOval(point.getX(), point.getY(), waypointsSize, waypointsSize);
-            gc.strokeOval(point.getX() - radius / 2 + waypointsSize / 2, point.getY() - radius / 2 + waypointsSize / 2, radius, radius);
+        if (laby.getUseAstar()){
+            for (Vector2D point : checkpoint) {
+                gc.fillOval(point.getX(), point.getY(), waypointsSize, waypointsSize);
+                gc.strokeOval(point.getX() - radius / 2 + waypointsSize / 2, point.getY() - radius / 2 + waypointsSize / 2, radius, radius);
+            }
         }
 
         //vélocité de l'ennemi
@@ -181,7 +183,11 @@ public class ViewLabyrinth implements Observer {
         gc.fillOval(xCoord + ennemiSize / 2 - velocityPointSize / 2, yCoord + ennemiSize / 2 - velocityPointSize / 2, velocityPointSize, velocityPointSize);
 
         //ennemi
-        gc.drawImage(ennemi.getImage(), xCoordEnnemi, yCoordEnnemi, getTailleCase(), getTailleCase());
+        gc.drawImage(ennemi.getImage(),
+                xCoordEnnemi - ennemiSize / 2.0 - 0.5,
+                yCoordEnnemi - ennemiSize / 2.0,
+                getTailleCase(), getTailleCase());
+
 
         //range des ennemis
         gc.setStroke(Color.BLACK);

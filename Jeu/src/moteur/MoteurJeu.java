@@ -116,11 +116,12 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
         labyrinthMap.put("test1", "Ressources/Labyrinthe4.txt");
         labyrinthMap.put("test2", "Ressources/Laby_test2.txt");
+        labyrinthMap.put("testSteering", "Ressources/Laby_testSteering.txt");
 
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2");
-        labyrinthComboBox.setValue("Large");
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2","testSteering");
+        labyrinthComboBox.setValue("testSteering");
 
         // Définit "Petit" comme valeur par défaut
         HBox labyrinthBox = new HBox(10, new Label("Choisir le labyrinthe :"), labyrinthComboBox);
@@ -134,6 +135,10 @@ public class MoteurJeu extends Application {
         nbEnnemiesToWinField.setPromptText("Nombre d'ennemis qui doivent atteindre la ligne d'arrivée");
         nbEnnemiesToWinField.setText("70");
 
+        // CheckBox avec ou sans Astar
+        CheckBox avecAstarBox = new CheckBox();
+        avecAstarBox.setSelected(false);
+
         HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
         // Champ pour le nombre de manches
         TextField roundsField = new TextField();
@@ -143,6 +148,7 @@ public class MoteurJeu extends Application {
         enemiesField.setId("enemiesField");
         roundsField.setId("roundsField");
         nbEnnemiesToWinField.setId("ennemiesToWinField");
+        avecAstarBox.setId("avecOuSansAstarBox");
 
         // Création du contrôleur avec les références des champs
         //ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField, nbEnnemiesToWinField);
@@ -150,6 +156,7 @@ public class MoteurJeu extends Application {
 
         HBox roundsBox = new HBox(10, new Label("Nombre de manches :"), roundsField);
         HBox ennemiesToWinBox = new HBox(10, new Label("Objectif :"), nbEnnemiesToWinField);
+        HBox noAstar = new HBox(10, new Label("Avec Astar ? "), avecAstarBox);
         // Bouton Start
         Button startButton = new Button("Start");
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -177,12 +184,12 @@ public class MoteurJeu extends Application {
             }
         });
         // Ajout des composants au conteneur principal
-        root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, ennemiesToWinBox, startButton);
+        root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, ennemiesToWinBox, noAstar, startButton);
 
         //startButton.setOnMouseClicked(controllerStart);
 
         // Configure la scène de la fenêtre
-        Scene dialogScene = new Scene(root, 400, 200);
+        Scene dialogScene = new Scene(root, 400, 230);
         dialogStage.setScene(dialogScene);
         // Configure la fenêtre en tant que modale
         dialogStage.initOwner(primaryStage);

@@ -1,5 +1,8 @@
 package mains;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
 
 import java.io.IOException;
@@ -44,4 +47,5 @@ public class MainSimulation {
             System.err.println(e.getMessage());
         }
     }
+
 }

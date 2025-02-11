@@ -1,15 +1,11 @@
 package laby.controllers;
 
-import entites.enemies.Ennemy;
-import evolution.EnnemyEvolution;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
-
-import java.util.Map;
 
 public class ControllerNextManche implements EventHandler<MouseEvent> {
 
@@ -26,7 +22,7 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         laby.setStartTime();
 
         //clear les logs si on est pas en simulation
-        if (!laby.estSimulation()) {
+        if (!laby.getSimulation()) {
             VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
             parentVBox.getChildren().clear();
 

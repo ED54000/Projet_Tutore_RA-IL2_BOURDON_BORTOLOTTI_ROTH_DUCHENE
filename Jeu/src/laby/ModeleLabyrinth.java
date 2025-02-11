@@ -12,11 +12,13 @@ import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import moteur.Jeu;
 import steering_astar.Steering.PathfollowingBehavior;
+import steering_astar.Steering.SeekBehavior;
 import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
 
 import java.awt.*;
 import java.io.*;
+
 import java.util.*;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private int nbEnnemiesArrived;
     private long startTime;
 
+    private static boolean useAstar;
 
     //entités
     public ArrayList<Ennemy> enemies = new ArrayList<>();
@@ -62,6 +65,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
 
     //labyrinthe
+    private static ModeleLabyrinth instance;
     private static char[][] cases;
     private int Xstart, Ystart, XArrival, YArrival, XstartRender, YstartRender, XArrivalRender, YArrivalRender;
     private Map<String, ArrayList<Vector2D>> BehavioursMap = new HashMap<>();
@@ -171,28 +175,46 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private void setAllEnnemiesStats(ArrayList<Ennemy> ennemies) {
-        createBehaviours(this.getCases());
+        if (useAstar){
+            createBehaviours(this.getCases());
+        }
+
         for (Ennemy e : ennemies) {
             e.setPositionReel(e.getPosition().divide(ModeleLabyrinth.getTailleCase()));
 
             e.setToStart(this);
             if (e instanceof Giant) {
-                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
-                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+                if (useAstar){
+                    e.setBehavior(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+                    e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
+                } else {
+                    e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                }
             }
             if (e instanceof Ninja) {
-                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
-                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
+                if (useAstar){
+                    e.setBehavior(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(1))));
+                    e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(1)));
+                } else {
+                    e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                }
             }
             if (e instanceof Berserker) {
-                e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
-                e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
+                if (useAstar){
+                    e.setBehavior(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(2))));
+                    e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(2)));
+                } else {
+                    e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                }
             }
             if (e instanceof Druide) {
-                ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
-
-                e.setBehaviorPath(new PathfollowingBehavior(aStarHealerPath));
-                e.setDistanceStartToArrival(aStarHealerPath);
+                if (useAstar){
+                    ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbDruides, nbGiant, nbBerserker, nbNinja);
+                    e.setBehavior(new PathfollowingBehavior(aStarHealerPath));
+                    e.setDistanceStartToArrival(aStarHealerPath);
+                } else {
+                    e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender,YArrivalRender)));
+                }
             }
         }
     }
@@ -436,7 +458,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void handleActiveDefenseCombat(ActiveDefense defense, double secondes) {
         Ennemy enemyTarget = defense.getTarget();
-        // Si la defense focus déja un enemy
+        // Si la defense focus déja un ennemi
         if (enemyTarget != null) {
             // On vérifie si l'ennemi est toujours dans la portée de la défense
             if (defense.isInRange(enemyTarget)) {
@@ -470,7 +492,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 defense.attack(enemy, secondes);
                 // On set la cible de la défense
                 defense.setTarget(enemy);
-                // Si l'enemy est mort, on set son killerType
+                // Si l'ennemi est mort, on set son killerType
                 if (enemy.getIsDead() && !deadEnemies.contains(enemy)) {
                     enemy.setKillerType(defense.getType());
                     // On retire la cible de la défense
@@ -490,10 +512,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Si l'enemy est dans la portée de la défense
             if (defense.isInRange(e) && !deadDefenses.contains(defense) && !((PassiveDefense) defense).getAttacked()) {
                 // Cela active la defense
-                // On attaque l'enemy
+                // On attaque l'ennemi
                 defense.attack(e, secondes);
                 defense.setAttacked(true);
-                // Si l'enemy est mort, on set son killerType
+                // Si l'ennemi est mort, on set son killerType
                 if (e.getIsDead() && !deadEnemies.contains(e)) {
                     e.setKillerType(defense.getType());
                     // Et on met à jour son temps de survie
@@ -527,8 +549,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         System.out.println("Ennemis en fin de manche : " + ennemiesEndOfManche);
         setLogs("Manche " + nbManches + " terminée");
+
         //dans le cas ou on est en simulation
-        if (this.estSimulation()) {
+        if (this.getSimulation()) {
             handleSimulation();
         }
 
@@ -599,9 +622,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
                 e.setDistanceToArrival(astar.aStarSearch(copyGrid, this.getLength(), this.getLengthY(),
                         new Vector2D(posYReel, posXReel),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehavior(), true));
+                        new Vector2D(this.getYArrival(), this.getXArrival()), e.getBehaviorString(), true));
             }
-            System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehavior() + "survivalTime : " + e.getSurvivalTime());
+            System.out.println("Ennemy " + c + " fin de manche : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehaviorString() + "survivalTime : " + e.getSurvivalTime());
 
             c++;
         }
@@ -689,34 +712,37 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 copyGrid[(int) position.getY()][(int) position.getX()] = '.';
 
             }
-            int ennemyPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
-            int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
-            if (ennemyPosY < 0) {
-                ennemyPosY = 0;
-            }
-            if (ennemyPosX < 0) {
-                ennemyPosX = 0;
-            }
-            if (ennemyPosX > copyGrid[0].length - 1) {
-                ennemyPosX = copyGrid[0].length - 1;
-            }
-            if (ennemyPosY > copyGrid.length - 1) {
-                ennemyPosY = copyGrid.length - 1;
-            }
-            char charCourant = copyGrid[ennemyPosY][ennemyPosX];
-            if (charCourant == '#') {
-                int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
-                ennemyPosY = newCoord[0];
-                ennemyPosX = newCoord[1];
-            }
-            copyGrid[ennemyPosY][ennemyPosX] = 'S';
-            if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
-                Astar newAstar = new Astar();
-                ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
+
+            if (useAstar) {
+                int ennemyPosY = (int) Math.ceil(ennemy.getPositionReel().getY());
+                int ennemyPosX = (int) Math.ceil(ennemy.getPositionReel().getX());
+                if (ennemyPosY < 0) {
+                    ennemyPosY = 0;
+                }
+                if (ennemyPosX < 0) {
+                    ennemyPosX = 0;
+                }
+                if (ennemyPosX > copyGrid[0].length - 1) {
+                    ennemyPosX = copyGrid[0].length - 1;
+                }
+                if (ennemyPosY > copyGrid.length - 1) {
+                    ennemyPosY = copyGrid.length - 1;
+                }
+                char charCourant = copyGrid[ennemyPosY][ennemyPosX];
+                if (charCourant == '#') {
+                    int[] newCoord = moveEnemyToClosestValidPoint(copyGrid, ennemyPosX, ennemyPosY);
+                    ennemyPosY = newCoord[0];
+                    ennemyPosX = newCoord[1];
+                }
+                copyGrid[ennemyPosY][ennemyPosX] = 'S';
+                if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
+                    Astar newAstar = new Astar();
+                    ArrayList<Vector2D> path = newAstar.aStarSearch(copyGrid, copyGrid.length, copyGrid[0].length,
                         new Vector2D(ennemyPosY, ennemyPosX),
-                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehavior(), false);
-                ennemy.setBehaviorPath(new PathfollowingBehavior(path));
-                BehavioursMap.put(ennemy.getBehavior(), path);
+                        new Vector2D(this.getYArrival(), this.getXArrival()), ennemy.getBehaviorString(), false);
+                    ennemy.setBehavior(new PathfollowingBehavior(path));
+                    BehavioursMap.put(ennemy.getBehaviorString(), path);
+                }
             }
         }
     }
@@ -807,7 +833,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         if (this.ennemiesEvolved.isEmpty()) {
             System.out.println("Liste des ennemies : " + this.enemies);
             Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant" + i);
-            e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
+            e.setBehavior(new PathfollowingBehavior(this.BehavioursMap.get(BEHAVIOURS.get(0))));
             e.setDistanceStartToArrival(this.BehavioursMap.get(BEHAVIOURS.get(0)));
             this.enemies.add(e);
         } else {
@@ -815,8 +841,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
             e.setName(e.getName() + i);
             e.setToStart(this);
 
-            e.setBehaviorPath(new PathfollowingBehavior(this.BehavioursMap.get(e.getBehavior())));
-            e.setDistanceStartToArrival(this.BehavioursMap.get(e.getBehavior()));
+            e.setBehavior(new PathfollowingBehavior(this.BehavioursMap.get(e.getBehaviorString())));
+            e.setDistanceStartToArrival(this.BehavioursMap.get(e.getBehaviorString()));
 
             this.enemies.add(e);
 
@@ -965,15 +991,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
         this.ennemiesArrived = new ArrayList<>();
     }
 
-    public void setSimulation(boolean b) {
-        this.simulation = b;
+    public static boolean getSimulation() {
+        return simulation || simulationEvolution;
     }
 
-    public static boolean estSimulation() {
-        if (simulation || simulationEvolution) {
-            return true;
-        }
-        return false;
+    public void setSimulation(boolean b) {
+        simulation = b;
     }
 
     public long getStartTime() {
@@ -1006,5 +1029,25 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void setDefenses(ArrayList<Defense> defenseEndOfManche) {
         this.defenses = defenseEndOfManche;
+    }
+
+    public static boolean getUseAstar() {
+        return useAstar;
+    }
+
+    public void setUseAstar(boolean useAstar) {
+        this.useAstar = useAstar;
+    }
+
+    /**
+     * Obtient l'instance unique du labyrinthe (pattern Singleton)
+     *
+     * @return l'instance unique du ModeleLabyrinth
+     */
+    public static ModeleLabyrinth getLabyrinth() {
+        if (instance == null) {
+            instance = new ModeleLabyrinth();
+        }
+        return instance;
     }
 }
