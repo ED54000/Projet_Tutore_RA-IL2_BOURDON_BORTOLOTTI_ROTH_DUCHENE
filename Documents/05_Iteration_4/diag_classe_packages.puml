@@ -44,7 +44,7 @@ package "steering_astar.Steering" {
 "laby.modele" --> "entities" : Crée et possède
 "laby.modele" ----> "steering_astar.Astar" : Crée et possède
 "steering_astar.Steering" --> "steering_astar.Astar" : Utilise
-"steering_astar.Steering" --> "entities.ennemies" : Modifie les coordonnées
+"steering_astar.Steering" <-- "entities.ennemies" : Appelle
 "evolution" --> "entities.ennemies" : Utilise
 "evolution" --> "laby.modele" : Modifie
 
