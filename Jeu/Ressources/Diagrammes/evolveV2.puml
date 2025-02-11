@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+
+MainTest -> ModeleLaby: create
+activate MainTest
+activate ModeleLaby
+ModeleLaby -> ModeleLaby: createLabyrinthePour1
+deactivate ModeleLaby
+
+loop Nombre d'évolutions
+    loop Pour chaque simulation
+        loop boucle de jeu
+            MainTest -> ModeleLaby: update
+
+            ModeleLaby -> ModeleLaby: update
+
+        end
+        MainTest -> ModeleLaby: refresh
+        activate ModeleLaby
+        ModeleLaby -> ModeleLaby: refresh
+        deactivate ModeleLaby
+    end
+    MainTest -> ModeleLaby: new Evolutionv()
+    activate ModeleLaby
+    ModeleLaby -> Evolution : new Evolutionv()
+    activate Evolution
+    ModeleLaby -> Evolution : evolve(ModeleLaby.getScore())
+    Evolution --> ModeleLaby : ennemies évolués
+    deactivate Evolution
+    ModeleLaby -> ModeleLaby : refresh()
+    deactivate ModeleLaby
+end
+
+deactivate MainTest
+@enduml

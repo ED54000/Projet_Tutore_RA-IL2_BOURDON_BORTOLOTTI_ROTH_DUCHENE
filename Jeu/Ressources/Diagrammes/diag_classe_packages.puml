@@ -1,0 +1,51 @@
+@startuml
+'' Déclaration des blocs
+package "entities" {
+}
+
+package "entities.defenses" {
+}
+
+package "entities.ennemies" {
+}
+
+package "evolution" {
+}
+
+package "laby"{
+}
+
+package "laby.controllers" {
+}
+
+package "laby.views" {
+}
+
+package "laby.modele" {
+}
+
+package "mains" {
+}
+
+package "moteur" {
+}
+
+package "steering_astar.Astar" {
+}
+
+package "steering_astar.Steering" {
+}
+
+'' Relations entre les blocs
+"mains" --> "moteur" : Utilise
+"mains" --> "laby" : Utilise
+"laby.controllers" --> "laby.modele" : Modifie les données
+"laby.modele" --> "laby.views" : Notifie et met à jour
+"laby.modele" --> "entities" : Crée et possède
+"laby.modele" ----> "steering_astar.Astar" : Crée et possède
+"steering_astar.Steering" --> "steering_astar.Astar" : Utilise
+"steering_astar.Steering" --> "entities.ennemies" : Modifie les coordonnées
+"evolution" --> "entities.ennemies" : Utilise
+"evolution" --> "laby.modele" : Modifie
+
+@enduml

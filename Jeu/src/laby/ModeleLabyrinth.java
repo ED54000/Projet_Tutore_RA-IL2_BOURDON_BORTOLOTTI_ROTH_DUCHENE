@@ -548,7 +548,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             );
             new ControllerLearn(this).handle(fakeClickEvent);
             new ControllerNextManche(this).handle(fakeClickEvent);
-        } else if (this.simulationEvolution) {
+        } /*else if (this.simulationEvolution) {
             EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
             double score = evolution.getScore(ennemiesEndOfManche.get(0));
             this.defenses = this.getDefenseEndOfManche();
@@ -557,6 +557,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             ennemyScore.put((Giant) ennemiesEndOfManche.get(0), score);
             this.end = true;
         }
+        */
     }
 
     private void calculateFinalDistances() {

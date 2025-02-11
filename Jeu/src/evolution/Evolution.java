@@ -65,7 +65,7 @@ public class Evolution {
 
     public double getScore(Ennemy e) {
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
-        int bonus = e.getIsDead() ? -1000 : 1000;
+        int bonus = e.getIsDead() ? -10000 : 10000;
         System.out.println("Survival time : "+e.getSurvivalTime() /1000000000);
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Bonus : "+bonus);
@@ -89,7 +89,6 @@ public class Evolution {
         for (int i = 0; i < moitie; i++) {
             meilleurs.add(ennemiesTries.get(i).getKey());
         }
-        //System.out.println("Meilleurs ennemies : "+meilleurs);
 
         //Générer les enfants via le croisement
         ArrayList<Ennemy> enfants = new ArrayList<>();
@@ -123,10 +122,22 @@ public class Evolution {
         // On boucle sur les géants de la population
         for (Ennemy giant : nouvellePopulation) {
             // On applique une mutation sur chaque géant
-            giant.setHealth(mutateValue(giant.getHealth()));
-            //giant.setSpeed(mutateValue(giant.getSpeed()));
-            giant.setDamages(mutateValue(giant.getDamages()));
-            giant.setAttackSpeed(mutateValue(giant.getAttackSpeed()));
+            if (mutateValue(giant.getHealth()) > 500)
+                giant.setHealth(500);
+            else
+                giant.setHealth(mutateValue(giant.getHealth()));
+
+            if (mutateValue(giant.getSpeed()) > 4){
+                giant.setSpeed(4);
+            } else {
+                giant.setSpeed(mutateValue(giant.getSpeed()));
+            }
+
+            if (mutateValue(giant.getDamages()) > 100)
+                giant.setDamages(100);
+            else
+                giant.setDamages(mutateValue(giant.getDamages()));
+            //giant.setAttackSpeed(mutateValue(giant.getAttackSpeed()));
         }
 
         return nouvellePopulation;
@@ -138,7 +149,7 @@ public class Evolution {
      * @return la valeur mutée
      */
     private double mutateValue(double value) {
-        return value * (1 + (Math.random() * 0.10 - 0.05));
+        return value * (1 + (Math.random() * 0.20 - 0.10));
     }
 
     /**
@@ -161,7 +172,7 @@ public class Evolution {
         //enfant.setSprite(null);
 
         enfant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
-        //enfant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
+        enfant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
         enfant.setDamages(randomChoice(parent1.getDamages(), parent2.getDamages()));
         enfant.setAttackSpeed(randomChoice(parent1.getAttackSpeed(), parent2.getAttackSpeed()));
         // Ajouter ici les propriétés spécifiques à croiser
