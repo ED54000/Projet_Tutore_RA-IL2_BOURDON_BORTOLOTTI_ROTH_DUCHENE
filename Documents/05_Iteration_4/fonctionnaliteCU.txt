@@ -9,6 +9,8 @@ Marin :
 	- Amélioration des formules de score pour l'évolution
 	- Modification de l'évolution : on reproduit les ennemis enfants sur les stats de naissance des parents plutôt que sur les stats de fin de manche.
 	- Résolution de bugs
+	- Simulation
+	- Evolution pour un agent seul
 
 Florian : 
 	- Attaque des ennemis sur les défense
