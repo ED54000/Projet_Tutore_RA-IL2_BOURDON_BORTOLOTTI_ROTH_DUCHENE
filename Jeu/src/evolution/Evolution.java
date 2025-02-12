@@ -141,7 +141,7 @@ public class Evolution {
      * @return
      */
     private double mutateValue(double value) {
-        return value * (1 + (Math.random() * 0.07 - 0.02));
+        return value * (1 + (Math.random() * 0.10 - 0.05));
 
 
     }
