@@ -5,6 +5,7 @@ import laby.ModeleLabyrinth;
 import steering_astar.Astar.Astar;
 import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
+import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
@@ -44,11 +45,12 @@ public abstract class Ennemy extends Entity {
         Astar astar = Astar.getAStar();
         return astar.aStarSearch(grid, grid.length, grid[0].length,
                 startCoordinate,
-                new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()), this.getBehaviorString(), false);
+                new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()),
+                this.getBehaviorString(), 
+                false);
     }
 
     public void healDamage(Ennemy target, double heal, double speedTime){
-
         // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
         if(this.getLastAttackCount() >=  this.getAttackSpeed() * speedTime) {
             if (this.getAttackSpeed() <= 0) {
@@ -86,6 +88,22 @@ public abstract class Ennemy extends Entity {
         position = position.add(velocity);
         positionReel = position.divide(ModeleLabyrinth.getTailleCase());
     }
+
+    public void resetPathFollowingBehavior(ArrayList<Vector2D> path) {
+        boolean found = false;
+        for (Behavior behavior : new ArrayList<>(listBehaviors)) {
+            if (behavior instanceof PathfollowingBehavior) {
+                listBehaviors.remove(behavior);
+                listBehaviors.add(new PathfollowingBehavior(path));
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            listBehaviors.add(new PathfollowingBehavior(path));
+        }
+    }
+
 
 
 

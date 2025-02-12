@@ -20,6 +20,7 @@ import steering_astar.Astar.*;
 import java.awt.*;
 import java.io.*;
 
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.List;
 
@@ -179,21 +180,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
             e.setToStart(this);
 
             if (useAstar) {
-                ArrayList<Vector2D> astarPath = e.calculerChemin(cases,getStart());
-                e.setBehavior(new PathfollowingBehavior(astarPath));
-                e.setDistanceStartToArrival(astarPath);
-            } else {
-                e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender, YArrivalRender)));
-            }
-
-            if (e instanceof Druide) {
-                if (useAstar) {
+                if (e instanceof Druide) {
                     ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbGiant, nbBerserker, nbNinja);
                     e.setBehavior(new PathfollowingBehavior(aStarHealerPath));
                     e.setDistanceStartToArrival(aStarHealerPath);
                 } else {
-                    e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender, YArrivalRender)));
+                    ArrayList<Vector2D> astarPath = e.calculerChemin(cases,getStart());
+                    e.setBehavior(new PathfollowingBehavior(astarPath));
+                    e.setDistanceStartToArrival(astarPath);
                 }
+            } else {
+                e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender, YArrivalRender)));
             }
         }
     }
@@ -701,12 +698,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 copyGrid[ennemyPosY][ennemyPosX] = 'S';
                 if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
-                    for (Behavior behavior : ennemy.getBehaviors()) {
-                        if (behavior instanceof PathfollowingBehavior) {
-                            ((PathfollowingBehavior) behavior).setCheckpoints(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX)));
-                            break;
-                        }
-                    }
+                    ennemy.resetPathFollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX)));
                 }
             }
         }

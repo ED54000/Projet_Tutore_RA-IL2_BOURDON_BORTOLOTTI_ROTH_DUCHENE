@@ -12,7 +12,7 @@ public class AvoidBehavior extends Behavior {
     public AvoidBehavior(Vector2D target) {
         this.setTarget(target);
         if (ModeleLabyrinth.getLabyrinth().getUseAstar()){
-            this.setWeight(BASE_AVOID_WEIGHT/4);
+            this.setWeight(BASE_AVOID_WEIGHT/2);
         } else {
             this.setWeight(BASE_AVOID_WEIGHT);
         }

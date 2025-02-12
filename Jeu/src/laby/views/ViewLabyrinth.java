@@ -112,9 +112,9 @@ public class ViewLabyrinth implements Observer {
         Color colorPath = Color.rgb(15, 175, 252);
         for (Ennemy ennemi : laby.enemies) {
             ArrayList<Vector2D> path =  new ArrayList<>();
-            if(ModeleLabyrinth.getLabyrinth().getUseAstar()){
-                path = ennemi.calculerChemin(ModeleLabyrinth.getCases(), ModeleLabyrinth.getStart());
-            }
+//            if(ModeleLabyrinth.getLabyrinth().getUseAstar()){
+//                path = ennemi.calculerChemin(ModeleLabyrinth.getCases(), ModeleLabyrinth.getStart());
+//            }
             renderEnnemi(gc, ennemi, path, colorPath);
         }
     }
@@ -124,7 +124,7 @@ public class ViewLabyrinth implements Observer {
         int y = i * getTailleCase();
 
         switch (caseType) {
-            //case ModeleLabyrinth.CANON -> gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, getTailleCase(), getTailleCase());
+            //  case ModeleLabyrinth.CANON -> gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, getTailleCase(), getTailleCase());
             /*case ModeleLabyrinth.BOMB -> {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 gc.drawImage(images.get(ModeleLabyrinth.BOMB), x + 5, y + 5, getTailleCase() - 10, getTailleCase() - 10);
