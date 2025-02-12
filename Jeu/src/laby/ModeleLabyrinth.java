@@ -180,21 +180,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
             e.setToStart(this);
 
             if (useAstar) {
-                ArrayList<Vector2D> astarPath = e.calculerChemin(cases,getStart());
-                e.setBehavior(new PathfollowingBehavior(astarPath));
-                e.setDistanceStartToArrival(astarPath);
-            } else {
-                e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender, YArrivalRender)));
-            }
-
-            if (e instanceof Druide) {
-                if (useAstar) {
+                if (e instanceof Druide) {
                     ArrayList<Vector2D> aStarHealerPath = getNewHealerAStar(nbGiant, nbBerserker, nbNinja);
                     e.setBehavior(new PathfollowingBehavior(aStarHealerPath));
                     e.setDistanceStartToArrival(aStarHealerPath);
                 } else {
-                    e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender, YArrivalRender)));
+                    ArrayList<Vector2D> astarPath = e.calculerChemin(cases,getStart());
+                    e.setBehavior(new PathfollowingBehavior(astarPath));
+                    e.setDistanceStartToArrival(astarPath);
                 }
+            } else {
+                e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender, YArrivalRender)));
             }
         }
     }
