@@ -45,7 +45,7 @@ L'application permet de :
 Objectif itération 5 :
 	- Ajouter un arrival behavior
 	- Bugfix et refactor
-    - Ajouter la possibilité de charger un nouveau labyrinthe
-    - Ajouter l’évolution avec steering behavior
+    	- Ajouter la possibilité de charger un nouveau labyrinthe
+    	- Ajouter l’évolution avec steering behavior
 	- Ajouter l’accélération du temps en version grapique
 	- Ajouter une génération de graphique en fin de partie
