@@ -26,6 +26,7 @@ public class Evolution {
 
         // Après évaluation, on réaffecte les statistiques de départ aux ennemis
         for (Ennemy ennemy : stats.keySet()) {
+            ennemy.setArrived(false);
             double[] statsStart = startStats.get(ennemy);
             if (statsStart != null) {
                 ennemy.setHealth(statsStart[0]);
