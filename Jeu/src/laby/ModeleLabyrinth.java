@@ -20,6 +20,7 @@ import steering_astar.Astar.*;
 import java.awt.*;
 import java.io.*;
 
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.List;
 
@@ -700,12 +701,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 copyGrid[ennemyPosY][ennemyPosX] = 'S';
                 if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
-                    for (Behavior behavior : ennemy.getBehaviors()) {
-                        if (behavior instanceof PathfollowingBehavior) {
-                            ((PathfollowingBehavior) behavior).setCheckpoints(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX)));
-                            break;
-                        }
-                    }
+                    ennemy.resetPathFollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX)));
                 }
             }
         }

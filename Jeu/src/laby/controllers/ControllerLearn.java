@@ -18,10 +18,7 @@ import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
@@ -147,11 +144,10 @@ if (!ModeleLabyrinth.getSimulation()) {
         laby.refreshEnnemyArrived();
         laby.refreshDeadEnemies();
         laby.refreshEnnemyEndOfManche();
-
-        laby.refreshDefenseEndOfManche();
         laby.refreshDeadDefenses();
+        laby.defenses = laby.getDefenseEndOfManche();
 
-        //TODO : on remet les valeurs par défaut pour les defenses en attendant de les faire évoluer
+//TODO : on remet les valeurs par défaut pour les defenses en attendant de les faire évoluer
         for (Defense d : laby.defenses) {
             d.setLastAttackCount(0);
             d.setIsDead(false);
@@ -164,6 +160,12 @@ if (!ModeleLabyrinth.getSimulation()) {
             if (d instanceof Archer) {
                 d.setHealth(200);
             }
+        }
+
+        laby.refreshDefenseEndOfManche();
+        System.err.println("Liste des défense : "+ laby.defenses);
+        for (Defense d : laby.defenses) {
+            System.out.println(d.getName()+ " " +d.getPosition());
         }
 
         // On va compter le nombre d'ennemis pour chaque comportement
@@ -194,19 +196,19 @@ if (!ModeleLabyrinth.getSimulation()) {
         for (Ennemy e : laby.enemies) {
             e.setLastAttackCount(0);
             if (e.getBehaviorString().equals("Healer")) {
-              e.setBehavior(new PathfollowingBehavior(laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja)));
+              e.resetPathFollowingBehavior(laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja));
             } else {
-                e.setBehavior(new PathfollowingBehavior(e.calculerChemin(ModeleLabyrinth.getCases(),new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart()))));
+                e.resetPathFollowingBehavior(e.calculerChemin(ModeleLabyrinth.getCases(),new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart())));
             }
             e.setArrived(false);
         }
-
 
         int c = 0;
         for (Ennemy e : laby.enemies) {
             if (e.getHealth() < 0 ){
                 e.setHealth(e.getHealth()*-1);
             }
+
             c++;
         }
 
