@@ -163,10 +163,6 @@ if (!ModeleLabyrinth.getSimulation()) {
         }
 
         laby.refreshDefenseEndOfManche();
-        System.err.println("Liste des défense : "+ laby.defenses);
-        for (Defense d : laby.defenses) {
-            System.out.println(d.getName()+ " " +d.getPosition());
-        }
 
         // On va compter le nombre d'ennemis pour chaque comportement
         int nbNinja = 0;
