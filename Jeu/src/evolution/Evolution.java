@@ -26,12 +26,12 @@ public class Evolution {
 
             jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, 18);
             double score = simulate(jeu);
-            //if (jeu.etreFini()){
-            //    System.out.println("Jeu fini bitchhh");
-            //    //stop l'évolution
-            //    return null;
-            //}
-            // On stocke le score pour ce groupe
+            if (jeu.etreFini()){
+                System.out.println("Jeu fini les enneies ont gagné");
+                //stop l'évolution
+                return null;
+            }
+            //On stocke le score pour ce groupe
             newStats.put(groupe, score);
             jeu = null;
             // Après évaluation, réaffecter les statistiques de départ
