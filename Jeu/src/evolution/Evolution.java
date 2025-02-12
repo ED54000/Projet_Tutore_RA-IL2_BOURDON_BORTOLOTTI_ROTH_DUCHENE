@@ -169,7 +169,8 @@ public class Evolution {
      * @return la valeur mutée
      */
     private double mutateValue(double value) {
-        return value * (1 + (Math.random() * 0.10 - 0.05));
+        //return value * (1 + (Math.random() * 0.10 - 0.05));
+        return value * (1 + (-0.02 + Math.random() * 0.07));
     }
 
     /**
