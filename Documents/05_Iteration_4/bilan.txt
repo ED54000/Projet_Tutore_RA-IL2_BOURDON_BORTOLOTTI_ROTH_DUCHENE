@@ -1,9 +1,13 @@
-Bilan Itération 3 :
+Bilan Itération 4 :
 
 Objectifs de l'itération : 
-	- Attaque des ennemis sur les défenses
-	- Évolution des ennemis
-
+	- Réaliser des diagrammes de séquence pour clarifier le fonctionnement du projet.
+	- Réaliser un refactoring du code.
+	- Ajout d’un behavior d’évitement des murs 
+	- Adapter l'algorithme évolutionnaire v2 à la structure du projet.
+	- Tempérer les attaques des ennemis et des défenses en fonction du moteur de jeu et retirer le timer.
+	- Obtenir une simulation fonctionnelle.
+	- Faire évoluer les groupes d'ennemis plutôt que les ennemis individuellement (débuter et potentiellement finaliser en itération 5).
 
 Validation : 
 
