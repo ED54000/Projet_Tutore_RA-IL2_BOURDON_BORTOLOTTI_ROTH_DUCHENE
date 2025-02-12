@@ -59,3 +59,29 @@ https://trello.com/b/qyPhaAyy/ra-il2-2024-bortolotti-bourdon-roth-duchene
 Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, et le nombre d'ennemies qui doivent passer pour gagner.
 Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites. Les ennemis peuvent également attaquer les défenses afin de les détruire. Lorsqu'une défense est détruite, le chemin est recalculé pour chaque agent et donc ils s'adaptent au changements de l'environnement au cours d'une manche. Voir le déroulement de la manche dans les logs (quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
 Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués jusqu'à la fin du jeu.
+
+
+ ## Itération 4 
+  - Tag :[iteration_4]
+- Réalisations : 
+	- Evolution logs
+	- Evolution par groupes
+	- Génération de graphiques
+	- Amélioration des formules de score pour l'évolution
+	- Modification de l'évolution : on reproduit les ennemis enfants sur les stats de naissance des parents plutôt que sur les stats de fin de manche.
+	- Simulation
+	- Evolution pour un agent seul
+	- Refactoring de la structure du code
+	- Ajout comportement pour éviter les obstacles dans steering behaviors
+	- Résolution de bugs
+
+
+À la fin de cette itération, nous pouvons : 
+
+Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, le nombre d'ennemies qui doivent passer pour gagner 
+et si A* est utilisé ou non.
+Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement (si A* est utilisé) et se faisant attaquer 
+par les défenses dans un labyrinthe bien modélisé à l'aide de sprites. Les ennemis peuvent également attaquer les défenses afin de les détruire. 
+Lorsqu'une défense est détruite, si A* est utilisé, le chemin est recalculé pour chaque agent et ils s'adaptent donc aux changements de l'environnement 
+au cours d'une manche. Voir le déroulement de la manche dans les logs (quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
+Faire évoluer les groupes d'ennemies à chaque manche pour essayer d'optimiser la composition des groupes afin de gagner la partie.
