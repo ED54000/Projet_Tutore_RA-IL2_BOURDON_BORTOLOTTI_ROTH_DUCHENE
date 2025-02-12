@@ -89,14 +89,21 @@ public abstract class Ennemy extends Entity {
         positionReel = position.divide(ModeleLabyrinth.getTailleCase());
     }
 
-    public void resetPathFollowingBehavior(ArrayList<Vector2D> path){
-        for (Behavior behavior : this.getBehaviors()) {
+    public void resetPathFollowingBehavior(ArrayList<Vector2D> path) {
+        boolean found = false;
+        for (Behavior behavior : new ArrayList<>(listBehaviors)) {
             if (behavior instanceof PathfollowingBehavior) {
-                ((PathfollowingBehavior) behavior).setCheckpoints(path);
+                listBehaviors.remove(behavior);
+                listBehaviors.add(new PathfollowingBehavior(path));
+                found = true;
                 break;
             }
         }
+        if (!found) {
+            listBehaviors.add(new PathfollowingBehavior(path));
+        }
     }
+
 
 
 

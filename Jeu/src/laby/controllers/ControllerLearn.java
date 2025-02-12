@@ -195,11 +195,13 @@ if (!ModeleLabyrinth.getSimulation()) {
         System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
         for (Ennemy e : laby.enemies) {
             e.setLastAttackCount(0);
+            ArrayList<Vector2D> newPathToFollow;
             if (e.getBehaviorString().equals("Healer")) {
-              e.resetPathFollowingBehavior(laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja));
+              newPathToFollow = laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja);
             } else {
-                e.resetPathFollowingBehavior(e.calculerChemin(ModeleLabyrinth.getCases(),new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart())));
+               newPathToFollow = e.calculerChemin(ModeleLabyrinth.getCases(),new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart()));
             }
+            e.resetPathFollowingBehavior(newPathToFollow);
             e.setArrived(false);
         }
 
