@@ -1,16 +1,23 @@
 package steering_astar.Steering;
 
 import entites.enemies.Ennemy;
+import laby.ModeleLabyrinth;
 
 public class SeekBehavior extends Behavior {
+
+    private static final double BASE_SEEK_WEIGHT = 0.5;
 
     /***
      * constructeur de la classe
      * @param target coordonnees de la cible du comportement
      */
-    public SeekBehavior(Vector2D target/*, double weight*/) {
+    public SeekBehavior(Vector2D target) {
         this.setTarget(target);
-        /*this.setWeight(weight);*/
+        if (ModeleLabyrinth.getLabyrinth().getUseAstar()){
+            this.setWeight(BASE_SEEK_WEIGHT*2);
+        } else {
+            this.setWeight(BASE_SEEK_WEIGHT);
+        }
     }
 
     /***
@@ -21,7 +28,8 @@ public class SeekBehavior extends Behavior {
     @Override
     public Vector2D calculateForce(Ennemy ennemy) {
         Vector2D desired = this.getTarget().subtract(ennemy.getPosition()).normalize().scale(ennemy.getMaxSpeed());
-        return ((desired.subtract(ennemy.getVelocity())).scale(ACCELERATION_DIVISER))/*.scale(this.getWeight())*/;
+        desired = desired.subtract(ennemy.getVelocity()).scale(ACCELERATION_DIVISER);
+        return desired;
     }
 }
 

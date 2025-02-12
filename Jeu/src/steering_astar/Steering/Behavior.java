@@ -13,7 +13,7 @@ public abstract class Behavior {
     protected final double ACCELERATION_DIVISER = 0.15;
 
     private Vector2D target;
-    /*private double weight;*/
+    private double weight;
 
     /***
      * methode servant a calculer la force de mouvement selon un comportement
@@ -22,24 +22,24 @@ public abstract class Behavior {
      */
     public abstract Vector2D calculateForce(Ennemy ennemy);
 
-    public void setTarget(Vector2D target) {
-        this.target = target;
+    public Vector2D getTarget() {
+        return this.target;
     }
 
-    public Vector2D getTarget() {
-         return this.target;
+    public void setTarget(Vector2D target) {
+        this.target = target;
     }
 
     public static double getTargetRadius() {
         return TARGET_RADIUS;
     }
-/*
+
     public double getWeight() {
         return weight;
     }
 
     public void setWeight(double weight) {
         this.weight = weight;
-    }*/
+    }
 }
 

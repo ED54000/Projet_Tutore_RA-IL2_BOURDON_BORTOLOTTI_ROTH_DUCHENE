@@ -2,7 +2,6 @@ package evolution;
 
 import entites.enemies.Ennemy;
 import entites.enemies.Giant;
-import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
@@ -14,11 +13,11 @@ public class EnnemyEvolutionv2 {
 
     public double getScore(Ennemy e){
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
-        int bonus = e.isDead() ? -20 : 20;
-        System.out.println("Distance to Arrival : "+e.getDistanceToArrival());
+        int bonus = e.getIsDead() ? -20 : 20;
+        System.out.println("Survival time : "+e.getSurvivalTime());
         System.out.println("Bonus : "+bonus);
 
-        double score = e.getDistanceToArrival() + bonus;
+        double score = e.getSurvivalTime() + bonus;
         return score;
     }
 
@@ -63,7 +62,7 @@ public class EnnemyEvolutionv2 {
         Giant giant = new Giant(new Vector2D(0, 0), "Giant");
 
         giant.setHealth(randomChoice(parent1.getHealth(), parent2.getHealth()));
-        giant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
+        //giant.setSpeed(randomChoice(parent1.getSpeed(), parent2.getSpeed()));
         giant.setDamages(randomChoice(parent1.getDamages(), parent2.getDamages()));
         giant.setAttackSpeed(randomChoice(parent1.getAttackSpeed(), parent2.getAttackSpeed()));
         // Ajouter ici les propriétés spécifiques à croiser

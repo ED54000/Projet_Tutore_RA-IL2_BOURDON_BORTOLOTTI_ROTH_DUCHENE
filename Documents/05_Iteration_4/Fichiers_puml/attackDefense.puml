@@ -1,0 +1,26 @@
+@startuml towerIsDestroyed
+skinparam sequenceMessageAlign center
+participant "Entity:defense" as d
+participant "Entity:ennemi" as e
+
+
+     ->  d : attack(target, speedTime)
+     activate d
+        
+        d -> d : lastAttackCount = 0
+        d -> e : takeDamage(damage)
+        activate e
+        e->e : health -= damage
+        e-->d : void
+        deactivate e
+
+        <-- d : void 
+        deactivate d
+
+
+
+
+
+
+
+@enduml

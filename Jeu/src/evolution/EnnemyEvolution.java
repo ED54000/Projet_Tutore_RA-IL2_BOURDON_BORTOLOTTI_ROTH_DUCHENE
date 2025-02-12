@@ -1,8 +1,6 @@
 package evolution;
 
-import entites.enemies.Berserker;
 import entites.enemies.Ennemy;
-import laby.ModeleLabyrinth;
 
 import java.util.*;
 
@@ -31,12 +29,12 @@ public class EnnemyEvolution {
 
         // On parcourt la liste des ennemis :
         for (Ennemy e : ennemies) {
-            switch (e.getBehavior()){
+            switch (e.getBehaviorString()){
                 case "Fugitive":
                     // On calcule le score de l'ennemi
                     double score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
-                    if(e.isItArrived()){
+                    if(e.getIsArrived()){
                         score += 1500;
                     }
                     //System.out.println("score fuyard: "+score);
@@ -61,7 +59,7 @@ public class EnnemyEvolution {
                     // On calcule le score de l'ennemi
                     score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
-                    if(e.isItArrived()){
+                    if(e.getIsArrived()){
                         score += 1500;
                     }
                     //System.out.println("score normal: "+score);
@@ -86,7 +84,7 @@ public class EnnemyEvolution {
                     // On calcule le score de l'ennemi
                     score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
-                    if(e.isItArrived()){
+                    if(e.getIsArrived()){
                         score += 1500;
                     }
                   //  System.out.println("score healer: "+score);
@@ -112,7 +110,7 @@ public class EnnemyEvolution {
                     // On calcule le score de l'ennemi
                     score = e.getDistanceToArrival() * 10 + 1000 - (0.01 * (double) e.getSurvivalTime());
                     // On ajoute des points si l'ennemi est arrivé
-                    if(e.isItArrived()){
+                    if(e.getIsArrived()){
                         score += 1500;
                     }
                    // System.out.println("score kamikaze: "+score);
@@ -246,7 +244,7 @@ public class EnnemyEvolution {
         // On parcourt les ennemis morts
         for (Ennemy e : deadEnnemies) {
             // Si l'ennemi est mort, on lui affecte son killerType, sinon son type ne change pas
-            if(e.isDead()){
+            if(e.getIsDead()){
                 // On affecte le type de l'ennemi (le type de la tour qui l'a tué)
                 String newType = e.getKillerType();
                 if (newType == null){
@@ -255,7 +253,7 @@ public class EnnemyEvolution {
                 e.setType(newType);
             }
             // En fonction du comportement de l'ennemi
-            switch (e.getBehavior()) {
+            switch (e.getBehaviorString()) {
 
                 case "Fugitive" :
                     // On affecte les statistiques moyennes des fuyards
@@ -294,7 +292,7 @@ public class EnnemyEvolution {
         // Pour chaque ennemi
         for(Ennemy e: ennemies) {
             // Si l'ennemi n'a pas atteint la fin
-            if(!e.isItArrived()) {
+            if(!e.getIsArrived()) {
                 //double randomDouble = min + (Math.random() * (max - min));
                 // On ajoute des statistiques aléatoires
                 // Vie entre -5 et 5
@@ -313,6 +311,9 @@ public class EnnemyEvolution {
             if(e.getSpeed() < 1){
                 e.setSpeed(1);
             }
+            if(e.getSpeed() > 5){
+                e.setSpeed(5);
+            }
         }
         return ennemies;
     }
@@ -328,7 +329,7 @@ public class EnnemyEvolution {
         // On parcourt la liste des ennemis
         for (Ennemy e : ennemies) {
             // Si l'ennemi est mort, on l'ajoute à la liste des ennemis morts
-            if (e.isDead()) {
+            if (e.getIsDead()) {
                 deadEnnemies.add(e);
             }
         }

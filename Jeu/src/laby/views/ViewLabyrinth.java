@@ -1,11 +1,7 @@
 package laby.views;
 
-import entites.defenses.Bomb;
-import entites.defenses.Canon;
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
-import entites.enemies.Ninja;
-import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -13,11 +9,9 @@ import javafx.scene.paint.Color;
 import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
-import moteur.FrameStats;
 import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,25 +78,25 @@ public class ViewLabyrinth implements Observer {
 
             if (defense instanceof entites.defenses.Canon) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-                if (!defense.isDead()) {
+                if (!defense.getIsDead()) {
                     gc.drawImage(defense.getImage(), x, y, getTailleCase(), getTailleCase());
                 }
             }
             if (defense instanceof entites.defenses.Archer) {
                 gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
-                if (!defense.isDead()) {
+                if (!defense.getIsDead()) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
             }
             if (defense instanceof entites.defenses.Bomb) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-                if (!defense.isDead()) {
+                if (!defense.getIsDead()) {
                     gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
             }
 
             // dessiner la range des défenses
-            if (!defense.isDead()) {
+            if (!defense.getIsDead()) {
                 x = defense.getPosition().getX() * getTailleCase();
                 y = defense.getPosition().getY() * getTailleCase();
                 double range = defense.getRange() * getTailleCase();
@@ -117,9 +111,11 @@ public class ViewLabyrinth implements Observer {
         // Dessin des ennemis
         Color colorPath = Color.rgb(15, 175, 252);
         for (Ennemy ennemi : laby.enemies) {
-            for (String behaviour : laby.getBehaviours()) {
-                renderEnnemi(gc, ennemi, laby.getBehavioursMap().get(behaviour), colorPath);
-            }
+            ArrayList<Vector2D> path =  new ArrayList<>();
+//            if(ModeleLabyrinth.getLabyrinth().getUseAstar()){
+//                path = ennemi.calculerChemin(ModeleLabyrinth.getCases(), ModeleLabyrinth.getStart());
+//            }
+            renderEnnemi(gc, ennemi, path, colorPath);
         }
     }
 
@@ -128,7 +124,7 @@ public class ViewLabyrinth implements Observer {
         int y = i * getTailleCase();
 
         switch (caseType) {
-            //case ModeleLabyrinth.CANON -> gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, getTailleCase(), getTailleCase());
+            //  case ModeleLabyrinth.CANON -> gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, getTailleCase(), getTailleCase());
             /*case ModeleLabyrinth.BOMB -> {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 gc.drawImage(images.get(ModeleLabyrinth.BOMB), x + 5, y + 5, getTailleCase() - 10, getTailleCase() - 10);
@@ -173,9 +169,11 @@ public class ViewLabyrinth implements Observer {
         //points de passage
         gc.setFill(pathColor);
         gc.setStroke(pathColor);
-        for (Vector2D point : checkpoint) {
-            gc.fillOval(point.getX(), point.getY(), waypointsSize, waypointsSize);
-            gc.strokeOval(point.getX() - radius / 2 + waypointsSize / 2, point.getY() - radius / 2 + waypointsSize / 2, radius, radius);
+        if (laby.getUseAstar()){
+            for (Vector2D point : checkpoint) {
+                gc.fillOval(point.getX(), point.getY(), waypointsSize, waypointsSize);
+                gc.strokeOval(point.getX() - radius / 2 + waypointsSize / 2, point.getY() - radius / 2 + waypointsSize / 2, radius, radius);
+            }
         }
 
         //vélocité de l'ennemi
@@ -187,7 +185,11 @@ public class ViewLabyrinth implements Observer {
         gc.fillOval(xCoord + ennemiSize / 2 - velocityPointSize / 2, yCoord + ennemiSize / 2 - velocityPointSize / 2, velocityPointSize, velocityPointSize);
 
         //ennemi
-        gc.drawImage(ennemi.getImage(), xCoordEnnemi, yCoordEnnemi, getTailleCase(), getTailleCase());
+        gc.drawImage(ennemi.getImage(),
+                xCoordEnnemi - ennemiSize / 2.0 - 0.5,
+                yCoordEnnemi - ennemiSize / 2.0,
+                getTailleCase(), getTailleCase());
+
 
         //range des ennemis
         gc.setStroke(Color.BLACK);

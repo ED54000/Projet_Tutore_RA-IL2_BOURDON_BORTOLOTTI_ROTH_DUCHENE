@@ -176,20 +176,19 @@ public class Vector2D {
         return new int[]{x, y};
     }
 
-    public boolean isObstacle(){
+    public boolean isObstacle() {
+        ModeleLabyrinth m = ModeleLabyrinth.getLabyrinth();
+
         int[] coordCase = getCaseFromVector(this);
-        char theCase;
-        ModeleLabyrinth m = new ModeleLabyrinth();
-        int length = m.getCases().length;
-        if (coordCase[0] > 0 && coordCase[1] > 0 && length > coordCase[1]) {
-            theCase = m.getCase(coordCase[1],coordCase[0]);
-        } else {
-            theCase = 'ඞ';
-        }
-        if (theCase == '#' || theCase == 'A' || theCase == 'C'){
+        int x = coordCase[0];
+        int y = coordCase[1];
+
+        if (x < 0 || y < 0 || x >= m.getCases()[0].length || y >= m.getCases().length) {
             return true;
         }
-        return false;
+
+        char theCase = m.getCase(y, x);
+        return theCase == '#' || theCase == 'A' || theCase == 'C';
     }
 
     public Vector2D getClosestCaseCenter(){

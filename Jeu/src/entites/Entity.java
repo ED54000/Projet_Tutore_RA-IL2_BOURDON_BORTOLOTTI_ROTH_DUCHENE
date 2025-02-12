@@ -11,7 +11,7 @@ public abstract class Entity {
     private String type;
     private double damages;
     private double range;
-    private Image sprite;
+    private Image sprite = null;
     protected double health;
     private boolean isDead = false;
     private String name;
@@ -22,7 +22,9 @@ public abstract class Entity {
         this.position = position;
         this.damages = damages;
         this.range = range;
-        this.sprite = new Image(sprite);
+        if(!ModeleLabyrinth.getSimulation()) {
+            this.sprite = new Image(sprite);
+        }
         this.health = health;
         this.name = name;
         this.attackSpeed = attackSpeed;
@@ -81,7 +83,7 @@ public abstract class Entity {
      * @param damage les dégâts à prendre
      */
     public void takeDamage(double damage) {
-        health -= damage;
+        health -= Math.abs(damage);
         if (this.health <= 0) {
             isDead = true;
         }
@@ -137,6 +139,7 @@ public abstract class Entity {
             System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
             System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
             System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
+            System.out.println("Target mort : "+ target.getIsDead());
             System.out.println("=====================================");
         }
         // Sinon, on ne fait rien
@@ -144,6 +147,10 @@ public abstract class Entity {
 
     public String getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Vector2D getPosition() {
@@ -158,20 +165,16 @@ public abstract class Entity {
         return damages;
     }
 
-    public double getRange() {
-        return range;
-    }
-
     protected void setDamages(double damages) {
         this.damages = damages;
     }
 
-    public void setRange(double range) {
-        this.range = range;
+    public double getRange() {
+        return range;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setRange(double range) {
+        this.range = range;
     }
 
     public Image getImage() { return sprite; }
@@ -184,11 +187,11 @@ public abstract class Entity {
         this.health = health;
     }
 
-    public boolean isDead() {
+    public boolean getIsDead() {
         return this.isDead;
     }
 
-    public void setDead(boolean b) {
+    public void setIsDead(boolean b) {
         this.isDead = b;
     }
 
@@ -214,5 +217,9 @@ public abstract class Entity {
 
     public void setLastAttackCount(long lastAttackCount) {
         this.lastAttackCount = lastAttackCount;
+    }
+
+    public void setSprite(Object o) {
+        this.sprite = (Image) o;
     }
 }

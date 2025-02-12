@@ -1,0 +1,130 @@
+@startuml
+
+
+class ControllerLearn {
+  ~ laby: ModeleLabyrinth
+  + handle(MouseEvent): void
+}
+class ControllerNextManche {
+  ~ laby: ModeleLabyrinth
+  + handle(MouseEvent): void
+}
+class ModeleLabyrinth {
+  - simulationEvolution: boolean
+  - ennemiesEvolved: ArrayList<Giant>
+  + deadEnemies: ArrayList<Ennemy>
+  - nbCanon: int
+  - Xstart: int
+  - cases: char[][]
+  - ennemiesArrived: ArrayList<Ennemy>
+  - logs: String
+  - defensesEndOfManche: ArrayList<Defense>
+  - end: boolean
+  - astar: Astar
+  + END: char
+  + START: char
+  - endTime: long
+  + nbEnnemiesToWin: int
+  - startTime: long
+  + deadDefenses: ArrayList<Defense>
+  - simulation: boolean
+  + TREE: char
+  - nbManches: int
+  - enemiesToRemove: ArrayList<Ennemy>
+  + BOMB: char
+  - nbArcher: int
+  - BehavioursMap: Map<String, ArrayList<Vector2D>>
+  + ROAD: char
+  - ennemiesEndOfManche: ArrayList<Ennemy>
+  + defenses: ArrayList<Defense>
+  - YArrival: int
+  - XstartRender: int
+  + enemies: ArrayList<Ennemy>
+  ~ screenSize: Dimension
+  - YArrivalRender: int
+  - BEHAVIOURS: ArrayList<String>
+  - nbEnnemiesArrived: int
+  - nbBomb: int
+  - YstartRender: int
+  + ARCHER: char
+  + CANON: char
+  - XArrivalRender: int
+  - pause: boolean
+  - limManches: int
+  - XArrival: int
+  - ennemyScore: HashMap<Giant, Double>
+  - Ystart: int
+  - observateurs: ArrayList<Observer>
+  - createEnnemies(int): void
+  + towerIsDestroyed(): void
+  + deleteObserver(Observer): void
+  + creerLabyrinthePour1(String, int): void
+  + setNbManches(int): void
+  + setEnd(boolean): void
+  + setLogs(String): void
+  + refreshEnnemyEndOfManche(): void
+  + refresh(int): void
+  + update(double): void
+  + refreshDeadEnemies(): void
+  + refreshEnnemyArrived(): void
+  + registerObserver(Observer): void
+  + etreFini(): boolean
+  + refreshEnnemiesScore(): void
+  + init(Canvas): void
+  + refreshDeadDefenses(): void
+  + notifyObserver(): void
+  + getNewHealerAStar(int, int, int): ArrayList<Vector2D>
+  + creerLabyrinthe(String, int, int, int): void
+  + getCloserEnnemy(ActiveDefense): Ennemy
+  + refreshDefenseEndOfManche(): void
+
+}
+
+hide ModeleLabyrinth attributes
+hide ModeleLabyrinth methods
+
+interface Observer << interface >> {
+  + update(Subject): void
+}
+interface Subject << interface >> {
+  + registerObserver(Observer): void
+  + deleteObserver(Observer): void
+  + notifyObserver(): void
+}
+class ViewLabyrinth {
+  ~ tailleCase: int
+  - canvas: Canvas
+  - laby: ModeleLabyrinth
+  - start: Image
+  - images: Map<Character, Image>
+  - tree: Image
+  - end: Image
+  - bomb: Image
+  - archer: Image
+  - road: Image
+  - canon: Image
+  - dessinerCase(GraphicsContext, char, int, int): void
+  - dessinerJeu(ModeleLabyrinth, Canvas): void
+  - renderEnnemi(GraphicsContext, Ennemy, ArrayList<Vector2D>, Color): void
+  + update(Subject): void
+}
+
+hide ViewLabyrinth attributes
+
+class ViewLogs {
+  - laby: ModeleLabyrinth
+  - logs: VBox
+  + update(Subject): void
+}
+
+ControllerLearn       -[dashed]->  ControllerNextManche : "«create»"
+ControllerLearn      "1" *--> "laby\n1" ModeleLabyrinth      
+ControllerNextManche "1" *--> "laby\n1" ModeleLabyrinth      
+ModeleLabyrinth      "1" *--> "observateurs\n*" Observer             
+ModeleLabyrinth       -[dashed]-^  Subject              
+ViewLabyrinth        "1" *---> "laby\n1" ModeleLabyrinth      
+ViewLabyrinth         -[dashed]-^  Observer             
+ViewLogs              -[dashed]->  ControllerLearn      : "«create»"
+ViewLogs             "1" *---> "laby\n1" ModeleLabyrinth      
+ViewLogs              -[dashed]-^  Observer             
+@enduml

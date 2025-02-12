@@ -114,12 +114,13 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
-        labyrinthMap.put("test1", "Ressources/Laby_test.txt");
+        labyrinthMap.put("test1", "Ressources/Labyrinthe4.txt");
         labyrinthMap.put("test2", "Ressources/Laby_test2.txt");
+        labyrinthMap.put("testSteering", "Ressources/Laby_testSteering.txt");
 
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2");
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2","testSteering");
         labyrinthComboBox.setValue("Large");
 
         // Définit "Petit" comme valeur par défaut
@@ -134,6 +135,10 @@ public class MoteurJeu extends Application {
         nbEnnemiesToWinField.setPromptText("Nombre d'ennemis qui doivent atteindre la ligne d'arrivée");
         nbEnnemiesToWinField.setText("70");
 
+        // CheckBox avec ou sans Astar
+        CheckBox avecAstarBox = new CheckBox();
+        avecAstarBox.setSelected(true);
+
         HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
         // Champ pour le nombre de manches
         TextField roundsField = new TextField();
@@ -143,6 +148,7 @@ public class MoteurJeu extends Application {
         enemiesField.setId("enemiesField");
         roundsField.setId("roundsField");
         nbEnnemiesToWinField.setId("ennemiesToWinField");
+        avecAstarBox.setId("avecOuSansAstarBox");
 
         // Création du contrôleur avec les références des champs
         //ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField, nbEnnemiesToWinField);
@@ -150,6 +156,7 @@ public class MoteurJeu extends Application {
 
         HBox roundsBox = new HBox(10, new Label("Nombre de manches :"), roundsField);
         HBox ennemiesToWinBox = new HBox(10, new Label("Objectif :"), nbEnnemiesToWinField);
+        HBox noAstar = new HBox(10, new Label("Avec Astar ? "), avecAstarBox);
         // Bouton Start
         Button startButton = new Button("Start");
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -166,10 +173,10 @@ public class MoteurJeu extends Application {
                 }
                 dialogStage.close();
                 try {
+                    laby.setUseAstar(avecAstarBox.isSelected());
                     ArrayList<Ennemy> ennemies = laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
                     System.out.println("Les ennemies : " + ennemies.size());
                     laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
-
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -177,12 +184,12 @@ public class MoteurJeu extends Application {
             }
         });
         // Ajout des composants au conteneur principal
-        root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, ennemiesToWinBox, startButton);
+        root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, ennemiesToWinBox, noAstar, startButton);
 
         //startButton.setOnMouseClicked(controllerStart);
 
         // Configure la scène de la fenêtre
-        Scene dialogScene = new Scene(root, 400, 200);
+        Scene dialogScene = new Scene(root, 400, 230);
         dialogStage.setScene(dialogScene);
         // Configure la fenêtre en tant que modale
         dialogStage.initOwner(primaryStage);
@@ -202,6 +209,7 @@ public class MoteurJeu extends Application {
         title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         VBox logs = new VBox();
+        logs.setMinWidth(350);
         logs.setPrefWidth(getScreenSize().width/7.0);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
@@ -209,6 +217,8 @@ public class MoteurJeu extends Application {
 
         //Ajout d'un scrollPane
         ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setFitToWidth(false); // Permet au ScrollPane de scroller horizontalement
         scrollPane.setPrefSize(getScreenSize().width/6.8, getScreenSize().height);
         scrollPane.setContent(logs);
 

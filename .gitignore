@@ -40,3 +40,6 @@ bin/
 ### Images ###
 *.jpg
 */img/
+
+### Excel ###
+*.csv 

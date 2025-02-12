@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 public class PathfollowingBehavior extends Behavior {
 
+    private static final double BASE_PATHFOLLOWING_WEIGHT = 1;
     private ArrayList<Vector2D> checkpoints;
     private Vector2D currentCheckpoint;
     private int currentCheckpointIndex;
@@ -24,6 +25,7 @@ public class PathfollowingBehavior extends Behavior {
         this.currentCheckpoint = this.checkpoints.getFirst();
         this.currentCheckpointIndex = 0;
         this.setTarget(currentCheckpoint);
+        this.setWeight(BASE_PATHFOLLOWING_WEIGHT);
     }
 
     /***
@@ -43,5 +45,12 @@ public class PathfollowingBehavior extends Behavior {
             currentCheckpoint = checkpoints.get(currentCheckpointIndex);
         }
         return res;
+    }
+
+    public void setCheckpoints(ArrayList<Vector2D> checkpoints) {
+        this.checkpoints = checkpoints;
+        this.currentCheckpoint = this.checkpoints.getFirst();
+        this.currentCheckpointIndex = 0;
+        this.setTarget(currentCheckpoint);
     }
 }

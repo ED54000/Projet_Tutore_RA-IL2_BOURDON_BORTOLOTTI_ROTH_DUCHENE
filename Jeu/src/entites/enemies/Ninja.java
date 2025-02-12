@@ -7,9 +7,9 @@ public class Ninja extends Ennemy{
     public Ninja(Vector2D position, String name) {
         super(position,
                 80 + (Math.random() - 0.5) * 20,
-                4 + (Math.random() - 0.5),
+                2.5 + (Math.random() - 0.5),
                 50 + (Math.random() - 0.5) * 10,
-                1500,
+                700,
                 0.35, 1, name,"/ninja.png", "Fugitive");
     }
 }
