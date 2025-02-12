@@ -5,6 +5,7 @@ import laby.ModeleLabyrinth;
 import steering_astar.Astar.Astar;
 import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
+import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
@@ -87,6 +88,22 @@ public abstract class Ennemy extends Entity {
         position = position.add(velocity);
         positionReel = position.divide(ModeleLabyrinth.getTailleCase());
     }
+
+    public void resetPathFollowingBehavior(ArrayList<Vector2D> path) {
+        boolean found = false;
+        for (Behavior behavior : new ArrayList<>(listBehaviors)) {
+            if (behavior instanceof PathfollowingBehavior) {
+                listBehaviors.remove(behavior);
+                listBehaviors.add(new PathfollowingBehavior(path));
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            listBehaviors.add(new PathfollowingBehavior(path));
+        }
+    }
+
 
 
 

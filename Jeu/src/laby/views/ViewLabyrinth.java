@@ -124,7 +124,7 @@ public class ViewLabyrinth implements Observer {
         int y = i * getTailleCase();
 
         switch (caseType) {
-            //case ModeleLabyrinth.CANON -> gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, getTailleCase(), getTailleCase());
+            //  case ModeleLabyrinth.CANON -> gc.drawImage(images.get(ModeleLabyrinth.CANON), x, y, getTailleCase(), getTailleCase());
             /*case ModeleLabyrinth.BOMB -> {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 gc.drawImage(images.get(ModeleLabyrinth.BOMB), x + 5, y + 5, getTailleCase() - 10, getTailleCase() - 10);
