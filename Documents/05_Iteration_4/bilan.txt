@@ -1,8 +1,9 @@
-Bilan Itération 3 :
+Bilan Itération 4 :
 
 Objectifs de l'itération : 
-	- Attaque des ennemis sur les défenses
-	- Évolution des ennemis
+	- Évolution d’un ennemi unique
+	- Évolution de groupes d’ennemis
+	- Mise en place d'un déplacement sans A*, uniquement avec Steering behavior
 
 
 Validation : 
@@ -12,38 +13,39 @@ Validation :
 
 Le(s) bug(s) restant :
 
-	- IndexOutOfBounds lors du recalcul de chemin.
+	- Il reste des bugs d'affichage à régler (collision avec les murs parfois ignorée).
 
 
 Conformité à l'étude préalable :
 
-	- Les défenses attaquent bien les ennemis.
-	- Les ennemis attaquent bien les défenses.
-	- Les défenses et ennemis ont des types qui modifient leur dégâts. 
+	- L'évolution de groupe a bien été réalisée.
+	- L'itération a bien été utilisée pour refactor le code existant et fixer des bugs.
 
 
 Problèmes rencontrés :
 
-	- De nombreux bug ont du être fixés, notamment des confusions entre coordonnées réelles et coordonnées d'affichage.
-	- La structure du code est devenue confuse avec les ajouts des précédentes itérations, ce qui a créé de nombreux bug difficiles à corriger.
+	- De nombreux bug, qui ont été résolu, ont été créé lors du refactor du code, en raison de sa mauvaise structure.
 
 
 Pour lancer l'application : 
  	- Lancer le fichier MainLaby.java situé dans le chemin suivant src/mains/MainLaby.java pour une version graphique.
-	- Lancer le fichier MainSimulation.java situé dans le chemin suivant src/mains/MainSimulation.java pour une version sans affichage.
+	- Lancer le fichier MainSimulation.java situé dans le chemin suivant src/mains/MainSimu.java pour une version sans affichage.
 
 
 L'application permet de : 
-	- Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, et le nombre d'ennemies qui passe pour gagner.
-	- Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un 		  labyrinthe bien modélisé à l'aide de sprites.
-	- Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués jusqu'à la fin du jeu.
+	- Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches,
+	  le nombre d'ennemies qui passe pour gagner, et la méthode de déplacement.
+	- Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de
+	  leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites.
+	- Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués
+	  jusqu'à la fin du jeu.
 	- Pouvoir lancer l'application sans interface graphique ce qui accélère les vagues.
 
 
-Objectif itération 4 :
-	- Réaliser des diagrammes de séquences pour clarifier le fonctionnemment du projet
-	- Réfactoring du code
-	- Adaptation de l'algorithme évolutionnaire v2 à la structure du projet
-	- Tempérer les attaques des ennemies et des défenses en fonction du moteur de jeu et enlever timer
-	- obtenir une simulation fonctionnelle
-	- avoir une évolution sur les groupes d'ennemis et non pas sur les ennemis (commencer et sûrement à finaliser en itération 5)
+Objectif itération 5 :
+	- Ajouter un arrival behavior
+	- Bugfix et refactor
+    	- Ajouter la possibilité de charger un nouveau labyrinthe
+    	- Ajouter l’évolution avec steering behavior
+	- Ajouter l’accélération du temps en version grapique
+	- Ajouter une génération de graphique en fin de partie
