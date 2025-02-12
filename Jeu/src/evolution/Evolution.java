@@ -24,9 +24,13 @@ public class Evolution {
                 refreshEnnemiesAndAdd(ennemy, jeu, copieGroupe);
             }
 
-            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, 1200);
+            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, 18);
             double score = simulate(jeu);
-            System.out.println("le Score : "+score);
+            //if (jeu.etreFini()){
+            //    System.out.println("Jeu fini bitchhh");
+            //    //stop l'évolution
+            //    return null;
+            //}
             // On stocke le score pour ce groupe
             newStats.put(groupe, score);
             jeu = null;

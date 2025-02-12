@@ -49,7 +49,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         Evolution evolution = new Evolution();
         if (laby.getNbManches()<2){
             // nombre de groupes
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 25; i++) {
                 groupes.add(createEnnemies(laby.getEnnemyEndOfManche().size()));
             }
         }
