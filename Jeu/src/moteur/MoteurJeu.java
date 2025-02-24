@@ -50,6 +50,8 @@ public class MoteurJeu extends Application {
     private static double FPS = 100;
     private static double dureeFPS = 1000 / (FPS + 1);
 
+    private static boolean simpleMode = false;
+
     /**
      * statistiques sur les frames
      */
@@ -254,6 +256,7 @@ public class MoteurJeu extends Application {
                 toggleButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;"); // Le bouton passe en vert pour montrer que le mode simple est activé
             } else {
                 System.out.println("Mode simple désactivé");
+                disableSimpleMode(viewLabyrinth);
                 toggleButton.setStyle(""); // Reset au style par défaut
             }
         });
@@ -325,11 +328,54 @@ public class MoteurJeu extends Application {
 
     /**
      * Méthode permettant d'activer le mode simple
+     * @param vue vue du labyrinthe
      */
     public void enableSimpleMode(ViewLabyrinth vue) {
+        setSimpleMode(true);
         // On crée les sprites Images du jeu
         Image tree = new Image("/blackSquare.png");
         Image tile = new Image("/whiteSquare.png");
+
+        // On applique les sprites aux cases (sol, murs)
+        Map<Character, Image> newImages = new HashMap<>();
+        for(Map.Entry<Character, Image> entry : vue.getImages().entrySet()) {
+            newImages.put(entry.getKey(), entry.getValue());
+        }
+        newImages.put(ModeleLabyrinth.TREE, tree);
+        newImages.put(ModeleLabyrinth.ROAD, tile);
+        vue.setImages(newImages);
+
+        // On applique les sprites aux ennemis
+        ArrayList<Ennemy> allEnnemies = new ArrayList<>(); // Liste des ennemis vivants et morts
+        allEnnemies.addAll(laby.enemies);
+        allEnnemies.addAll(laby.deadEnemies);
+        for (Ennemy ennemy : allEnnemies) {
+            switch (ennemy.getBehaviorString()){
+                case "Normal" :
+                    ennemy.setSprite(new Image("/gray.png"));
+                    break;
+                case "Kamikaze" :
+                    ennemy.setSprite(new Image("/red.png"));
+                    break;
+                case "Healer" :
+                    ennemy.setSprite(new Image("/green.png"));
+                    break;
+                case "Fugitive" :
+                    ennemy.setSprite(new Image("/blue.png"));
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Méthode permettant de désactiver le mode simple
+     * @param vue vue du labyrinthe
+     */
+    private void disableSimpleMode(ViewLabyrinth vue) {
+        setSimpleMode(false);
+        // On crée les sprites Images du jeu
+        Image tree = new Image("/tree3.png");
+        Image tile = new Image("/tiles3.png");
 
         // On applique les sprites aux entités
         Map<Character, Image> newImages = new HashMap<>();
@@ -340,6 +386,33 @@ public class MoteurJeu extends Application {
         newImages.put(ModeleLabyrinth.ROAD, tile);
         vue.setImages(newImages);
 
+        // On applique les sprites aux ennemis
+        ArrayList<Ennemy> allEnnemies = new ArrayList<>(); // Liste des ennemis vivants et morts
+        allEnnemies.addAll(laby.enemies);
+        allEnnemies.addAll(laby.deadEnemies);
+        for (Ennemy ennemy : allEnnemies) {
+            switch (ennemy.getBehaviorString()){
+                case "Normal" :
+                    ennemy.setSprite(new Image("/giant.png"));
+                    break;
+                case "Kamikaze" :
+                    ennemy.setSprite(new Image("/berserker.png"));
+                    break;
+                case "Healer" :
+                    ennemy.setSprite(new Image("/druide.png"));
+                    break;
+                case "Fugitive" :
+                    ennemy.setSprite(new Image("/ninja.png"));
+                    break;
+            }
+        }
+    }
 
+    public void setSimpleMode(boolean mode) {
+        simpleMode = mode;
+    }
+
+    public static boolean getSimpleMode() {
+        return simpleMode;
     }
 }

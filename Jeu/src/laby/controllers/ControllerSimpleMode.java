@@ -15,6 +15,6 @@ public class ControllerSimpleMode implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent event) {
-        System.out.println("SIMPLE MODE ACTIVATED");
+
     }
 }
