@@ -18,13 +18,14 @@ public class Evolution {
         // On boucle sur la map, mais on ne modifie pas la map pendant l'itération
         for (ArrayList<Ennemy> groupe : stats.keySet()) {
             ModeleLabyrinth jeu = new ModeleLabyrinth();
+            jeu.nbEnnemiesToWin = groupe.size() - 1; //Fixe le nombre d'ennemis qui doivent passer pour gagner au npmbre de base -1
             //crée une copie de groupe
             ArrayList<Ennemy> copieGroupe = new ArrayList<>();
             for (Ennemy ennemy : groupe) {
                 refreshEnnemiesAndAdd(ennemy, jeu, copieGroupe);
             }
 
-            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, 20);
+            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, jeu.nbEnnemiesToWin);
             double score = simulate(jeu);
             if (jeu.etreFini()){
                 System.out.println("Jeu fini les enneies ont gagné");
