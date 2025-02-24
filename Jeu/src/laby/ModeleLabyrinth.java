@@ -2,8 +2,6 @@ package laby;
 
 import entites.defenses.*;
 import entites.enemies.*;
-import evolution.EnnemyEvolution;
-import evolution.EnnemyEvolutionv2;
 import evolution.Evolution;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
@@ -11,16 +9,12 @@ import javafx.scene.input.MouseEvent;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import moteur.Jeu;
-import steering_astar.Steering.Behavior;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.SeekBehavior;
 import steering_astar.Steering.Vector2D;
 import steering_astar.Astar.*;
-
 import java.awt.*;
 import java.io.*;
-
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.List;
 
