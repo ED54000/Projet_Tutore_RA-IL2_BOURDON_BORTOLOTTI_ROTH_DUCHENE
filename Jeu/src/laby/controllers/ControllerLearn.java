@@ -153,9 +153,10 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         laby.refreshDeadEnemies();
         laby.refreshEnnemyEndOfManche();
 
-        laby.refreshDefenseEndOfManche();
         laby.refreshDeadDefenses();
+        laby.defenses = laby.getDefenseEndOfManche();
 
+        System.out.println("Défensess : " + laby.defenses.size());
         //TODO : on remet les valeurs par défaut pour les defenses en attendant de les faire évoluer
         for (Defense d : laby.defenses) {
             d.setLastAttackCount(0);
@@ -170,6 +171,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 d.setHealth(200);
             }
         }
+        laby.refreshDefenseEndOfManche();
 
         // On va compter le nombre d'ennemis pour chaque comportement
         int nbNinja = 0;
