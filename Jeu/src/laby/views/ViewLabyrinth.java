@@ -181,4 +181,11 @@ public class ViewLabyrinth implements Observer {
         gc.setStroke(Color.BLACK);
         gc.strokeOval(xCoordEnnemi - range, yCoordEnnemi - range, 2 * range, 2 * range);
     }
+
+    public void setImages(Map<Character, Image> newImages) {
+        images.clear();
+        images.putAll(newImages);
+    }
+
+    public Map<Character, Image> getImages() {return images;}
 }

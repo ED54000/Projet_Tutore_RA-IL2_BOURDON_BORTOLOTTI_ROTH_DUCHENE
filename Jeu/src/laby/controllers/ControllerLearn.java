@@ -27,8 +27,6 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
     ModeleLabyrinth laby;
     ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
 
-
-
     public ControllerLearn(ModeleLabyrinth laby) {
         this.laby = laby;
     }

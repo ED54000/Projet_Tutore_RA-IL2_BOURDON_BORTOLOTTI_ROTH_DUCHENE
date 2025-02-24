@@ -3,7 +3,6 @@ package moteur;
 //https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 
 import entites.enemies.Ennemy;
-import evolution.EnnemyEvolution;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -14,16 +13,24 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 import laby.ModeleLabyrinth;
 
+import laby.controllers.ControllerSimpleMode;
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
+import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +49,6 @@ public class MoteurJeu extends Application {
      */
     private static double FPS = 100;
     private static double dureeFPS = 1000 / (FPS + 1);
-
 
     /**
      * statistiques sur les frames
@@ -91,7 +97,6 @@ public class MoteurJeu extends Application {
         MoteurJeu.jeu = laby;
     }
 
-
     //#################################
     // SURCHARGE Application
     //#################################
@@ -101,8 +106,8 @@ public class MoteurJeu extends Application {
     public void start(Stage primaryStage) throws IOException {
         // création des vues
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
-        //enregistrement des observateurs
         laby.registerObserver(viewLabyrinth);
+
         // Crée une nouvelle fenêtre (Stage)
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Labyrinthe");
@@ -239,6 +244,23 @@ public class MoteurJeu extends Application {
         //ajout des logs
         root.setRight(ContainerLogs);
 
+        // Ajout du bouton simple mode
+        // Création d'un bouton radio au top
+        ToggleButton toggleButton = new ToggleButton("Mode simple");
+        toggleButton.setOnAction(e -> {
+            if (toggleButton.isSelected()) {
+                System.out.println("Mode simple activé!");
+                enableSimpleMode(viewLabyrinth);
+                toggleButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;"); // Le bouton passe en vert pour montrer que le mode simple est activé
+            } else {
+                System.out.println("Mode simple désactivé");
+                toggleButton.setStyle(""); // Reset au style par défaut
+            }
+        });
+        toggleButton.setOnMouseClicked(new ControllerSimpleMode(laby));
+
+        root.setTop(toggleButton);
+
         // creation de la scene
         final Scene scene = new Scene(root);
         primaryStage.setScene(scene);
@@ -301,8 +323,23 @@ public class MoteurJeu extends Application {
         timer.start();
     }
 
-    private void createDialog(Stage primaryStage) {
+    /**
+     * Méthode permettant d'activer le mode simple
+     */
+    public void enableSimpleMode(ViewLabyrinth vue) {
+        // On crée les sprites Images du jeu
+        Image tree = new Image("/blackSquare.png");
+        Image tile = new Image("/whiteSquare.png");
+
+        // On applique les sprites aux entités
+        Map<Character, Image> newImages = new HashMap<>();
+        for(Map.Entry<Character, Image> entry : vue.getImages().entrySet()) {
+            newImages.put(entry.getKey(), entry.getValue());
+        }
+        newImages.put(ModeleLabyrinth.TREE, tree);
+        newImages.put(ModeleLabyrinth.ROAD, tile);
+        vue.setImages(newImages);
+
 
     }
-
 }
