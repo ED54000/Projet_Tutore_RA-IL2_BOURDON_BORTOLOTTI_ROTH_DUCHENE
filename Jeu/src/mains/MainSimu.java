@@ -26,8 +26,8 @@ public class MainSimu extends Application {
 
             // Initialisation avec une liste d'ennemis
             ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
-            for (int i = 0; i < 40; i++) { // 50 groupes
-                groupes.add(createEnnemies(20)); // Chaque groupe contient 5 ennemis
+            for (int i = 0; i < 50; i++) { // 50 groupes
+                groupes.add(createEnnemies(20));
             }
 
 
@@ -47,6 +47,8 @@ public class MainSimu extends Application {
                 if (stats == null) {
                     System.out.println("Les ennemies ont gagé la partie");
                     writer.write("Les ennemies ont gagné la partie");
+                    //arrête le programme
+                    break;
                 }
                 groupes = evolution.evolve(stats);
 
@@ -64,8 +66,9 @@ public class MainSimu extends Application {
                 //TODO : A réadapter pour les groupes
                 logStats(writer, manche + 1, groupes.get(0));
             }
+
             System.out.println("Fin de la simulation. Données enregistrées dans " + fileName);
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

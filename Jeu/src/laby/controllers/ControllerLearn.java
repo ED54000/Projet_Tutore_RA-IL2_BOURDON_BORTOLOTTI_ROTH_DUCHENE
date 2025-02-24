@@ -21,7 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static evolution.Evolution.refreshEnnemiesAndAdd;
-import static laby.ModeleLabyrinth.createEnnemies;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
@@ -48,7 +47,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         if (laby.getNbManches()<2){
             // nombre de groupes
             for (int i = 0; i < 20; i++) {
-                groupes.add(createEnnemies(laby.getEnnemyEndOfManche().size()));
+                groupes.add(laby.createEnnemies(laby.getEnnemyEndOfManche().size()));
             }
         }
 
@@ -180,39 +179,44 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         for(Ennemy e : laby.enemies){
             e.setIsDead(false);
             if(e instanceof Ninja){
-                e.setBehavior("Fugitive");
+                e.setBehaviorString("Fugitive");
                 nbNinja++;
             }
             if(e instanceof Giant){
-                e.setBehavior("Normal");
+                e.setBehaviorString("Normal");
                 nbGiant++;
             }
             if(e instanceof Druide){
-                e.setBehavior("Healer");
+                e.setBehaviorString("Healer");
                 nbHealer++;
             }
             if(e instanceof Berserker){
-                e.setBehavior("Kamikaze");
+                e.setBehaviorString("Kamikaze");
                 nbBerserker++;
             }
         }
         System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
-        laby.createBehaviours(laby.getCases());
         for (Ennemy e : laby.enemies) {
             e.setLastAttackCount(0);
-            if (e.getBehavior().equals("Healer")) {
-              e.setBehaviorPath(new PathfollowingBehavior(laby.getNewHealerAStar(nbHealer, nbGiant, nbBerserker, nbNinja)));
+            ArrayList<Vector2D> newPathToFollow;
+            if (e.getBehaviorString().equals("Healer")) {
+                newPathToFollow = laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja);
             } else {
-                e.setBehaviorPath(new PathfollowingBehavior(laby.getBehavioursMap().get(e.getBehavior())));
+                newPathToFollow = e.calculerChemin(ModeleLabyrinth.getCases(),new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart()));
             }
+            e.resetPathFollowingBehavior(newPathToFollow);
             e.setArrived(false);
         }
 
+        int c = 0;
         for (Ennemy e : laby.enemies) {
             if (e.getHealth() < 0 ){
                 e.setHealth(e.getHealth()*-1);
             }
+
+            c++;
         }
+
 
         // On sauvegarde les statistiques des ennemis
         EnnemyEvolution.saveStartStats(laby.enemies);

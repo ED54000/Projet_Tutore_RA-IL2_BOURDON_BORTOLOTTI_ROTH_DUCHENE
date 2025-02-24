@@ -24,7 +24,7 @@ public class Evolution {
                 refreshEnnemiesAndAdd(ennemy, jeu, copieGroupe);
             }
 
-            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, 18);
+            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, 20);
             double score = simulate(jeu);
             if (jeu.etreFini()){
                 System.out.println("Jeu fini les enneies ont gagné");
