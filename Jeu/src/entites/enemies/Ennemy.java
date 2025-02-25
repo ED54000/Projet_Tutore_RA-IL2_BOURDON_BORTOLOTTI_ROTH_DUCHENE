@@ -162,8 +162,15 @@ public abstract class Ennemy extends Entity {
     public List<Behavior> getBehaviors() { return this.listBehaviors; }
 
     public void setBehavior(Behavior behavior) {
+        for (Behavior b : listBehaviors) {
+            if (b instanceof PathfollowingBehavior && behavior instanceof PathfollowingBehavior) {
+                listBehaviors.remove(b);
+                break;
+            }
+        }
         this.listBehaviors.add(behavior);
     }
+
 
     public String getBehaviorString() {
         return behaviorString;
