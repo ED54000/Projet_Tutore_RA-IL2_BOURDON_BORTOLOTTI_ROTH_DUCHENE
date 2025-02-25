@@ -207,7 +207,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             } else {
                 newPathToFollow = e.calculerChemin(ModeleLabyrinth.getCases(),new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart()));
             }
-            e.resetPathFollowingBehavior(newPathToFollow);
+            e.setBehavior(new PathfollowingBehavior(newPathToFollow));
             e.setArrived(false);
         }
 

@@ -707,7 +707,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 copyGrid[ennemyPosY][ennemyPosX] = 'S';
                 if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
-                    ennemy.resetPathFollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX)));
+                    ennemy.setBehavior(new PathfollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX))));
                 }
             }
         }
