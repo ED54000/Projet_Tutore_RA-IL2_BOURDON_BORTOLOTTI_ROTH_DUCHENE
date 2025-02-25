@@ -11,16 +11,23 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
@@ -30,6 +37,8 @@ import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
@@ -37,6 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 
 import static laby.ModeleLabyrinth.getScreenSize;
 
@@ -213,7 +223,7 @@ public class MoteurJeu extends Application {
         VBox ContainerLogs = new VBox();
         Label title = new Label("Logs");
         title.setStyle("-fx-font-weight: bold");
-        title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        title.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         VBox logs = new VBox();
         logs.setMinWidth(350);
@@ -351,17 +361,17 @@ public class MoteurJeu extends Application {
         allEnnemies.addAll(laby.deadEnemies);
         for (Ennemy ennemy : allEnnemies) {
             switch (ennemy.getBehaviorString()){
-                case "Normal" :
-                    ennemy.setSprite(new Image("/gray.png"));
+                case "Normal":
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/gray.png")));
                     break;
                 case "Kamikaze" :
-                    ennemy.setSprite(new Image("/red.png"));
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/red.png")));
                     break;
                 case "Healer" :
-                    ennemy.setSprite(new Image("/green.png"));
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/green.png")));
                     break;
                 case "Fugitive" :
-                    ennemy.setSprite(new Image("/blue.png"));
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/blue.png")));
                     break;
             }
         }
@@ -430,5 +440,54 @@ public class MoteurJeu extends Application {
 
     public static boolean getSimpleMode() {
         return simpleMode;
+    }
+
+    // Method to add text to an image
+    public static Image addTextToImage(String text, Image image) {
+        // Create a writable image
+        WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        // Create a canvas to draw on
+        Canvas canvas = new Canvas(image.getWidth(), image.getHeight());
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        // Draw the original image
+        gc.drawImage(image, 0, 0);
+
+        // Calculate the maximum font size that fits within the image
+        double maxWidth = image.getWidth() * 0.8; // 80% of the image width
+        double maxHeight = image.getHeight() * 0.2; // 20% of the image height
+        double fontSize = 20; // Initial font size
+        Font font;
+        javafx.scene.text.Text tempText;
+
+        do {
+            font = new Font(fontSize);
+            tempText = new javafx.scene.text.Text(text);
+            tempText.setFont(font);
+            fontSize++;
+        } while (tempText.getLayoutBounds().getWidth() < maxWidth && tempText.getLayoutBounds().getHeight() < maxHeight);
+
+        // Use the last valid font size
+        fontSize--;
+        font = new Font(fontSize);
+        tempText.setFont(font);
+
+        // Set the font and color for the text
+        gc.setFont(font);
+        gc.setFill(Color.BLACK);
+
+        // Calculate the position to center the text
+        double textWidth = tempText.getLayoutBounds().getWidth();
+        double textHeight = tempText.getLayoutBounds().getHeight();
+        double x = (image.getWidth() - textWidth) / 2;
+        double y = (image.getHeight() + textHeight) / 2;
+
+        // Draw the text on the image
+        gc.fillText(text, x, y);
+
+        // Capture the canvas content into the writable image
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        canvas.snapshot(params, writableImage);
+        return writableImage;
     }
 }
