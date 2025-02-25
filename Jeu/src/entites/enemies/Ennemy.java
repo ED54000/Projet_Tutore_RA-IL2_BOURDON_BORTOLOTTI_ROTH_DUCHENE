@@ -2,6 +2,7 @@ package entites.enemies;
 
 import entites.Entity;
 import laby.ModeleLabyrinth;
+import moteur.MoteurJeu;
 import steering_astar.Astar.Astar;
 import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
@@ -62,6 +63,11 @@ public abstract class Ennemy extends Entity {
             if (target.health + Math.abs(heal) <= target.healthBase) {
                 // On heal
                 target.health += Math.abs(heal);
+                // Si le jeu est en mode simple
+                if(MoteurJeu.getSimpleMode()) {
+                    // On met à jour le sprite de l'ennemi (sa vie)
+                    ModeleLabyrinth.updateSprite(target);
+                }
                 System.out.println("Soin de " + this.getName() + " sur " + target.getName());
                 System.out.println("Montant de soin : " + Math.abs(heal));
                 System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
