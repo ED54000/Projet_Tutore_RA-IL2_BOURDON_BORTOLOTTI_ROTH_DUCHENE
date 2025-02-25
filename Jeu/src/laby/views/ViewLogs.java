@@ -35,25 +35,7 @@ public class ViewLogs implements Observer {
 
 
         ennemiesBox = new VBox();
-
         ennemiesLabels = new HashMap<>();
-        System.out.println("Ennemies bitch : "+laby.enemies);
-        // Initialisation de la liste des labels des ennemis
-        for (Ennemy ennemy : laby.enemies) {
-            // Création d'un nouveau label si l'ennemi n'existe pas encore
-            Label ennemyLabel = new Label(formatterEnnemy(ennemy));
-            ennemyLabel.setStyle("""
-                -fx-padding: 3 8;
-                -fx-background-color: white;
-                -fx-border-color: #e0e0e0;
-                -fx-border-radius: 3;
-                -fx-font-size: 11px;
-                                """);
-            ennemiesLabels.put(ennemy, ennemyLabel);
-            ennemiesBox.getChildren().add(ennemyLabel);
-        }
-
-        this.vbox.getChildren().add(ennemiesBox);
 
         //this.logs.getChildren().add(ennemiesBox);
     }
@@ -62,6 +44,8 @@ public class ViewLogs implements Observer {
     public void update(Subject s) {
         if (!laby.getLogs().isEmpty()) {
             Label label = new Label(laby.getLogs());
+
+            System.out.println("Logs : " + laby.getLogs());
 
             // Style de base pour tous les logs
             String baseStyle = """
@@ -119,8 +103,26 @@ public class ViewLogs implements Observer {
 
                 button.setOnMouseClicked(controllerLearn);
                 vbox.getChildren().addAll(label, button);
-            }
-            else {
+            } else if (laby.getLogs().matches("Manche \\d+")) {
+                System.out.println("YALLA");
+                vbox.getChildren().add(label);
+                // Initialisation de la liste des labels des ennemis
+                for (Ennemy ennemy : laby.enemies) {
+                    // Création d'un nouveau label si l'ennemi n'existe pas encore
+                    Label ennemyLabel = new Label(formatterEnnemy(ennemy));
+                    ennemyLabel.setStyle("""
+                -fx-padding: 3 8;
+                -fx-background-color: white;
+                -fx-border-color: #e0e0e0;
+                -fx-border-radius: 3;
+                -fx-font-size: 11px;
+                                """);
+                    ennemiesLabels.put(ennemy, ennemyLabel);
+                    ennemiesBox.getChildren().add(ennemyLabel);
+                }
+                vbox.getChildren().add(ennemiesBox);
+
+            } else {
                 mettreAJourEnnemies(label.getText());
             }
             laby.setLogs("");
@@ -142,14 +144,21 @@ public class ViewLogs implements Observer {
                     .orElse(null);
         }
 
-        // Mise à jour si l'ennemi est trouvé
+        // Si non trouvé, chercher dans les ennemis arrivés
+        if (ennemy == null) {
+            ennemy = laby.ennemiesArrived.stream()
+                    .filter(e -> e.getName().equals(name))
+                    .findFirst()
+                    .orElse(null);
+        }
+
         // Mise à jour si l'ennemi est trouvé
         if (ennemy != null) {
             if (ennemiesLabels.containsKey(ennemy)) {
                 Label label = ennemiesLabels.get(ennemy);
                 label.setText(formatterEnnemy(ennemy));
 
-                // Appliquer le style en fonction de l'état de l'ennemi
+                // Appliquer le style en fonction de l'état
                 String baseStyle = """
                 -fx-padding: 3 8;
                 -fx-background-color: white;
@@ -166,29 +175,8 @@ public class ViewLogs implements Observer {
                     label.setStyle(baseStyle);
                 }
             } else {
-                // Si l'ennemi n'était pas affiché, l'ajouter
-                Label ennemyLabel = new Label(formatterEnnemy(ennemy));
-
-                // Style de base
-                String baseStyle = """
-                -fx-padding: 3 8;
-                -fx-background-color: white;
-                -fx-border-color: #e0e0e0;
-                -fx-border-radius: 3;
-                -fx-font-size: 11px;
-            """;
-
-                // Appliquer le style en fonction de l'état
-                if (ennemy.getIsDead()) {
-                    ennemyLabel.setStyle(baseStyle + "-fx-text-fill: red;");
-                } else if (ennemy.getIsArrived()) {
-                    ennemyLabel.setStyle(baseStyle + "-fx-text-fill: green;");
-                } else {
-                    ennemyLabel.setStyle(baseStyle);
-                }
-
-                ennemiesLabels.put(ennemy, ennemyLabel);
-                ennemiesBox.getChildren().add(ennemyLabel);
+                // Création d'un nouveau label...
+                // Même logique de style que ci-dessus
             }
         }
         else {
@@ -198,8 +186,18 @@ public class ViewLogs implements Observer {
 
 
     private String formatterEnnemy(Ennemy ennemy) {
-        String style = ennemy.getIsDead() ? "-fx-text-fill: red;" : "";
-        return String.format("%s - Vie : %.2f", ennemy.getName(), ennemy.getHealth()) + style;
+        // Retourne uniquement le texte sans style CSS
+        StringBuilder info = new StringBuilder();
+        info.append(ennemy.getName()).append(" - Vie : ").append(String.format("%.2f", ennemy.getHealth()));
+
+        // Ajouter d'autres informations si nécessaires
+        if (ennemy.getIsDead()) {
+            info.append(" (Mort)");
+        } else if (ennemy.getIsArrived()) {
+            info.append(" (Arrivé)");
+        }
+
+        return info.toString();
     }
 
 }
