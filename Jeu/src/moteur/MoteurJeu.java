@@ -16,6 +16,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -24,6 +25,7 @@ import laby.ModeleLabyrinth;
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -114,13 +116,10 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
-        labyrinthMap.put("test1", "Ressources/Labyrinthe4.txt");
-        labyrinthMap.put("test2", "Ressources/Laby_test2.txt");
-        labyrinthMap.put("testSteering", "Ressources/Laby_testSteering.txt");
 
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2","testSteering");
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large","Plus");
         labyrinthComboBox.setValue("Large");
 
         // Définit "Petit" comme valeur par défaut
@@ -137,7 +136,7 @@ public class MoteurJeu extends Application {
 
         // CheckBox avec ou sans Astar
         CheckBox avecAstarBox = new CheckBox();
-        avecAstarBox.setSelected(true);
+        avecAstarBox.setSelected(false);
 
         HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
         // Champ pour le nombre de manches
@@ -163,12 +162,13 @@ public class MoteurJeu extends Application {
             @Override
             public void handle(MouseEvent MouseEvent) {
                 laby.setStartTime();
+                String labyrinthString ;
                 switch (labyrinthComboBox.getValue()) {
-                    case "Petit":
+                    case "Plus" :
+                        labyrinthString = openLaby();
                         break;
-                    case "Grand":
-                        break;
-                    case "Large":
+                    default :
+                        labyrinthString = labyrinthMap.get(labyrinthComboBox.getValue());
                         break;
                 }
                 dialogStage.close();
@@ -176,7 +176,7 @@ public class MoteurJeu extends Application {
                     laby.setUseAstar(avecAstarBox.isSelected());
                     ArrayList<Ennemy> ennemies = laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
                     System.out.println("Les ennemies : " + ennemies.size());
-                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
+                    laby.creerLabyrinthe(labyrinthString, ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -303,6 +303,22 @@ public class MoteurJeu extends Application {
 
     private void createDialog(Stage primaryStage) {
 
+    }
+    private String openLaby() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Sélectionner un fichier de labyrinthe");
+        FileChooser.ExtensionFilter extFilter =
+                new FileChooser.ExtensionFilter("Fichiers texte (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.setInitialDirectory(new File("Ressources"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+            return selectedFile.getAbsolutePath();
+        } else {
+            System.err.println("Aucun fichier sélectionné, utilisation du labyrinthe par défaut");
+            return "Ressources/Labyrinthe1.txt";
+        }
     }
 
 }

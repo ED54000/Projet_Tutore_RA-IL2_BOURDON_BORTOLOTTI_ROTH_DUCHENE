@@ -545,7 +545,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             char[][] copyGrid = new char[cases.length][];
             for (int i = 0; i < cases.length; i++) {
                 copyGrid[i] = cases[i].clone();
-                for (int j = 0; j < copyGrid.length; j++) {
+                for (int j = 0; j < copyGrid[i].length; j++) {
                     if (copyGrid[i][j] == 'B' || copyGrid[i][j] == 'C' || copyGrid[i][j] == 'A') {
                         copyGrid[i][j] = '.';
                     }
