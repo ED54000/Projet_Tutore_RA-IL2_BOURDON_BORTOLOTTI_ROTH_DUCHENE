@@ -198,7 +198,10 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             }
         }
         System.out.println("Ninja : "+nbNinja+" Giant : "+nbGiant+" Healer : "+nbHealer+" Berserker : "+nbBerserker);
+        //laby.createBehaviours(laby.getCases());
+
         for (Ennemy e : laby.enemies) {
+            System.out.println("Ennemy : " + e.getName() + " Behavior : " + e.getListBehavior());
             e.setLastAttackCount(0);
             ArrayList<Vector2D> newPathToFollow;
             if (e.getBehaviorString().equals("Healer")) {
@@ -210,14 +213,14 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             e.setArrived(false);
         }
 
-        int c = 0;
         for (Ennemy e : laby.enemies) {
             if (e.getHealth() < 0 ){
                 e.setHealth(e.getHealth()*-1);
             }
 
-            c++;
+
         }
+
 
 
         // On sauvegarde les statistiques des ennemis
