@@ -4,11 +4,13 @@ import entites.defenses.*;
 import entites.enemies.*;
 import evolution.Evolution;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import moteur.Jeu;
+import moteur.MoteurJeu;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.SeekBehavior;
 import steering_astar.Steering.Vector2D;
@@ -564,7 +566,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             char[][] copyGrid = new char[cases.length][];
             for (int i = 0; i < cases.length; i++) {
                 copyGrid[i] = cases[i].clone();
-                for (int j = 0; j < copyGrid.length; j++) {
+                for (int j = 0; j < copyGrid[i].length; j++) {
                     if (copyGrid[i][j] == 'B' || copyGrid[i][j] == 'C' || copyGrid[i][j] == 'A') {
                         copyGrid[i][j] = '.';
                     }

@@ -11,15 +11,23 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
@@ -29,12 +37,16 @@ import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 
 import static laby.ModeleLabyrinth.getScreenSize;
 
@@ -121,13 +133,10 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
-        labyrinthMap.put("test1", "Ressources/Labyrinthe4.txt");
-        labyrinthMap.put("test2", "Ressources/Laby_test2.txt");
-        labyrinthMap.put("testSteering", "Ressources/Laby_testSteering.txt");
 
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2","testSteering");
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large","Plus");
         labyrinthComboBox.setValue("Large");
 
         // Définit "Petit" comme valeur par défaut
@@ -170,12 +179,13 @@ public class MoteurJeu extends Application {
             @Override
             public void handle(MouseEvent MouseEvent) {
                 laby.setStartTime();
+                String labyrinthString ;
                 switch (labyrinthComboBox.getValue()) {
-                    case "Petit":
+                    case "Plus" :
+                        labyrinthString = openLaby();
                         break;
-                    case "Grand":
-                        break;
-                    case "Large":
+                    default :
+                        labyrinthString = labyrinthMap.get(labyrinthComboBox.getValue());
                         break;
                 }
                 dialogStage.close();
@@ -183,7 +193,7 @@ public class MoteurJeu extends Application {
                     laby.setUseAstar(avecAstarBox.isSelected());
                     ArrayList<Ennemy> ennemies = laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
                     System.out.println("Les ennemies : " + ennemies.size());
-                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
+                    laby.creerLabyrinthe(labyrinthString, ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -213,7 +223,7 @@ public class MoteurJeu extends Application {
         VBox ContainerLogs = new VBox();
         Label title = new Label("Logs");
         title.setStyle("-fx-font-weight: bold");
-        title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        title.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         VBox logs = new VBox();
         logs.setMinWidth(350);
@@ -351,17 +361,17 @@ public class MoteurJeu extends Application {
         allEnnemies.addAll(laby.deadEnemies);
         for (Ennemy ennemy : allEnnemies) {
             switch (ennemy.getBehaviorString()){
-                case "Normal" :
-                    ennemy.setSprite(new Image("/gray.png"));
+                case "Normal":
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/gray.png")));
                     break;
                 case "Kamikaze" :
-                    ennemy.setSprite(new Image("/red.png"));
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/red.png")));
                     break;
                 case "Healer" :
-                    ennemy.setSprite(new Image("/green.png"));
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/green.png")));
                     break;
                 case "Fugitive" :
-                    ennemy.setSprite(new Image("/blue.png"));
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/blue.png")));
                     break;
             }
         }
@@ -407,6 +417,22 @@ public class MoteurJeu extends Application {
             }
         }
     }
+    private String openLaby() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Sélectionner un fichier de labyrinthe");
+        FileChooser.ExtensionFilter extFilter =
+                new FileChooser.ExtensionFilter("Fichiers texte (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.setInitialDirectory(new File("Ressources"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+            return selectedFile.getAbsolutePath();
+        } else {
+            System.err.println("Aucun fichier sélectionné, utilisation du labyrinthe par défaut");
+            return "Ressources/Labyrinthe1.txt";
+        }
+    }
 
     public void setSimpleMode(boolean mode) {
         simpleMode = mode;
@@ -414,5 +440,54 @@ public class MoteurJeu extends Application {
 
     public static boolean getSimpleMode() {
         return simpleMode;
+    }
+
+    // Method to add text to an image
+    public static Image addTextToImage(String text, Image image) {
+        // Create a writable image
+        WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        // Create a canvas to draw on
+        Canvas canvas = new Canvas(image.getWidth(), image.getHeight());
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        // Draw the original image
+        gc.drawImage(image, 0, 0);
+
+        // Calculate the maximum font size that fits within the image
+        double maxWidth = image.getWidth() * 0.8; // 80% of the image width
+        double maxHeight = image.getHeight() * 0.2; // 20% of the image height
+        double fontSize = 20; // Initial font size
+        Font font;
+        javafx.scene.text.Text tempText;
+
+        do {
+            font = new Font(fontSize);
+            tempText = new javafx.scene.text.Text(text);
+            tempText.setFont(font);
+            fontSize++;
+        } while (tempText.getLayoutBounds().getWidth() < maxWidth && tempText.getLayoutBounds().getHeight() < maxHeight);
+
+        // Use the last valid font size
+        fontSize--;
+        font = new Font(fontSize);
+        tempText.setFont(font);
+
+        // Set the font and color for the text
+        gc.setFont(font);
+        gc.setFill(Color.BLACK);
+
+        // Calculate the position to center the text
+        double textWidth = tempText.getLayoutBounds().getWidth();
+        double textHeight = tempText.getLayoutBounds().getHeight();
+        double x = (image.getWidth() - textWidth) / 2;
+        double y = (image.getHeight() + textHeight) / 2;
+
+        // Draw the text on the image
+        gc.fillText(text, x, y);
+
+        // Capture the canvas content into the writable image
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        canvas.snapshot(params, writableImage);
+        return writableImage;
     }
 }
