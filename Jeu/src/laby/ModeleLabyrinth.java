@@ -48,7 +48,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
     private HashMap<Giant, Double> ennemyScore = new HashMap<>();
     private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
-    private int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
+    private static int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
 
 
     //si le jeu est avec le main simulation
@@ -189,7 +189,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
     }
 
-    public ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
+    public static ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
         ArrayList<Ennemy> ennemies = new ArrayList<>();
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
@@ -220,7 +220,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // On sauvegarde les statistiques des ennemis
         Evolution.saveStartStats(ennemies);
-        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
+        //System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
         Map<Ennemy, double[]> map = Evolution.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
@@ -320,6 +320,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 handleEnemyArrival(enemy);
                 enemyIterator.remove();
                 System.out.println("Liste des ennemis a la fin : " + enemies);
+                //On affiche le détail des ennemis
+                for (Ennemy e : enemies) {
+                    System.out.println("Ennemy : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehaviorString() + "survivalTime : " + e.getSurvivalTime());
+                    System.out.println("Position : " + e.getPositionReel());
+                }
+
+
             } else {
                 enemy.update();
             }
@@ -376,6 +383,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 System.out.println(e.getName() + " est mort !");
                 setLogs(e.getName() + " est mort. Coup dur !");
                 System.out.println("Liste des ennemis a la fin : " + enemies);
+                //On affiche le détail des ennemis
+                for (Ennemy en : enemies) {
+                    System.out.println("Ennemy : " + en.getName() + " type:" + en.getType() + " vie" + en.getHealth() + " vitesse :" + en.getSpeed() + " dégâts :" + en.getDamages() + " distance arrivée :" + en.getDistanceToArrival() + " behavior :" + en.getBehaviorString() + "survivalTime : " + en.getSurvivalTime()+"arrived : "+en.getIsArrived());
+                    //ses coordonnées
+                    System.out.println("Position : " + en.getPositionReel());
+                }
             }
         }
     }

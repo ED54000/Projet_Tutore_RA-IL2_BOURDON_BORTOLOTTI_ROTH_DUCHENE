@@ -1,7 +1,6 @@
 package mains;
 
-import entites.enemies.Ennemy;
-import entites.enemies.Giant;
+import entites.enemies.*;
 import evolution.Evolution;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -12,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static laby.ModeleLabyrinth.createEnnemies;
+
 public class MainSimu extends Application {
 
     @Override
@@ -19,33 +20,51 @@ public class MainSimu extends Application {
         // Fichier de sortie pour les logs
         String fileName = "Ressources/evolution_stats.csv";
 
-        try (FileWriter writer = new FileWriter(fileName)) {
-            writer.write("Manche;Nom;Vie;Dégâts;Vitesse\n");
+        try (FileWriter writer = new FileWriter(fileName)){
+            //écrit les différents ennemis
+            writer.write("Manche;Giant;Ninja;Druide;Berserker\n");
 
             // Initialisation avec une liste d'ennemis
-            ArrayList<Ennemy> ennemies = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
-                Giant giant = new Giant(new Vector2D(0, 0), "Giant " + i);
-                giant.setSprite(null);
-                ennemies.add(giant);
+            ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
+            for (int i = 0; i < 50; i++) { // 50 groupes
+                groupes.add(createEnnemies(20));
             }
 
+
             // Boucle sur le nombre de manches avec une population d'ennemis évoluée à chaque fois
-            for (int manche = 0; manche < 30; manche++) {
+            for (int manche = 0; manche < 100; manche++) {
                 System.out.println("Manche " + manche);
 
                 // Création d'une HashMap avec pour clé l'ennemi et pour valeur son score
-                HashMap<Ennemy, Double> stats = new HashMap<>();
-                for (Ennemy ennemy : ennemies) {
-                    stats.put(ennemy, 0.0);
+                HashMap<ArrayList<Ennemy>, Double> stats = new HashMap<>();
+                for (ArrayList<Ennemy> groupe : groupes) {
+                    stats.put(groupe, 0.0);
                 }
 
                 // On évolue
                 Evolution evolution = new Evolution();
-                ennemies = evolution.evolve(evolution.evaluate(stats));
+                stats = evolution.evaluate(stats);
+                if (stats == null) {
+                    System.out.println("Les ennemies ont gagné la partie");
+                    writer.write("Les ennemies ont gagné la partie");
+                    //arrête le programme
+                    break;
+                }
+                groupes = evolution.evolve(stats);
+
+                //après l'évolution
+                System.out.println("Après l'évolution");
+                for (ArrayList<Ennemy> groupe : groupes) {
+                    System.out.println("Groupe : ");
+                    for (Ennemy ennemy : groupe) {
+                        System.out.println(ennemy.getName() + " : " + ennemy.getHealth() + " " + ennemy.getDamages() + " " + ennemy.getSpeed());
+                    }
+                }
+
 
                 // Écriture des stats après l'évolution
-                logStats(writer, manche + 1, ennemies);
+                //TODO : A réadapter pour les groupes
+                logStats(writer, manche + 1, groupes.get(0));
             }
 
             System.out.println("Fin de la simulation. Données enregistrées dans " + fileName);
@@ -55,11 +74,21 @@ public class MainSimu extends Application {
     }
 
     private void logStats(FileWriter writer, int manche, ArrayList<Ennemy> ennemies) throws IOException {
+        int nbGiant = 0;
+        int nbNinja = 0;
+        int nbDruide = 0;
+        int nbBersrker = 0;
         for (Ennemy ennemy : ennemies) {
-            writer.write(manche + ";" + ennemy.getName() + ";" +
-                    String.format("%.2f", ennemy.getHealth()) + ";" +
-                    String.format("%.2f", ennemy.getDamages()) + ";" +
-                    String.format("%.2f", ennemy.getSpeed()) + "\n");
+            if (ennemy instanceof Giant) {
+                nbGiant++;
+            } else if (ennemy instanceof Ninja) {
+                nbNinja++;
+            } else if (ennemy instanceof Druide) {
+                nbDruide++;
+            } else if (ennemy instanceof Berserker) {
+                nbBersrker++;
+            }
         }
+        writer.write(manche + ";" + nbGiant + ";" + nbNinja + ";" + nbDruide + ";" + nbBersrker + "\n");
     }
 }

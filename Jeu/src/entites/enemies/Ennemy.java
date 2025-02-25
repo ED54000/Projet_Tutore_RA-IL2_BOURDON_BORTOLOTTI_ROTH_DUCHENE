@@ -204,5 +204,9 @@ public abstract class Ennemy extends Entity {
         this.setPositionReel(new Vector2D(modeleLabyrinth.getXstart() + XstartRandom, modeleLabyrinth.getYstart() + YstartRandom));
         this.setPosition(new Vector2D(modeleLabyrinth.getXstartRender() + XstartRandom, modeleLabyrinth.getYstartRender() + YstartRandom));
     }
+
+    public List<Behavior> getListBehavior() {
+        return listBehaviors;
+    }
 }
 

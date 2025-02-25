@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
+import moteur.MoteurJeu;
 import steering_astar.Steering.Behavior;
 import steering_astar.Steering.Vector2D;
 
@@ -152,22 +153,25 @@ public class ViewLabyrinth implements Observer {
         double velocityPointMultiplier = 20;
 
         // points de passage
-        gc.setFill(pathColor);
+        /*gc.setFill(pathColor);
         gc.setStroke(pathColor);
         if (laby.getUseAstar()) {
             for (Vector2D point : checkpoint) {
                 gc.fillOval(point.getX() - waypointsSize / 2, point.getY() - waypointsSize / 2, waypointsSize, waypointsSize);
                 gc.strokeOval(point.getX() - radius / 2, point.getY() - radius / 2, radius, radius);
             }
-        }
+        }*/
 
         // vélocité de l'ennemi
-        gc.setFill(Color.RED);
-        gc.setStroke(Color.RED);
-        double xCoord = xCoordEnnemi + xCoordVelocity * velocityPointMultiplier;
-        double yCoord = yCoordEnnemi + yCoordVelocity * velocityPointMultiplier;
-        gc.strokeLine(xCoordEnnemi, yCoordEnnemi, xCoord, yCoord);
-        gc.fillOval(xCoord - velocityPointSize / 2, yCoord - velocityPointSize / 2, velocityPointSize, velocityPointSize);
+        // Si on est en mode simple, on ne dessine pas la vélocité de l'ennemi
+        if(!MoteurJeu.getSimpleMode()) {
+            gc.setFill(Color.RED);
+            gc.setStroke(Color.RED);
+            double xCoord = xCoordEnnemi + xCoordVelocity * velocityPointMultiplier;
+            double yCoord = yCoordEnnemi + yCoordVelocity * velocityPointMultiplier;
+            gc.strokeLine(xCoordEnnemi, yCoordEnnemi, xCoord, yCoord);
+            gc.fillOval(xCoord - velocityPointSize / 2, yCoord - velocityPointSize / 2, velocityPointSize, velocityPointSize);
+        }
 
         Image image = ennemi.getImage();
 
@@ -178,7 +182,17 @@ public class ViewLabyrinth implements Observer {
                 getTailleCase(), getTailleCase());
 
         // range des ennemis
-        gc.setStroke(Color.BLACK);
-        gc.strokeOval(xCoordEnnemi - range, yCoordEnnemi - range, 2 * range, 2 * range);
+        // Si on est en mode simple, on ne dessine pas la range des ennemis
+        if(!MoteurJeu.getSimpleMode()){
+            gc.setStroke(Color.BLACK);
+            gc.strokeOval(xCoordEnnemi - range, yCoordEnnemi - range, 2 * range, 2 * range);
+        }
     }
+
+    public void setImages(Map<Character, Image> newImages) {
+        images.clear();
+        images.putAll(newImages);
+    }
+
+    public Map<Character, Image> getImages() {return images;}
 }

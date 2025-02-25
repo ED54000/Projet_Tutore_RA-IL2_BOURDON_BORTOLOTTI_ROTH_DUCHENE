@@ -1,5 +1,7 @@
 package entites.enemies;
 
+import javafx.scene.image.Image;
+import moteur.MoteurJeu;
 import steering_astar.Steering.Vector2D;
 
 public class Ninja extends Ennemy{
@@ -11,5 +13,10 @@ public class Ninja extends Ennemy{
                 50 + (Math.random() - 0.5) * 10,
                 700,
                 0.35, 1, name,"/ninja.png", "Fugitive");
+
+        // Si on est en mode simple
+        if(MoteurJeu.getSimpleMode()) {
+            this.setSprite(new Image("/blue.png"));
+        }
     }
 }
