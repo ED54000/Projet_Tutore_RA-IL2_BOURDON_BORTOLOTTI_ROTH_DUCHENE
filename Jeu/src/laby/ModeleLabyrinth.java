@@ -441,6 +441,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     defense.attack(enemyTarget, secondes);
                     // Quand il se fait attaquer normalement
                     setLogs(enemyTarget.getName());
+                    // Si le jeu est en mode simple
+                    if(MoteurJeu.getSimpleMode()){
+                        // On met à jour le sprite de l'ennemi (sa vie)
+                        updateSprite(enemyTarget);
+                    }
                 }
                 // Si l'ennemi est mort on set son killerType
                 if (enemyTarget.getIsDead() && !deadEnemies.contains(enemyTarget)) {
@@ -497,6 +502,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     e.setSurvivalTime(System.currentTimeMillis() - startTime);
                 }
                 setLogs(e.getName());
+                // Si le jeu est en mode simple
+                if(MoteurJeu.getSimpleMode()){
+                    // On met à jour son sprite (sa vie)
+                    updateSprite(e);
+                }
                 // La défense s'autodétruit après avoir attaqué
                 defense.takeDamage(10000);
                 //setLogs("La défense : " + defense.getType() + " à été détruite");
@@ -713,7 +723,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 copyGrid[ennemyPosY][ennemyPosX] = 'S';
                 if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
-                    ennemy.resetPathFollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX)));
+                    ennemy.setBehavior(new PathfollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX))));
                 }
             }
         }
@@ -1013,5 +1023,27 @@ public class ModeleLabyrinth implements Jeu, Subject {
             instance = new ModeleLabyrinth();
         }
         return instance;
+    }
+
+    /**
+     * Méthode permettant de mettre la vie à jour lorsqu'un ennemi voit sa vie changée
+     * @param e l'ennemi en question
+     */
+    public static void updateSprite(Ennemy e){
+        System.out.println("Sprite update");
+        switch (e.getBehaviorString()) {
+            case "Normal":
+                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/gray.png")));
+                break;
+            case "Kamikaze":
+                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/red.png")));
+                break;
+            case "Fugitive":
+                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/blue.png")));
+                break;
+            case "Healer":
+                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/green.png")));
+                break;
+        }
     }
 }
