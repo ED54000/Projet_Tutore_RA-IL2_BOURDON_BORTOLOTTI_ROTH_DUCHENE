@@ -349,7 +349,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
         System.out.println("Le " + enemy.getName() + " est arrivé");
-        setLogs("Le " + enemy.getName() + " est arrivé");
+        //setLogs("Le " + enemy.getName() + " est arrivé");
 
         ennemiesArrived.add(enemy);
 
@@ -369,7 +369,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 deadDefenses.add(d);
                 defenseIterator.remove();
                 towerIsDestroyed();
-                setLogs("La défense : " + d.getName() + " à été détruite");
+                //setLogs("La défense : " + d.getName() + " à été détruite");
             }
         }
         // On retire les ennemis morts
@@ -381,7 +381,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 //enemies.remove(e);
                 enemyIterator.remove();
                 System.out.println(e.getName() + " est mort !");
-                setLogs(e.getName() + " est mort. Coup dur !");
+                //Quand l'ennemie est mort
+                setLogs(e.getName());
                 System.out.println("Liste des ennemis a la fin : " + enemies);
                 //On affiche le détail des ennemis
                 for (Ennemy en : enemies) {
@@ -398,6 +399,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Tous les ennemis a portée sont soignés
             if (enemy.isInRange(enemyTarget) && !this.getPause()) {
                 enemy.healDamage(enemyTarget, enemy.getDamages(), secondes);
+                //Quand il se fait heal
+                setLogs(enemyTarget.getName());
             }
         }
     }
@@ -434,6 +437,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 if (!enemyTarget.getIsDead()) {
                     // On l'attaque
                     defense.attack(enemyTarget, secondes);
+                    // Quand il se fait attaquer normalement
+                    setLogs(enemyTarget.getName());
                 }
                 // Si l'ennemi est mort on set son killerType
                 if (enemyTarget.getIsDead() && !deadEnemies.contains(enemyTarget)) {
@@ -489,9 +494,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Et on met à jour son temps de survie
                     e.setSurvivalTime(System.currentTimeMillis() - startTime);
                 }
+                setLogs(e.getName());
                 // La défense s'autodétruit après avoir attaqué
                 defense.takeDamage(10000);
-                setLogs("La défense : " + defense.getType() + " à été détruite");
+                //setLogs("La défense : " + defense.getType() + " à été détruite");
             }
         }
     }
