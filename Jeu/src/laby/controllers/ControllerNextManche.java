@@ -7,6 +7,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
 
+import java.io.IOException;
+
 public class ControllerNextManche implements EventHandler<MouseEvent> {
 
     ModeleLabyrinth laby;
@@ -28,7 +30,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
             int nbManches = laby.getNbManches()+1;
             parentVBox.getChildren().add(new Label("Manche " + nbManches));
-
         }
 
         laby.setPause(false);

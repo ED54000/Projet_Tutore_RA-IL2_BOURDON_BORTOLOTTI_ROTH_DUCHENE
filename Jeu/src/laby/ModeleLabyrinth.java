@@ -320,6 +320,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 handleEnemyArrival(enemy);
                 enemyIterator.remove();
                 System.out.println("Liste des ennemis a la fin : " + enemies);
+                //On affiche le détail des ennemis
+                for (Ennemy e : enemies) {
+                    System.out.println("Ennemy : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehaviorString() + "survivalTime : " + e.getSurvivalTime());
+                    System.out.println("Position : " + e.getPositionReel());
+                }
+
+
             } else {
                 enemy.update();
             }
@@ -376,6 +383,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 System.out.println(e.getName() + " est mort !");
                 setLogs(e.getName() + " est mort. Coup dur !");
                 System.out.println("Liste des ennemis a la fin : " + enemies);
+                //On affiche le détail des ennemis
+                for (Ennemy en : enemies) {
+                    System.out.println("Ennemy : " + en.getName() + " type:" + en.getType() + " vie" + en.getHealth() + " vitesse :" + en.getSpeed() + " dégâts :" + en.getDamages() + " distance arrivée :" + en.getDistanceToArrival() + " behavior :" + en.getBehaviorString() + "survivalTime : " + en.getSurvivalTime()+"arrived : "+en.getIsArrived());
+                    //ses coordonnées
+                    System.out.println("Position : " + en.getPositionReel());
+                }
             }
         }
     }

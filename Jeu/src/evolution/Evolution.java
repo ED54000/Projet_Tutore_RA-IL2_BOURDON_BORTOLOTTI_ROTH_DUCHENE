@@ -32,13 +32,13 @@ public class Evolution {
                 //stop l'évolution
                 return null;
             }
-            //On stocke le score pour ce groupe
-            newStats.put(groupe, score);
             jeu = null;
             // Après évaluation, réaffecter les statistiques de départ
             for (Ennemy ennemies : groupe) {
                 //TODO ennemies a mettre en ennemy
-                //ennemies.setArrived(false);
+                ennemies.setArrived(false);
+                ennemies.setIsDead(false);
+
                 double[] statsStart = startStats.get(ennemies);
                 if (statsStart != null) {
                     ennemies.setHealth(statsStart[0]);
@@ -49,6 +49,8 @@ public class Evolution {
                     System.err.println("Aucune stats sauvegardée pour " + ennemies.getName());
                 }
             }
+            //On stocke le score pour ce groupe
+            newStats.put(groupe, score);
         }
         // Remplacer les anciens scores avec les nouveaux
         stats.putAll(newStats);
@@ -155,12 +157,15 @@ public class Evolution {
             // On applique une mutation sur chaque ennemy
             for (Ennemy ennemy : groupe) {
                 //TODO faire les vérif aussi pour vie et damage
-                ennemy.setHealth(mutateValue(ennemy.getHealth()));
+                //on set la vie si < 500
+                double newHealth = mutateValue(ennemy.getHealth());
+                ennemy.setHealth(newHealth > 500 ? 500 : newHealth);
                 //on set la speed si < 4
                 double newSpeed = mutateValue(ennemy.getSpeed());
                 ennemy.setSpeed(newSpeed > 4 ? 4 : newSpeed);
-                //System.out.println("Speed : "+ennemy.getSpeed());
-                ennemy.setDamages(mutateValue(ennemy.getDamages()));
+                //on set les dégâts si < 50
+                double newDamages = mutateValue(ennemy.getDamages());
+                ennemy.setDamages(newDamages > 50 ? 50 : newDamages);
                 //ennemy.setAttackSpeed(mutateValue(ennemy.getAttackSpeed()));
             }
         }
