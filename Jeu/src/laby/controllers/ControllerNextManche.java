@@ -22,20 +22,21 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         //System.out.println("Clique manche suivante");
         // On met à jour le time de départ de la manche
         laby.setStartTime();
-
+        laby.setPause(false);
         //clear les logs si on est pas en simulation
         if (!laby.getSimulation()) {
             VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
             parentVBox.getChildren().clear();
 
-            int nbManches = laby.getNbManches()+1;
-            parentVBox.getChildren().add(new Label("Manche " + nbManches));
-        }
 
-        laby.setPause(false);
-        laby.setNbManches(laby.getNbManches() + 1);
+            //laby.setLogs("Manche "+nbManches);
+            //parentVBox.getChildren().add(new Label("Manche " + nbManches));
+        }
+        int nbManches = laby.getNbManches()+1;
+        laby.setNbManches(nbManches);
         System.out.println("===========================================");
         System.out.println("Fin de la manche");
-        System.out.println("Nouvelle manche : " + laby.getNbManches());
+        System.out.println("Nouvelle manche : " + nbManches);
+        laby.setLogs("Manche "+nbManches);
     }
 }

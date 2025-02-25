@@ -46,7 +46,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Defense> deadDefenses = new ArrayList<>();
     private ArrayList<Defense> defensesEndOfManche = new ArrayList<>();
     private ArrayList<Ennemy> ennemiesEndOfManche = new ArrayList<>();
-    private ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
+    public ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
     private HashMap<Giant, Double> ennemyScore = new HashMap<>();
     private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
@@ -351,7 +351,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
         System.out.println("Le " + enemy.getName() + " est arrivé");
-        //setLogs("Le " + enemy.getName() + " est arrivé");
+        setLogs(enemy.getName());
 
         ennemiesArrived.add(enemy);
 
