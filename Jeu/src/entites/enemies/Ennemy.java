@@ -157,8 +157,6 @@ public abstract class Ennemy extends Entity {
 
     public Vector2D getVelocity() { return velocity; }
 
-    public double getMaxSpeed() { return speed; }
-
     public List<Behavior> getBehaviors() { return this.listBehaviors; }
 
     public void setBehavior(Behavior behavior) {
