@@ -4,11 +4,13 @@ import entites.defenses.*;
 import entites.enemies.*;
 import evolution.Evolution;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import moteur.Jeu;
+import moteur.MoteurJeu;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.SeekBehavior;
 import steering_astar.Steering.Vector2D;
@@ -48,7 +50,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
     private HashMap<Giant, Double> ennemyScore = new HashMap<>();
     private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
-    private int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
+    private static int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
 
 
     //si le jeu est avec le main simulation
@@ -189,7 +191,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
     }
 
-    public ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
+    public static ArrayList<Ennemy> createEnnemies(int nbEnnemies) {
         ArrayList<Ennemy> ennemies = new ArrayList<>();
         for (int i = 0; i < nbEnnemies; i++) {
             //crée un ennemi au hasard
@@ -220,7 +222,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // On sauvegarde les statistiques des ennemis
         Evolution.saveStartStats(ennemies);
-        System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
+        //System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
         Map<Ennemy, double[]> map = Evolution.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
@@ -320,6 +322,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 handleEnemyArrival(enemy);
                 enemyIterator.remove();
                 System.out.println("Liste des ennemis a la fin : " + enemies);
+                //On affiche le détail des ennemis
+                for (Ennemy e : enemies) {
+                    System.out.println("Ennemy : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehaviorString() + "survivalTime : " + e.getSurvivalTime());
+                    System.out.println("Position : " + e.getPositionReel());
+                }
+
+
             } else {
                 enemy.update();
             }
@@ -342,7 +351,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
         System.out.println("Le " + enemy.getName() + " est arrivé");
-        setLogs("Le " + enemy.getName() + " est arrivé");
+        //setLogs("Le " + enemy.getName() + " est arrivé");
 
         ennemiesArrived.add(enemy);
 
@@ -362,7 +371,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 deadDefenses.add(d);
                 defenseIterator.remove();
                 towerIsDestroyed();
-                setLogs("La défense : " + d.getName() + " à été détruite");
+                //setLogs("La défense : " + d.getName() + " à été détruite");
             }
         }
         // On retire les ennemis morts
@@ -374,8 +383,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 //enemies.remove(e);
                 enemyIterator.remove();
                 System.out.println(e.getName() + " est mort !");
-                setLogs(e.getName() + " est mort. Coup dur !");
+                //Quand l'ennemie est mort
+                setLogs(e.getName());
                 System.out.println("Liste des ennemis a la fin : " + enemies);
+                //On affiche le détail des ennemis
+                for (Ennemy en : enemies) {
+                    System.out.println("Ennemy : " + en.getName() + " type:" + en.getType() + " vie" + en.getHealth() + " vitesse :" + en.getSpeed() + " dégâts :" + en.getDamages() + " distance arrivée :" + en.getDistanceToArrival() + " behavior :" + en.getBehaviorString() + "survivalTime : " + en.getSurvivalTime()+"arrived : "+en.getIsArrived());
+                    //ses coordonnées
+                    System.out.println("Position : " + en.getPositionReel());
+                }
             }
         }
     }
@@ -385,6 +401,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
             // Tous les ennemis a portée sont soignés
             if (enemy.isInRange(enemyTarget) && !this.getPause()) {
                 enemy.healDamage(enemyTarget, enemy.getDamages(), secondes);
+                //Quand il se fait heal
+                setLogs(enemyTarget.getName());
             }
         }
     }
@@ -421,6 +439,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 if (!enemyTarget.getIsDead()) {
                     // On l'attaque
                     defense.attack(enemyTarget, secondes);
+                    // Quand il se fait attaquer normalement
+                    setLogs(enemyTarget.getName());
                 }
                 // Si l'ennemi est mort on set son killerType
                 if (enemyTarget.getIsDead() && !deadEnemies.contains(enemyTarget)) {
@@ -476,9 +496,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Et on met à jour son temps de survie
                     e.setSurvivalTime(System.currentTimeMillis() - startTime);
                 }
+                setLogs(e.getName());
                 // La défense s'autodétruit après avoir attaqué
                 defense.takeDamage(10000);
-                setLogs("La défense : " + defense.getType() + " à été détruite");
+                //setLogs("La défense : " + defense.getType() + " à été détruite");
             }
         }
     }
@@ -545,7 +566,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             char[][] copyGrid = new char[cases.length][];
             for (int i = 0; i < cases.length; i++) {
                 copyGrid[i] = cases[i].clone();
-                for (int j = 0; j < copyGrid.length; j++) {
+                for (int j = 0; j < copyGrid[i].length; j++) {
                     if (copyGrid[i][j] == 'B' || copyGrid[i][j] == 'C' || copyGrid[i][j] == 'A') {
                         copyGrid[i][j] = '.';
                     }
@@ -692,7 +713,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 copyGrid[ennemyPosY][ennemyPosX] = 'S';
                 if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
-                    ennemy.resetPathFollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX)));
+                    ennemy.setBehavior(new PathfollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX))));
                 }
             }
         }

@@ -3,7 +3,6 @@ package moteur;
 //https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 
 import entites.enemies.Ennemy;
-import evolution.EnnemyEvolution;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -12,22 +11,42 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 import laby.ModeleLabyrinth;
 
+import laby.controllers.ControllerSimpleMode;
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 
 import static laby.ModeleLabyrinth.getScreenSize;
 
@@ -43,6 +62,7 @@ public class MoteurJeu extends Application {
     private static double FPS = 100;
     private static double dureeFPS = 1000 / (FPS + 1);
 
+    private static boolean simpleMode = false;
 
     /**
      * statistiques sur les frames
@@ -91,7 +111,6 @@ public class MoteurJeu extends Application {
         MoteurJeu.jeu = laby;
     }
 
-
     //#################################
     // SURCHARGE Application
     //#################################
@@ -101,8 +120,8 @@ public class MoteurJeu extends Application {
     public void start(Stage primaryStage) throws IOException {
         // création des vues
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
-        //enregistrement des observateurs
         laby.registerObserver(viewLabyrinth);
+
         // Crée une nouvelle fenêtre (Stage)
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Labyrinthe");
@@ -114,13 +133,10 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
-        labyrinthMap.put("test1", "Ressources/Labyrinthe4.txt");
-        labyrinthMap.put("test2", "Ressources/Laby_test2.txt");
-        labyrinthMap.put("testSteering", "Ressources/Laby_testSteering.txt");
 
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "test1", "test2","testSteering");
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large","Plus");
         labyrinthComboBox.setValue("Large");
 
         // Définit "Petit" comme valeur par défaut
@@ -163,12 +179,13 @@ public class MoteurJeu extends Application {
             @Override
             public void handle(MouseEvent MouseEvent) {
                 laby.setStartTime();
+                String labyrinthString ;
                 switch (labyrinthComboBox.getValue()) {
-                    case "Petit":
+                    case "Plus" :
+                        labyrinthString = openLaby();
                         break;
-                    case "Grand":
-                        break;
-                    case "Large":
+                    default :
+                        labyrinthString = labyrinthMap.get(labyrinthComboBox.getValue());
                         break;
                 }
                 dialogStage.close();
@@ -176,7 +193,7 @@ public class MoteurJeu extends Application {
                     laby.setUseAstar(avecAstarBox.isSelected());
                     ArrayList<Ennemy> ennemies = laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
                     System.out.println("Les ennemies : " + ennemies.size());
-                    laby.creerLabyrinthe(labyrinthMap.get(labyrinthComboBox.getValue()), ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
+                    laby.creerLabyrinthe(labyrinthString, ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -206,7 +223,7 @@ public class MoteurJeu extends Application {
         VBox ContainerLogs = new VBox();
         Label title = new Label("Logs");
         title.setStyle("-fx-font-weight: bold");
-        title.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        title.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         VBox logs = new VBox();
         logs.setMinWidth(350);
@@ -238,6 +255,24 @@ public class MoteurJeu extends Application {
         root.setCenter(canvasContainer);
         //ajout des logs
         root.setRight(ContainerLogs);
+
+        // Ajout du bouton simple mode
+        // Création d'un bouton radio au top
+        ToggleButton toggleButton = new ToggleButton("Mode simple");
+        toggleButton.setOnAction(e -> {
+            if (toggleButton.isSelected()) {
+                System.out.println("Mode simple activé!");
+                enableSimpleMode(viewLabyrinth);
+                toggleButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;"); // Le bouton passe en vert pour montrer que le mode simple est activé
+            } else {
+                System.out.println("Mode simple désactivé");
+                disableSimpleMode(viewLabyrinth);
+                toggleButton.setStyle(""); // Reset au style par défaut
+            }
+        });
+        toggleButton.setOnMouseClicked(new ControllerSimpleMode(laby));
+
+        root.setTop(toggleButton);
 
         // creation de la scene
         final Scene scene = new Scene(root);
@@ -301,8 +336,161 @@ public class MoteurJeu extends Application {
         timer.start();
     }
 
-    private void createDialog(Stage primaryStage) {
+    /**
+     * Méthode permettant d'activer le mode simple
+     * @param vue vue du labyrinthe
+     */
+    public void enableSimpleMode(ViewLabyrinth vue) {
+        setSimpleMode(true);
+        // On crée les sprites Images du jeu
+        Image tree = new Image("/blackSquare.png");
+        Image tile = new Image("/whiteSquare.png");
 
+        // On applique les sprites aux cases (sol, murs)
+        Map<Character, Image> newImages = new HashMap<>();
+        for(Map.Entry<Character, Image> entry : vue.getImages().entrySet()) {
+            newImages.put(entry.getKey(), entry.getValue());
+        }
+        newImages.put(ModeleLabyrinth.TREE, tree);
+        newImages.put(ModeleLabyrinth.ROAD, tile);
+        vue.setImages(newImages);
+
+        // On applique les sprites aux ennemis
+        ArrayList<Ennemy> allEnnemies = new ArrayList<>(); // Liste des ennemis vivants et morts
+        allEnnemies.addAll(laby.enemies);
+        allEnnemies.addAll(laby.deadEnemies);
+        for (Ennemy ennemy : allEnnemies) {
+            switch (ennemy.getBehaviorString()){
+                case "Normal":
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/gray.png")));
+                    break;
+                case "Kamikaze" :
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/red.png")));
+                    break;
+                case "Healer" :
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/green.png")));
+                    break;
+                case "Fugitive" :
+                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/blue.png")));
+                    break;
+            }
+        }
     }
 
+    /**
+     * Méthode permettant de désactiver le mode simple
+     * @param vue vue du labyrinthe
+     */
+    private void disableSimpleMode(ViewLabyrinth vue) {
+        setSimpleMode(false);
+        // On crée les sprites Images du jeu
+        Image tree = new Image("/tree3.png");
+        Image tile = new Image("/tiles3.png");
+
+        // On applique les sprites aux entités
+        Map<Character, Image> newImages = new HashMap<>();
+        for(Map.Entry<Character, Image> entry : vue.getImages().entrySet()) {
+            newImages.put(entry.getKey(), entry.getValue());
+        }
+        newImages.put(ModeleLabyrinth.TREE, tree);
+        newImages.put(ModeleLabyrinth.ROAD, tile);
+        vue.setImages(newImages);
+
+        // On applique les sprites aux ennemis
+        ArrayList<Ennemy> allEnnemies = new ArrayList<>(); // Liste des ennemis vivants et morts
+        allEnnemies.addAll(laby.enemies);
+        allEnnemies.addAll(laby.deadEnemies);
+        for (Ennemy ennemy : allEnnemies) {
+            switch (ennemy.getBehaviorString()){
+                case "Normal" :
+                    ennemy.setSprite(new Image("/giant.png"));
+                    break;
+                case "Kamikaze" :
+                    ennemy.setSprite(new Image("/berserker.png"));
+                    break;
+                case "Healer" :
+                    ennemy.setSprite(new Image("/druide.png"));
+                    break;
+                case "Fugitive" :
+                    ennemy.setSprite(new Image("/ninja.png"));
+                    break;
+            }
+        }
+    }
+    private String openLaby() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Sélectionner un fichier de labyrinthe");
+        FileChooser.ExtensionFilter extFilter =
+                new FileChooser.ExtensionFilter("Fichiers texte (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.setInitialDirectory(new File("Ressources"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+            return selectedFile.getAbsolutePath();
+        } else {
+            System.err.println("Aucun fichier sélectionné, utilisation du labyrinthe par défaut");
+            return "Ressources/Labyrinthe1.txt";
+        }
+    }
+
+    public void setSimpleMode(boolean mode) {
+        simpleMode = mode;
+    }
+
+    public static boolean getSimpleMode() {
+        return simpleMode;
+    }
+
+    /**
+     * Méthode pour afficher du texte sur une image
+     * @param text Texte à afficher
+     * @param image Image sur laquelle afficher le texte
+     * @return Image avec le texte
+     */
+    public static Image addTextToImage(String text, Image image) {
+        WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        // On crée un canvas pour dessiner l'image
+        Canvas canvas = new Canvas(image.getWidth(), image.getHeight());
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        // On dessine l'image sur le canvas
+        gc.drawImage(image, 0, 0);
+
+        // On calcule la taille de la police pour que le texte soit lisible
+        double maxWidth = image.getWidth() * 0.8;
+        double maxHeight = image.getHeight() * 0.2;
+        double fontSize = 20;
+        Font font;
+        javafx.scene.text.Text tempText;
+
+        do {
+            font = new Font(fontSize);
+            tempText = new javafx.scene.text.Text(text);
+            tempText.setFont(font);
+            fontSize++;
+        } while (tempText.getLayoutBounds().getWidth() < maxWidth && tempText.getLayoutBounds().getHeight() < maxHeight);
+
+        // On réduit la taille de la police pour que le texte rentre dans l'image
+        fontSize--;
+        font = new Font(fontSize);
+        tempText.setFont(font);
+
+        // On choisit le font et la couleur
+        gc.setFont(font);
+        gc.setFill(Color.BLACK);
+
+        // On calcule la position du texte pour le centrer
+        double textWidth = tempText.getLayoutBounds().getWidth();
+        double textHeight = tempText.getLayoutBounds().getHeight();
+        double x = (image.getWidth() - textWidth) / 2;
+        double y = (image.getHeight() + textHeight) / 2;
+
+        // On dessine le texte sur le canvas
+        gc.fillText(text, x, y);
+
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        canvas.snapshot(params, writableImage);
+        return writableImage;
+    }
 }

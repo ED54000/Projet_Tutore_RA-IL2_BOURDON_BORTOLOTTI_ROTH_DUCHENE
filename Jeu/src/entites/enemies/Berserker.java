@@ -1,5 +1,7 @@
 package entites.enemies;
 
+import javafx.scene.image.Image;
+import moteur.MoteurJeu;
 import steering_astar.Steering.Vector2D;
 
 public class Berserker extends Ennemy {
@@ -11,5 +13,10 @@ public class Berserker extends Ennemy {
                 75 + (Math.random() - 0.5) * 10,
                 1000,
                 0.75, 1, name, "/berserker.png", "Kamikaze");
+
+        // Si on est en mode simple
+        if(MoteurJeu.getSimpleMode()) {
+            this.setSprite(new Image("/red.png"));
+        }
     }
 }
