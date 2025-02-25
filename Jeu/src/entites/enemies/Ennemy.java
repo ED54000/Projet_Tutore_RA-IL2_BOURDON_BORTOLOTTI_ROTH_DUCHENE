@@ -47,13 +47,13 @@ public abstract class Ennemy extends Entity {
         return astar.aStarSearch(grid, grid.length, grid[0].length,
                 startCoordinate,
                 new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()),
-                this.getBehaviorString(), 
+                this.getBehaviorString(),
                 false);
     }
 
-    public void healDamage(Ennemy target, double heal, double speedTime){
+    public void healDamage(Ennemy target, double heal, double speedTime) {
         // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
-        if(this.getLastAttackCount() >=  this.getAttackSpeed() * speedTime) {
+        if (this.getLastAttackCount() >= this.getAttackSpeed() * speedTime) {
             if (this.getAttackSpeed() <= 0) {
                 this.setAttackSpeed(1);
             }
@@ -94,24 +94,6 @@ public abstract class Ennemy extends Entity {
         position = position.add(velocity);
         positionReel = position.divide(ModeleLabyrinth.getTailleCase());
     }
-
-    public void resetPathFollowingBehavior(ArrayList<Vector2D> path) {
-        boolean found = false;
-        for (Behavior behavior : new ArrayList<>(listBehaviors)) {
-            if (behavior instanceof PathfollowingBehavior) {
-                listBehaviors.remove(behavior);
-                listBehaviors.add(new PathfollowingBehavior(path));
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            listBehaviors.add(new PathfollowingBehavior(path));
-        }
-    }
-
-
-
 
     public int getDistanceToArrival() {
         return distanceToArrival;
@@ -163,11 +145,17 @@ public abstract class Ennemy extends Entity {
 
     public Vector2D getVelocity() { return velocity; }
 
-    public double getMaxSpeed() { return speed; }
-
-    public List<Behavior> getBehaviors() { return this.listBehaviors; }
+    public List<Behavior> getListBehavior() {
+        return listBehaviors;
+    }
 
     public void setBehavior(Behavior behavior) {
+        for (Behavior b : listBehaviors) {
+            if (b instanceof PathfollowingBehavior && behavior instanceof PathfollowingBehavior) {
+                listBehaviors.remove(b);
+                break;
+            }
+        }
         this.listBehaviors.add(behavior);
     }
 
@@ -184,7 +172,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
-   //     System.out.println(vector2DS.size());
+        //     System.out.println(vector2DS.size());
         this.distanceStartToArrival = vector2DS.size();
     }
 
@@ -204,15 +192,11 @@ public abstract class Ennemy extends Entity {
         this.survivalTime = survivalTime;
     }
 
-    public void setToStart(ModeleLabyrinth modeleLabyrinth){
-        double XstartRandom =  Math.random()*1.5;
-        double YstartRandom =  Math.random()*1.5;
+    public void setToStart(ModeleLabyrinth modeleLabyrinth) {
+        double XstartRandom = Math.random() * 1.5;
+        double YstartRandom = Math.random() * 1.5;
         this.setPositionReel(new Vector2D(modeleLabyrinth.getXstart() + XstartRandom, modeleLabyrinth.getYstart() + YstartRandom));
         this.setPosition(new Vector2D(modeleLabyrinth.getXstartRender() + XstartRandom, modeleLabyrinth.getYstartRender() + YstartRandom));
-    }
-
-    public List<Behavior> getListBehavior() {
-        return listBehaviors;
     }
 }
 
