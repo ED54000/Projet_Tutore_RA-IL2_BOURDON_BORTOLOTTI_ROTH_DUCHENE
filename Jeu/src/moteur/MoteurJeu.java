@@ -442,20 +442,24 @@ public class MoteurJeu extends Application {
         return simpleMode;
     }
 
-    // Method to add text to an image
+    /**
+     * Méthode pour afficher du texte sur une image
+     * @param text Texte à afficher
+     * @param image Image sur laquelle afficher le texte
+     * @return Image avec le texte
+     */
     public static Image addTextToImage(String text, Image image) {
-        // Create a writable image
         WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        // Create a canvas to draw on
+        // On crée un canvas pour dessiner l'image
         Canvas canvas = new Canvas(image.getWidth(), image.getHeight());
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        // Draw the original image
+        // On dessine l'image sur le canvas
         gc.drawImage(image, 0, 0);
 
-        // Calculate the maximum font size that fits within the image
-        double maxWidth = image.getWidth() * 0.8; // 80% of the image width
-        double maxHeight = image.getHeight() * 0.2; // 20% of the image height
-        double fontSize = 20; // Initial font size
+        // On calcule la taille de la police pour que le texte soit lisible
+        double maxWidth = image.getWidth() * 0.8;
+        double maxHeight = image.getHeight() * 0.2;
+        double fontSize = 20;
         Font font;
         javafx.scene.text.Text tempText;
 
@@ -466,25 +470,24 @@ public class MoteurJeu extends Application {
             fontSize++;
         } while (tempText.getLayoutBounds().getWidth() < maxWidth && tempText.getLayoutBounds().getHeight() < maxHeight);
 
-        // Use the last valid font size
+        // On réduit la taille de la police pour que le texte rentre dans l'image
         fontSize--;
         font = new Font(fontSize);
         tempText.setFont(font);
 
-        // Set the font and color for the text
+        // On choisit le font et la couleur
         gc.setFont(font);
         gc.setFill(Color.BLACK);
 
-        // Calculate the position to center the text
+        // On calcule la position du texte pour le centrer
         double textWidth = tempText.getLayoutBounds().getWidth();
         double textHeight = tempText.getLayoutBounds().getHeight();
         double x = (image.getWidth() - textWidth) / 2;
         double y = (image.getHeight() + textHeight) / 2;
 
-        // Draw the text on the image
+        // On dessine le texte sur le canvas
         gc.fillText(text, x, y);
 
-        // Capture the canvas content into the writable image
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
         canvas.snapshot(params, writableImage);
