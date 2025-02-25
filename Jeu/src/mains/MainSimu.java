@@ -45,7 +45,7 @@ public class MainSimu extends Application {
                 Evolution evolution = new Evolution();
                 stats = evolution.evaluate(stats);
                 if (stats == null) {
-                    System.out.println("Les ennemies ont gagé la partie");
+                    System.out.println("Les ennemies ont gagné la partie");
                     writer.write("Les ennemies ont gagné la partie");
                     //arrête le programme
                     break;
