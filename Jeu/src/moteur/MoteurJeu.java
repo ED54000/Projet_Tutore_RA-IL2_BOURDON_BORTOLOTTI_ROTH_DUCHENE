@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
 
 import laby.controllers.ControllerSimpleMode;
+import laby.views.ViewGraphique;
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
@@ -248,9 +249,11 @@ public class MoteurJeu extends Application {
         // création des vues
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
         ViewLogs viewLogs = new ViewLogs(laby, ContainerLogs);
+        ViewGraphique viewGraphique = new ViewGraphique(laby);
         //enregistrement des observateurs
         laby.registerObserver(viewLabyrinth);
         laby.registerObserver(viewLogs);
+        laby.registerObserver(viewGraphique);
 
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);

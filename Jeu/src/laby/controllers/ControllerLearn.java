@@ -26,9 +26,11 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
     ModeleLabyrinth laby;
     ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
+    ControllerGraphique controllerGraphique;
 
     public ControllerLearn(ModeleLabyrinth laby) {
         this.laby = laby;
+        this.controllerGraphique = new ControllerGraphique(laby);
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             stats.put(groupe, 0.0);
         }
 
-        //Création d'une liste des ennemies de cette partie tout neuf
+        double score = evolution.getScore(laby.getEnnemyEndOfManche());
         ArrayList<Ennemy> copieGroupe = new ArrayList<>();
         for (Ennemy ennemy : laby.getEnnemyEndOfManche()) {
             refreshEnnemiesAndAdd(ennemy, laby, copieGroupe);
@@ -63,18 +65,21 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
         try {
             stats = evolution.evaluate(stats);
-            stats.put(copieGroupe, evolution.getScore(laby.getEnnemyEndOfManche()));
+            System.out.println("Stats : "+stats);
+            stats.put(copieGroupe, score);
             groupes = evolution.evolve(stats);
+            System.out.println("Groupe Après l'évolution : "+groupes);
             laby.enemies = groupes.get(0);
-            System.out.println("Après l'évolution");
-            for (Ennemy ennemy : laby.enemies) {
-                System.out.println(ennemy.getName() + " : " + ennemy.getHealth() + " " + ennemy.getDamages() + " " + ennemy.getSpeed());
-            }
+            //System.out.println("Après l'évolution");
+            //for (Ennemy ennemy : laby.enemies) {
+            //    System.out.println(ennemy.getName() + " : " + ennemy.getHealth() + " " + ennemy.getDamages() + " " + ennemy.getSpeed());
+            //}
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        //on crée ennemisParType
+        //on affiche les détails de l'évolution
+        // on sépare les ennemis par type pour les afficher
         Map<Class<? extends Ennemy>, List<Ennemy>> ennemisParType = laby.enemies.stream()
                 .collect(Collectors.groupingBy(Ennemy::getClass));
 
@@ -138,7 +143,29 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                     nextManche.setStyle(nextManche.getStyle() + "-fx-background-color: #4CAF50;"));
 
             nextManche.setOnMouseClicked(new ControllerNextManche(laby));
-            parentVBox.getChildren().add(nextManche);
+
+            //Boutton pour les graphiques
+            Button graphiques = new Button("Graphiques");
+            graphiques.setStyle("""
+                -fx-background-color: #4CAF50;
+                -fx-text-fill: white;
+                -fx-font-size: 11px;
+                -fx-padding: 3 10;
+                -fx-background-radius: 3;
+                -fx-cursor: hand;
+            """);
+
+            graphiques.setOnMouseEntered(e ->
+                    nextManche.setStyle(nextManche.getStyle() + "-fx-background-color: #45a049;"));
+            graphiques.setOnMouseExited(e ->
+                    nextManche.setStyle(nextManche.getStyle() + "-fx-background-color: #4CAF50;"));
+
+            //On récupère le score du meilleur groupe
+            double bestScore = stats.get(laby.enemies);
+            controllerGraphique.setScore(bestScore);
+            graphiques.setOnMouseClicked(controllerGraphique);
+
+            parentVBox.getChildren().addAll(nextManche, graphiques);
             ModeleLabyrinth.setLogs("");
         }
 
@@ -201,6 +228,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
         for (Ennemy e : laby.enemies) {
             e.setLastAttackCount(0);
+            e.setSurvivalTime(0);
             ArrayList<Vector2D> newPathToFollow;
             if (e.getBehaviorString().equals("Healer")) {
                 newPathToFollow = laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja);
@@ -218,8 +246,6 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
 
         }
-
-
 
         // On sauvegarde les statistiques des ennemis
         EnnemyEvolution.saveStartStats(laby.enemies);

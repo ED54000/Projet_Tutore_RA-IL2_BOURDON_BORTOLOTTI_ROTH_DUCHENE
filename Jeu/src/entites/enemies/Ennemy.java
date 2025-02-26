@@ -21,7 +21,7 @@ public abstract class Ennemy extends Entity {
     private static int timeSpawn = 0;
     private String behaviorString;
     private boolean isArrived;
-    private long survivalTime;
+    private long survivalTime = 0;
     private Vector2D positionReel;
     private Vector2D velocity;
     private final double healthBase;
