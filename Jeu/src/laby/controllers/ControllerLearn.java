@@ -46,7 +46,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         Evolution evolution = new Evolution();
         if (laby.getNbManches()<2){
             // nombre de groupes
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 30; i++) {
                 groupes.add(laby.createEnnemies(laby.getEnnemyEndOfManche().size()));
             }
         }
@@ -66,7 +66,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         try {
             laby.setSimulationEvolution(true);
             stats = evolution.evaluate(stats);
-            stats.put(copieGroupe, evolution.getScore(laby.getEnnemyEndOfManche()));
+            stats.put(copieGroupe, score);
             groupes = evolution.evolve(stats);
             laby.setSimulationEvolution(false);
             laby.enemies = groupes.get(0);
@@ -228,7 +228,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
         for (Ennemy e : laby.enemies) {
             e.setLastAttackCount(0);
-            e.setSurvivalTime(0);
+            e.setSurvivalTime(0); // TODO : a vérifier
             ArrayList<Vector2D> newPathToFollow;
             if (e.getBehaviorString().equals("Healer")) {
                 newPathToFollow = laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja);

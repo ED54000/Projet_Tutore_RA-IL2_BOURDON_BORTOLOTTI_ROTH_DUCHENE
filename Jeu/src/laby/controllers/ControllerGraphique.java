@@ -1,33 +1,53 @@
 package laby.controllers;
 
+import entites.enemies.Ennemy;
+import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import laby.ModeleLabyrinth;
+import laby.views.ViewGraphique;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class ControllerGraphique implements javafx.event.EventHandler<MouseEvent> {
+public class ControllerGraphique implements EventHandler<MouseEvent> {
 
-    private final ModeleLabyrinth laby;
-    private double score = 0;
-    private final HashMap<String, List<Double>> donnees;
+    ModeleLabyrinth laby;
+    double score = 0;
+    HashMap<String, List<Double>> donnees;
+    int manche = 0;  // Comptabilise le nombre de manches
 
     public ControllerGraphique(ModeleLabyrinth laby) {
         this.laby = laby;
         this.donnees = new HashMap<>();
-        this.donnees.put("Score du groupe", new ArrayList<>());
     }
 
     @Override
     public void handle(MouseEvent mouseEvent) {
-        // Récupérer la liste actuelle des scores et ajouter le nouveau score
-        List<Double> scores = donnees.get("Score du groupe");
-        scores.add(score);  // On ajoute le score actuel à la liste
 
-        // Mettre à jour les données du graphique
+        // Grouper les ennemis par type
+        Map<Class<? extends Ennemy>, List<Ennemy>> ennemisParType = laby.enemies.stream()
+                .collect(Collectors.groupingBy(Ennemy::getClass));
+
+        // Mettre à jour les données pour chaque type d'ennemi
+        for (Map.Entry<Class<? extends Ennemy>, List<Ennemy>> entry : ennemisParType.entrySet()) {
+            String nomType = entry.getKey().getSimpleName();  // Utilise le nom de la classe pour le nom de la courbe
+
+            // Si la courbe n'existe pas encore, on la crée
+            if (!donnees.containsKey(nomType)) {
+                donnees.put(nomType, new ArrayList<>());
+            }
+
+            // Ajouter le nombre d'ennemis de ce type pour cette manche
+            donnees.get(nomType).add((double) entry.getValue().size());
+        }
+
+        // Mise à jour du graphique avec les nouvelles données
         laby.setDonneesGraphique(donnees);
+
+        // Incrémenter le nombre de manches
+        manche++;
+
+        // Afficher la vue du graphique
         laby.setGraphique(true);
     }
 
