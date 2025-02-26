@@ -444,7 +444,7 @@ public class MoteurJeu extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.drawImage(image, 0, 0);
 
-        // Calculate a dynamic font size based on the image height
+        // calcule la taille du texte en fonction de la taille de l'image
         double fontSize = image.getHeight() / 5; // Adjust the divisor as needed
         Font font = Font.font("Arial", FontWeight.BOLD, fontSize);
         javafx.scene.text.Text tempText = new javafx.scene.text.Text(text);
@@ -453,16 +453,16 @@ public class MoteurJeu extends Application {
         gc.setFont(font);
         gc.setFill(Color.WHITE);
 
-        // Calculate the position to center the text
+        // calcule la position du texte (au centre)
         double textWidth = tempText.getLayoutBounds().getWidth();
         double textHeight = tempText.getLayoutBounds().getHeight();
         double x = (image.getWidth() - textWidth) / 2;
         double y = (image.getHeight() + textHeight) / 2;
 
-        // Draw the text on the image
+        // dessine le texte sur l'image
         gc.fillText(text, x, y);
 
-        // Capture the canvas content into the writable image
+        // capture le canvas dans l'image
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
         canvas.snapshot(params, writableImage);
