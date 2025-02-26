@@ -1,6 +1,7 @@
 package entites.enemies;
 
 import entites.Entity;
+import javafx.scene.image.Image;
 import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
 import steering_astar.Astar.Astar;
@@ -26,10 +27,15 @@ public abstract class Ennemy extends Entity {
     private Vector2D velocity;
     private final double healthBase;
     private List<Behavior> listBehaviors = new ArrayList<>();
+    private boolean isHeal;
+    private Image spriteHeal = null;
 
     public Ennemy(Vector2D position, double health, double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
         super(position, damages, range, sprite, health, name, attackSpeed);
         this.speed = speed;
+        if (!ModeleLabyrinth.getSimulation()) {
+            this.spriteHeal = new Image(sprite+"_heal.png");
+        }
         this.healthBase = health;
         //this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         this.distanceToArrival = distanceToArrival;
@@ -67,6 +73,8 @@ public abstract class Ennemy extends Entity {
                 if(MoteurJeu.getSimpleMode()) {
                     // On met à jour le sprite de l'ennemi (sa vie)
                     ModeleLabyrinth.updateSprite(target);
+                }else {
+                    target.setIsHeal(true);
                 }
                 System.out.println("Soin de " + this.getName() + " sur " + target.getName());
                 System.out.println("Montant de soin : " + Math.abs(heal));
@@ -197,6 +205,18 @@ public abstract class Ennemy extends Entity {
         double YstartRandom = Math.random() * 1.5;
         this.setPositionReel(new Vector2D(modeleLabyrinth.getXstart() + XstartRandom, modeleLabyrinth.getYstart() + YstartRandom));
         this.setPosition(new Vector2D(modeleLabyrinth.getXstartRender() + XstartRandom, modeleLabyrinth.getYstartRender() + YstartRandom));
+    }
+
+    public boolean getIsHeal() {
+        return isHeal;
+    }
+
+    public void setIsHeal(boolean heal) {
+        isHeal = heal;
+    }
+
+    public Image getSpriteHeal() {
+        return spriteHeal;
     }
 }
 

@@ -12,7 +12,7 @@ public class Berserker extends Ennemy {
                 1.75 + (Math.random() - 0.5),
                 75 + (Math.random() - 0.5) * 10,
                 1000,
-                0.75, 1, name, "/berserker.png", "Kamikaze");
+                0.75, 1, name, "/berserker", "Kamikaze");
 
         // Si on est en mode simple
         if(MoteurJeu.getSimpleMode()) {

@@ -2,14 +2,13 @@ package laby.views;
 
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
@@ -20,9 +19,6 @@ import steering_astar.Steering.Vector2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.text.Element;
-import javax.swing.text.html.ImageView;
 
 import static laby.ModeleLabyrinth.getTailleCase;
 
@@ -37,8 +33,8 @@ public class ViewLabyrinth implements Observer {
         this.canvas = canvas;
 
         // Chargement des images
-        images.put(ModeleLabyrinth.TREE, new Image("/tree3.png"));
-        images.put(ModeleLabyrinth.ROAD, new Image("/tiles3.png"));
+        images.put(ModeleLabyrinth.TREE, new Image("tree3.png"));
+        images.put(ModeleLabyrinth.ROAD, new Image("tiles3.png"));
     }
 
     @Override
@@ -77,9 +73,19 @@ public class ViewLabyrinth implements Observer {
         // Dessin des défenses
         for (Defense defense : laby.defenses) {
             Image spriteDefense = defense.getImage();
-            if (defense.isHit()){
-                applyRedFilter(spriteDefense);
+            if (defense.getIsHit()) {
+                spriteDefense = defense.getSpriteHit();
+                Timeline timeline = new Timeline(new KeyFrame(
+                        Duration.millis(500),
+                        ae -> {
+                            defense.setSprite(defense.getImage());
+                            defense.setIsHit(false);
+                        }
+                ));
+                timeline.setCycleCount(1);
+                timeline.play();
             }
+
             double x = defense.getPosition().getX() * getTailleCase() - getTailleCase() / 2.0;
             double y = defense.getPosition().getY() * getTailleCase() - getTailleCase() / 2.0;
 
@@ -120,7 +126,7 @@ public class ViewLabyrinth implements Observer {
         Color colorPath = Color.rgb(15, 175, 252);
         for (Ennemy ennemi : laby.enemies) {
             ArrayList<Vector2D> path = new ArrayList<>();
-            if(ModeleLabyrinth.getLabyrinth().getUseAstar()){
+            if (ModeleLabyrinth.getLabyrinth().getUseAstar()) {
                 path = ennemi.calculerChemin(ModeleLabyrinth.getCases(), ModeleLabyrinth.getStart());
             }
             renderEnnemi(gc, ennemi, path, colorPath);
@@ -175,7 +181,7 @@ public class ViewLabyrinth implements Observer {
 
         // vélocité de l'ennemi
         // Si on est en mode simple, on ne dessine pas la vélocité de l'ennemi
-        if(!MoteurJeu.getSimpleMode()) {
+        if (!MoteurJeu.getSimpleMode()) {
             gc.setFill(Color.RED);
             gc.setStroke(Color.RED);
             double xCoord = xCoordEnnemi + xCoordVelocity * velocityPointMultiplier;
@@ -187,55 +193,63 @@ public class ViewLabyrinth implements Observer {
         Image image = ennemi.getImage();
 
         // Si l'ennemi est touché on met l'image en rouge
-        if (ennemi.isHit()){
-            image = applyRedFilter(image);
-        }
-
-        // ennemi
-        gc.drawImage(image,
-                xCoordEnnemi - getTailleCase() / 2.0,
-                yCoordEnnemi - getTailleCase() / 2.0,
-                getTailleCase(), getTailleCase());
-
-
-
-        // range des ennemis
-        // Si on est en mode simple, on ne dessine pas la range des ennemis
-        if(!MoteurJeu.getSimpleMode()){
-            gc.setStroke(Color.BLACK);
-            gc.strokeOval(xCoordEnnemi - range, yCoordEnnemi - range, 2 * range, 2 * range);
-        }
-    }
-
-    public void setImages(Map<Character, Image> newImages) {
-        images.clear();
-        images.putAll(newImages);
-    }
-
-    public Map<Character, Image> getImages() {return images;}
-    private Image applyRedFilter(Image originalImage) {
-        int width = (int) originalImage.getWidth();
-        int height = (int) originalImage.getHeight();
-        WritableImage redFilteredImage = new WritableImage(width, height);
-
-        PixelReader pixelReader = originalImage.getPixelReader();
-        PixelWriter pixelWriter = redFilteredImage.getPixelWriter();
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Color originalColor = pixelReader.getColor(x, y);
-
-                // Mélange la couleur originale avec du rouge
-                double red = Math.min(1.0, originalColor.getRed() + 0.5); // Augmente le rouge
-                double green = originalColor.getGreen() * 0.5; // Diminue le vert
-                double blue = originalColor.getBlue() * 0.5; // Diminue le bleu
-
-                Color newColor = new Color(red, green, blue, originalColor.getOpacity());
-                pixelWriter.setColor(x, y, newColor);
+        if (!MoteurJeu.getSimpleMode()){
+            if (ennemi.getIsHit()) {
+                image = ennemi.getSpriteHit();
+                // Utiliser un Timeline pour réinitialiser l'image après un certain délai
+                Timeline timeline = new Timeline(new KeyFrame(
+                        Duration.millis(500), // Durée pendant laquelle l'image reste rouge
+                        ae -> {
+                            ennemi.setSprite(ennemi.getImage()); // Réinitialise l'image de l'ennemi
+                            ennemi.setIsHit(false);
+                        }
+                ));
+                timeline.setCycleCount(1);
+                timeline.play();
             }
-        }
-        return redFilteredImage;
+            if (ennemi.getIsHeal()) {
+                image = ennemi.getSpriteHeal();
+                // Utiliser un Timeline pour réinitialiser l'image après un certain délai
+                Timeline timeline = new Timeline(new KeyFrame(
+                        Duration.millis(500), // Durée pendant laquelle l'image reste rouge
+                        ae -> {
+                            ennemi.setSprite(ennemi.getImage()); // Réinitialise l'image de l'ennemi
+                            ennemi.setIsHeal(false);
+                        }
+                ));
+                timeline.setCycleCount(1);
+                timeline.play();
+            }
+
     }
+    // ennemi
+        gc.drawImage(image,
+    xCoordEnnemi -
+
+    getTailleCase() /2.0,
+    yCoordEnnemi -
+
+    getTailleCase() /2.0,
+
+    getTailleCase(),getTailleCase());
 
 
+    // range des ennemis
+    // Si on est en mode simple, on ne dessine pas la range des ennemis
+        if(!MoteurJeu.getSimpleMode())
+
+    {
+        gc.setStroke(Color.BLACK);
+        gc.strokeOval(xCoordEnnemi - range, yCoordEnnemi - range, 2 * range, 2 * range);
+    }
+}
+
+public void setImages(Map<Character, Image> newImages) {
+    images.clear();
+    images.putAll(newImages);
+}
+
+public Map<Character, Image> getImages() {
+    return images;
+}
 }

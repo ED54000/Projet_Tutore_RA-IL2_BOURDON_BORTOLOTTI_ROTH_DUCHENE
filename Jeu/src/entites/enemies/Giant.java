@@ -12,7 +12,7 @@ public class Giant extends Ennemy {
                 1.33 + (Math.random() - 0.5),
                 30 + (Math.random() - 0.5) * 10,
                 500,
-                1.5, 1, name,"/giant.png", "Normal");
+                1.5, 1, name,"/giant", "Normal");
 
         // Si on est en mode simple
         if(MoteurJeu.getSimpleMode()) {

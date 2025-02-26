@@ -45,7 +45,7 @@ public class ViewLogs implements Observer {
         if (!laby.getLogs().isEmpty()) {
             Label label = new Label(laby.getLogs());
 
-            System.out.println("Logs : " + laby.getLogs());
+         // System.out.println("Logs : " + laby.getLogs());
 
             // Style de base pour tous les logs
             String baseStyle = """

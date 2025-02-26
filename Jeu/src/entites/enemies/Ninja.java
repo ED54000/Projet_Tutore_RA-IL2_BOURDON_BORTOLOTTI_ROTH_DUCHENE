@@ -12,7 +12,7 @@ public class Ninja extends Ennemy{
                 2.5 + (Math.random() - 0.5),
                 50 + (Math.random() - 0.5) * 10,
                 700,
-                0.35, 1, name,"/ninja.png", "Fugitive");
+                0.35, 1, name,"/ninja", "Fugitive");
 
         // Si on est en mode simple
         if(MoteurJeu.getSimpleMode()) {

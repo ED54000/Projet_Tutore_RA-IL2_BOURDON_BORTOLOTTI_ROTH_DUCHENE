@@ -15,6 +15,7 @@ public abstract class Entity {
     private double damages;
     private double range;
     private Image sprite = null;
+    private Image spriteHit = null;
     protected double health;
     private boolean isDead = false;
     private String name;
@@ -28,7 +29,8 @@ public abstract class Entity {
         this.damages = damages;
         this.range = range;
         if (!ModeleLabyrinth.getSimulation()) {
-            this.sprite = new Image(sprite);
+            this.sprite = new Image(sprite+".png");
+            this.spriteHit = new Image(sprite+"_hit.png");
         }
         this.health = health;
         this.name = name;
@@ -85,11 +87,10 @@ public abstract class Entity {
 
     /**
      * Prendre des dégâts
-     *
      * @param damage les dégâts à prendre
      */
     public void takeDamage(double damage) {
-        this.setHit(true);
+        this.setIsHit(true);
         health -= Math.abs(damage);
         if (this.health <= 0) {
             isDead = true;
@@ -188,6 +189,10 @@ public abstract class Entity {
         return sprite;
     }
 
+    public Image getSpriteHit() {
+        return spriteHit;
+    }
+
     public double getHealth() {
         return this.health;
     }
@@ -232,16 +237,12 @@ public abstract class Entity {
         this.sprite = (Image) o;
     }
 
-    public boolean isHit() {
+    public boolean getIsHit() {
         return isHit;
     }
 
-    public void setHit(boolean hit) {
-        isHit = hit;
-        if (hit) {
-            Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500), event -> this.isHit = false));
-            timeline.setCycleCount(1);
-            timeline.play();
-        }
+    public void setIsHit(boolean hit) {
+        this.isHit = hit;
     }
+
 }
