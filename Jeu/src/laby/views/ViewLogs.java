@@ -34,7 +34,7 @@ public class ViewLogs implements Observer {
         this.vbox = (VBox) scrollPane.getContent();
 
 
-        ennemiesBox = new VBox();
+        //ennemiesBox = new VBox();
         ennemiesLabels = new HashMap<>();
 
         //this.logs.getChildren().add(ennemiesBox);
@@ -44,8 +44,6 @@ public class ViewLogs implements Observer {
     public void update(Subject s) {
         if (!laby.getLogs().isEmpty()) {
             Label label = new Label(laby.getLogs());
-
-         // System.out.println("Logs : " + laby.getLogs());
 
             // Style de base pour tous les logs
             String baseStyle = """
@@ -57,21 +55,14 @@ public class ViewLogs implements Observer {
             -fx-font-family: 'Segoe UI', sans-serif;
             -fx-font-size: 11px;
         """;
-
-
             label.setStyle(baseStyle);
-
             label.setMaxWidth(Double.MAX_VALUE);
-
-
             vbox.setStyle("""
             -fx-background-color: #f5f5f5;
             -fx-padding: 5;
             -fx-spacing: 3;
         """);
             //vbox.getChildren().add(label);
-
-
             scrollPane.setStyle("""
             -fx-background: #f5f5f5;
             -fx-background-color: transparent;
@@ -104,7 +95,7 @@ public class ViewLogs implements Observer {
                 button.setOnMouseClicked(controllerLearn);
                 vbox.getChildren().addAll(label, button);
             } else if (laby.getLogs().matches("Manche \\d+")) {
-                System.out.println("YALLA");
+                ennemiesBox = new VBox();
                 vbox.getChildren().add(label);
                 // Initialisation de la liste des labels des ennemis
                 for (Ennemy ennemy : laby.enemies) {
@@ -125,7 +116,7 @@ public class ViewLogs implements Observer {
             } else {
                 mettreAJourEnnemies(label.getText());
             }
-            laby.setLogs("");
+            ModeleLabyrinth.setLogs("");
         }
     }
 
@@ -188,7 +179,8 @@ public class ViewLogs implements Observer {
     private String formatterEnnemy(Ennemy ennemy) {
         // Retourne uniquement le texte sans style CSS
         StringBuilder info = new StringBuilder();
-        info.append(ennemy.getName()).append(" - Vie : ").append(String.format("%.2f", ennemy.getHealth()));
+        //Le bloc de code si l'on veut afficher la vie aussi quand l'ennemi est mort
+        /*info.append(ennemy.getName()).append(" - Vie : ").append(String.format("%.2f", ennemy.getHealth()));
 
         // Ajouter d'autres informations si nécessaires
         if (ennemy.getIsDead()) {
@@ -196,8 +188,17 @@ public class ViewLogs implements Observer {
         } else if (ennemy.getIsArrived()) {
             info.append(" (Arrivé)");
         }
-
+         */
+        info.append(ennemy.getName());
+        // Ajouter les informations sur la vie uniquement si l'ennemi n'est pas mort
+        if (ennemy.getIsDead()) {
+            info.append(" (Mort)");
+        } else if (ennemy.getIsArrived()) {
+            info.append(" - Vie : ").append(String.format("%.2f", ennemy.getHealth()));
+            info.append(" (Arrivé)");
+        } else {
+            info.append(" - Vie : ").append(String.format("%.2f", ennemy.getHealth()));
+        }
         return info.toString();
     }
-
 }

@@ -27,8 +27,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         if (!laby.getSimulation()) {
             VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
             parentVBox.getChildren().clear();
-
-
             //laby.setLogs("Manche "+nbManches);
             //parentVBox.getChildren().add(new Label("Manche " + nbManches));
         }
@@ -37,6 +35,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         System.out.println("===========================================");
         System.out.println("Fin de la manche");
         System.out.println("Nouvelle manche : " + nbManches);
-        laby.setLogs("Manche "+nbManches);
+        ModeleLabyrinth.setLogs("Manche "+nbManches);
     }
 }
