@@ -63,6 +63,7 @@ public abstract class Ennemy extends Entity {
             if (target.health + Math.abs(heal) <= target.healthBase) {
                 // On heal
                 target.health += Math.abs(heal);
+                ModeleLabyrinth.setLogs(target.getName());
                 // Si le jeu est en mode simple
                 if(MoteurJeu.getSimpleMode()) {
                     // On met à jour le sprite de l'ennemi (sa vie)

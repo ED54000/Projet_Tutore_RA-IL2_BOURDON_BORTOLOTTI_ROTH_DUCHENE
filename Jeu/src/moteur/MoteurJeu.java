@@ -230,7 +230,7 @@ public class MoteurJeu extends Application {
         logs.setPrefWidth(getScreenSize().width/7.0);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
-        laby.setLogs("Manche 1");
+        ModeleLabyrinth.setLogs("Manche 1");
         //logs.getChildren().add(new Label("Manche 1"));
 
         //Ajout d'un scrollPane

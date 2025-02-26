@@ -68,7 +68,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private static int XArrival, YArrival, Xstart, Ystart;
     private ArrayList<Observer> observateurs;
 
-    private String logs = "";
+    private static String logs = "";
 
     private boolean pause = false;
     private boolean end = false;
@@ -402,7 +402,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (enemy.isInRange(enemyTarget) && !this.getPause()) {
                 enemy.healDamage(enemyTarget, enemy.getDamages(), secondes);
                 //Quand il se fait heal
-                setLogs(enemyTarget.getName());
+                //setLogs(enemyTarget.getName());
             }
         }
     }
@@ -885,7 +885,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return logs;
     }
 
-    public void setLogs(String log) {
+    public static void setLogs(String log) {
         logs = log;
     }
 
