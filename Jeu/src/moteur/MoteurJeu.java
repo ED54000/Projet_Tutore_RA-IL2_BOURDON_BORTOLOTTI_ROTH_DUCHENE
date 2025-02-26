@@ -445,7 +445,7 @@ public class MoteurJeu extends Application {
         gc.drawImage(image, 0, 0);
 
         // calcule la taille du texte en fonction de la taille de l'image
-        double fontSize = image.getHeight() / 5; // Adjust the divisor as needed
+        double fontSize = image.getHeight() / 5; // ajuste la taille de la police en fonction de la taille de l'image
         Font font = Font.font("Arial", FontWeight.BOLD, fontSize);
         javafx.scene.text.Text tempText = new javafx.scene.text.Text(text);
         tempText.setFont(font);
