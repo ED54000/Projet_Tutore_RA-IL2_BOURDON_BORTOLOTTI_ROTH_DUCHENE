@@ -4,7 +4,11 @@ import entites.defenses.Defense;
 import entites.enemies.Ennemy;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import laby.ModeleLabyrinth;
 import laby.Observer;
@@ -16,6 +20,9 @@ import steering_astar.Steering.Vector2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.text.Element;
+import javax.swing.text.html.ImageView;
 
 import static laby.ModeleLabyrinth.getTailleCase;
 
@@ -69,25 +76,29 @@ public class ViewLabyrinth implements Observer {
 
         // Dessin des défenses
         for (Defense defense : laby.defenses) {
+            Image spriteDefense = defense.getImage();
+            if (defense.isHit()){
+                applyRedFilter(spriteDefense);
+            }
             double x = defense.getPosition().getX() * getTailleCase() - getTailleCase() / 2.0;
             double y = defense.getPosition().getY() * getTailleCase() - getTailleCase() / 2.0;
 
             if (defense instanceof entites.defenses.Canon) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 if (!defense.getIsDead()) {
-                    gc.drawImage(defense.getImage(), x, y, getTailleCase(), getTailleCase());
+                    gc.drawImage(spriteDefense, x, y, getTailleCase(), getTailleCase());
                 }
             }
             if (defense instanceof entites.defenses.Archer) {
                 gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
                 if (!defense.getIsDead()) {
-                    gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
+                    gc.drawImage(spriteDefense, x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
             }
             if (defense instanceof entites.defenses.Bomb) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 if (!defense.getIsDead()) {
-                    gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
+                    gc.drawImage(spriteDefense, x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
             }
 
@@ -175,11 +186,18 @@ public class ViewLabyrinth implements Observer {
 
         Image image = ennemi.getImage();
 
+        // Si l'ennemi est touché on met l'image en rouge
+        if (ennemi.isHit()){
+            image = applyRedFilter(image);
+        }
+
         // ennemi
         gc.drawImage(image,
                 xCoordEnnemi - getTailleCase() / 2.0,
                 yCoordEnnemi - getTailleCase() / 2.0,
                 getTailleCase(), getTailleCase());
+
+
 
         // range des ennemis
         // Si on est en mode simple, on ne dessine pas la range des ennemis
@@ -195,4 +213,29 @@ public class ViewLabyrinth implements Observer {
     }
 
     public Map<Character, Image> getImages() {return images;}
+    private Image applyRedFilter(Image originalImage) {
+        int width = (int) originalImage.getWidth();
+        int height = (int) originalImage.getHeight();
+        WritableImage redFilteredImage = new WritableImage(width, height);
+
+        PixelReader pixelReader = originalImage.getPixelReader();
+        PixelWriter pixelWriter = redFilteredImage.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color originalColor = pixelReader.getColor(x, y);
+
+                // Mélange la couleur originale avec du rouge
+                double red = Math.min(1.0, originalColor.getRed() + 0.5); // Augmente le rouge
+                double green = originalColor.getGreen() * 0.5; // Diminue le vert
+                double blue = originalColor.getBlue() * 0.5; // Diminue le bleu
+
+                Color newColor = new Color(red, green, blue, originalColor.getOpacity());
+                pixelWriter.setColor(x, y, newColor);
+            }
+        }
+        return redFilteredImage;
+    }
+
+
 }
