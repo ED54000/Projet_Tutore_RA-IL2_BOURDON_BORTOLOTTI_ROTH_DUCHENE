@@ -1,0 +1,50 @@
+@startuml
+
+skinparam sequenceMessageAlign center
+
+participant "ModeleLabyrinthe: laby" as m
+participant "Entity: e1" as e1
+participant "Entity: e2" as e2
+participant "ViewLabyrinthe: laby" as v
+participant "Image: entitySprite" as i
+
+activate m
+m -> e1 : updateCombat()
+
+activate e1
+e1 -> e1 : attack(e2, damage)
+note right of e1
+    isHitting = true
+end note
+
+e1 -> e2 : takeDamage(damage)
+activate e2
+note right of e2
+    isHit = true
+end note
+e1 <- e2 : void
+deactivate e2
+
+m <- e1 : void
+deactivate e1
+
+m -> v : notifyObserver()
+activate v
+v -> v : renderEnnemi()
+
+v -> i : applyFilter()
+activate i
+note right of i
+    on applique un filtre selon
+    l'interaction actuelle de l'entité
+    (attaque, dégâts subis)
+end note
+v <- i : void
+deactivate i
+
+v <- v : void
+m <- v : void
+deactivate v
+deactivate m
+
+@enduml
