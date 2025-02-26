@@ -25,6 +25,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -47,8 +48,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import javax.imageio.ImageIO;
-
 import static laby.ModeleLabyrinth.getScreenSize;
 
 
@@ -263,18 +262,8 @@ public class MoteurJeu extends Application {
         // Ajout du bouton simple mode
         // Création d'un bouton radio au top
         ToggleButton toggleButton = new ToggleButton("Mode simple");
-        toggleButton.setOnAction(e -> {
-            if (toggleButton.isSelected()) {
-                System.out.println("Mode simple activé!");
-                enableSimpleMode(viewLabyrinth);
-                toggleButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;"); // Le bouton passe en vert pour montrer que le mode simple est activé
-            } else {
-                System.out.println("Mode simple désactivé");
-                disableSimpleMode(viewLabyrinth);
-                toggleButton.setStyle(""); // Reset au style par défaut
-            }
-        });
-        toggleButton.setOnMouseClicked(new ControllerSimpleMode(laby));
+        ControllerSimpleMode controllerSimpleMode = new ControllerSimpleMode(laby, viewLabyrinth, toggleButton);
+        toggleButton.setOnMouseClicked(controllerSimpleMode);
 
         root.setTop(toggleButton);
 
@@ -385,7 +374,7 @@ public class MoteurJeu extends Application {
      * Méthode permettant de désactiver le mode simple
      * @param vue vue du labyrinthe
      */
-    private void disableSimpleMode(ViewLabyrinth vue) {
+    public void disableSimpleMode(ViewLabyrinth vue) {
         setSimpleMode(false);
         // On crée les sprites Images du jeu
         Image tree = new Image("/tree3.png");
@@ -454,44 +443,29 @@ public class MoteurJeu extends Application {
      */
     public static Image addTextToImage(String text, Image image) {
         WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        // On crée un canvas pour dessiner l'image
         Canvas canvas = new Canvas(image.getWidth(), image.getHeight());
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        // On dessine l'image sur le canvas
         gc.drawImage(image, 0, 0);
 
-        // On calcule la taille de la police pour que le texte soit lisible
-        double maxWidth = image.getWidth() * 0.8;
-        double maxHeight = image.getHeight() * 0.2;
-        double fontSize = 20;
-        Font font;
-        javafx.scene.text.Text tempText;
-
-        do {
-            font = new Font(fontSize);
-            tempText = new javafx.scene.text.Text(text);
-            tempText.setFont(font);
-            fontSize++;
-        } while (tempText.getLayoutBounds().getWidth() < maxWidth && tempText.getLayoutBounds().getHeight() < maxHeight);
-
-        // On réduit la taille de la police pour que le texte rentre dans l'image
-        fontSize--;
-        font = new Font(fontSize);
+        // calcule la taille du texte en fonction de la taille de l'image
+        double fontSize = image.getHeight() / 5; // ajuste la taille de la police en fonction de la taille de l'image
+        Font font = Font.font("Arial", FontWeight.BOLD, fontSize);
+        javafx.scene.text.Text tempText = new javafx.scene.text.Text(text);
         tempText.setFont(font);
 
-        // On choisit le font et la couleur
         gc.setFont(font);
-        gc.setFill(Color.BLACK);
+        gc.setFill(Color.WHITE);
 
-        // On calcule la position du texte pour le centrer
+        // calcule la position du texte (au centre)
         double textWidth = tempText.getLayoutBounds().getWidth();
         double textHeight = tempText.getLayoutBounds().getHeight();
         double x = (image.getWidth() - textWidth) / 2;
         double y = (image.getHeight() + textHeight) / 2;
 
-        // On dessine le texte sur le canvas
+        // dessine le texte sur l'image
         gc.fillText(text, x, y);
 
+        // capture le canvas dans l'image
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
         canvas.snapshot(params, writableImage);

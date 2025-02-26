@@ -64,16 +64,16 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         }
 
         try {
+            laby.setSimulationEvolution(true);
             stats = evolution.evaluate(stats);
-            System.out.println("Stats : "+stats);
-            stats.put(copieGroupe, score);
+            stats.put(copieGroupe, evolution.getScore(laby.getEnnemyEndOfManche()));
             groupes = evolution.evolve(stats);
-            System.out.println("Groupe Après l'évolution : "+groupes);
+            laby.setSimulationEvolution(false);
             laby.enemies = groupes.get(0);
-            //System.out.println("Après l'évolution");
-            //for (Ennemy ennemy : laby.enemies) {
-            //    System.out.println(ennemy.getName() + " : " + ennemy.getHealth() + " " + ennemy.getDamages() + " " + ennemy.getSpeed());
-            //}
+            System.out.println("Après l'évolution");
+            for (Ennemy ennemy : laby.enemies) {
+                System.out.println(ennemy.getName() + " : " + ennemy.getHealth() + " " + ennemy.getDamages() + " " + ennemy.getSpeed());
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -246,6 +246,8 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
 
         }
+
+
 
         // On sauvegarde les statistiques des ennemis
         EnnemyEvolution.saveStartStats(laby.enemies);
