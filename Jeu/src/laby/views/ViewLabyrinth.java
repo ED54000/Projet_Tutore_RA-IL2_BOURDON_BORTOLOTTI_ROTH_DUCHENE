@@ -14,9 +14,7 @@ import laby.Observer;
 import laby.Subject;
 import moteur.MoteurJeu;
 import steering_astar.Steering.Behavior;
-import steering_astar.Steering.Vector2D;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,13 +121,8 @@ public class ViewLabyrinth implements Observer {
         }
 
         // Dessin des ennemis
-        Color colorPath = Color.rgb(15, 175, 252);
         for (Ennemy ennemi : laby.enemies) {
-            ArrayList<Vector2D> path = new ArrayList<>();
-            if (ModeleLabyrinth.getLabyrinth().getUseAstar()) {
-                path = ennemi.calculerChemin(ModeleLabyrinth.getCases(), ModeleLabyrinth.getStart());
-            }
-            renderEnnemi(gc, ennemi, path, colorPath);
+            renderEnnemi(gc, ennemi);
         }
     }
 
@@ -155,29 +148,16 @@ public class ViewLabyrinth implements Observer {
         }
     }
 
-    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor) {
-        double radius = Behavior.getTargetRadius();
+    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi) {
         int tCase = getTailleCase();
         double xCoordEnnemi = ennemi.getPosition().getX();
         double yCoordEnnemi = ennemi.getPosition().getY();
         double xCoordVelocity = ennemi.getVelocity().getX();
         double yCoordVelocity = ennemi.getVelocity().getY();
         double range = ennemi.getRange() * tCase;
-
-        double ennemiSize = 20;
-        double waypointsSize = 10;
         double velocityPointSize = 10;
         double velocityPointMultiplier = 20;
 
-        // points de passage
-        /*gc.setFill(pathColor);
-        gc.setStroke(pathColor);
-        if (laby.getUseAstar()) {
-            for (Vector2D point : checkpoint) {
-                gc.fillOval(point.getX() - waypointsSize / 2, point.getY() - waypointsSize / 2, waypointsSize, waypointsSize);
-                gc.strokeOval(point.getX() - radius / 2, point.getY() - radius / 2, radius, radius);
-            }
-        }*/
 
         // vélocité de l'ennemi
         // Si on est en mode simple, on ne dessine pas la vélocité de l'ennemi
@@ -193,7 +173,7 @@ public class ViewLabyrinth implements Observer {
         Image image = ennemi.getImage();
 
         // Si l'ennemi est touché on met l'image en rouge
-        if (!MoteurJeu.getSimpleMode()){
+        if (!MoteurJeu.getSimpleMode()) {
             if (ennemi.getIsHit()) {
                 image = ennemi.getSpriteHit();
                 // Utiliser un Timeline pour réinitialiser l'image après un certain délai
@@ -209,11 +189,10 @@ public class ViewLabyrinth implements Observer {
             }
             if (ennemi.getIsHeal()) {
                 image = ennemi.getSpriteHeal();
-                // Utiliser un Timeline pour réinitialiser l'image après un certain délai
                 Timeline timeline = new Timeline(new KeyFrame(
-                        Duration.millis(500), // Durée pendant laquelle l'image reste rouge
+                        Duration.millis(500),
                         ae -> {
-                            ennemi.setSprite(ennemi.getImage()); // Réinitialise l'image de l'ennemi
+                            ennemi.setSprite(ennemi.getImage());
                             ennemi.setIsHeal(false);
                         }
                 ));
@@ -221,35 +200,33 @@ public class ViewLabyrinth implements Observer {
                 timeline.play();
             }
 
-    }
-    // ennemi
+        }
+        // ennemi
         gc.drawImage(image,
-    xCoordEnnemi -
+                xCoordEnnemi -
 
-    getTailleCase() /2.0,
-    yCoordEnnemi -
+                        getTailleCase() / 2.0,
+                yCoordEnnemi -
 
-    getTailleCase() /2.0,
+                        getTailleCase() / 2.0,
 
-    getTailleCase(),getTailleCase());
+                getTailleCase(), getTailleCase());
 
 
-    // range des ennemis
-    // Si on est en mode simple, on ne dessine pas la range des ennemis
-        if(!MoteurJeu.getSimpleMode())
-
-    {
-        gc.setStroke(Color.BLACK);
-        gc.strokeOval(xCoordEnnemi - range, yCoordEnnemi - range, 2 * range, 2 * range);
+        // range des ennemis
+        // Si on est en mode simple, on ne dessine pas la range des ennemis
+        if (!MoteurJeu.getSimpleMode()) {
+            gc.setStroke(Color.BLACK);
+            gc.strokeOval(xCoordEnnemi - range, yCoordEnnemi - range, 2 * range, 2 * range);
+        }
     }
-}
 
-public void setImages(Map<Character, Image> newImages) {
-    images.clear();
-    images.putAll(newImages);
-}
+    public void setImages(Map<Character, Image> newImages) {
+        images.clear();
+        images.putAll(newImages);
+    }
 
-public Map<Character, Image> getImages() {
-    return images;
-}
+    public Map<Character, Image> getImages() {
+        return images;
+    }
 }
