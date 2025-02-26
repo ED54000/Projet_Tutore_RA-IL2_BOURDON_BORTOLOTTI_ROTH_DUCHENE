@@ -2,18 +2,19 @@ package laby.views;
 
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
 import moteur.MoteurJeu;
 import steering_astar.Steering.Behavior;
-import steering_astar.Steering.Vector2D;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +31,8 @@ public class ViewLabyrinth implements Observer {
         this.canvas = canvas;
 
         // Chargement des images
-        images.put(ModeleLabyrinth.TREE, new Image("/tree3.png"));
-        images.put(ModeleLabyrinth.ROAD, new Image("/tiles3.png"));
+        images.put(ModeleLabyrinth.TREE, new Image("tree3.png"));
+        images.put(ModeleLabyrinth.ROAD, new Image("tiles3.png"));
     }
 
     @Override
@@ -69,25 +70,39 @@ public class ViewLabyrinth implements Observer {
 
         // Dessin des défenses
         for (Defense defense : laby.defenses) {
+            Image spriteDefense = defense.getImage();
+            if (defense.getIsHit()) {
+                spriteDefense = defense.getSpriteHit();
+                Timeline timeline = new Timeline(new KeyFrame(
+                        Duration.millis(500),
+                        ae -> {
+                            defense.setSprite(defense.getImage());
+                            defense.setIsHit(false);
+                        }
+                ));
+                timeline.setCycleCount(1);
+                timeline.play();
+            }
+
             double x = defense.getPosition().getX() * getTailleCase() - getTailleCase() / 2.0;
             double y = defense.getPosition().getY() * getTailleCase() - getTailleCase() / 2.0;
 
             if (defense instanceof entites.defenses.Canon) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 if (!defense.getIsDead()) {
-                    gc.drawImage(defense.getImage(), x, y, getTailleCase(), getTailleCase());
+                    gc.drawImage(spriteDefense, x, y, getTailleCase(), getTailleCase());
                 }
             }
             if (defense instanceof entites.defenses.Archer) {
                 gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
                 if (!defense.getIsDead()) {
-                    gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
+                    gc.drawImage(spriteDefense, x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
             }
             if (defense instanceof entites.defenses.Bomb) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 if (!defense.getIsDead()) {
-                    gc.drawImage(defense.getImage(), x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
+                    gc.drawImage(spriteDefense, x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
                 }
             }
 
@@ -106,13 +121,8 @@ public class ViewLabyrinth implements Observer {
         }
 
         // Dessin des ennemis
-        Color colorPath = Color.rgb(15, 175, 252);
         for (Ennemy ennemi : laby.enemies) {
-            ArrayList<Vector2D> path = new ArrayList<>();
-            if(ModeleLabyrinth.getLabyrinth().getUseAstar()){
-                path = ennemi.calculerChemin(ModeleLabyrinth.getCases(), ModeleLabyrinth.getStart());
-            }
-            renderEnnemi(gc, ennemi, path, colorPath);
+            renderEnnemi(gc, ennemi);
         }
     }
 
@@ -138,33 +148,20 @@ public class ViewLabyrinth implements Observer {
         }
     }
 
-    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi, ArrayList<Vector2D> checkpoint, Color pathColor) {
-        double radius = Behavior.getTargetRadius();
+    private void renderEnnemi(GraphicsContext gc, Ennemy ennemi) {
         int tCase = getTailleCase();
         double xCoordEnnemi = ennemi.getPosition().getX();
         double yCoordEnnemi = ennemi.getPosition().getY();
         double xCoordVelocity = ennemi.getVelocity().getX();
         double yCoordVelocity = ennemi.getVelocity().getY();
         double range = ennemi.getRange() * tCase;
-
-        double ennemiSize = 20;
-        double waypointsSize = 10;
         double velocityPointSize = 10;
         double velocityPointMultiplier = 20;
 
-        // points de passage
-        /*gc.setFill(pathColor);
-        gc.setStroke(pathColor);
-        if (laby.getUseAstar()) {
-            for (Vector2D point : checkpoint) {
-                gc.fillOval(point.getX() - waypointsSize / 2, point.getY() - waypointsSize / 2, waypointsSize, waypointsSize);
-                gc.strokeOval(point.getX() - radius / 2, point.getY() - radius / 2, radius, radius);
-            }
-        }*/
 
         // vélocité de l'ennemi
         // Si on est en mode simple, on ne dessine pas la vélocité de l'ennemi
-        if(!MoteurJeu.getSimpleMode()) {
+        if (!MoteurJeu.getSimpleMode()) {
             gc.setFill(Color.RED);
             gc.setStroke(Color.RED);
             double xCoord = xCoordEnnemi + xCoordVelocity * velocityPointMultiplier;
@@ -175,15 +172,50 @@ public class ViewLabyrinth implements Observer {
 
         Image image = ennemi.getImage();
 
+        // Si l'ennemi est touché on met l'image en rouge
+        if (!MoteurJeu.getSimpleMode()) {
+            if (ennemi.getIsHit()) {
+                image = ennemi.getSpriteHit();
+                // Utiliser un Timeline pour réinitialiser l'image après un certain délai
+                Timeline timeline = new Timeline(new KeyFrame(
+                        Duration.millis(500), // Durée pendant laquelle l'image reste rouge
+                        ae -> {
+                            ennemi.setSprite(ennemi.getImage()); // Réinitialise l'image de l'ennemi
+                            ennemi.setIsHit(false);
+                        }
+                ));
+                timeline.setCycleCount(1);
+                timeline.play();
+            }
+            if (ennemi.getIsHeal()) {
+                image = ennemi.getSpriteHeal();
+                Timeline timeline = new Timeline(new KeyFrame(
+                        Duration.millis(500),
+                        ae -> {
+                            ennemi.setSprite(ennemi.getImage());
+                            ennemi.setIsHeal(false);
+                        }
+                ));
+                timeline.setCycleCount(1);
+                timeline.play();
+            }
+
+        }
         // ennemi
         gc.drawImage(image,
-                xCoordEnnemi - getTailleCase() / 2.0,
-                yCoordEnnemi - getTailleCase() / 2.0,
+                xCoordEnnemi -
+
+                        getTailleCase() / 2.0,
+                yCoordEnnemi -
+
+                        getTailleCase() / 2.0,
+
                 getTailleCase(), getTailleCase());
+
 
         // range des ennemis
         // Si on est en mode simple, on ne dessine pas la range des ennemis
-        if(!MoteurJeu.getSimpleMode()){
+        if (!MoteurJeu.getSimpleMode()) {
             gc.setStroke(Color.BLACK);
             gc.strokeOval(xCoordEnnemi - range, yCoordEnnemi - range, 2 * range, 2 * range);
         }
@@ -194,5 +226,7 @@ public class ViewLabyrinth implements Observer {
         images.putAll(newImages);
     }
 
-    public Map<Character, Image> getImages() {return images;}
+    public Map<Character, Image> getImages() {
+        return images;
+    }
 }

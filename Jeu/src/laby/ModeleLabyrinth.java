@@ -68,7 +68,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private static int XArrival, YArrival, Xstart, Ystart;
     private ArrayList<Observer> observateurs;
 
-    private String logs = "";
+    private static String logs = "";
 
     private boolean pause = false;
     private boolean end = false;
@@ -402,7 +402,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (enemy.isInRange(enemyTarget) && !this.getPause()) {
                 enemy.healDamage(enemyTarget, enemy.getDamages(), secondes);
                 //Quand il se fait heal
-                setLogs(enemyTarget.getName());
+                //setLogs(enemyTarget.getName());
             }
         }
     }
@@ -441,8 +441,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     defense.attack(enemyTarget, secondes);
                     // Quand il se fait attaquer normalement
                     setLogs(enemyTarget.getName());
-                    // Si le jeu est en mode simple
-                    if(MoteurJeu.getSimpleMode()){
+                    // Si le jeu est en mode simple et non en simulation
+                    if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
                         // On met à jour le sprite de l'ennemi (sa vie)
                         updateSprite(enemyTarget);
                     }
@@ -502,8 +502,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     e.setSurvivalTime(System.currentTimeMillis() - startTime);
                 }
                 setLogs(e.getName());
-                // Si le jeu est en mode simple
-                if(MoteurJeu.getSimpleMode()){
+                // Si le jeu est en mode simple et pas en simulation
+                if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
                     // On met à jour son sprite (sa vie)
                     updateSprite(e);
                 }
@@ -730,7 +730,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void creerLabyrinthePour1(String fichier, int numIndividu) throws IOException {
-        simulationEvolution = true;
         this.limManches = 2;
         //ouvrir le fichier
         FileReader fr = new FileReader(fichier);
@@ -885,7 +884,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return logs;
     }
 
-    public void setLogs(String log) {
+    public static void setLogs(String log) {
         logs = log;
     }
 
@@ -966,7 +965,15 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public static boolean getSimulation() {
-        return simulation || simulationEvolution;
+        return simulation;
+    }
+
+    public static boolean getSimulationEvolution() {
+        return simulationEvolution;
+    }
+
+    public void setSimulationEvolution(boolean b) {
+        simulationEvolution = b;
     }
 
     public void setSimulation(boolean b) {

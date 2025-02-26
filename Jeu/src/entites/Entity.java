@@ -1,7 +1,10 @@
 package entites;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import entites.enemies.Ennemy;
+import javafx.util.Duration;
 import laby.ModeleLabyrinth;
 import steering_astar.Steering.Vector2D;
 
@@ -12,18 +15,22 @@ public abstract class Entity {
     private double damages;
     private double range;
     private Image sprite = null;
+    private Image spriteHit = null;
     protected double health;
     private boolean isDead = false;
     private String name;
     private double attackSpeed;
     private long lastAttackCount = 0;
+    private boolean isHit = false;
+
 
     public Entity(Vector2D position, double damages, double range, String sprite, double health, String name, double attackSpeed) {
         this.position = position;
         this.damages = damages;
         this.range = range;
-        if(!ModeleLabyrinth.getSimulation()) {
-            this.sprite = new Image(sprite);
+        if (!ModeleLabyrinth.getSimulation()) {
+            this.sprite = new Image(sprite+".png");
+            this.spriteHit = new Image(sprite+"_hit.png");
         }
         this.health = health;
         this.name = name;
@@ -83,6 +90,7 @@ public abstract class Entity {
      * @param damage les dégâts à prendre
      */
     public void takeDamage(double damage) {
+        this.setIsHit(true);
         health -= Math.abs(damage);
         if (this.health <= 0) {
             isDead = true;
@@ -97,7 +105,7 @@ public abstract class Entity {
      */
     public boolean isInRange(Entity target) {
 
-        double targetX,targetY,entityX,entityY;
+        double targetX, targetY, entityX, entityY;
 
         if (this instanceof Ennemy) {
             entityX = ((Ennemy) this).getPositionReel().getX();
@@ -127,19 +135,19 @@ public abstract class Entity {
         return distanceSquared <= rangeInPixelsSquared;
     }
 
-    public synchronized void attack(Entity target, double speedTime){
+    public synchronized void attack(Entity target, double speedTime) {
         // On récupère le temps actuel en millisecondes
         // Si le temps écoulé depuis la dernière attaque est supérieur ou égal à l'attackSpeed
-        if(lastAttackCount >= attackSpeed * speedTime ) {
+        if (lastAttackCount >= attackSpeed * speedTime) {
             // On met à jour le temps de la dernière attaque
             lastAttackCount = 0;
             // On attaque la défense
             System.out.println("=====================================");
-            target.takeDamage(this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages());
-            System.out.println("Attaque de " + this.getName() +" de type : "+this.getType()+ " sur " + target.getName()+" de type : "+target.getType());
-            System.out.println("Dégâts infligés : " + (this.getDamages()*getBonus(getType(), target.getType()) + this.getDamages()));
+            target.takeDamage(this.getDamages() * getBonus(getType(), target.getType()) + this.getDamages());
+            System.out.println("Attaque de " + this.getName() + " de type : " + this.getType() + " sur " + target.getName() + " de type : " + target.getType());
+            System.out.println("Dégâts infligés : " + (this.getDamages() * getBonus(getType(), target.getType()) + this.getDamages()));
             System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
-            System.out.println("Target mort : "+ target.getIsDead());
+            System.out.println("Target mort : " + target.getIsDead());
             System.out.println("=====================================");
         }
         // Sinon, on ne fait rien
@@ -177,7 +185,13 @@ public abstract class Entity {
         this.range = range;
     }
 
-    public Image getImage() { return sprite; }
+    public Image getImage() {
+        return sprite;
+    }
+
+    public Image getSpriteHit() {
+        return spriteHit;
+    }
 
     public double getHealth() {
         return this.health;
@@ -222,4 +236,13 @@ public abstract class Entity {
     public void setSprite(Object o) {
         this.sprite = (Image) o;
     }
+
+    public boolean getIsHit() {
+        return isHit;
+    }
+
+    public void setIsHit(boolean hit) {
+        this.isHit = hit;
+    }
+
 }
