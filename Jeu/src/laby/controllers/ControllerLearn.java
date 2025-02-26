@@ -62,7 +62,9 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         }
 
         try {
+            laby.setSimulationEvolution(true);
             stats = evolution.evaluate(stats);
+            laby.setSimulationEvolution(false);
             stats.put(copieGroupe, evolution.getScore(laby.getEnnemyEndOfManche()));
             groupes = evolution.evolve(stats);
             laby.enemies = groupes.get(0);

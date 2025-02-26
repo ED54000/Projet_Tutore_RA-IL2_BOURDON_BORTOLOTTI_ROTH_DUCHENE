@@ -1,8 +1,11 @@
 package entites.enemies;
 
 import javafx.scene.image.Image;
+import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
 import steering_astar.Steering.Vector2D;
+
+import static moteur.MoteurJeu.addTextToImage;
 
 public class Giant extends Ennemy {
 
@@ -15,8 +18,8 @@ public class Giant extends Ennemy {
                 1.5, 1, name,"/giant", "Normal");
 
         // Si on est en mode simple
-        if(MoteurJeu.getSimpleMode()) {
-            this.setSprite(new Image("/gray.png"));
+        if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulation()) {
+            this.setSprite(addTextToImage("" + (int)this.getHealth(), new Image("/gray.png")));
         }
     }
 }

@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
+import moteur.MoteurJeu;
 
 import java.io.IOException;
 
@@ -36,5 +37,11 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         System.out.println("Fin de la manche");
         System.out.println("Nouvelle manche : " + nbManches);
         ModeleLabyrinth.setLogs("Manche "+nbManches);
+
+        // Si le jeu est en mode simple
+        if(MoteurJeu.getSimpleMode()) {
+            // On rappelle la méthode du mode simple
+
+        }
     }
 }

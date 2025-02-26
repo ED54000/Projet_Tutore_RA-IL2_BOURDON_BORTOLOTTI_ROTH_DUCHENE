@@ -1,8 +1,11 @@
 package entites.enemies;
 
 import javafx.scene.image.Image;
+import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
 import steering_astar.Steering.Vector2D;
+
+import static moteur.MoteurJeu.addTextToImage;
 
 public class Ninja extends Ennemy{
 
@@ -15,8 +18,8 @@ public class Ninja extends Ennemy{
                 0.35, 1, name,"/ninja", "Fugitive");
 
         // Si on est en mode simple
-        if(MoteurJeu.getSimpleMode()) {
-            this.setSprite(new Image("/blue.png"));
+        if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulation()) {
+            this.setSprite(addTextToImage("" + (int)this.getHealth(), new Image("/blue.png")));
         }
     }
 }
