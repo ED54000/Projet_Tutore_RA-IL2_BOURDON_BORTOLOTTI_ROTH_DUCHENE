@@ -8,6 +8,8 @@ out/
 **/pom.xml
 **/target/
 **/*.log
+**/workspace.xml
+
 
 ### Eclipse ###
 .apt_generated
