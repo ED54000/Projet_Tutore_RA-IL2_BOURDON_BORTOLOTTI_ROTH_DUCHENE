@@ -1,5 +1,6 @@
 package laby.controllers;
 
+import entites.enemies.Ennemy;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -40,8 +41,9 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
         // Si le jeu est en mode simple
         if(MoteurJeu.getSimpleMode()) {
-            // On rappelle la méthode du mode simple
-
+            for(Ennemy e: laby.enemies) {
+                ModeleLabyrinth.updateSprite(e);
+            }
         }
     }
 }

@@ -373,8 +373,6 @@ public class MoteurJeu extends Application {
                 return;
             }
 
-            System.out.println("time : " + System.nanoTime());
-
             jeu.update(dureeFPS / 1000.0);
 
             // ViewLabyrinth.dessinerJeu(jeu, canvas);
