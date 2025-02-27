@@ -1,1 +1,0 @@
-de ligne 69 a 106 dans ControllerLearn je bosse mon ViewLoading, à continuer.
