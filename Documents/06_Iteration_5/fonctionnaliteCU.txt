@@ -14,14 +14,15 @@ Marin :
 
 
 Florian : 
-	- Ajout comportement pour éviter les obstacles dans steering behaviors
-	- Refactoring de la structure du code
+	- Modification de la vitesse du jeu 
+	- Ajout d'un arrival behavior
 	- Résolutions de bugs
 
 Eloi : 
-	- Refactoring de la structure du code
-	- Ajout comportement pour éviter les obstacles dans steering behaviors
+	- Ajout de la sélection d'un labyrinthe non répertorié 
+	- Ajout d'animation lors d'une touche ou d'un soin
 	- Résolution de bugs
+	- Ajout d'un arrival behavior
 
 
 À la fin de cette itération, nous pouvons : 
