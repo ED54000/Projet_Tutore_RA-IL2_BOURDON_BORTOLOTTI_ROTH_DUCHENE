@@ -52,3 +52,4 @@ Jeu/mvnw.cmd
 Jeu/pom.xml
 Jeu/target/
 Jeu/*.log
+Jeu/Ressources/evolution_stats.csv
