@@ -1,8 +1,8 @@
 Tristan :
-	- Evolution logs
-	- Simulation 
-	- Evolution par groupes
-	- Génération de graphiques
+	- Refonte logs
+	- Amélioration fonction de score
+	- Génération de graphique à chaque manche (population)
+	- Génération de graphique en direct (suivi de la vie de chaque ennemi d'une population)
 	- Résolution de bugs
 
 Marin : 
