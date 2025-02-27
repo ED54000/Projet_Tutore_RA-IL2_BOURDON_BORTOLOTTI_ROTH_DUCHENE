@@ -1,23 +1,20 @@
 ### IntelliJ IDEA ###
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-*/*.iml/
-*/.idea/
-*/*.mvn/
-*/mvnw.cmd/
-*/pom.xml/
-*/.gitignore
-*/mvn
-*/target/*
-*/*.log/
+.idea/  # Exclut le dossier .idea à la racine
+**/*.iml
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+**/pom.xml
+**/target/
+**/*.log
 
 ### Eclipse ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 bin/
@@ -39,7 +36,17 @@ bin/
 
 ### Images ###
 *.jpg
-*/img/
+**/img/
 
 ### Excel ###
-*.csv 
+*.csv
+
+# Exclusion spécifique du projet "Jeu"
+Jeu/.idea/
+Jeu/*.iml
+Jeu/.mvn/
+Jeu/mvnw
+Jeu/mvnw.cmd
+Jeu/pom.xml
+Jeu/target/
+Jeu/*.log

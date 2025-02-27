@@ -14,14 +14,15 @@ Marin :
 
 
 Florian : 
-	- Ajout comportement pour éviter les obstacles dans steering behaviors
-	- Refactoring de la structure du code
+	- Modification de la vitesse du jeu 
+	- Ajout d'un arrival behavior
 	- Résolutions de bugs
 
 Eloi : 
-	- Refactoring de la structure du code
-	- Ajout comportement pour éviter les obstacles dans steering behaviors
+	- Ajout de la sélection d'un labyrinthe non répertorié 
+	- Ajout d'animation lors d'une touche ou d'un soin
 	- Résolution de bugs
+	- Ajout d'un arrival behavior
 
 
 À la fin de cette itération, nous pouvons : 
@@ -31,5 +32,7 @@ et si A* est utilisé ou non.
 Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement (si A* est utilisé) et se faisant attaquer 
 par les défenses dans un labyrinthe bien modélisé à l'aide de sprites. Les ennemis peuvent également attaquer les défenses afin de les détruire. 
 Lorsqu'une défense est détruite, si A* est utilisé, le chemin est recalculé pour chaque agent et ils s'adaptent donc aux changements de l'environnement 
-au cours d'une manche. Voir le déroulement de la manche dans les logs (quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
+au cours d'une manche. 
+Voir le déroulement de la manche dans les logs (les pv de chaque entité en temps réel, quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
 Faire évoluer les groupes d'ennemies à chaque manche pour essayer d'optimiser la composition des groupes afin de gagner la partie.
+Afficher un graphique représantant l'évolution de la composition du groupe d'ennemi au cours des manches.

@@ -73,6 +73,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private static String logs = "";
 
     private boolean pause = false;
+    private boolean pauseManche = false;
     private boolean end = false;
     private long endTime;
 
@@ -273,7 +274,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             return;
         }
         // Vérification de la fin d'une manche
-        if (enemies.isEmpty() && !this.pause) {
+        if (enemies.isEmpty() && !this.pauseManche) {
             handleEndOfManche();
             return;
         }
@@ -319,7 +320,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void updateEnemyPositions() {
         Iterator<Ennemy> enemyIterator = enemies.iterator();
-        while (enemyIterator.hasNext() && !this.pause) {
+        while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
             Ennemy enemy = enemyIterator.next();
             if (hasReachedArrival(enemy)) {
                 handleEnemyArrival(enemy);
@@ -402,7 +403,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private void handleDruideCombat(Ennemy enemy, double secondes) {
         for (Ennemy enemyTarget : enemies) {
             // Tous les ennemis a portée sont soignés
-            if (enemy.isInRange(enemyTarget) && !this.getPause()) {
+            if (enemy.isInRange(enemyTarget) && !this.getPause() && this.getPauseManche()) {
                 enemy.healDamage(enemyTarget, enemy.getDamages(), secondes);
                 //Quand il se fait heal
                 //setLogs(enemyTarget.getName());
@@ -519,7 +520,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void handleEndOfManche() {
         System.out.println("Fin de la manche " + nbManches);
-        this.pause = true;
+        this.pauseManche = true;
         // On réactive toutes les défenses passives
         for (Defense defense : defenses) {
             if (defense instanceof PassiveDefense) {
@@ -835,7 +836,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         refreshDeadDefenses();
         refreshDefenseEndOfManche();
 
-        this.setPause(false);
+        this.setPauseManche(false);
     }
 
     public int[] moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
@@ -897,6 +898,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public void setPause(boolean pause) {
         this.pause = pause;
+    }
+
+    public boolean getPauseManche() {
+        return pauseManche;
+    }
+
+    public void setPauseManche(boolean pauseManche) {
+        this.pauseManche = pauseManche;
     }
 
     public static double getXstart() {
