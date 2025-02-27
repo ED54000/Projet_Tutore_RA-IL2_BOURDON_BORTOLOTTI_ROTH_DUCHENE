@@ -1,7 +1,9 @@
 package entites.enemies;
 
 import entites.Entity;
+import javafx.scene.image.Image;
 import laby.ModeleLabyrinth;
+import moteur.MoteurJeu;
 import steering_astar.Astar.Astar;
 import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
@@ -20,15 +22,20 @@ public abstract class Ennemy extends Entity {
     private static int timeSpawn = 0;
     private String behaviorString;
     private boolean isArrived;
-    private long survivalTime;
+    private long survivalTime = 0;
     private Vector2D positionReel;
     private Vector2D velocity;
     private final double healthBase;
     private List<Behavior> listBehaviors = new ArrayList<>();
+    private boolean isHeal;
+    private Image spriteHeal = null;
 
     public Ennemy(Vector2D position, double health, double speed, double damages, double attackSpeed, double range, int distanceToArrival, String name, String sprite, String behavior) {
         super(position, damages, range, sprite, health, name, attackSpeed);
         this.speed = speed;
+        if (!ModeleLabyrinth.getSimulation()) {
+            this.spriteHeal = new Image(sprite+"_heal.png");
+        }
         this.healthBase = health;
         //this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         this.distanceToArrival = distanceToArrival;
@@ -46,13 +53,13 @@ public abstract class Ennemy extends Entity {
         return astar.aStarSearch(grid, grid.length, grid[0].length,
                 startCoordinate,
                 new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()),
-                this.getBehaviorString(), 
+                this.getBehaviorString(),
                 false);
     }
 
-    public void healDamage(Ennemy target, double heal, double speedTime){
+    public void healDamage(Ennemy target, double heal, double speedTime) {
         // Si le temps écoulé depuis le dernier heal est supérieur ou égal à l'attackSpeed
-        if(this.getLastAttackCount() >=  this.getAttackSpeed() * speedTime) {
+        if (this.getLastAttackCount() >= this.getAttackSpeed() * speedTime) {
             if (this.getAttackSpeed() <= 0) {
                 this.setAttackSpeed(1);
             }
@@ -62,6 +69,14 @@ public abstract class Ennemy extends Entity {
             if (target.health + Math.abs(heal) <= target.healthBase) {
                 // On heal
                 target.health += Math.abs(heal);
+                ModeleLabyrinth.setLogs(target.getName());
+                // Si le jeu est en mode simple et pas en simulation
+                if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()) {
+                    // On met à jour le sprite de l'ennemi (sa vie)
+                    ModeleLabyrinth.updateSprite(target);
+                }else {
+                    target.setIsHeal(true);
+                }
                 System.out.println("Soin de " + this.getName() + " sur " + target.getName());
                 System.out.println("Montant de soin : " + Math.abs(heal));
                 System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
@@ -88,24 +103,6 @@ public abstract class Ennemy extends Entity {
         position = position.add(velocity);
         positionReel = position.divide(ModeleLabyrinth.getTailleCase());
     }
-
-    public void resetPathFollowingBehavior(ArrayList<Vector2D> path) {
-        boolean found = false;
-        for (Behavior behavior : new ArrayList<>(listBehaviors)) {
-            if (behavior instanceof PathfollowingBehavior) {
-                listBehaviors.remove(behavior);
-                listBehaviors.add(new PathfollowingBehavior(path));
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            listBehaviors.add(new PathfollowingBehavior(path));
-        }
-    }
-
-
-
 
     public int getDistanceToArrival() {
         return distanceToArrival;
@@ -157,11 +154,17 @@ public abstract class Ennemy extends Entity {
 
     public Vector2D getVelocity() { return velocity; }
 
-    public double getMaxSpeed() { return speed; }
-
-    public List<Behavior> getBehaviors() { return this.listBehaviors; }
+    public List<Behavior> getListBehavior() {
+        return listBehaviors;
+    }
 
     public void setBehavior(Behavior behavior) {
+        for (Behavior b : listBehaviors) {
+            if (b instanceof PathfollowingBehavior && behavior instanceof PathfollowingBehavior) {
+                listBehaviors.remove(b);
+                break;
+            }
+        }
         this.listBehaviors.add(behavior);
     }
 
@@ -178,7 +181,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
-   //     System.out.println(vector2DS.size());
+        //     System.out.println(vector2DS.size());
         this.distanceStartToArrival = vector2DS.size();
     }
 
@@ -198,11 +201,23 @@ public abstract class Ennemy extends Entity {
         this.survivalTime = survivalTime;
     }
 
-    public void setToStart(ModeleLabyrinth modeleLabyrinth){
-        double XstartRandom =  Math.random()*1.5;
-        double YstartRandom =  Math.random()*1.5;
+    public void setToStart(ModeleLabyrinth modeleLabyrinth) {
+        double XstartRandom = Math.random() * 1.5;
+        double YstartRandom = Math.random() * 1.5;
         this.setPositionReel(new Vector2D(modeleLabyrinth.getXstart() + XstartRandom, modeleLabyrinth.getYstart() + YstartRandom));
         this.setPosition(new Vector2D(modeleLabyrinth.getXstartRender() + XstartRandom, modeleLabyrinth.getYstartRender() + YstartRandom));
+    }
+
+    public boolean getIsHeal() {
+        return isHeal;
+    }
+
+    public void setIsHeal(boolean heal) {
+        isHeal = heal;
+    }
+
+    public Image getSpriteHeal() {
+        return spriteHeal;
     }
 }
 

@@ -1,0 +1,54 @@
+Bilan Itération 5 :
+
+Objectifs de l'itération : 
+	- Ajouter un arrival behavior 
+	- Ajouter l’accélération du temps en version graphique
+	- Ajouter l’évolution avec steering behavior 
+	- Pouvoir charger un labyrinthe
+	- Intégrer une génération de graphique en fin de partie
+
+
+
+Validation : 
+
+	- Nous n'avons pas fait l'évolution avec steering behavior.
+
+
+Le(s) bug(s) restant :
+
+	- Il reste des bugs d'affichage à régler (collision avec les murs parfois ignorée).
+
+
+Conformité à l'étude préalable :
+
+	- Ajouts des critères de victoires et de défaites sont bien mis en place.
+
+
+Problèmes rencontrés :
+
+	- De nombreux bug, qui ont été résolu, ont été créé lors de l'ajouts de nouvelles fonctionnalités, en raison de sa mauvaise structure.
+
+
+Pour lancer l'application : 
+ 	- Lancer le fichier MainLaby.java situé dans le chemin suivant src/mains/MainLaby.java pour une version graphique.
+	- Lancer le fichier MainSimu.java situé dans le chemin suivant src/mains/MainSimu.java pour une version sans affichage.
+
+
+L'application permet de : 
+	- Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches,
+	  le nombre d'ennemies qui passe pour gagner, et la méthode de déplacement.
+	- Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de
+	  leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites ou un mode simple si voulu.
+	- Faire accélerer, ralentir ou mettre en pause la manche pour une meilleure compréhension.
+	- Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués
+	  jusqu'à la fin du jeu à l'aide de graphique affichés en fin de manche.
+	- Pouvoir lancer l'application sans interface graphique ce qui accélère les vagues.
+
+
+Objectif itération 6 :
+
+    	- Ajouter l’évolution avec steering behavior
+	- Ajouter une génération de graphiques en temps réel 
+	- Gérer le cas d’évolution avec un seul ennemi
+	- Ajouter un bouton “Aide” qui résume les types et leurs comportements
+
