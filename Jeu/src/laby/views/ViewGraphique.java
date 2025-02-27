@@ -37,7 +37,7 @@ public class ViewGraphique implements Observer {
 
             // Axes du graphique
             NumberAxis axeX = new NumberAxis();
-            axeX.setTickLabelFormatter(new javafx.scene.chart.NumberAxis.DefaultFormatter(axeX, "%d", null));
+            //axeX.setTickLabelFormatter(new javafx.scene.chart.NumberAxis.DefaultFormatter(axeX, "%d", null));
             axeX.setLabel("Nombre de manches");
 
             NumberAxis axeY = new NumberAxis();

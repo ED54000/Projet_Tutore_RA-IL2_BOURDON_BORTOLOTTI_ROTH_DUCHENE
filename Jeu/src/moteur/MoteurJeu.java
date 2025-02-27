@@ -39,6 +39,7 @@ import laby.ModeleLabyrinth;
 
 import laby.controllers.ControllerSimpleMode;
 import laby.views.ViewGraphique;
+import laby.views.ViewGraphiqueDirect;
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
@@ -234,7 +235,7 @@ public class MoteurJeu extends Application {
 
         VBox logs = new VBox();
         logs.setMinWidth(350);
-        logs.setPrefWidth(getScreenSize().width/7.0);
+        logs.setPrefWidth(getScreenSize().width/5);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
         ModeleLabyrinth.setLogs("Manche 1");
@@ -244,7 +245,7 @@ public class MoteurJeu extends Application {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setFitToWidth(false); // Permet au ScrollPane de scroller horizontalement
-        scrollPane.setPrefSize(getScreenSize().width/6.8, getScreenSize().height);
+        scrollPane.setPrefSize(getScreenSize().width/5, getScreenSize().height);
         scrollPane.setContent(logs);
 
         ContainerLogs.getChildren().addAll(title, scrollPane);
@@ -253,13 +254,16 @@ public class MoteurJeu extends Application {
         //ControllerStart controllerStart = new ControllerStart(laby);
         //ControllerLearn controllerLearn = new ControllerLearn(laby);
         // création des vues
+        ViewGraphiqueDirect viewGraphiqueDirect = new ViewGraphiqueDirect(laby);
+        //ContainerLogs.getChildren().add(viewGraphiqueDirect.getGraphique());
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
-        ViewLogs viewLogs = new ViewLogs(laby, ContainerLogs);
+        ViewLogs viewLogs = new ViewLogs(laby, ContainerLogs, viewGraphiqueDirect);
         ViewGraphique viewGraphique = new ViewGraphique(laby);
         //enregistrement des observateurs
         laby.registerObserver(viewLabyrinth);
         laby.registerObserver(viewLogs);
         laby.registerObserver(viewGraphique);
+        laby.registerObserver(viewGraphiqueDirect);
 
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);
