@@ -235,7 +235,7 @@ public class MoteurJeu extends Application {
 
         VBox logs = new VBox();
         logs.setMinWidth(350);
-        logs.setPrefWidth(getScreenSize().width/7.0);
+        logs.setPrefWidth(getScreenSize().width/5);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
         ModeleLabyrinth.setLogs("Manche 1");
@@ -245,7 +245,7 @@ public class MoteurJeu extends Application {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setFitToWidth(false); // Permet au ScrollPane de scroller horizontalement
-        scrollPane.setPrefSize(getScreenSize().width/6.8, getScreenSize().height);
+        scrollPane.setPrefSize(getScreenSize().width/5, getScreenSize().height);
         scrollPane.setContent(logs);
 
         ContainerLogs.getChildren().addAll(title, scrollPane);

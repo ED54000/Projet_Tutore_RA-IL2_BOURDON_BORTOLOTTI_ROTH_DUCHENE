@@ -41,6 +41,8 @@ public class ControllerGraphique implements EventHandler<MouseEvent> {
             donnees.get(nomType).add((double) entry.getValue().size());
         }
 
+        System.out.println("Données graphiques : " + donnees);
+
         // Mise à jour du graphique avec les nouvelles données
         laby.setDonneesGraphique(donnees);
 
