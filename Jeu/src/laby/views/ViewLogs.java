@@ -69,7 +69,7 @@ public class ViewLogs implements Observer {
             -fx-padding: 0;
         """);
 
-            if (laby.getPause() && laby.getLogs().matches("Manche \\d+ terminée")) {
+            if (laby.getPauseManche() &&  laby.getLogs().matches("Manche \\d+ terminée")) {
                 label.setStyle(baseStyle + """
                 -fx-background-color: #e8f5e9;
                 -fx-border-color: #81c784;

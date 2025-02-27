@@ -23,7 +23,7 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         //System.out.println("Clique manche suivante");
         // On met à jour le time de départ de la manche
         laby.setStartTime();
-        laby.setPause(false);
+        laby.setPauseManche(false);
         //clear les logs si on est pas en simulation
         if (!laby.getSimulation()) {
             VBox parentVBox = (VBox) ((Button) mouseEvent.getSource()).getParent();
