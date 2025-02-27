@@ -79,7 +79,7 @@ public class Evolution {
 
         long lastUpdateTime = System.nanoTime();
         // Tant que la manche est en cours
-        while (!jeu.getPause()) {
+        while (!jeu.getPause() && !jeu.getPauseManche()) {
             long currentTime = System.nanoTime();
             double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
 
