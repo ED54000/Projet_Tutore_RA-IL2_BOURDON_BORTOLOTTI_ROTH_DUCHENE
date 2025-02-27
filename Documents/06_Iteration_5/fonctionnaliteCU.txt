@@ -6,7 +6,7 @@ Tristan :
 	- Résolution de bugs
 
 Marin : 
-	- Ajout d'un "mode simple" avec des sprites différents, et un environnement graphique globalement allégé pour mieux comprendre ce qu'il se passe. Activation/désactivation via un bouton grâce à 	  MVC.
+	- Ajout d'un "mode simple" avec des sprites différents, et un environnement graphique globalement allégé pour mieux comprendre ce qu'il se passe. Activation/désactivation via un bouton grâce à  MVC.
 	- Résolution de bugs
 	- Ajout d'une ViewLoading qui permet d'afficher une barre de chargement pendant que l'algorithme d'évolution s'exécute (pas encore terminé).
 
@@ -30,7 +30,7 @@ et si A* est utilisé ou non.
 Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement (si A* est utilisé) et se faisant attaquer 
 par les défenses dans un labyrinthe bien modélisé à l'aide de sprites. Les ennemis peuvent également attaquer les défenses afin de les détruire. 
 Lorsqu'une défense est détruite, si A* est utilisé, le chemin est recalculé pour chaque agent et ils s'adaptent donc aux changements de l'environnement 
-au cours d'une manche. 
+au cours d'une manche. Pouvoir choisir un mode simple qui simplifie l'affichage. Un graphique avec les points de vie de chaque ennemi est affiché en temps réel.
 Voir le déroulement de la manche dans les logs (les pv de chaque entité en temps réel, quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
 Faire évoluer les groupes d'ennemies à chaque manche pour essayer d'optimiser la composition des groupes afin de gagner la partie.
 Afficher un graphique représantant l'évolution de la composition du groupe d'ennemi au cours des manches.
