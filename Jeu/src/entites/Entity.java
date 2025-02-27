@@ -94,6 +94,7 @@ public abstract class Entity {
         health -= Math.abs(damage);
         if (this.health <= 0) {
             isDead = true;
+            this.health = 0;
         }
     }
 

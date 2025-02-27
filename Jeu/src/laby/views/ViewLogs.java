@@ -20,12 +20,14 @@ public class ViewLogs implements Observer {
     private VBox vbox;
     private ScrollPane scrollPane;
     private ControllerLearn controllerLearn;
+    private ViewGraphiqueDirect graphique;
 
     private VBox ennemiesBox; // Zone pour afficher les ennemis
     private HashMap<Ennemy, Label> ennemiesLabels; // Associer chaque ennemi à son label
 
-    public ViewLogs(ModeleLabyrinth laby, VBox logs) {
+    public ViewLogs(ModeleLabyrinth laby, VBox logs, ViewGraphiqueDirect graphique) {
         this.laby = laby;
+        this.graphique = graphique;
         //this.logs = (VBox)(logs.getChildren().get(1));
         //this.logs = logs;
         this.controllerLearn = new ControllerLearn(laby);
@@ -116,7 +118,12 @@ public class ViewLogs implements Observer {
             } else {
                 mettreAJourEnnemies(label.getText());
             }
-            ModeleLabyrinth.setLogs("");
+
+            //Vérifie si la vbox contient déjà le graphique
+            if (!vbox.getChildren().contains(graphique.getGraphique())) {
+                vbox.getChildren().add(graphique.getGraphique());
+            }
+
         }
     }
 
