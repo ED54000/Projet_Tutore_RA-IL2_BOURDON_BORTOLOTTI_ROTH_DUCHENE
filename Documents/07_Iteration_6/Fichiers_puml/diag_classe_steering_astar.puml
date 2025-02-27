@@ -1,0 +1,85 @@
+@startuml
+
+class Astar {
+  + Astar(): 
+  - countNearbyTowers(char[][], Vector2D): int
+  - getTowerPenalty(double[][], Vector2D): double
+  + isValid(char[][], Vector2D): boolean
+  ~ calculateHValue(Vector2D, Vector2D): double
+  + findClosestValidPoint(char[][], int, int): int[]
+  + isDestination(Vector2D, Vector2D): boolean
+  - tracePath(Cell[][], Vector2D): ArrayList<Vector2D>
+  ~ isUnblocked(char[][], Vector2D): boolean
+  - createTowerAvoidanceCostGrid(char[][], String): double[][]
+  - getNearTower(char[][], Vector2D): Vector2D
+  + aStarSearch(char[][], int, int, Vector2D, Vector2D, String, Boolean): ArrayList<Vector2D>
+}
+class AvoidBehavior {
+  + AvoidBehavior(Vector2D): 
+  + calculateForce(Ennemy): Vector2D
+  - createFeelers(Vector2D, Vector2D): Vector2D[]
+  - calculateAvoidanceForce(Vector2D, Vector2D, Vector2D): Vector2D
+  - isObstacleInPath(Ennemy): boolean
+  - rotateVector(Vector2D, double): Vector2D
+  - calculateDistance(Vector2D, Vector2D): double
+}
+class Behavior {
+  + Behavior(): 
+  - TARGET_RADIUS: double
+  - weight: double
+  - target: Vector2D
+  + calculateForce(Ennemy): Vector2D
+   target: Vector2D
+   weight: double
+   TARGET_RADIUS: double
+}
+class Cell {
+  ~ Cell(): 
+  + Cell(Vector2D, double, double, double): 
+}
+class Details {
+  + Details(double, double, double): 
+}
+class PathfollowingBehavior {
+  + PathfollowingBehavior(ArrayList<Vector2D>): 
+  - checkpoints: ArrayList<Vector2D>
+  + calculateForce(Ennemy): Vector2D
+}
+class SeekBehavior {
+  + SeekBehavior(Vector2D): 
+  + calculateForce(Ennemy): Vector2D
+}
+class Vector2D {
+  + Vector2D(double, double): 
+  - y: double
+  - x: double
+  + subtract(Vector2D): Vector2D
+  + equals(Object): boolean
+  + scale(double): Vector2D
+  - <color :red >getCloser(Vector2D, Vector2D): Vector2D</color>
+  + toString(): String
+  + <color :red >getCloserPairIndex(char[][], char): double[]</color>
+  + distanceTo(Vector2D): double
+  + divide(double): Vector2D
+  + magnitude(): double
+  + add(Vector2D): Vector2D
+  + getCaseFromVector(Vector2D): int[]
+  + normalize(): Vector2D
+  + <color :red >getPairIndex(char[][], char): int[]</color>
+   closestCaseCenter: Vector2D
+   obstacle: boolean
+
+}
+
+Cell      <--   Astar : "«create»"
+Vector2D  <-   Cell  : "«create»"
+Vector2D  "parent\n1" <--*  "1" Cell
+Astar     -->  Details : "«create»"
+Behavior  ^--  SeekBehavior
+Behavior  ^--  AvoidBehavior
+Vector2D "target\n1" <--* "1" Behavior
+Vector2D  <-[dashed] Astar: "«create»"
+Behavior  ^--  PathfollowingBehavior
+PathfollowingBehavior ->  SeekBehavior : "«create»"
+PathfollowingBehavior "1" *-> "checkpoints\n*" Vector2D            
+@enduml
