@@ -26,12 +26,12 @@ Conformité à l'étude préalable :
 
 Problèmes rencontrés :
 
-	- De nombreux bug, qui ont été résolu, ont été créé lors du refactor du code, en raison de sa mauvaise structure.
+	- De nombreux bug, qui ont été résolu, ont été créé lors de l'ajouts de nouvelles fonctionnalités, en raison de sa mauvaise structure.
 
 
 Pour lancer l'application : 
  	- Lancer le fichier MainLaby.java situé dans le chemin suivant src/mains/MainLaby.java pour une version graphique.
-	- Lancer le fichier MainSimulation.java situé dans le chemin suivant src/mains/MainSimu.java pour une version sans affichage.
+	- Lancer le fichier MainSimu.java situé dans le chemin suivant src/mains/MainSimu.java pour une version sans affichage.
 
 
 L'application permet de : 
