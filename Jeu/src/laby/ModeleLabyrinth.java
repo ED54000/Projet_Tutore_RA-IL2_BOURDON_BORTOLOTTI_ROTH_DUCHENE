@@ -49,6 +49,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public ArrayList<Ennemy> ennemiesArrived = new ArrayList<>();
     private ArrayList<Ennemy> enemiesToRemove = new ArrayList<>();
     private HashMap<Giant, Double> ennemyScore = new HashMap<>();
+    private HashMap<String, List<Double>> donneesGraphique;
     private ArrayList<Giant> ennemiesEvolved = new ArrayList<>();
     private static int nbArcher, nbCanon, nbBomb, nbGiant, nbNinja, nbBerserker, nbDruides = 0;
 
@@ -56,6 +57,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     //si le jeu est avec le main simulation
     private static boolean simulation = false;
     private static boolean simulationEvolution = false;
+    private boolean showGraph = false;
 
 
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -279,6 +281,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         removeDeadEntities();
         for (Ennemy e : enemies) {
             e.setLastAttackCount(e.getLastAttackCount() + 1);
+            e.setSurvivalTime(e.getSurvivalTime() + 1);
         }
         for (Defense d : defenses) {
             d.setLastAttackCount(d.getLastAttackCount() + 1);
@@ -347,7 +350,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         nbEnnemiesArrived++;
 
         enemy.setPosition(new Vector2D(XArrival, YArrival));
-        enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
+        //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
 
         System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
         System.out.println("Le " + enemy.getName() + " est arrivé");
@@ -415,7 +418,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // le berserker se suicide après avoir attaqué
                 enemy.takeDamage(1000);
                 // On met à jour le temps de survie
-                enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
+                //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
             }
         }
     }
@@ -453,7 +456,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // On retire la cible de la défense
                     defense.setTarget(null);
                     // On met à jour le temps de survie de l'ennemi
-                    enemyTarget.setSurvivalTime(System.currentTimeMillis() - startTime);
+                    //enemyTarget.setSurvivalTime(System.currentTimeMillis() - startTime);
                 }
             }
             // Si l'ennemi n'est plus dans la portée de la défense
@@ -478,7 +481,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // On retire la cible de la défense
                     defense.setTarget(null);
                     // On met à jour le temps de survie de l'enemy
-                    enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
+                    //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
                 }
             }
         }
@@ -499,7 +502,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 if (e.getIsDead() && !deadEnemies.contains(e)) {
                     e.setKillerType(defense.getType());
                     // Et on met à jour son temps de survie
-                    e.setSurvivalTime(System.currentTimeMillis() - startTime);
+                    //e.setSurvivalTime(System.currentTimeMillis() - startTime);
                 }
                 setLogs(e.getName());
                 // Si le jeu est en mode simple et pas en simulation
@@ -1052,5 +1055,20 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/green.png")));
                 break;
         }
+    }
+
+    public boolean getShowGraph() {
+        return showGraph;
+    }
+    public void setGraphique(boolean b) {
+        this.showGraph = b;
+    }
+
+    public void setDonneesGraphique(HashMap<String, List<Double>> donnees) {
+        this.donneesGraphique = donnees;
+    }
+
+    public Map<String, List<Double>> getDonneesGraphique() {
+        return donneesGraphique;
     }
 }

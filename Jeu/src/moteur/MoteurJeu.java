@@ -34,6 +34,7 @@ import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
 
 import laby.controllers.ControllerSimpleMode;
+import laby.views.ViewGraphique;
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
@@ -62,6 +63,8 @@ public class MoteurJeu extends Application {
     private static double dureeFPS = 1000 / (FPS + 1);
 
     private static boolean simpleMode = false;
+
+    private static final int BASE_FPS = 100;
 
     /**
      * statistiques sur les frames
@@ -247,9 +250,11 @@ public class MoteurJeu extends Application {
         // création des vues
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
         ViewLogs viewLogs = new ViewLogs(laby, ContainerLogs);
+        ViewGraphique viewGraphique = new ViewGraphique(laby);
         //enregistrement des observateurs
         laby.registerObserver(viewLabyrinth);
         laby.registerObserver(viewLogs);
+        laby.registerObserver(viewGraphique);
 
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);
@@ -262,7 +267,68 @@ public class MoteurJeu extends Application {
         ControllerSimpleMode controllerSimpleMode = new ControllerSimpleMode(laby, viewLabyrinth, toggleButton);
         toggleButton.setOnMouseClicked(controllerSimpleMode);
 
-        root.setTop(toggleButton);
+
+        // MODIFICATION VITESSE JEU
+
+        ToggleButton speedUpButton = new ToggleButton("Accélérer");
+        ToggleButton slowDownButton = new ToggleButton("Ralentir");
+        ToggleButton pauseButton = new ToggleButton("Pause");
+
+        speedUpButton.setOnAction(e -> {
+            if (speedUpButton.isSelected()) {
+                setFPS(BASE_FPS * 2);
+                speedUpButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+
+                slowDownButton.setSelected(false);
+                pauseButton.setSelected(false);
+
+                slowDownButton.setStyle("");
+                pauseButton.setStyle("");
+
+                laby.setPause(false);
+            } else {
+                setFPS(BASE_FPS);
+                speedUpButton.setStyle("");
+            }
+        });
+
+        slowDownButton.setOnAction(e -> {
+            if (slowDownButton.isSelected()) {
+                setFPS(BASE_FPS / 2);
+                slowDownButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+
+                speedUpButton.setSelected(false);
+                pauseButton.setSelected(false);
+
+                speedUpButton.setStyle("");
+                pauseButton.setStyle("");
+
+                laby.setPause(false);
+            } else {
+                setFPS(BASE_FPS);
+                slowDownButton.setStyle("");
+            }
+        });
+
+        pauseButton.setOnAction(e -> {
+            if (pauseButton.isSelected()) {
+                laby.setPause(true);
+                pauseButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+
+                speedUpButton.setSelected(false);
+                slowDownButton.setSelected(false);
+
+                speedUpButton.setStyle("");
+                slowDownButton.setStyle("");
+            } else {
+                laby.setPause(false);
+                pauseButton.setStyle("");
+            }
+            setFPS(BASE_FPS);
+        });
+
+        HBox controls = new HBox(10, toggleButton, slowDownButton, pauseButton, speedUpButton);
+        root.setTop(controls);
 
         // creation de la scene
         final Scene scene = new Scene(root);
