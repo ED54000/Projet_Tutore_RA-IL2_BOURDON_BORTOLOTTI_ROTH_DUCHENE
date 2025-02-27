@@ -3,7 +3,10 @@ package moteur;
 //https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 
 import entites.enemies.Ennemy;
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
@@ -31,6 +34,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import laby.ModeleLabyrinth;
 
 import laby.controllers.ControllerSimpleMode;
@@ -65,6 +69,7 @@ public class MoteurJeu extends Application {
     private static boolean simpleMode = false;
 
     private static final int BASE_FPS = 100;
+    private Timeline timeline;
 
     /**
      * statistiques sur les frames
@@ -276,7 +281,7 @@ public class MoteurJeu extends Application {
 
         speedUpButton.setOnAction(e -> {
             if (speedUpButton.isSelected()) {
-                setFPS(BASE_FPS * 2);
+                modifyFPS(BASE_FPS * 2);
                 speedUpButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
 
                 slowDownButton.setSelected(false);
@@ -287,14 +292,14 @@ public class MoteurJeu extends Application {
 
                 laby.setPause(false);
             } else {
-                setFPS(BASE_FPS);
+                modifyFPS(BASE_FPS);
                 speedUpButton.setStyle("");
             }
         });
 
         slowDownButton.setOnAction(e -> {
             if (slowDownButton.isSelected()) {
-                setFPS(BASE_FPS / 2);
+                modifyFPS(BASE_FPS / 2);
                 slowDownButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
 
                 speedUpButton.setSelected(false);
@@ -305,7 +310,7 @@ public class MoteurJeu extends Application {
 
                 laby.setPause(false);
             } else {
-                setFPS(BASE_FPS);
+                modifyFPS(BASE_FPS);
                 slowDownButton.setStyle("");
             }
         });
@@ -338,7 +343,7 @@ public class MoteurJeu extends Application {
 
         // lance la boucle de jeu
         jeu.init(canvas);
-        startAnimation(canvas);
+        startAnimation(canvas, FPS);
     }
 
     /**
@@ -346,50 +351,41 @@ public class MoteurJeu extends Application {
      *
      * @param canvas le canvas sur lequel on est synchronise
      */
-    private void startAnimation(final Canvas canvas) {
-        // stocke la derniere mise e jour
-        final LongProperty lastUpdateTime = new SimpleLongProperty(0);
+    private void startAnimation(final Canvas canvas, double fps) {
+        modifyFPS(fps); // Initialise l'animation avec un FPS donné
+    }
 
-        // timer pour boucle de jeu
-        final AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long timestamp) {
-                //fin du jeu
-                if (Platform.isFxApplicationThread() && jeu.etreFini()) {
-                    this.stop();
-                    return;
-                }
+    public void modifyFPS(double newFPS) {
+        if (newFPS <= 0) return; // Sécurité : éviter une division par zéro
 
-                // si jamais passe dans la boucle, initialise le temps
-                if (lastUpdateTime.get() == 0) {
-                    lastUpdateTime.set(timestamp);
-                }
+        dureeFPS = 1000.0 / newFPS; // Convertir FPS en durée (ms)
 
-                // mesure le temps ecoule depuis la derniere mise a jour
-                long elapsedTime = timestamp - lastUpdateTime.get();
-                double dureeEnMilliSecondes = elapsedTime / 1_000_000.0;
+        // Si le timeline existe déjà, on l'arrête avant de le recréer
+        if (timeline != null) {
+            timeline.stop();
+        }
 
-
-                // si le temps ecoule depasse le necessaire pour FPS souhaite
-                if (dureeEnMilliSecondes > dureeFPS) {
-                    // met a jour le jeu
-                    jeu.update(dureeEnMilliSecondes / 1_000.);
-
-                    // dessine le jeu
-                    //ViewLabyrinth.dessinerJeu(jeu, canvas);
-                    //notifier observateurs
-
-                    // ajoute la duree dans les statistiques
-                    frameStats.addFrame(elapsedTime);
-
-                    // met a jour la date de derniere mise a jour
-                    lastUpdateTime.set(timestamp);
-                }
-
+        // Création d'un nouveau Timeline avec le nouvel intervalle
+        timeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(dureeFPS), event -> {
+            if (jeu.etreFini()) {
+                timeline.stop();
+                return;
             }
-        };
-        // lance l'animation
-        timer.start();
+
+            System.out.println("time : " + System.nanoTime());
+
+            jeu.update(dureeFPS / 1000.0);
+
+            // ViewLabyrinth.dessinerJeu(jeu, canvas);
+            // Notifier les observateurs
+
+            frameStats.addFrame((long) (dureeFPS * 1_000_000)); // Convertir en ns
+        });
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
     }
 
     /**
