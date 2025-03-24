@@ -3,9 +3,6 @@ package moteur;
 //https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 
 import entites.enemies.Ennemy;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -18,7 +15,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import laby.ModeleLabyrinth;
 import laby.controllers.ControllerSimpleMode;
 import laby.views.ViewGraphique;
@@ -33,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static laby.ModeleLabyrinth.getScreenSize;
+import static moteur.TimeManagement.modifyFPS;
 
 
 // copied from: https://gist.github.com/james-d/8327842
@@ -43,31 +40,18 @@ public class MoteurJeu extends Application {
     /**
      * gestion du temps : nombre de frame par secondes et temps par iteration
      */
-    private static double FPS = 100;
-    private static double dureeFPS = 1000 / (FPS + 1);
+    static double FPS = 100;
+    static final int BASE_FPS = 100;
 
-    private static boolean simpleMode = false;
-
-    private static final int BASE_FPS = 100;
-    private Timeline timeline;
-
-    /**
-     * statistiques sur les frames
-     */
-    private final FrameStats frameStats = new FrameStats();
 
     /**
      * jeu en Cours et renderer du jeu
      */
     private static Jeu jeu = null;
     ModeleLabyrinth laby = (ModeleLabyrinth) MoteurJeu.jeu;
-    //Labyrinthe laby = labyJeu.getLabyrinthe();
-    //private static DessinJeu dessin = null;
-
     // initialisation du canvas de dessin et du container
     final Canvas canvas = new Canvas();
     final Pane canvasContainer = new Pane(canvas);
-    //final VBox logs = new VBox();
 
     /**
      * lancement d'un jeu
@@ -81,16 +65,6 @@ public class MoteurJeu extends Application {
         // si le jeu existe, on lance le moteur de jeu
         if (jeu != null)
             launch();
-    }
-
-    /**
-     * frame par secondes
-     *
-     * @param FPSSouhaitees nombre de frames par secondes souhaitees
-     */
-    public static void setFPS(int FPSSouhaitees) {
-        FPS = FPSSouhaitees;
-        dureeFPS = 1000 / (FPS + 1);
     }
 
 
@@ -179,7 +153,7 @@ public class MoteurJeu extends Application {
                 dialogStage.close();
                 try {
                     laby.setUseAstar(avecAstarBox.isSelected());
-                    ArrayList<Ennemy> ennemies = laby.createEnnemies(Integer.parseInt(enemiesField.getText()));
+                    ArrayList<Ennemy> ennemies = ModeleLabyrinth.createEnnemies(Integer.parseInt(enemiesField.getText()));
                     System.out.println("Les ennemies : " + ennemies.size());
                     laby.creerLabyrinthe(labyrinthString, ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
                 } catch (IOException e) {
@@ -191,7 +165,6 @@ public class MoteurJeu extends Application {
         // Ajout des composants au conteneur principal
         root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, ennemiesToWinBox, noAstar, startButton);
 
-        //startButton.setOnMouseClicked(controllerStart);
 
         // Configure la scène de la fenêtre
         Scene dialogScene = new Scene(root, 400, 230);
@@ -220,7 +193,6 @@ public class MoteurJeu extends Application {
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
         ModeleLabyrinth.setLogs("Manche 1");
-        //logs.getChildren().add(new Label("Manche 1"));
 
         //Ajout d'un scrollPane
         ScrollPane scrollPane = new ScrollPane();
@@ -231,12 +203,8 @@ public class MoteurJeu extends Application {
 
         ContainerLogs.getChildren().addAll(title, scrollPane);
 
-        //TODO : création des controleurs
-        //ControllerStart controllerStart = new ControllerStart(laby);
-        //ControllerLearn controllerLearn = new ControllerLearn(laby);
         // création des vues
         ViewGraphiqueDirect viewGraphiqueDirect = new ViewGraphiqueDirect(laby);
-        //ContainerLogs.getChildren().add(viewGraphiqueDirect.getGraphique());
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
         ViewLogs viewLogs = new ViewLogs(laby, ContainerLogs, viewGraphiqueDirect);
         ViewGraphique viewGraphique = new ViewGraphique(laby);
@@ -264,57 +232,18 @@ public class MoteurJeu extends Application {
         ToggleButton slowDownButton = new ToggleButton("Ralentir");
         ToggleButton pauseButton = new ToggleButton("Pause");
 
+        TimeManagement timeManagement = new TimeManagement(jeu, laby, speedUpButton, slowDownButton, pauseButton);
+
         speedUpButton.setOnAction(e -> {
-            if (speedUpButton.isSelected()) {
-                modifyFPS(BASE_FPS * 2);
-                speedUpButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-
-                slowDownButton.setSelected(false);
-                pauseButton.setSelected(false);
-
-                slowDownButton.setStyle("");
-                pauseButton.setStyle("");
-
-                laby.setPause(false);
-            } else {
-                modifyFPS(BASE_FPS);
-                speedUpButton.setStyle("");
-            }
+            TimeManagement.modifySpeed((BASE_FPS * 2), speedUpButton, slowDownButton);
         });
 
         slowDownButton.setOnAction(e -> {
-            if (slowDownButton.isSelected()) {
-                modifyFPS(BASE_FPS / 2);
-                slowDownButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-
-                speedUpButton.setSelected(false);
-                pauseButton.setSelected(false);
-
-                speedUpButton.setStyle("");
-                pauseButton.setStyle("");
-
-                laby.setPause(false);
-            } else {
-                modifyFPS(BASE_FPS);
-                slowDownButton.setStyle("");
-            }
+            TimeManagement.modifySpeed((BASE_FPS / 2), slowDownButton, speedUpButton);
         });
 
         pauseButton.setOnAction(e -> {
-            if (pauseButton.isSelected()) {
-                laby.setPause(true);
-                pauseButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-
-                speedUpButton.setSelected(false);
-                slowDownButton.setSelected(false);
-
-                speedUpButton.setStyle("");
-                slowDownButton.setStyle("");
-            } else {
-                laby.setPause(false);
-                pauseButton.setStyle("");
-            }
-            setFPS(BASE_FPS);
+            TimeManagement.pause();
         });
 
         ToggleButton helpButton = new ToggleButton("Aide");
@@ -345,38 +274,6 @@ public class MoteurJeu extends Application {
         modifyFPS(fps); // Initialise l'animation avec un FPS donné
     }
 
-    public void modifyFPS(double newFPS) {
-        if (newFPS <= 0) return; // Sécurité : éviter une division par zéro
-
-        dureeFPS = 1000.0 / newFPS; // Convertir FPS en durée (ms)
-
-        // Si le timeline existe déjà, on l'arrête avant de le recréer
-        if (timeline != null) {
-            timeline.stop();
-        }
-
-        // Création d'un nouveau Timeline avec le nouvel intervalle
-        timeline = new Timeline();
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(dureeFPS), event -> {
-            if (jeu.etreFini()) {
-                timeline.stop();
-                return;
-            }
-
-            jeu.update(dureeFPS / 1000.0);
-
-            // ViewLabyrinth.dessinerJeu(jeu, canvas);
-            // Notifier les observateurs
-
-            frameStats.addFrame((long) (dureeFPS * 1_000_000)); // Convertir en ns
-        });
-
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
-    }
-
-
 
     private String openLaby() {
         FileChooser fileChooser = new FileChooser();
@@ -394,10 +291,6 @@ public class MoteurJeu extends Application {
             return "Ressources/Labyrinthe1.txt";
         }
     }
-
-
-
-
 
     private void openHelpWindow() {
         HelpWindow helpWindow = HelpWindow.getHelpWindow();
