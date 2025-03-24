@@ -4,13 +4,9 @@ package moteur;
 
 import entites.enemies.Ennemy;
 import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -18,41 +14,30 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.FontWeight;
-import javafx.stage.FileChooser;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import laby.ModeleLabyrinth;
-
 import laby.controllers.ControllerSimpleMode;
 import laby.views.ViewGraphique;
 import laby.views.ViewGraphiqueDirect;
 import laby.views.ViewLabyrinth;
 import laby.views.ViewLogs;
 
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import static laby.ModeleLabyrinth.getScreenSize;
 
 
@@ -93,7 +78,7 @@ public class MoteurJeu extends Application {
     /**
      * lancement d'un jeu
      *
-     * @param jeu    jeu a lancer
+     * @param jeu jeu a lancer
      */
     public static void launch(Jeu jeu) {
         // le jeu en cours et son afficheur
@@ -122,6 +107,7 @@ public class MoteurJeu extends Application {
     //#################################
     // SURCHARGE Application
     //#################################
+
     /**
      * creation de l'application avec juste un canvas et des statistiques
      */
@@ -144,7 +130,7 @@ public class MoteurJeu extends Application {
 
         // Initialisation de la ComboBox avec les noms lisibles
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large","Plus");
+        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "Plus");
         labyrinthComboBox.setValue("Large");
 
         // Définit "Petit" comme valeur par défaut
@@ -187,12 +173,12 @@ public class MoteurJeu extends Application {
             @Override
             public void handle(MouseEvent MouseEvent) {
                 laby.setStartTime();
-                String labyrinthString ;
+                String labyrinthString;
                 switch (labyrinthComboBox.getValue()) {
-                    case "Plus" :
+                    case "Plus":
                         labyrinthString = openLaby();
                         break;
-                    default :
+                    default:
                         labyrinthString = labyrinthMap.get(labyrinthComboBox.getValue());
                         break;
                 }
@@ -224,7 +210,7 @@ public class MoteurJeu extends Application {
     }
 
     public void startJeu(Stage primaryStage) {
-        canvas.setWidth((getScreenSize().width/7.0)*6);
+        canvas.setWidth((getScreenSize().width / 7.0) * 6);
         canvas.widthProperty().bind(canvasContainer.widthProperty());
         canvas.heightProperty().bind(canvasContainer.heightProperty());
 
@@ -235,7 +221,7 @@ public class MoteurJeu extends Application {
 
         VBox logs = new VBox();
         logs.setMinWidth(350);
-        logs.setPrefWidth(getScreenSize().width/5);
+        logs.setPrefWidth(getScreenSize().width / 5);
         logs.setPadding(new Insets(10));
         logs.setSpacing(10);
         ModeleLabyrinth.setLogs("Manche 1");
@@ -245,7 +231,7 @@ public class MoteurJeu extends Application {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setFitToWidth(false); // Permet au ScrollPane de scroller horizontalement
-        scrollPane.setPrefSize(getScreenSize().width/5, getScreenSize().height);
+        scrollPane.setPrefSize(getScreenSize().width / 5, getScreenSize().height);
         scrollPane.setContent(logs);
 
         ContainerLogs.getChildren().addAll(title, scrollPane);
@@ -336,7 +322,12 @@ public class MoteurJeu extends Application {
             setFPS(BASE_FPS);
         });
 
-        HBox controls = new HBox(10, toggleButton, slowDownButton, pauseButton, speedUpButton);
+        ToggleButton helpButton = new ToggleButton("Aide");
+
+        helpButton.setOnAction(e -> openHelpWindow());
+
+
+        HBox controls = new HBox(10, toggleButton, slowDownButton, pauseButton, speedUpButton, helpButton);
         root.setTop(controls);
 
         // creation de la scene
@@ -392,6 +383,7 @@ public class MoteurJeu extends Application {
 
     /**
      * Méthode permettant d'activer le mode simple
+     *
      * @param vue vue du labyrinthe
      */
     public void enableSimpleMode(ViewLabyrinth vue) {
@@ -402,7 +394,7 @@ public class MoteurJeu extends Application {
 
         // On applique les sprites aux cases (sol, murs)
         Map<Character, Image> newImages = new HashMap<>();
-        for(Map.Entry<Character, Image> entry : vue.getImages().entrySet()) {
+        for (Map.Entry<Character, Image> entry : vue.getImages().entrySet()) {
             newImages.put(entry.getKey(), entry.getValue());
         }
         newImages.put(ModeleLabyrinth.TREE, tree);
@@ -414,18 +406,18 @@ public class MoteurJeu extends Application {
         allEnnemies.addAll(laby.enemies);
         allEnnemies.addAll(laby.deadEnemies);
         for (Ennemy ennemy : allEnnemies) {
-            switch (ennemy.getBehaviorString()){
+            switch (ennemy.getBehaviorString()) {
                 case "Normal":
-                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/gray.png")));
+                    ennemy.setSprite(addTextToImage("" + (int) ennemy.getHealth(), new Image("/gray.png")));
                     break;
-                case "Kamikaze" :
-                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/red.png")));
+                case "Kamikaze":
+                    ennemy.setSprite(addTextToImage("" + (int) ennemy.getHealth(), new Image("/red.png")));
                     break;
-                case "Healer" :
-                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/green.png")));
+                case "Healer":
+                    ennemy.setSprite(addTextToImage("" + (int) ennemy.getHealth(), new Image("/green.png")));
                     break;
-                case "Fugitive" :
-                    ennemy.setSprite(addTextToImage("" + (int)ennemy.getHealth(), new Image("/blue.png")));
+                case "Fugitive":
+                    ennemy.setSprite(addTextToImage("" + (int) ennemy.getHealth(), new Image("/blue.png")));
                     break;
             }
         }
@@ -433,6 +425,7 @@ public class MoteurJeu extends Application {
 
     /**
      * Méthode permettant de désactiver le mode simple
+     *
      * @param vue vue du labyrinthe
      */
     public void disableSimpleMode(ViewLabyrinth vue) {
@@ -443,7 +436,7 @@ public class MoteurJeu extends Application {
 
         // On applique les sprites aux entités
         Map<Character, Image> newImages = new HashMap<>();
-        for(Map.Entry<Character, Image> entry : vue.getImages().entrySet()) {
+        for (Map.Entry<Character, Image> entry : vue.getImages().entrySet()) {
             newImages.put(entry.getKey(), entry.getValue());
         }
         newImages.put(ModeleLabyrinth.TREE, tree);
@@ -455,22 +448,23 @@ public class MoteurJeu extends Application {
         allEnnemies.addAll(laby.enemies);
         allEnnemies.addAll(laby.deadEnemies);
         for (Ennemy ennemy : allEnnemies) {
-            switch (ennemy.getBehaviorString()){
-                case "Normal" :
+            switch (ennemy.getBehaviorString()) {
+                case "Normal":
                     ennemy.setSprite(new Image("/giant.png"));
                     break;
-                case "Kamikaze" :
+                case "Kamikaze":
                     ennemy.setSprite(new Image("/berserker.png"));
                     break;
-                case "Healer" :
+                case "Healer":
                     ennemy.setSprite(new Image("/druide.png"));
                     break;
-                case "Fugitive" :
+                case "Fugitive":
                     ennemy.setSprite(new Image("/ninja.png"));
                     break;
             }
         }
     }
+
     private String openLaby() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Sélectionner un fichier de labyrinthe");
@@ -498,7 +492,8 @@ public class MoteurJeu extends Application {
 
     /**
      * Méthode pour afficher du texte sur une image
-     * @param text Texte à afficher
+     *
+     * @param text  Texte à afficher
      * @param image Image sur laquelle afficher le texte
      * @return Image avec le texte
      */
@@ -531,5 +526,10 @@ public class MoteurJeu extends Application {
         params.setFill(Color.TRANSPARENT);
         canvas.snapshot(params, writableImage);
         return writableImage;
+    }
+
+    private void openHelpWindow() {
+        HelpWindow helpWindow = HelpWindow.getHelpWindow();
+        helpWindow.show();
     }
 }
