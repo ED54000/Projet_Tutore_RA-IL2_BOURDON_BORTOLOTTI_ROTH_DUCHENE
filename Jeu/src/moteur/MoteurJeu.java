@@ -6,6 +6,7 @@ import entites.enemies.Ennemy;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -80,100 +81,196 @@ public class MoteurJeu extends Application {
      * creation de l'application avec juste un canvas et des statistiques
      */
     public void start(Stage primaryStage) throws IOException {
-        // création des vues
+        // Création des vues
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
         laby.registerObserver(viewLabyrinth);
 
-        // Crée une nouvelle fenêtre (Stage)
+        // Configuration de la fenêtre de dialogue
         Stage dialogStage = new Stage();
-        dialogStage.setTitle("Labyrinthe");
-        // Conteneur principal
-        VBox root = new VBox(10);
-        root.setPadding(new Insets(20));
+        dialogStage.setTitle("Configuration du Labyrinthe");
+
+        // Conteneur principal avec style moderne
+        VBox root = new VBox(20);
+        root.setPadding(new Insets(30));
+        root.setStyle("-fx-background-color: #f5f5f5; "
+                + "-fx-background-radius: 10; "
+                + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+
+        // En-tête
+        Label titleLabel = new Label("Configuration de la partie");
+        titleLabel.setStyle("-fx-font-size: 24px; "
+                + "-fx-font-weight: bold; "
+                + "-fx-text-fill: #2c3e50; "
+                + "-fx-padding: 0 0 20 0;");
+
         // Map des labyrinthes
         Map<String, String> labyrinthMap = new HashMap<>();
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
 
-        // Initialisation de la ComboBox avec les noms lisibles
+        // Section de sélection du labyrinthe
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
         labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "Plus");
         labyrinthComboBox.setValue("Large");
+        labyrinthComboBox.setId("labyrinthComboBox");
+        labyrinthComboBox.setStyle("-fx-background-color: #f8f9fa; "
+                + "-fx-background-radius: 5; "
+                + "-fx-border-color: #dee2e6; "
+                + "-fx-border-radius: 5; "
+                + "-fx-padding: 5;");
 
-        // Définit "Petit" comme valeur par défaut
-        HBox labyrinthBox = new HBox(10, new Label("Choisir le labyrinthe :"), labyrinthComboBox);
-        // Champ pour le nombre d'ennemis
-        TextField enemiesField = new TextField();
-        enemiesField.setPromptText("Nombre d'ennemis");
-        enemiesField.setText("30");
+        VBox labyrinthSection = createSection("Choisir le labyrinthe", labyrinthComboBox);
 
-        // Champ pour le nombre d'ennemis qui doivent atteindre la ligne d'arrivée
-        TextField nbEnnemiesToWinField = new TextField();
-        nbEnnemiesToWinField.setPromptText("Nombre d'ennemis qui doivent atteindre la ligne d'arrivée");
-        nbEnnemiesToWinField.setText("70");
+        // Section configuration des ennemis
+        TextField enemiesField = createStyledTextField("30", "enemiesField");
+        VBox enemiesSection = createSection("Nombre d'ennemis", enemiesField);
 
-        // CheckBox avec ou sans Astar
+        TextField nbEnnemiesToWinField = createStyledTextField("70", "ennemiesToWinField");
+        VBox objectifSection = createSection("Objectif d'ennemis à l'arrivée", nbEnnemiesToWinField);
+
+        // Section nombre de manches
+        TextField roundsField = createStyledTextField("10", "roundsField");
+        VBox roundsSection = createSection("Nombre de manches", roundsField);
+
+        // Section A*
         CheckBox avecAstarBox = new CheckBox();
         avecAstarBox.setSelected(true);
-
-        HBox enemiesBox = new HBox(10, new Label("Nombre d'ennemis :"), enemiesField);
-        // Champ pour le nombre de manches
-        TextField roundsField = new TextField();
-        roundsField.setPromptText("Nombre de manches");
-        roundsField.setText("10");
-        labyrinthComboBox.setId("labyrinthComboBox");
-        enemiesField.setId("enemiesField");
-        roundsField.setId("roundsField");
-        nbEnnemiesToWinField.setId("ennemiesToWinField");
         avecAstarBox.setId("avecOuSansAstarBox");
+        avecAstarBox.setStyle("-fx-padding: 5;");
 
-        // Création du contrôleur avec les références des champs
-        //ControllerStart controllerStart = new ControllerStart(laby, labyrinthComboBox, enemiesField, roundsField, nbEnnemiesToWinField);
+        VBox astarSection = createSection("Utiliser l'algorithme A*", avecAstarBox);
 
+        // Bouton de démarrage
+        Button startButton = new Button("Démarrer la partie");
+        startButton.setStyle("-fx-background-color: #4CAF50; "
+                + "-fx-text-fill: white; "
+                + "-fx-font-size: 14px; "
+                + "-fx-font-weight: bold; "
+                + "-fx-padding: 12 24; "
+                + "-fx-background-radius: 5; "
+                + "-fx-cursor: hand;");
 
-        HBox roundsBox = new HBox(10, new Label("Nombre de manches :"), roundsField);
-        HBox ennemiesToWinBox = new HBox(10, new Label("Objectif :"), nbEnnemiesToWinField);
-        HBox noAstar = new HBox(10, new Label("Avec Astar ? "), avecAstarBox);
-        // Bouton Start
-        Button startButton = new Button("Start");
-        startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent MouseEvent) {
-                laby.setStartTime();
-                String labyrinthString;
-                switch (labyrinthComboBox.getValue()) {
-                    case "Plus":
-                        labyrinthString = openLaby();
-                        break;
-                    default:
-                        labyrinthString = labyrinthMap.get(labyrinthComboBox.getValue());
-                        break;
-                }
-                dialogStage.close();
-                try {
-                    laby.setUseAstar(avecAstarBox.isSelected());
-                    ArrayList<Ennemy> ennemies = ModeleLabyrinth.createEnnemies(Integer.parseInt(enemiesField.getText()));
-                    System.out.println("Les ennemies : " + ennemies.size());
-                    laby.creerLabyrinthe(labyrinthString, ennemies, Integer.parseInt(roundsField.getText()), Integer.parseInt(nbEnnemiesToWinField.getText()));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                startJeu(primaryStage);
+        // Effet hover pour le bouton
+        startButton.setOnMouseEntered(e ->
+                startButton.setStyle("-fx-background-color: #45a049; "
+                        + "-fx-text-fill: white; "
+                        + "-fx-font-size: 14px; "
+                        + "-fx-font-weight: bold; "
+                        + "-fx-padding: 12 24; "
+                        + "-fx-background-radius: 5; "
+                        + "-fx-cursor: hand; "
+                        + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 0);")
+        );
+
+        startButton.setOnMouseExited(e ->
+                startButton.setStyle("-fx-background-color: #4CAF50; "
+                        + "-fx-text-fill: white; "
+                        + "-fx-font-size: 14px; "
+                        + "-fx-font-weight: bold; "
+                        + "-fx-padding: 12 24; "
+                        + "-fx-background-radius: 5; "
+                        + "-fx-cursor: hand;")
+        );
+
+        startButton.setOnMouseClicked(event -> {
+            laby.setStartTime();
+            String labyrinthString;
+            switch (labyrinthComboBox.getValue()) {
+                case "Plus":
+                    labyrinthString = openLaby();
+                    break;
+                default:
+                    labyrinthString = labyrinthMap.get(labyrinthComboBox.getValue());
+                    break;
             }
+            dialogStage.close();
+            try {
+                laby.setUseAstar(avecAstarBox.isSelected());
+                ArrayList<Ennemy> ennemies = ModeleLabyrinth.createEnnemies(
+                        Integer.parseInt(enemiesField.getText())
+                );
+                laby.creerLabyrinthe(
+                        labyrinthString,
+                        ennemies,
+                        Integer.parseInt(roundsField.getText()),
+                        Integer.parseInt(nbEnnemiesToWinField.getText())
+                );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            startJeu(primaryStage);
         });
-        // Ajout des composants au conteneur principal
-        root.getChildren().addAll(labyrinthBox, enemiesBox, roundsBox, ennemiesToWinBox, noAstar, startButton);
 
+        // Assemblage de l'interface
+        root.getChildren().addAll(
+                titleLabel,
+                labyrinthSection,
+                enemiesSection,
+                objectifSection,
+                roundsSection,
+                astarSection,
+                startButton
+        );
 
-        // Configure la scène de la fenêtre
-        Scene dialogScene = new Scene(root, 400, 230);
+        // Configuration de la scène
+        Scene dialogScene = new Scene(root, 500, 750);
+        dialogScene.setFill(Color.TRANSPARENT);
         dialogStage.setScene(dialogScene);
-        // Configure la fenêtre en tant que modale
         dialogStage.initOwner(primaryStage);
         dialogStage.initModality(Modality.APPLICATION_MODAL);
-        // Affiche la fenêtre
         dialogStage.showAndWait();
+    }
+
+    // Méthode utilitaire pour créer une section
+    private VBox createSection(String labelText, Node content) {
+        VBox section = new VBox(10);
+        section.setStyle("-fx-background-color: white; "
+                + "-fx-padding: 15; "
+                + "-fx-background-radius: 5; "
+                + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 0);");
+
+        Label label = new Label(labelText);
+        label.setStyle("-fx-font-size: 14px; "
+                + "-fx-font-weight: bold; "
+                + "-fx-text-fill: #34495e;");
+
+        section.getChildren().addAll(label, content);
+        return section;
+    }
+
+    // Méthode utilitaire pour créer un TextField stylisé
+    private TextField createStyledTextField(String defaultValue, String id) {
+        TextField field = new TextField(defaultValue);
+        field.setId(id);
+        field.setStyle("-fx-background-color: #f8f9fa; "
+                + "-fx-background-radius: 5; "
+                + "-fx-border-color: #dee2e6; "
+                + "-fx-border-radius: 5; "
+                + "-fx-padding: 8; "
+                + "-fx-font-size: 13px;");
+
+        // Effet focus
+        field.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+            if (isFocused) {
+                field.setStyle("-fx-background-color: white; "
+                        + "-fx-background-radius: 5; "
+                        + "-fx-border-color: #4CAF50; "
+                        + "-fx-border-radius: 5; "
+                        + "-fx-padding: 8; "
+                        + "-fx-font-size: 13px; "
+                        + "-fx-effect: dropshadow(three-pass-box, rgba(76,175,80,0.2), 5, 0, 0, 0);");
+            } else {
+                field.setStyle("-fx-background-color: #f8f9fa; "
+                        + "-fx-background-radius: 5; "
+                        + "-fx-border-color: #dee2e6; "
+                        + "-fx-border-radius: 5; "
+                        + "-fx-padding: 8; "
+                        + "-fx-font-size: 13px;");
+            }
+        });
+
+        return field;
     }
 
     public void startJeu(Stage primaryStage) {
