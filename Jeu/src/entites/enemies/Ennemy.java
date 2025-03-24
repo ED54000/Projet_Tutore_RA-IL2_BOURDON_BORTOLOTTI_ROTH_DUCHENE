@@ -4,6 +4,7 @@ import entites.Entity;
 import javafx.scene.image.Image;
 import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
+import moteur.SimpleMode;
 import steering_astar.Astar.Astar;
 import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
@@ -71,7 +72,7 @@ public abstract class Ennemy extends Entity {
                 target.health += Math.abs(heal);
                 ModeleLabyrinth.setLogs(target.getName());
                 // Si le jeu est en mode simple et pas en simulation
-                if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()) {
+                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()) {
                     // On met à jour le sprite de l'ennemi (sa vie)
                     ModeleLabyrinth.updateSprite(target);
                 }else {

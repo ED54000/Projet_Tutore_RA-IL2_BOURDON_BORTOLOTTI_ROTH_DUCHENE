@@ -11,6 +11,7 @@ import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import moteur.Jeu;
 import moteur.MoteurJeu;
+import moteur.SimpleMode;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.SeekBehavior;
 import steering_astar.Steering.Vector2D;
@@ -446,7 +447,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Quand il se fait attaquer normalement
                     setLogs(enemyTarget.getName());
                     // Si le jeu est en mode simple et non en simulation
-                    if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                    if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
                         // On met à jour le sprite de l'ennemi (sa vie)
                         updateSprite(enemyTarget);
                     }
@@ -507,7 +508,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 setLogs(e.getName());
                 // Si le jeu est en mode simple et pas en simulation
-                if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
                     // On met à jour son sprite (sa vie)
                     updateSprite(e);
                 }
@@ -1052,16 +1053,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
         System.out.println("Sprite update");
         switch (e.getBehaviorString()) {
             case "Normal":
-                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/gray.png")));
+                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/gray.png")));
                 break;
             case "Kamikaze":
-                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/red.png")));
+                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/red.png")));
                 break;
             case "Fugitive":
-                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/blue.png")));
+                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/blue.png")));
                 break;
             case "Healer":
-                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/green.png")));
+                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/green.png")));
                 break;
         }
     }

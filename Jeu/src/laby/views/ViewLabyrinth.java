@@ -13,6 +13,7 @@ import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
 import moteur.MoteurJeu;
+import moteur.SimpleMode;
 import steering_astar.Steering.Behavior;
 
 import java.util.HashMap;
@@ -161,7 +162,7 @@ public class ViewLabyrinth implements Observer {
 
         // vélocité de l'ennemi
         // Si on est en mode simple, on ne dessine pas la vélocité de l'ennemi
-        if (!MoteurJeu.getSimpleMode()) {
+        if (!SimpleMode.getSimpleMode()) {
             gc.setFill(Color.RED);
             gc.setStroke(Color.RED);
             double xCoord = xCoordEnnemi + xCoordVelocity * velocityPointMultiplier;
@@ -173,7 +174,7 @@ public class ViewLabyrinth implements Observer {
         Image image = ennemi.getImage();
 
         // Si l'ennemi est touché on met l'image en rouge
-        if (!MoteurJeu.getSimpleMode()) {
+        if (!SimpleMode.getSimpleMode()) {
             if (ennemi.getIsHit()) {
                 image = ennemi.getSpriteHit();
                 // Utiliser un Timeline pour réinitialiser l'image après un certain délai
@@ -215,7 +216,7 @@ public class ViewLabyrinth implements Observer {
 
         // range des ennemis
         // Si on est en mode simple, on ne dessine pas la range des ennemis
-        if (!MoteurJeu.getSimpleMode()) {
+        if (!SimpleMode.getSimpleMode()) {
             gc.setStroke(Color.BLACK);
             gc.strokeOval(xCoordEnnemi - range, yCoordEnnemi - range, 2 * range, 2 * range);
         }
