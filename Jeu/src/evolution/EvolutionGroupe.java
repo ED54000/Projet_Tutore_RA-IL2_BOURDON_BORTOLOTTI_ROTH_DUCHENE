@@ -8,11 +8,12 @@ import steering_astar.Steering.Vector2D;
 import java.io.IOException;
 import java.util.*;
 
-public class Evolution {
+public class EvolutionGroupe implements Evolve{
 
     // On stocke les statistiques des ennemis au départ de la manche
     public static final Map<Ennemy, double[]> startStats = Collections.synchronizedMap(new HashMap<>());
 
+    @Override
     public HashMap<ArrayList<Ennemy>, Double> evaluate(HashMap<ArrayList<Ennemy>, Double> stats) throws IOException {
         // Créer une nouvelle map pour stocker les résultats
         HashMap<ArrayList<Ennemy>, Double> newStats = new HashMap<>();
@@ -23,17 +24,14 @@ public class Evolution {
                 continue;
             }
 
-
             ModeleLabyrinth jeu = new ModeleLabyrinth();
-            jeu.nbEnnemiesToWin = groupe.size(); //Fixe le nombre d'ennemis qui doivent passer pour gagner au npmbre de base -1
+            jeu.nbEnnemiesToWin = groupe.size(); //Fixe le nombre d'ennemis qui doivent passer pour gagner au npmbre de base
             //crée une copie de groupe
             ArrayList<Ennemy> copieGroupe = new ArrayList<>();
-            System.out.println("Groupe avant : "+groupe);
             for (Ennemy ennemy : groupe) {
                 ennemy.setSurvivalTime(0);
                 refreshEnnemiesAndAdd(ennemy, jeu, copieGroupe);
             }
-            System.out.println("Groupe tout neuf : "+copieGroupe);
 
             jeu.creerLabyrinthe(MoteurJeu.labyFile, copieGroupe, 1000, jeu.nbEnnemiesToWin);
             double score = simulate(jeu);
@@ -281,7 +279,7 @@ public class Evolution {
         ennemy.setArrived(false);
 
         // Réinitialisation des stats
-        double[] statsStart = Evolution.startStats.get(ennemy);
+        double[] statsStart = EvolutionGroupe.startStats.get(ennemy);
         if (statsStart != null) {
             ennemy.setHealth(statsStart[0]);
             ennemy.setSpeed(statsStart[1]);

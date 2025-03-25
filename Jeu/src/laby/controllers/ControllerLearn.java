@@ -6,7 +6,7 @@ import entites.defenses.Canon;
 import entites.defenses.Defense;
 import entites.enemies.*;
 import evolution.EnnemyEvolution;
-import evolution.Evolution;
+import evolution.EvolutionGroupe;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static evolution.Evolution.refreshEnnemiesAndAdd;
+import static evolution.EvolutionGroupe.refreshEnnemiesAndAdd;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
@@ -43,8 +43,8 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         }
 
         // On fait évoluer les ennemis
-        Evolution evolution = new Evolution();
-        if (laby.getNbManches()<2){
+        EvolutionGroupe evolution = new EvolutionGroupe();
+        if (laby.getNbManches()<2) {
             // nombre de groupes
             for (int i = 0; i < 25; i++) {
                 groupes.add(laby.createEnnemies(laby.getEnnemyEndOfManche().size()));

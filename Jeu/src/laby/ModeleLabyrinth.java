@@ -2,11 +2,12 @@ package laby;
 
 import entites.defenses.*;
 import entites.enemies.*;
-import evolution.Evolution;
+import evolution.EvolutionGroupe;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import jdk.swing.interop.SwingInterOpUtils;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import moteur.Jeu;
@@ -225,10 +226,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
 
         // On sauvegarde les statistiques des ennemis
-        Evolution.saveStartStats(ennemies);
+        EvolutionGroupe.saveStartStats(ennemies);
         //System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
-        Map<Ennemy, double[]> map = Evolution.startStats;
+        Map<Ennemy, double[]> map = EvolutionGroupe.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
             Ennemy enemy = entry.getKey();
             double[] values = entry.getValue();
@@ -323,7 +324,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Iterator<Ennemy> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
             Ennemy enemy = enemyIterator.next();
+            System.out.println("hasReachedArrival(enemy) : " + hasReachedArrival(enemy));
             if (hasReachedArrival(enemy)) {
+                System.out.println("arrivé");
                 handleEnemyArrival(enemy);
                 enemyIterator.remove();
                 System.out.println("Liste des ennemis a la fin : " + enemies);
@@ -332,8 +335,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     System.out.println("Ennemy : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehaviorString() + "survivalTime : " + e.getSurvivalTime());
                     System.out.println("Position : " + e.getPositionReel());
                 }
-
-
             } else {
                 enemy.update();
             }
@@ -341,6 +342,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private boolean hasReachedArrival(Ennemy enemy) {
+        //double x = enemy.getPosition().getX();
+        //double y = enemy.getPosition().getY();
+        //System.out.println("X arrival : " + x + " Y arrival : " + y);
+
         return Math.abs(enemy.getPosition().getX() - XArrivalRender) <= 10 &&
                 Math.abs(enemy.getPosition().getY() - YArrivalRender) <= 10 &&
                 !enemy.getIsArrived() &&
@@ -351,7 +356,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         enemy.setArrived(true);
         nbEnnemiesArrived++;
 
-        enemy.setPosition(new Vector2D(XArrival, YArrival));
+        enemy.setPosition(getArrival());
         //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
 
         System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
@@ -929,6 +934,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return YArrival;
     }
 
+    public static Vector2D getArrival() {
+        return new Vector2D(YArrival, XArrival);
+    }
+
     public int getNbManches() {
         return nbManches;
     }
@@ -1081,4 +1090,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public Map<String, List<Double>> getDonneesGraphique() {
         return donneesGraphique;
     }
+
+
 }
