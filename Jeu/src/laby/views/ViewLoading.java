@@ -5,36 +5,35 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ViewLoading {
-    private Stage popupStage;
+    private Stage stage;
     private ProgressBar progressBar;
     private Label progressLabel;
 
-    public ViewLoading(Stage parentStage, int totalSimulations) {
-        popupStage = new Stage();
-        popupStage.setAlwaysOnTop(true);  // Garder la popup au premier plan
-        popupStage.initOwner(parentStage);
-        popupStage.setTitle("Exécution en cours...");
+    public ViewLoading(Stage parentStage) {
+        stage = new Stage();
+        stage.initOwner(parentStage);
+        stage.setTitle("Chargement...");
 
-        progressLabel = new Label("Exécution en cours...");
+        progressLabel = new Label("Evolution en cours...");
         progressBar = new ProgressBar();
-        progressBar.setProgress(-1); // Mode indéterminé (barre animée)
+        progressBar.setProgress(-1);  // Mode indéterminé
 
         VBox layout = new VBox(10, progressLabel, progressBar);
         layout.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(layout, 300, 150);
-        popupStage.setScene(scene);
+
+        Scene scene = new Scene(layout, 300, 100);
+        stage.setScene(scene);
     }
 
-    // Afficher la fenêtre de chargement
     public void show() {
-        popupStage.show();
+        stage.show();
     }
 
-    // Fermer la fenêtre de chargement
     public void close() {
-        popupStage.close();
+        stage.close();
     }
 }

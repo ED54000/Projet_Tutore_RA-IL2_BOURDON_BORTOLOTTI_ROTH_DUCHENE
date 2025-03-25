@@ -19,7 +19,7 @@ public class ViewGraphique implements Observer {
     private int manche = 0;
     private static boolean mancheTerminee = true;
     private LineChart<Number, Number> graphique;
-    private NumberAxis axeX; // Ajouter une référence à l'axe X
+    private NumberAxis axeX;
 
     private static final List<String> TYPES_ENNEMIS = Arrays.asList("Giant", "Ninja", "Berserker", "Druide");
 

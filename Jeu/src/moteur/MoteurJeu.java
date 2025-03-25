@@ -45,6 +45,7 @@ public class MoteurJeu extends Application {
      * jeu en Cours et renderer du jeu
      */
     private static Jeu jeu = null;
+    public static String labyFile;
     ModeleLabyrinth laby = (ModeleLabyrinth) MoteurJeu.jeu;
     // initialisation du canvas de dessin et du container
     final Canvas canvas = new Canvas();
@@ -196,6 +197,7 @@ public class MoteurJeu extends Application {
                 throw new RuntimeException(e);
             }
             startJeu(primaryStage);
+            MoteurJeu.labyFile = labyrinthString;
         });
 
         // Assemblage de l'interface
@@ -390,9 +392,11 @@ public class MoteurJeu extends Application {
         File selectedFile = fileChooser.showOpenDialog(null);
 
         if (selectedFile != null) {
+            MoteurJeu.labyFile = selectedFile.getAbsolutePath();
             return selectedFile.getAbsolutePath();
         } else {
             System.err.println("Aucun fichier sélectionné, utilisation du labyrinthe par défaut");
+            MoteurJeu.labyFile = "Ressources/Labyrinthe1.txt";
             return "Ressources/Labyrinthe1.txt";
         }
     }
