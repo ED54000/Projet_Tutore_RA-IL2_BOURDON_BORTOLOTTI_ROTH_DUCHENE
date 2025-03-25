@@ -112,21 +112,14 @@ public class EvolutionGroupe implements Evolve{
     }
 
     public ArrayList<ArrayList<Ennemy>> evolve(HashMap<ArrayList<Ennemy>, Double> ennemies) {
-
-        //System.out.println("Groupe initial : "+ennemies);
         //Trier les ennemies par score décroissant
         ArrayList<Map.Entry<ArrayList<Ennemy>, Double>> groupeTries = new ArrayList<>(ennemies.entrySet());
         groupeTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
 
-        //System.out.println("Groupe trié : "+groupeTries);
-        //System.out.println("Meilleur groupe : "+groupeTries.get(0).getKey());
-
-        //System.out.println("Groupe trié : "+groupeTries);
         //Sélectionner la moitié des meilleurs groupes
         int size = groupeTries.size();
         //int moitié = (int)Math.ceil(groupeTries.size() / 10);
         int moitie = size / 2;
-        //System.out.println("Moitié : "+moitie);
         ArrayList<ArrayList<Ennemy>> meilleurs = new ArrayList<>();
         for (int i = 0; i < moitie; i++) {
             //si le groupe est vide on ne fait rien
@@ -135,8 +128,6 @@ public class EvolutionGroupe implements Evolve{
             }
             meilleurs.add(groupeTries.get(i).getKey());
         }
-        //System.out.println("Meilleurs groupes : "+meilleurs);
-
         //Générer les enfants via le croisement
         ArrayList<ArrayList<Ennemy>> enfants = new ArrayList<>();
         Random random = new Random();
@@ -144,10 +135,6 @@ public class EvolutionGroupe implements Evolve{
             // Sélectionner deux parents aléatoires parmi les meilleurs
             ArrayList<Ennemy> parent1 = meilleurs.get(random.nextInt(meilleurs.size()));
             ArrayList<Ennemy> parent2 = meilleurs.get(random.nextInt(meilleurs.size()));
-
-            //System.out.println("Liste parent 1 : "+parent1);
-            //System.out.println("Liste parent 2 : "+parent2);
-
             // Créer un enfant en croisant les parents
             ArrayList<Ennemy> enfant = croiserGroupes(parent1, parent2);
             enfants.add(enfant);

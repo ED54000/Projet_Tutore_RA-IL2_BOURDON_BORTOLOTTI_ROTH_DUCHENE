@@ -938,7 +938,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public static Vector2D getArrival() {
-        return new Vector2D(YArrival, XArrival);
+        return new Vector2D(XArrival * ModeleLabyrinth.getTailleCase(), YArrival * ModeleLabyrinth.getTailleCase());
     }
 
     public int getNbManches() {

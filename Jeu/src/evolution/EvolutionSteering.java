@@ -1,6 +1,7 @@
 package evolution;
 
 import entites.enemies.Ennemy;
+import entites.enemies.Giant;
 import javafx.application.Platform;
 import laby.ModeleLabyrinth;
 import laby.views.ViewLabyrinth;
@@ -38,14 +39,6 @@ public class EvolutionSteering implements Evolve {
                 int largeur = jeu.getCases()[0].length * jeu.getTailleCase();
                 checkpoints.add(new Vector2D((int) (Math.random() * largeur), (int) (Math.random() * hauteur)));
             }
-            //ajoute l'arrivé
-            checkpoints.add(jeu.getArrival());
-            System.out.println("Le départ est : " + ennemy.getPosition()+" / "+jeu.getStart());
-            System.out.println("Les checkpoints sont : ");
-            for (Vector2D v : checkpoints) {
-                System.out.println(v);
-            }
-
             //créer PathFpllowingBehavior
             PathfollowingBehavior pathfollowingBehavior = new PathfollowingBehavior(checkpoints);
             ennemy.setBehavior(pathfollowingBehavior);
@@ -61,8 +54,6 @@ public class EvolutionSteering implements Evolve {
     @Override
     public double simulate(ModeleLabyrinth jeu) {
         System.out.println("Simulation");
-
-        //Platform.runLater(() -> MainSimuSteering.launchUI(jeu, jeu.enemies));
 
         saveStartStats(jeu.enemies);
 
@@ -98,7 +89,106 @@ public class EvolutionSteering implements Evolve {
 
     @Override
     public ArrayList<ArrayList<Ennemy>> evolve(HashMap<ArrayList<Ennemy>, Double> ennemies) {
-        return null;
+        //on trie les ennemis par score
+        ArrayList<Map.Entry<ArrayList<Ennemy>, Double>> groupeTries = new ArrayList<>(ennemies.entrySet());
+        groupeTries.sort((g1, g2) -> Double.compare(g2.getValue(), g1.getValue()));
+
+        //On prend les 50% meilleurs ennemis
+        int size = groupeTries.size();
+        int moitie = size / 2;
+
+        ArrayList<ArrayList<Ennemy>> meilleurs = new ArrayList<>();
+        for (int i = 0; i < moitie; i++) {
+            //si le groupe est vide on ne fait rien
+            if (groupeTries.get(i).getKey().isEmpty()) {
+                continue;
+            }
+            meilleurs.add(groupeTries.get(i).getKey());
+        }
+        //Générer les enfants via le croisement
+        ArrayList<ArrayList<Ennemy>> enfants = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < size-moitie; i++) {
+            // Sélectionner deux parents aléatoires parmi les meilleurs
+            ArrayList<Ennemy> parent1 = meilleurs.get(random.nextInt(meilleurs.size()));
+            ArrayList<Ennemy> parent2 = meilleurs.get(random.nextInt(meilleurs.size()));
+            // Créer un enfant en croisant les parents
+            ArrayList<Ennemy> enfant = croiserGroupes(parent1, parent2);
+            enfants.add(enfant);
+        }
+
+        //Combiner les meilleurs et les enfants
+        ArrayList<ArrayList<Ennemy>> nouvellePopulation = new ArrayList<>();
+        nouvellePopulation.addAll(meilleurs);
+        nouvellePopulation.addAll(enfants);
+
+        System.out.println("Nouvelle population : "+nouvellePopulation);
+        //Appliquer une mutation sur la nouvelle population
+        return mutate(nouvellePopulation);
+    }
+
+    ArrayList<Ennemy> croiserGroupes(ArrayList<Ennemy> g1, ArrayList<Ennemy> g2) {
+        //On récupère le premier ennemi de chaque groupe
+        Ennemy e1 = g1.get(0);
+        Ennemy e2 = g2.get(0);
+        //On récupère la listes de waypoints de chaque ennemi
+        ArrayList<Vector2D> waypoints1 = ((PathfollowingBehavior) e1.getListBehavior().get(0)).getCheckpoints();
+        ArrayList<Vector2D> waypoints2 = ((PathfollowingBehavior) e2.getListBehavior().get(0)).getCheckpoints();
+        //On créer une nouvelle liste de waypoints pour l'enfant
+        ArrayList<Vector2D> waypointsEnfant = new ArrayList<>();
+        //On ajoute le milieu des deux premiers waypoints
+        waypointsEnfant.add(new Vector2D((waypoints1.get(0).getX() + waypoints2.get(0).getX()) / 2, (waypoints1.get(0).getY() + waypoints2.get(0).getY()) / 2));
+        //On ajoute le milieu des deuxièmes waypoints
+        waypointsEnfant.add(new Vector2D((waypoints1.get(1).getX() + waypoints2.get(1).getX()) / 2, (waypoints1.get(1).getY() + waypoints2.get(1).getY()) / 2));
+        //On ajoute le milieu des troisièmes waypoints
+        waypointsEnfant.add(new Vector2D((waypoints1.get(2).getX() + waypoints2.get(2).getX()) / 2, (waypoints1.get(2).getY() + waypoints2.get(2).getY()) / 2));
+        //On ajoute l'arrivé
+        waypointsEnfant.add(new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()));
+        //On créer un nouveau PathfollowingBehavior pour l'enfant
+        PathfollowingBehavior pathfollowingBehavior = new PathfollowingBehavior(waypointsEnfant);
+        //On créer un nouvel ennemi pour l'enfant
+        Giant enfant = new Giant(new Vector2D(0, 0), "GiantEnfant");
+        //On ajoute le PathfollowingBehavior à l'enfant
+        enfant.setBehavior(pathfollowingBehavior);
+
+        ArrayList<Ennemy> listeEnfant = new ArrayList<>();
+        listeEnfant.add(enfant);
+        //On retourne l'enfant
+        return listeEnfant;
+    }
+
+    /**
+     * Méthode pour choisir aléatoirement une propriété entre deux options.
+     */
+    private <T> T randomChoice(T option1, T option2) {
+        return new Random().nextBoolean() ? option1 : option2;
+    }
+
+    /**
+     * Méthode pour appliquer une mutation
+     * @param nouvellePopulation
+     * @return
+     */
+    private ArrayList<ArrayList<Ennemy>> mutate(ArrayList<ArrayList<Ennemy>> nouvellePopulation) {
+        // On boucle sur la population
+        for (ArrayList<Ennemy> groupe : nouvellePopulation) {
+            Ennemy ennemy = groupe.get(0);
+            // On récupère les waypoints de l'ennemi
+            List<Vector2D> waypoints = ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints();
+            // On récupère les coordonnées de chaque waypoint
+            Vector2D waypoint1 = waypoints.get(0);
+            Vector2D waypoint2 = waypoints.get(1);
+            Vector2D waypoint3 = waypoints.get(2);
+            // On applique une mutation sur chaque coordonnée TODO : Tester avec des valeurs plus grandes
+            waypoint1.setX(waypoint1.getX() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
+            waypoint1.setY(waypoint1.getY() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
+            waypoint2.setX(waypoint2.getX() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
+            waypoint2.setY(waypoint2.getY() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
+            waypoint3.setX(waypoint3.getX() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
+            waypoint3.setY(waypoint3.getY() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
+        }
+
+        return nouvellePopulation;
     }
 
     private static void refreshEnnemies(Ennemy ennemy, ModeleLabyrinth jeu) {

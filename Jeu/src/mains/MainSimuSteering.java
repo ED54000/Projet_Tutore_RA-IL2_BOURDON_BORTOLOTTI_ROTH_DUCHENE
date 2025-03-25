@@ -5,6 +5,7 @@ import entites.enemies.Giant;
 import evolution.EvolutionSteering;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
 import java.util.ArrayList;
@@ -18,18 +19,29 @@ public class MainSimuSteering extends Application {
         // Initialisation avec une liste d'ennemis
         ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
         for (int i = 0; i < 50; i++) { //50 groupes d'un géant
-            groupes.add(new ArrayList<>(List.of(new Giant(new Vector2D(0, 0), "Giant"))));
+            groupes.add(new ArrayList<>(List.of(new Giant(new Vector2D(0, 0), "Giant"+i))));
         }
 
         // Nombre de manches (itération d'évolution)
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             HashMap<ArrayList<Ennemy>, Double> stats = new HashMap<>();
             for (ArrayList<Ennemy> groupe : groupes) {
                 stats.put(groupe, 0.0);
             }
 
             EvolutionSteering evolution = new EvolutionSteering();
+            System.out.println("Yala");
             stats = evolution.evaluate(stats);
+
+            System.out.println("Avant l'évolution");
+            //parcours stats
+            for (ArrayList<Ennemy> groupe : stats.keySet()) {
+                Ennemy ennemy = groupe.get(0);
+                //Affiche les waypoints
+                System.out.println("Waypoints de " + ennemy.getName());
+                System.out.println(((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints());
+
+            }
 
             if (stats == null) {
                 System.out.println("Les ennemies ont gagné la partie");
@@ -37,6 +49,17 @@ public class MainSimuSteering extends Application {
             }
 
             groupes = evolution.evolve(stats);
+
+            System.out.println("Après l'évolution");
+            //parcours groupes
+            for (ArrayList<Ennemy> groupe : groupes) {
+                Ennemy ennemy = groupe.get(0);
+                //Affiche les waypoints
+                System.out.println("Waypoints de " + ennemy.getName());
+                for (Vector2D waypoint : ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints()) {
+                    System.out.println(waypoint);
+                }
+            }
         }
         System.out.println("Fin bitch");
     }

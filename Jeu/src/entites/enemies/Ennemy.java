@@ -167,7 +167,7 @@ public abstract class Ennemy extends Entity {
                 break;
             }
         }
-        this.listBehaviors.add(behavior);
+        this.listBehaviors.addFirst(behavior);
     }
 
     public String getBehaviorString() {
