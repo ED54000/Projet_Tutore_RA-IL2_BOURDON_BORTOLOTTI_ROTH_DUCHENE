@@ -10,6 +10,7 @@ import javafx.scene.input.MouseEvent;
 import jdk.swing.interop.SwingInterOpUtils;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
+import laby.views.ViewGraphique;
 import moteur.Jeu;
 import moteur.MoteurJeu;
 import moteur.SimpleMode;
@@ -59,8 +60,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
     //si le jeu est avec le main simulation
     private static boolean simulation = false;
     private static boolean simulationEvolution = false;
-    private boolean showGraph = false;
-
+    //private boolean showGraph = false;
+    private boolean isEvolving = false;
 
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -269,6 +270,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     @Override
     public void update(double secondes) {
+        // On skip l'update si le jeu est en évolution
+        if (isEvolving) {
+            return;
+        }
+
         //Vérification de la fin du jeu
         if (this.nbManches == this.limManches) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
@@ -324,9 +330,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Iterator<Ennemy> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
             Ennemy enemy = enemyIterator.next();
-            //System.out.println("hasReachedArrival(enemy) : " + hasReachedArrival(enemy));
             if (hasReachedArrival(enemy)) {
-                System.out.println("arrivé chef");
                 handleEnemyArrival(enemy);
                 enemyIterator.remove();
                 System.out.println("Liste des ennemis a la fin : " + enemies);
@@ -335,6 +339,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     System.out.println("Ennemy : " + e.getName() + " type:" + e.getType() + " vie" + e.getHealth() + " vitesse :" + e.getSpeed() + " dégâts :" + e.getDamages() + " distance arrivée :" + e.getDistanceToArrival() + " behavior :" + e.getBehaviorString() + "survivalTime : " + e.getSurvivalTime());
                     System.out.println("Position : " + e.getPositionReel());
                 }
+
+
             } else {
                 enemy.update();
             }
@@ -342,13 +348,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private boolean hasReachedArrival(Ennemy enemy) {
-        double x = Math.abs(enemy.getPosition().getX() - XArrivalRender);
-        double y = Math.abs(enemy.getPosition().getY() - YArrivalRender);
-        //System.out.println("X ennemy : "+enemy.getPosition().getX());
-        //System.out.println("X arrivalRender : "+XArrivalRender);
-
-        //System.out.println("X arrival : " + x + " Y arrival : "+ y);
-
         return Math.abs(enemy.getPosition().getX() - XArrivalRender) <= 10 &&
                 Math.abs(enemy.getPosition().getY() - YArrivalRender) <= 10 &&
                 !enemy.getIsArrived() &&
@@ -359,7 +358,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         enemy.setArrived(true);
         nbEnnemiesArrived++;
 
-        enemy.setPosition(getArrival());
+        enemy.setPosition(new Vector2D(XArrival, YArrival));
         //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
 
         System.out.println("Nombre d'ennemis arrivés : " + this.nbEnnemiesArrived);
@@ -937,10 +936,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return YArrival;
     }
 
-    public static Vector2D getArrival() {
-        return new Vector2D(XArrival * ModeleLabyrinth.getTailleCase(), YArrival * ModeleLabyrinth.getTailleCase());
-    }
-
     public int getNbManches() {
         return nbManches;
     }
@@ -1079,12 +1074,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
     }
 
-    public boolean getShowGraph() {
-        return showGraph;
-    }
-    public void setGraphique(boolean b) {
-        this.showGraph = b;
-    }
 
     public void setDonneesGraphique(HashMap<String, List<Double>> donnees) {
         this.donneesGraphique = donnees;
@@ -1092,6 +1081,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public Map<String, List<Double>> getDonneesGraphique() {
         return donneesGraphique;
+    }
+
+    public boolean isEvolving() {
+        return isEvolving;
+    }
+
+    public void setEvolving(boolean evolving) {
+        isEvolving = evolving;
     }
 
 

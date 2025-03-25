@@ -36,7 +36,7 @@ public class EvolutionGroupe implements Evolve{
             jeu.creerLabyrinthe(MoteurJeu.labyFile, copieGroupe, 1000, jeu.nbEnnemiesToWin);
             double score = simulate(jeu);
             if (jeu.etreFini()){
-                System.out.println("Jeu fini les enneies ont gagné");
+                System.out.println("Jeu fini les ennemies ont gagné");
                 //stop l'évolution
                 return null;
             }
