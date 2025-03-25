@@ -4,13 +4,11 @@ package moteur;
 
 import entites.enemies.Ennemy;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -18,10 +16,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
 import laby.controllers.ControllerSimpleMode;
-import laby.views.ViewGraphique;
-import laby.views.ViewGraphiqueDirect;
-import laby.views.ViewLabyrinth;
-import laby.views.ViewLogs;
+import laby.views.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -347,8 +342,20 @@ public class MoteurJeu extends Application {
 
         helpButton.setOnAction(e -> openHelpWindow());
 
+        ToggleButton graphicsButton = new ToggleButton("Graphiques");
+        ViewGraphicsWindow graphicsWindow = new ViewGraphicsWindow(viewGraphiqueDirect);
+        laby.registerObserver(graphicsWindow);
 
-        HBox controls = new HBox(10, switchMode, slowDownButton, pauseButton, speedUpButton, helpButton);
+        graphicsButton.setOnAction(e -> {
+            if (graphicsButton.isSelected()) {
+                graphicsWindow.show();
+            } else {
+                graphicsWindow.hide();
+            }
+        });
+
+
+        HBox controls = new HBox(10, switchMode, slowDownButton, pauseButton, speedUpButton, helpButton, graphicsButton);
         root.setTop(controls);
 
         // creation de la scene

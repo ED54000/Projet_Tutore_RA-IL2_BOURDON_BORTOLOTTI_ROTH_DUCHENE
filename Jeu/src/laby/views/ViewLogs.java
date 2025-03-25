@@ -172,9 +172,6 @@ public class ViewLogs implements Observer {
                 } else {
                     label.setStyle(baseStyle);
                 }
-            } else {
-                // Création d'un nouveau label...
-                // Même logique de style que ci-dessus
             }
         }
         else {
