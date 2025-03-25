@@ -59,7 +59,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private static boolean simulation = false;
     private static boolean simulationEvolution = false;
     private boolean showGraph = false;
-
+    private boolean isEvolving = false;
 
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -268,6 +268,11 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     @Override
     public void update(double secondes) {
+        // On skip l'update si le jeu est en évolution
+        if (isEvolving) {
+            return;
+        }
+
         //Vérification de la fin du jeu
         if (this.nbManches == this.limManches) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
@@ -1080,5 +1085,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public Map<String, List<Double>> getDonneesGraphique() {
         return donneesGraphique;
+    }
+
+    public boolean isEvolving() {
+        return isEvolving;
+    }
+
+    public void setEvolving(boolean evolving) {
+        isEvolving = evolving;
     }
 }
