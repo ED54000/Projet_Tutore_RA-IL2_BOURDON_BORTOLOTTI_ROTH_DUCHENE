@@ -15,6 +15,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
+import laby.Observer;
 import laby.controllers.ControllerSimpleMode;
 import laby.views.*;
 
@@ -343,7 +344,7 @@ public class MoteurJeu extends Application {
         helpButton.setOnAction(e -> openHelpWindow());
 
         ToggleButton graphicsButton = new ToggleButton("Graphiques");
-        ViewGraphicsWindow graphicsWindow = new ViewGraphicsWindow(viewGraphiqueDirect);
+        ViewGraphicsWindow graphicsWindow = new ViewGraphicsWindow(laby, viewGraphiqueDirect, viewGraphique);
         laby.registerObserver(graphicsWindow);
 
         graphicsButton.setOnAction(e -> {

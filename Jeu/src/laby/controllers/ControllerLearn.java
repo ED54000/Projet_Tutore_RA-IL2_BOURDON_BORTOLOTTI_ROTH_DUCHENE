@@ -24,13 +24,15 @@ import static evolution.Evolution.refreshEnnemiesAndAdd;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
-    ModeleLabyrinth laby;
-    ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
-    ControllerGraphique controllerGraphique;
+    private ModeleLabyrinth laby;
+    private ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
+
+//    private ControllerGraphique controllerGraphique;
+    private HashMap<ArrayList<Ennemy>, Double> stats;
 
     public ControllerLearn(ModeleLabyrinth laby) {
         this.laby = laby;
-        this.controllerGraphique = new ControllerGraphique(laby);
+       // this.controllerGraphique = new ControllerGraphique(laby);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         }
 
         // On ajoute les nouveaux groupes a la map
-        HashMap<ArrayList<Ennemy>, Double> stats = new HashMap<>();
+        stats = new HashMap<>();
         for (ArrayList<Ennemy> groupe : groupes) {
             stats.put(groupe, 0.0);
         }
@@ -144,28 +146,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
             nextManche.setOnMouseClicked(new ControllerNextManche(laby));
 
-            //Boutton pour les graphiques
-            Button graphiques = new Button("Graphiques");
-            graphiques.setStyle("""
-                -fx-background-color: #4CAF50;
-                -fx-text-fill: white;
-                -fx-font-size: 11px;
-                -fx-padding: 3 10;
-                -fx-background-radius: 3;
-                -fx-cursor: hand;
-            """);
-
-            graphiques.setOnMouseEntered(e ->
-                    nextManche.setStyle(nextManche.getStyle() + "-fx-background-color: #45a049;"));
-            graphiques.setOnMouseExited(e ->
-                    nextManche.setStyle(nextManche.getStyle() + "-fx-background-color: #4CAF50;"));
-
-            //On récupère le score du meilleur groupe
-            double bestScore = stats.get(laby.enemies);
-            controllerGraphique.setScore(bestScore);
-            graphiques.setOnMouseClicked(controllerGraphique);
-
-            parentVBox.getChildren().addAll(nextManche, graphiques);
+            parentVBox.getChildren().addAll(nextManche);
             ModeleLabyrinth.setLogs("");
         }
 
@@ -252,5 +233,13 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         // On sauvegarde les statistiques des ennemis
         EnnemyEvolution.saveStartStats(laby.enemies);
 
+    }
+
+    public HashMap<ArrayList<Ennemy>, Double> getStats() {
+        return stats;
+    }
+
+    public void setStats(HashMap<ArrayList<Ennemy>, Double> stats) {
+        this.stats = stats;
     }
 }

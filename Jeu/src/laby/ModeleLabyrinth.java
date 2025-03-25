@@ -9,6 +9,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
+import laby.views.ViewGraphique;
 import moteur.Jeu;
 import moteur.MoteurJeu;
 import moteur.SimpleMode;
@@ -58,7 +59,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     //si le jeu est avec le main simulation
     private static boolean simulation = false;
     private static boolean simulationEvolution = false;
-    private boolean showGraph = false;
+    //private boolean showGraph = false;
 
 
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -545,7 +546,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
         if (this.getSimulation()) {
             handleSimulation();
         }
-
+       // ViewGraphique.setMancheTerminee(true);
     }
 
     private void handleSimulation() {
@@ -1067,12 +1068,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
     }
 
-    public boolean getShowGraph() {
+  /*  public boolean getShowGraph() {
         return showGraph;
     }
+
     public void setGraphique(boolean b) {
         this.showGraph = b;
-    }
+    }*/
 
     public void setDonneesGraphique(HashMap<String, List<Double>> donnees) {
         this.donneesGraphique = donnees;
