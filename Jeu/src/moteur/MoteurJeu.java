@@ -196,6 +196,7 @@ public class MoteurJeu extends Application {
                 throw new RuntimeException(e);
             }
             startJeu(primaryStage);
+            MoteurJeu.labyFile = labyrinthString;
         });
 
         // Assemblage de l'interface
