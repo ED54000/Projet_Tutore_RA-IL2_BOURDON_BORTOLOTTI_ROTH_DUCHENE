@@ -3,6 +3,7 @@ package evolution;
 import entites.enemies.Ennemy;
 import javafx.application.Platform;
 import laby.ModeleLabyrinth;
+import laby.views.ViewLabyrinth;
 import mains.MainSimu;
 import mains.MainSimuSteering;
 import steering_astar.Steering.PathfollowingBehavior;
@@ -21,37 +22,38 @@ public class EvolutionSteering implements Evolve {
         // Créer une nouvelle map pour stocker les résultats
         HashMap<ArrayList<Ennemy>, Double> newStats = new HashMap<>();
 
-        ArrayList<Ennemy> groupe = stats.keySet().iterator().next();
-        Ennemy ennemy = groupe.get(0);
-        ModeleLabyrinth jeu = new ModeleLabyrinth();
-        jeu.nbEnnemiesToWin = 2;
-        //refreshEnnemies(ennemy, jeu);
-        ArrayList<Ennemy> copieGroupe = new ArrayList<>(List.of(ennemy));
-        jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, jeu.nbEnnemiesToWin);
+        for (ArrayList<Ennemy> groupe : stats.keySet()){
+            Ennemy ennemy = groupe.get(0);
+            ModeleLabyrinth jeu = new ModeleLabyrinth();
+            jeu.nbEnnemiesToWin = 2;
+            //refreshEnnemies(ennemy, jeu);
+            ArrayList<Ennemy> copieGroupe = new ArrayList<>(List.of(ennemy));
+            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, jeu.nbEnnemiesToWin);
 
-        //Créer au hasard 3 checkpoints
-        ArrayList<Vector2D> checkpoints = new ArrayList<>();
-        for (int j = 0; j < 3; j++) {
-            //ajoute un checkpoint dans la limite du labyrinthe
-            int hauteur = jeu.getCases().length;
-            int largeur = jeu.getCases()[0].length;
-            checkpoints.add(new Vector2D((int) (Math.random() * largeur), (int) (Math.random() * hauteur)));
+            //Créer au hasard 3 checkpoints
+            ArrayList<Vector2D> checkpoints = new ArrayList<>();
+            for (int j = 0; j < 3; j++) {
+                //ajoute un checkpoint dans la limite du labyrinthe
+                int hauteur = jeu.getCases().length * jeu.getTailleCase();
+                int largeur = jeu.getCases()[0].length * jeu.getTailleCase();
+                checkpoints.add(new Vector2D((int) (Math.random() * largeur), (int) (Math.random() * hauteur)));
+            }
+            //ajoute l'arrivé
+            checkpoints.add(jeu.getArrival());
+            System.out.println("Le départ est : " + ennemy.getPosition()+" / "+jeu.getStart());
+            System.out.println("Les checkpoints sont : ");
+            for (Vector2D v : checkpoints) {
+                System.out.println(v);
+            }
+
+            //créer PathFpllowingBehavior
+            PathfollowingBehavior pathfollowingBehavior = new PathfollowingBehavior(checkpoints);
+            ennemy.setBehavior(pathfollowingBehavior);
+
+            double score = simulate(jeu);
+            refreshEnnemies(ennemy, jeu);
+            newStats.put(groupe, score);
         }
-        //ajoute l'arrivé
-        checkpoints.add(jeu.getArrival());
-        System.out.println("Le départ est : " + ennemy.getPositionReel()+" / "+jeu.getStart());
-        System.out.println("Les checkpoints sont : ");
-        for (Vector2D v : checkpoints) {
-            System.out.println(v);
-        }
-
-        //créer PathFpllowingBehavior
-        PathfollowingBehavior pathfollowingBehavior = new PathfollowingBehavior(checkpoints);
-        ennemy.setBehavior(pathfollowingBehavior);
-
-        double score = simulate(jeu);
-        refreshEnnemies(ennemy, jeu);
-        newStats.put(groupe, score);
         stats.putAll(newStats);
         return stats;
     }

@@ -105,7 +105,7 @@ public class Astar {
             col = nextNode.getY();
         } while (cellDetails[(int) row][(int) col].parent != nextNode);
 
-        // System.out.println(pathArray);
+        //System.out.println(pathArray);
         return pathArray;
     }
 

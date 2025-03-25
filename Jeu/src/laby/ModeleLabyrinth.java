@@ -324,9 +324,9 @@ public class ModeleLabyrinth implements Jeu, Subject {
         Iterator<Ennemy> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
             Ennemy enemy = enemyIterator.next();
-            System.out.println("hasReachedArrival(enemy) : " + hasReachedArrival(enemy));
+            //System.out.println("hasReachedArrival(enemy) : " + hasReachedArrival(enemy));
             if (hasReachedArrival(enemy)) {
-                System.out.println("arrivé");
+                System.out.println("arrivé chef");
                 handleEnemyArrival(enemy);
                 enemyIterator.remove();
                 System.out.println("Liste des ennemis a la fin : " + enemies);
@@ -342,9 +342,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private boolean hasReachedArrival(Ennemy enemy) {
-        //double x = enemy.getPosition().getX();
-        //double y = enemy.getPosition().getY();
-        //System.out.println("X arrival : " + x + " Y arrival : " + y);
+        double x = Math.abs(enemy.getPosition().getX() - XArrivalRender);
+        double y = Math.abs(enemy.getPosition().getY() - YArrivalRender);
+        //System.out.println("X ennemy : "+enemy.getPosition().getX());
+        //System.out.println("X arrivalRender : "+XArrivalRender);
+
+        //System.out.println("X arrival : " + x + " Y arrival : "+ y);
 
         return Math.abs(enemy.getPosition().getX() - XArrivalRender) <= 10 &&
                 Math.abs(enemy.getPosition().getY() - YArrivalRender) <= 10 &&
