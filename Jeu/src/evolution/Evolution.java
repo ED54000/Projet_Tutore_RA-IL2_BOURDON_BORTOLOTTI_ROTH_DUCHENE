@@ -2,6 +2,7 @@ package evolution;
 
 import entites.enemies.*;
 import laby.ModeleLabyrinth;
+import moteur.MoteurJeu;
 import steering_astar.Steering.Vector2D;
 
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class Evolution {
             }
             System.out.println("Groupe tout neuf : "+copieGroupe);
 
-            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, jeu.nbEnnemiesToWin);
+            jeu.creerLabyrinthe(MoteurJeu.labyFile, copieGroupe, 1000, jeu.nbEnnemiesToWin);
             double score = simulate(jeu);
             if (jeu.etreFini()){
                 System.out.println("Jeu fini les enneies ont gagné");
@@ -96,9 +97,7 @@ public class Evolution {
         for (Ennemy ennemy : e) {
             score += getScoreOneEnnemy(ennemy);
         }
-
         //TODO : Utiliser le temp que le grp a mit pour arriver
-
         return score;
     }
 
