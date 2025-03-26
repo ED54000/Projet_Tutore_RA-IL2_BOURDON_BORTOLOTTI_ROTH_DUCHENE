@@ -50,6 +50,7 @@ public class MoteurJeu extends Application {
     // initialisation du canvas de dessin et du container
     final Canvas canvas = new Canvas();
     final Pane canvasContainer = new Pane(canvas);
+    private Label objectifLabel;
 
     /**
      * lancement d'un jeu
@@ -308,6 +309,9 @@ public class MoteurJeu extends Application {
         laby.registerObserver(viewLogs);
         laby.registerObserver(viewGraphique);
         laby.registerObserver(viewGraphiqueDirect);
+        laby.registerObserver(obj -> updateObjectiveLabel());
+
+
 
         final BorderPane root = new BorderPane();
         root.setCenter(canvasContainer);
@@ -357,8 +361,11 @@ public class MoteurJeu extends Application {
             }
         });
 
+        objectifLabel = new Label();
+        updateObjectiveLabel();
 
-        HBox controls = new HBox(10, switchMode, slowDownButton, pauseButton, speedUpButton, helpButton, graphicsButton);
+
+        HBox controls = new HBox(10, switchMode, slowDownButton, pauseButton, speedUpButton, helpButton, graphicsButton,objectifLabel);
         root.setTop(controls);
 
         // creation de la scene
@@ -404,5 +411,24 @@ public class MoteurJeu extends Application {
     private void openHelpWindow() {
         HelpWindow helpWindow = HelpWindow.getHelpWindow();
         helpWindow.show();
+    }
+
+    private void updateObjectiveLabel() {
+        int obj = laby.nbEnnemiesToWin - laby.ennemiesArrived.size();
+        objectifLabel.setText("Il reste " + obj + " ennemis à passer sur " + laby.nbEnnemiesToWin);
+        objectifLabel.setStyle(
+                "-fx-background-color: #f8f9fa;" +
+                        "-fx-padding: 10px 20px;" +
+                        "-fx-border-radius: 5px;" +
+                        "-fx-background-radius: 5px;" +
+                        "-fx-border-color: #dee2e6;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-text-fill: #2c3e50;" +
+                        "-fx-margin-left: 20px"
+        );
+
+        // Ajout d'une marge à gauche dans le HBox
+        HBox.setMargin(objectifLabel, new Insets(0, 0, 0, 20));
     }
 }
