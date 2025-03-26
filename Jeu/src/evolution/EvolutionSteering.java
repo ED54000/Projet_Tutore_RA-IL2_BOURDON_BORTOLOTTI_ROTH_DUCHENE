@@ -160,7 +160,7 @@ public class EvolutionSteering implements Evolve {
         //On ajoute le milieu des troisièmes waypoints
         waypointsEnfant.add(new Vector2D((waypoints1.get(2).getX() + waypoints2.get(2).getX()) / 2, (waypoints1.get(2).getY() + waypoints2.get(2).getY()) / 2));
         //On ajoute l'arrivé
-        waypointsEnfant.add(new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()));
+        waypointsEnfant.add(ModeleLabyrinth.getArrival());
         //On créer un nouveau PathfollowingBehavior pour l'enfant
         PathfollowingBehavior pathfollowingBehavior = new PathfollowingBehavior(waypointsEnfant);
         //On créer un nouvel ennemi pour l'enfant

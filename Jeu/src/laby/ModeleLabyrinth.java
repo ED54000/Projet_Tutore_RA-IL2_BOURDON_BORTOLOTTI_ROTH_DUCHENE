@@ -406,7 +406,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
             }
         }
-
     }
 
     private void handleDruideCombat(Ennemy enemy, double secondes) {
@@ -938,7 +937,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public static Vector2D getArrival() {
-        return new Vector2D(YArrival * getTailleCase(), XArrival * getTailleCase());
+        return new Vector2D(XArrival * getTailleCase(), YArrival * getTailleCase());
     }
 
     public int getNbManches() {
