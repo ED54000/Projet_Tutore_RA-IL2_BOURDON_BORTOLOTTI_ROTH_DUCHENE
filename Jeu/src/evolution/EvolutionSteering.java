@@ -39,6 +39,9 @@ public class EvolutionSteering implements Evolve {
                 int largeur = jeu.getCases()[0].length * jeu.getTailleCase();
                 checkpoints.add(new Vector2D((int) (Math.random() * largeur), (int) (Math.random() * hauteur)));
             }
+            //ajoute l'arrivée
+            checkpoints.add(jeu.getArrival());
+
             //créer PathFpllowingBehavior
             PathfollowingBehavior pathfollowingBehavior = new PathfollowingBehavior(checkpoints);
             ennemy.setBehavior(pathfollowingBehavior);
@@ -55,6 +58,23 @@ public class EvolutionSteering implements Evolve {
     public double simulate(ModeleLabyrinth jeu) {
         System.out.println("Simulation");
 
+        // On affiche les informations sur les ennemis
+        Ennemy e = jeu.enemies.get(0);
+        System.out.println("Ennemi : " + e.getName());
+        System.out.println("Vitesse : " + e.getSpeed());
+        System.out.println("Dégâts : " + e.getDamages());
+        System.out.println("Vie : " + e.getHealth());
+        System.out.println("Vitesse d'attaque : " + e.getAttackSpeed());
+        System.out.println("Portée : " + e.getRange());
+        System.out.println("Waypoints : " + ((PathfollowingBehavior) e.getListBehavior().get(0)).getCheckpoints());
+        System.out.println("Mort : " + e.getIsDead());
+        System.out.println("Arrivé : " + e.getIsArrived());
+        System.out.println("Survie : " + e.getSurvivalTime());
+        System.out.println("Distance à l'arrivée : " + e.getDistanceToArrival());
+        System.out.println("Type de tueur : " + e.getKillerType());
+        System.out.println("Nombre de coups reçus : " + e.getLastAttackCount());
+
+
         saveStartStats(jeu.enemies);
 
         long lastUpdateTime = System.nanoTime();
@@ -69,9 +89,6 @@ public class EvolutionSteering implements Evolve {
         System.out.println("Fin de la simulation");
         return getScore(jeu.getEnnemyEndOfManche());
     }
-
-
-
 
     @Override
     public double getScore(ArrayList<Ennemy> ennemies) {
