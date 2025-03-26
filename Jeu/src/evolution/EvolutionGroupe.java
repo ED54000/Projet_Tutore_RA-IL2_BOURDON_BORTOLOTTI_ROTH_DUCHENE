@@ -226,8 +226,8 @@ public class EvolutionGroupe implements Evolve{
             );
             while (enfant.contains(e)) {
                 e = randomChoice(
-                        g1.get(random.nextInt(g1.size())),
-                        g2.get(random.nextInt(g2.size()))
+                    g1.get(random.nextInt(g1.size())),
+                    g2.get(random.nextInt(g2.size()))
                 );
             }
             enfant.add(e);

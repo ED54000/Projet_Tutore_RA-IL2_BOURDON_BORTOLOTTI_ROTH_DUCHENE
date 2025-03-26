@@ -19,6 +19,7 @@ public abstract class Ennemy extends Entity {
     private double speed;
     private int distanceToArrival;  //distanceToArrival sera calculé par A* dans le jeu
     private int distanceStartToArrival;
+    private double distanceTraveled;
     private String killerType;
     private static int timeSpawn = 0;
     private String behaviorString;
@@ -41,6 +42,7 @@ public abstract class Ennemy extends Entity {
         //this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         this.distanceToArrival = distanceToArrival;
         this.distanceStartToArrival = distanceToArrival;
+        this.distanceTraveled = 0;
         this.killerType = null;
         this.isArrived = false;
         this.behaviorString = behavior;
@@ -98,6 +100,9 @@ public abstract class Ennemy extends Entity {
             Vector2D steeringForce = behavior.calculateForce(this).scale(behavior.getWeight());
             totalForce = totalForce.add(steeringForce);
         }
+
+        double distance = velocity.magnitude();
+        distanceTraveled += distance;
 
         velocity = velocity.add(totalForce).normalize().scale(speed);
 
@@ -220,6 +225,10 @@ public abstract class Ennemy extends Entity {
 
     public Image getSpriteHeal() {
         return spriteHeal;
+    }
+
+    public double getDistanceTraveled() {
+        return this.distanceTraveled;
     }
 }
 
