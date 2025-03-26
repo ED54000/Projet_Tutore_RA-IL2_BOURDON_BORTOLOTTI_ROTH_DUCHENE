@@ -19,7 +19,7 @@ public class Druide extends Ennemy {
 
         // Si on est en mode simple
         if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulation()) {
-            this.setSprite(SimpleMode.addTextToImage("" + (int)this.getHealth(), new Image("/green.png")));
+            SimpleMode.addTextToImage("" + (int) this.getHealth(), new Image("/gray.png"), this::setSprite);
         }
     }
 }
