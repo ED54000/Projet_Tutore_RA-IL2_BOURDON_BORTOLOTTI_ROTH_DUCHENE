@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="javafx-controls-21">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/21/javafx-controls-21.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/21/javafx-controls-21.jar!/" recursive="false" />
+  </library>
+</component>

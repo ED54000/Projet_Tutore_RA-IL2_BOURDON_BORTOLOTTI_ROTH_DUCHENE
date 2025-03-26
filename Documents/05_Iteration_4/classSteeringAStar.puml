@@ -1,0 +1,86 @@
+@startuml
+
+
+
+class Astar {
+  + isDestination(Vector2D, Vector2D): boolean
+  - countNearbyTowers(char[][], Vector2D): int
+  - getTowerPenalty(double[][], Vector2D): double
+  - getNearTower(char[][], Vector2D): Vector2D
+  - createTowerAvoidanceCostGrid(char[][], String): double[][]
+  - tracePath(Cell[][], Vector2D): ArrayList<Vector2D>
+  ~ isUnblocked(char[][], Vector2D): boolean
+  + aStarSearch(char[][], int, int, Vector2D, Vector2D, String, Boolean): ArrayList<Vector2D>
+  ~ calculateHValue(Vector2D, Vector2D): double
+  ~ isValid(char[][], Vector2D): boolean
+}
+class AvoidBehavior {
+  - MAX_SEE_AHEAD: double
+  + getMAX_SEE_AHEAD(): double
+  + calculateForce(Ennemy): Vector2D
+}
+class Behavior {
+  # ACCELERATION_DIVISER: double
+  - target: Vector2D
+  - TARGET_RADIUS: double
+  + getTargetRadius(): double
+  + getTarget(): Vector2D
+  + setTarget(Vector2D): void
+  + calculateForce(Ennemy): Vector2D
+}
+class Cell {
+  + h: double
+  + parent: Vector2D
+  + g: double
+  + f: double
+}
+class Details {
+  ~ value: double
+  ~ j: double
+  ~ i: double
+}
+class PathfollowingBehavior {
+  - currentCheckpoint: Vector2D
+  - currentCheckpointIndex: int
+  - checkpoints: ArrayList<Vector2D>
+  + calculateForce(Ennemy): Vector2D
+}
+class SeekBehavior {
+  + calculateForce(Ennemy): Vector2D
+}
+class Vector2D {
+  - y: double
+  - x: double
+  + getPairIndex(char[][], char): int[]
+  + setY(double): void
+  + normalize(): Vector2D
+  + distanceTo(Vector2D): double
+  + getY(): double
+  + isObstacle(): boolean
+  + getX(): double
+  + getCloserPairIndex(char[][], char): double[]
+  + subtract(Vector2D): Vector2D
+  + toString(): String
+  + divide(double): Vector2D
+  + add(Vector2D): Vector2D
+  + scale(double): Vector2D
+  + equals(Object): boolean
+  - getCloser(Vector2D, Vector2D): Vector2D
+  + getCaseFromVector(Vector2D): int[]
+  + setX(double): void
+  + getClosestCaseCenter(): Vector2D
+  + magnitude(): double
+}
+
+Astar                  ->  Cell                  : "«create»"
+Astar                  ->  Details               : "«create»"
+Astar                  -[dashed]->  Vector2D              : "«create»"
+AvoidBehavior          --^  Behavior              
+Behavior              "1" *--> "target\n1" Vector2D              
+Cell                   ->  Vector2D              : "«create»"
+Cell                  "1" *--> "parent\n1" Vector2D              
+PathfollowingBehavior  --^  Behavior              
+PathfollowingBehavior  ->  SeekBehavior          : "«create»"
+PathfollowingBehavior "1" *-> "checkpoints\n*" Vector2D              
+SeekBehavior           --^  Behavior              
+@enduml

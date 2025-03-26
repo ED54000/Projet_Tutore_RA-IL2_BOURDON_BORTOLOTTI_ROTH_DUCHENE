@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="javafx-base">
+    <CLASSES>
+      <root url="file://$MAVEN_REPOSITORY$/org/openjfx/javafx-base" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$MAVEN_REPOSITORY$/org/openjfx/javafx-base" recursive="false" />
+  </library>
+</component>

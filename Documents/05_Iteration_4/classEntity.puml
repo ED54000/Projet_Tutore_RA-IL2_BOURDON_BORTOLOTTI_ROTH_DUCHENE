@@ -1,0 +1,63 @@
+@startuml
+
+class Entity {
+  # position: Vector2D
+  # health: double
+  - damages: double
+  - name: String
+  - range: double
+  - isDead: boolean
+  - attackSpeed: double
+  - type: String
+  - sprite: Image
+  - lastAttackCount: long
+  + getBonus(String, String): double
+  + isInRange(Entity): boolean
+  + takeDamage(double): void
+  + attack(Entity, double): void
+}
+
+class ActiveDefense {
+  - target: Ennemy
+}
+class Archer
+class Berserker
+class Bomb
+class Canon
+class Defense
+class Druide
+class Ennemy {
+  - behaviorPath: Behavior
+  - timeSpawn: int
+  - behavior: String
+  - positionReel: Vector2D
+  - survivalTime: long
+  - isArrived: boolean
+  - distanceStartToArrival: int
+  - velocity: Vector2D
+  - speed: double
+  - distanceToArrival: int
+  - killerType: String
+  + healDamage(Ennemy, double, double): void
+  + update(): void
+}
+
+class Giant
+class Ninja
+class PassiveDefense {
+  - attacked: boolean
+}
+
+Entity ^--  Ennemy
+Entity ^--  Defense
+Defense ^--  ActiveDefense
+Ennemy "target\n1" <--* "1" ActiveDefense
+ActiveDefense ^-- Archer
+Ennemy ^--  Berserker
+PassiveDefense ^-- Bomb
+ActiveDefense ^-- Canon
+Ennemy ^-- Druide
+Ennemy ^-- Giant
+Ennemy ^-- Ninja
+Defense ^--  PassiveDefense
+@enduml
