@@ -18,7 +18,7 @@ public class Berserker extends Ennemy {
 
         // Si on est en mode simple
         if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulation()) {
-            this.setSprite(SimpleMode.addTextToImage("" + (int)this.getHealth(), new Image("/red.png")));
+            SimpleMode.addTextToImage("" + (int) this.getHealth(), new Image("/red.png"), this::setSprite);
         }
     }
 }

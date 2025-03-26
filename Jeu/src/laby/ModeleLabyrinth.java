@@ -1064,16 +1064,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
         System.out.println("Sprite update");
         switch (e.getBehaviorString()) {
             case "Normal":
-                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/gray.png")));
+                SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/gray.png"), e::setSprite);
                 break;
             case "Kamikaze":
-                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/red.png")));
+                SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/red.png"), e::setSprite);
                 break;
             case "Fugitive":
-                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/blue.png")));
+                SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/blue.png"), e::setSprite);
                 break;
             case "Healer":
-                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/green.png")));
+                SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/green.png"), e::setSprite);
                 break;
         }
     }

@@ -1,6 +1,7 @@
 package moteur;
 
 import entites.enemies.Ennemy;
+import javafx.application.Platform;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,6 +16,7 @@ import laby.views.ViewLabyrinth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class SimpleMode {
     private static boolean simpleMode = false;
@@ -44,16 +46,16 @@ public class SimpleMode {
         for (Ennemy ennemy : allEnnemies) {
             switch (ennemy.getBehaviorString()) {
                 case "Normal":
-                    ennemy.setSprite(addTextToImage("" + (int) ennemy.getHealth(), new Image("/gray.png")));
+                    addTextToImage("" + (int) ennemy.getHealth(), new Image("/gray.png"), ennemy::setSprite);
                     break;
                 case "Kamikaze":
-                    ennemy.setSprite(addTextToImage("" + (int) ennemy.getHealth(), new Image("/red.png")));
+                    addTextToImage("" + (int) ennemy.getHealth(), new Image("/red.png"), ennemy::setSprite);
                     break;
                 case "Healer":
-                    ennemy.setSprite(addTextToImage("" + (int) ennemy.getHealth(), new Image("/green.png")));
+                    addTextToImage("" + (int) ennemy.getHealth(), new Image("/green.png"), ennemy::setSprite);
                     break;
                 case "Fugitive":
-                    ennemy.setSprite(addTextToImage("" + (int) ennemy.getHealth(), new Image("/blue.png")));
+                    addTextToImage("" + (int) ennemy.getHealth(), new Image("/blue.png"), ennemy::setSprite);
                     break;
             }
         }
@@ -116,35 +118,38 @@ public class SimpleMode {
      * @param image Image sur laquelle afficher le texte
      * @return Image avec le texte
      */
-    public static Image addTextToImage(String text, Image image) {
-        WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        Canvas canvas = new Canvas(image.getWidth(), image.getHeight());
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.drawImage(image, 0, 0);
+    public static void addTextToImage(String text, Image image, Consumer<Image> callback) {
+        Platform.runLater(() -> {
+            WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+            Canvas canvas = new Canvas(image.getWidth(), image.getHeight());
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            gc.drawImage(image, 0, 0);
 
-        // calcule la taille du texte en fonction de la taille de l'image
-        double fontSize = image.getHeight() / 5; // ajuste la taille de la police en fonction de la taille de l'image
-        Font font = Font.font("Arial", FontWeight.BOLD, fontSize);
-        javafx.scene.text.Text tempText = new javafx.scene.text.Text(text);
-        tempText.setFont(font);
+            // Calcule la taille du texte en fonction de la taille de l'image
+            double fontSize = image.getHeight() / 5;
+            Font font = Font.font("Arial", FontWeight.BOLD, fontSize);
+            javafx.scene.text.Text tempText = new javafx.scene.text.Text(text);
+            tempText.setFont(font);
 
-        gc.setFont(font);
-        gc.setFill(Color.WHITE);
+            gc.setFont(font);
+            gc.setFill(Color.WHITE);
 
-        // calcule la position du texte (au centre)
-        double textWidth = tempText.getLayoutBounds().getWidth();
-        double textHeight = tempText.getLayoutBounds().getHeight();
-        double x = (image.getWidth() - textWidth) / 2;
-        double y = (image.getHeight() + textHeight) / 2;
+            // Calcule la position du texte (centré)
+            double textWidth = tempText.getLayoutBounds().getWidth();
+            double textHeight = tempText.getLayoutBounds().getHeight();
+            double x = (image.getWidth() - textWidth) / 2;
+            double y = (image.getHeight() + textHeight) / 2;
 
-        // dessine le texte sur l'image
-        gc.fillText(text, x, y);
+            // Dessine le texte sur l'image
+            gc.fillText(text, x, y);
 
-        // capture le canvas dans l'image
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.TRANSPARENT);
-        canvas.snapshot(params, writableImage);
-        return writableImage;
+            // Capture le canvas dans l'image
+            SnapshotParameters params = new SnapshotParameters();
+            params.setFill(Color.TRANSPARENT);
+            WritableImage finalImage = canvas.snapshot(params, writableImage);
+
+            // Retourne l'image via un callback
+            callback.accept(finalImage);
+        });
     }
-
 }

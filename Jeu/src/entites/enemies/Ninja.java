@@ -19,7 +19,7 @@ public class Ninja extends Ennemy{
 
         // Si on est en mode simple
         if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulation()) {
-            this.setSprite(SimpleMode.addTextToImage("" + (int)this.getHealth(), new Image("/blue.png")));
+            SimpleMode.addTextToImage("" + (int) this.getHealth(), new Image("/blue.png"), this::setSprite);
         }
     }
 }
