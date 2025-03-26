@@ -7,9 +7,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
 import moteur.Jeu;
+import moteur.MoteurJeu;
 import moteur.SimpleMode;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.SeekBehavior;
@@ -273,11 +275,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
 
         //Vérification de la fin du jeu
-        if (this.nbManches == this.limManches) {
+        handleEndOfGame();
+        /*if (this.nbManches == this.limManches) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
             this.end = true;
             return;
-        }
+        }*/
+
         // Vérification de la fin d'une manche
         if (enemies.isEmpty() && !this.pauseManche) {
             handleEndOfManche();
@@ -364,7 +368,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         ennemiesArrived.add(enemy);
 
-        if (nbEnnemiesArrived >= nbEnnemiesToWin + 1) {
+        if (nbEnnemiesArrived >= nbEnnemiesToWin) {
             setLogs("Fin du jeu car assez d'ennemis ont atteint l'arrivée");
             this.end = true;
         }
@@ -549,7 +553,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
         if (this.getSimulation()) {
             handleSimulation();
         }
-
     }
 
     private void handleSimulation() {
@@ -845,22 +848,27 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public int[] moveEnemyToClosestValidPoint(char[][] grid, int ennemiPosX, int ennemiPosY) {
-        List<Integer> direction = Arrays.asList(-1, 0, 1);
+        LinkedList<Integer> direction = new LinkedList<>(List.of(-1, 0, 1));
 
         int currentX = ennemiPosX;
         int currentY = ennemiPosY;
 
         while (currentX == ennemiPosX && currentY == ennemiPosY) {
-            for (int i = 0; i < direction.size(); i++) {
-                for (int j = 0; j < direction.size(); j++) {
-                    int absY = Math.abs(ennemiPosY + direction.get(i));
-                    int absX = Math.abs(ennemiPosX + direction.get(j));
-                    if (grid[absY][absX] == '.') {
-                        ennemiPosY = absY;
-                        ennemiPosX = absX;
+            for (int i : direction) {
+                for (int j : direction) {
+                    int absY = ennemiPosY + i;
+                    int absX = ennemiPosX + j;
+
+                    // Vérifier que les coordonnées restent dans les limites du tableau
+                    if (absY >= 0 && absY < grid.length && absX >= 0 && absX < grid[0].length) {
+                        if (grid[absY][absX] == '.') {
+                            ennemiPosY = absY;
+                            ennemiPosX = absX;
+                        }
                     }
                 }
             }
+
             if (currentX == ennemiPosX && currentY == ennemiPosY) {
                 direction.addFirst(direction.getFirst() - 1);
                 direction.addLast(direction.getLast() + 1);
@@ -1092,5 +1100,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
         isEvolving = evolving;
     }
 
-
+    private void handleEndOfGame() {
+        // On vérifie si le nombre maximum de manches est atteint (en fin de manche)
+        if (this.nbManches >= this.limManches && this.pauseManche) {
+            System.out.println("Fin du jeu car le nombre limite de manches a été atteint");
+            setLogs("Fin du jeu car le nombre limite de manches a été atteint");
+            MoteurJeu.showEndGameScreen(MoteurJeu.primaryStage);
+            this.end = true;
+        }
+    }
 }

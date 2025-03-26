@@ -4,11 +4,15 @@ package moteur;
 
 import entites.enemies.Ennemy;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -50,6 +54,7 @@ public class MoteurJeu extends Application {
     // initialisation du canvas de dessin et du container
     final Canvas canvas = new Canvas();
     final Pane canvasContainer = new Pane(canvas);
+    public static Stage primaryStage;
 
     /**
      * lancement d'un jeu
@@ -78,6 +83,7 @@ public class MoteurJeu extends Application {
      * creation de l'application avec juste un canvas et des statistiques
      */
     public void start(Stage primaryStage) throws IOException {
+        MoteurJeu.primaryStage = primaryStage;
         // Création des vues
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
         laby.registerObserver(viewLabyrinth);
@@ -404,5 +410,70 @@ public class MoteurJeu extends Application {
     private void openHelpWindow() {
         HelpWindow helpWindow = HelpWindow.getHelpWindow();
         helpWindow.show();
+    }
+
+    public static void showEndGameScreen(Stage stage) {
+        // Charger l'image
+        ImageView gameOverImage = new ImageView(new Image("gameover1.png"));
+        gameOverImage.setPreserveRatio(true);
+        gameOverImage.fitWidthProperty().bind(stage.widthProperty());
+        gameOverImage.fitHeightProperty().bind(stage.heightProperty());
+
+        // Bouton Quitter
+        Button quitButton = new Button("Quitter");
+        quitButton.setStyle(
+                "-fx-background-color: #FF6347;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-padding: 10px 20px;" +
+                        "-fx-background-radius: 10px;"
+        );
+        quitButton.setOnAction(e -> System.exit(0));
+
+        // Bouton Rejouer
+        Button restartButton = new Button("Rejouer");
+        restartButton.setStyle(
+                "-fx-background-color: #4CAF50;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-padding: 10px 20px;" +
+                        "-fx-background-radius: 10px;"
+        );
+        restartButton.setOnAction(e -> restartApp());
+
+        // Texte explicatif
+        Label messageLabel = new Label("Le nombre max de manches est atteint.");
+        messageLabel.setStyle(
+                "-fx-text-fill: white;" +
+                        "-fx-font-size: 16px;"
+        );
+
+        // Conteneur pour les boutons et le texte
+        HBox buttonBox = new HBox(20); // Espacement de 20 pixels entre les éléments
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.getChildren().addAll(restartButton, messageLabel, quitButton);
+
+        // Mise en page
+        StackPane root = new StackPane();
+        root.getChildren().addAll(gameOverImage, buttonBox);
+        root.setStyle("-fx-background-color: black;");
+        StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
+
+        // Remplacement de la scène actuelle
+        Scene endScene = new Scene(root, 800, 600);
+        stage.setScene(endScene);
+        stage.show();
+    }
+
+    private static void restartApp() {
+        // Utilisez Platform.runLater pour exécuter le redémarrage dans le thread JavaFX
+        Platform.runLater(() -> {
+            try {
+                // Créez une nouvelle instance de votre application
+                Application.launch(MoteurJeu.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
