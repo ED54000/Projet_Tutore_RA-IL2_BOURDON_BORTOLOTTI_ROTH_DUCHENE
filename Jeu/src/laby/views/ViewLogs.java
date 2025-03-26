@@ -117,7 +117,7 @@ public class ViewLogs implements Observer {
 
             } else {
                 mettreAJourEnnemies(label.getText());
-            }git s
+            }
 
             //Vérifie si la vbox contient déjà le graphique
             if (!vbox.getChildren().contains(graphique.getGraphique())) {
