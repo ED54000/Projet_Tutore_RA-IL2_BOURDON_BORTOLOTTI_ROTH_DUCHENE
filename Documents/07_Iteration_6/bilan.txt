@@ -47,6 +47,7 @@ L'application permet de :
 	- Afficher un graphique représantant l'évolution de la composition du groupe d'ennemi au cours des manches.
     	- Afficher un graphique représantant la vie de chaque ennemi en temps réel au cours d'une manche.
     	- Afficher une fenêtre d'aide donnant des informations sur le jeu.
+	- Afficher un écran spécial à la fin de la partie.
 
 
 Objectif itération 7 :
