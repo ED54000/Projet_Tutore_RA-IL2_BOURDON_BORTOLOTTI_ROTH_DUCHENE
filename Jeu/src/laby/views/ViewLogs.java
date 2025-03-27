@@ -95,7 +95,8 @@ public class ViewLogs implements Observer {
                         button.setStyle(button.getStyle() + "-fx-background-color: #4CAF50;"));
 
                 button.setOnMouseClicked(controllerLearn);
-                vbox.getChildren().addAll(label, button);
+                vbox.getChildren().add(0,label);
+                vbox.getChildren().add(0,button);
             } else if (laby.getLogs().matches("Manche \\d+")) {
                 ennemiesBox = new VBox();
                 vbox.getChildren().add(label);
@@ -123,7 +124,6 @@ public class ViewLogs implements Observer {
             if (!vbox.getChildren().contains(graphique.getGraphique())) {
                 vbox.getChildren().add(graphique.getGraphique());
             }
-
         }
     }
 

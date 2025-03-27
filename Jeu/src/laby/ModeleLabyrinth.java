@@ -328,7 +328,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void updateEnemyPositions() {
         Iterator<Ennemy> enemyIterator = enemies.iterator();
-        while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
+         while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
             Ennemy enemy = enemyIterator.next();
             if (hasReachedArrival(enemy)) {
                 handleEnemyArrival(enemy);
@@ -425,7 +425,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // On l'attaque
                 enemy.attack(defense, secondes);
                 // le berserker se suicide après avoir attaqué
-                enemy.takeDamage(1000);
+                enemy.takeDamage(Integer.MAX_VALUE);
                 // On met à jour le temps de survie
                 //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
             }

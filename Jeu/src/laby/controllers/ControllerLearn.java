@@ -67,8 +67,8 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             EvolutionGroupe evolution = new EvolutionGroupe();
             if (laby.getNbManches() < 2) {
                 // nombre de groupes
-                for (int i = 0; i < 25; i++) {
-                    groupes.add(laby.createEnnemies(laby.getEnnemyEndOfManche().size()));
+                for (int i = 0; i < 45; i++) {
+                    groupes.add(ModeleLabyrinth.createEnnemies(laby.getEnnemyEndOfManche().size()));
                 }
             }
 
@@ -245,7 +245,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
 
                     nextManche.setOnMouseClicked(new ControllerNextManche(laby));
 
-                    finalParentVBox1.getChildren().addAll(nextManche);
+                    finalParentVBox1.getChildren().add(0,nextManche);
                     ModeleLabyrinth.setLogs("");
                 }
             });

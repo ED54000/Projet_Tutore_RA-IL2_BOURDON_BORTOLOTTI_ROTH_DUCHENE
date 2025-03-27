@@ -101,7 +101,7 @@ public class EvolutionGroupe implements Evolve{
 
     public double getScoreOneEnnemy(Ennemy e) {
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
-        int bonus = e.getIsDead() ? -1000 : 1000;
+        int bonus = e.getIsDead() ? -100000 : 100000;
         System.out.println("Survival time : "+(double)e.getSurvivalTime());
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Bonus : "+bonus);
@@ -163,13 +163,13 @@ public class EvolutionGroupe implements Evolve{
                 //TODO faire les vérif aussi pour vie et damage
                 //on set la vie si < 500
                 double newHealth = mutateValue(ennemy.getHealth());
-                ennemy.setHealth(newHealth > 500 ? 500 : newHealth);
+                //ennemy.setHealth(newHealth > 500 ? 500 : newHealth);
                 //on set la speed si < 4
                 double newSpeed = mutateValue(ennemy.getSpeed());
                 ennemy.setSpeed(newSpeed > 4 ? 4 : newSpeed);
                 //on set les dégâts si < 50
                 double newDamages = mutateValue(ennemy.getDamages());
-                ennemy.setDamages(newDamages > 50 ? 50 : newDamages);
+              //  ennemy.setDamages(newDamages > 50 ? 50 : newDamages);
                 //ennemy.setAttackSpeed(mutateValue(ennemy.getAttackSpeed()));
             }
         }

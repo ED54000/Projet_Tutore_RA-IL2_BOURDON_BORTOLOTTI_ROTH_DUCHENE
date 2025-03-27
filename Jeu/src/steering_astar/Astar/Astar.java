@@ -325,6 +325,13 @@ public class Astar {
             for (int i = 0; i < grid.length; i++) {
                 for (int j = 0; j < grid[i].length; j++) {
                     if (grid[i][j] == c) {
+
+//                        Vector2D towerPos = new Vector2D(i, j);
+//
+//                        // Vérifier si la tour est accessible
+//                        if (!isUnblocked(grid, towerPos)) {
+//                            continue;
+//                        }
                         // Calcul de la distance entre la position actuelle et la position de l'ennemi
                         double currentDistance = Math.sqrt(
                                 Math.pow(i - posEnnemi.getX(), 2) + Math.pow(j - posEnnemi.getY(), 2)

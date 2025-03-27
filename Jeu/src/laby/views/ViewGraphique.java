@@ -95,12 +95,12 @@ public class ViewGraphique implements Observer {
         axeX.setLabel("Nombre de manches");
         axeX.setForceZeroInRange(false);
         axeX.setAutoRanging(false);
+        axeX.setTickUnit(1); // Utiliser des entiers pour le nombre de manches
 
         // Configurer l'axe Y
         NumberAxis axeY = new NumberAxis();
         axeY.setLabel("Nombre d'ennemis");
         axeY.setTickUnit(1); // Utiliser des entiers pour le nombre d'ennemis
-        axeX.setTickUnit(1);
         axeY.setMinorTickCount(0);
 
         LineChart<Number, Number> graph = new LineChart<>(axeX, axeY);

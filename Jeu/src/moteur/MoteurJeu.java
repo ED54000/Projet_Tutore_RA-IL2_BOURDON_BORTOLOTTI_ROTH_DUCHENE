@@ -5,6 +5,7 @@ package moteur;
 import entites.enemies.Ennemy;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -99,16 +100,51 @@ public class MoteurJeu extends Application {
                 + "-fx-font-weight: bold; "
                 + "-fx-text-fill: #2c3e50; "
                 + "-fx-padding: 0 0 20 0;");
+        titleLabel.setAlignment(Pos.CENTER);
+        titleLabel.setMaxWidth(Double.MAX_VALUE);
+
+        // Section de sélection du labyrinthe préfait
+        ComboBox<String> configPrefaiteComboBox = new ComboBox<>();
+        configPrefaiteComboBox.getItems().addAll(
+                "Aucune",
+                "Chemin safe",
+                "Aucun chemin safe",
+                "Une tour unique",
+                "Nombreuses tours centrales",
+                "Tours inaccessibles"
+        );
+        configPrefaiteComboBox.setValue("Aucune");
+        configPrefaiteComboBox.setId("configPrefaiteComboBox");
+        configPrefaiteComboBox.setStyle("-fx-background-color: #f8f9fa; "
+                + "-fx-background-radius: 5; "
+                + "-fx-border-color: #dee2e6; "
+                + "-fx-border-radius: 5; "
+                + "-fx-padding: 5; ");
+
+        VBox configPrefaiteSection = createSection("Choisir une configuration de test", configPrefaiteComboBox);
 
         // Map des labyrinthes
         Map<String, String> labyrinthMap = new HashMap<>();
         labyrinthMap.put("Petit", "Ressources/Labyrinthe1.txt");
         labyrinthMap.put("Grand", "Ressources/Labyrinthe2.txt");
         labyrinthMap.put("Large", "Ressources/Labyrinthe3.txt");
+        labyrinthMap.put("Large sans safe", "Ressources/Labyrinthe3_bis.txt");
+        labyrinthMap.put("Ligne", "Ressources/Ligne.txt");
+        labyrinthMap.put("Nombreuses tours centrales", "Ressources/LignePlusieursTours.txt");
+        labyrinthMap.put("Tours inaccessibles", "Ressources/ToursInaccessibles.txt");
 
         // Section de sélection du labyrinthe
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
-        labyrinthComboBox.getItems().addAll("Petit", "Grand", "Large", "Plus");
+        labyrinthComboBox.getItems().addAll(
+                "Petit",
+                "Grand",
+                "Large",
+                "Large sans safe",
+                "Ligne",
+                "Nombreuses tours centrales",
+                "Tours inaccessibles",
+                "Plus"
+        );
         labyrinthComboBox.setValue("Large");
         labyrinthComboBox.setId("labyrinthComboBox");
         labyrinthComboBox.setStyle("-fx-background-color: #f8f9fa; "
@@ -147,6 +183,8 @@ public class MoteurJeu extends Application {
                 + "-fx-padding: 12 24; "
                 + "-fx-background-radius: 5; "
                 + "-fx-cursor: hand;");
+        startButton.setAlignment(Pos.CENTER);
+        startButton.setMaxWidth(Double.MAX_VALUE);
 
         // Effet hover pour le bouton
         startButton.setOnMouseEntered(e ->
@@ -169,6 +207,62 @@ public class MoteurJeu extends Application {
                         + "-fx-background-radius: 5; "
                         + "-fx-cursor: hand;")
         );
+
+        configPrefaiteComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == "Aucune") {
+                // Réactiver les autres ComboBox pour permettre la modification
+                labyrinthComboBox.setDisable(false);
+                enemiesField.setDisable(false);
+                nbEnnemiesToWinField.setDisable(false);
+                roundsField.setDisable(false);
+                avecAstarBox.setDisable(false);
+            } else {
+                labyrinthComboBox.setDisable(true);
+                enemiesField.setDisable(true);
+                nbEnnemiesToWinField.setDisable(true);
+                roundsField.setDisable(true);
+                avecAstarBox.setDisable(true);
+                switch (newValue){
+                    case "Chemin safe":
+                        labyrinthComboBox.setValue("Large");
+                        enemiesField.setText("15");
+                        nbEnnemiesToWinField.setText("12");
+                        roundsField.setText("10");
+                        avecAstarBox.setSelected(true);
+                        break;
+                    case "Aucun chemin safe":
+                        labyrinthComboBox.setValue("Large sans safe");
+                        enemiesField.setText("50");
+                        nbEnnemiesToWinField.setText("35");
+                        roundsField.setText("20");
+                        avecAstarBox.setSelected(true);
+                        break;
+                    case "Une tour unique":
+                        labyrinthComboBox.setValue("Ligne");
+                        enemiesField.setText("5");
+                        nbEnnemiesToWinField.setText("5");
+                        roundsField.setText("40");
+                        avecAstarBox.setSelected(true);
+                        break;
+                    case "Nombreuses tours centrales":
+                        labyrinthComboBox.setValue("Nombreuses tours centrales");
+                        enemiesField.setText("20");
+                        nbEnnemiesToWinField.setText("15");
+                        roundsField.setText("10");
+                        avecAstarBox.setSelected(true);
+                        break;
+                    case "Tours inaccessibles":
+                        labyrinthComboBox.setValue("Tours inaccessibles");
+                        enemiesField.setText("20");
+                        nbEnnemiesToWinField.setText("15");
+                        roundsField.setText("10");
+                        avecAstarBox.setSelected(true);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
 
         startButton.setOnMouseClicked(event -> {
             laby.setStartTime();
@@ -201,18 +295,19 @@ public class MoteurJeu extends Application {
         });
 
         // Assemblage de l'interface
+        HBox sectionsContainer = new HBox(20);
+        VBox leftColumn = new VBox(20, configPrefaiteSection, enemiesSection, roundsSection);
+        VBox rightColumn = new VBox(20, labyrinthSection, objectifSection, astarSection);
+        sectionsContainer.getChildren().addAll(leftColumn, rightColumn);
+
         root.getChildren().addAll(
                 titleLabel,
-                labyrinthSection,
-                enemiesSection,
-                objectifSection,
-                roundsSection,
-                astarSection,
+                sectionsContainer,
                 startButton
         );
 
         // Configuration de la scène
-        Scene dialogScene = new Scene(root, 500, 750);
+        Scene dialogScene = new Scene(root, 550, 525);
         dialogScene.setFill(Color.TRANSPARENT);
         dialogStage.setScene(dialogScene);
         dialogStage.initOwner(primaryStage);
@@ -330,7 +425,7 @@ public class MoteurJeu extends Application {
         TimeManagement timeManagement = new TimeManagement(jeu, laby, speedUpButton, slowDownButton, pauseButton);
 
         speedUpButton.setOnAction(e -> {
-            TimeManagement.modifySpeed((BASE_FPS * 2), speedUpButton, slowDownButton);
+            TimeManagement.modifySpeed((BASE_FPS * 8), speedUpButton, slowDownButton);
         });
 
         slowDownButton.setOnAction(e -> {
@@ -356,6 +451,9 @@ public class MoteurJeu extends Application {
                 graphicsWindow.hide();
             }
         });
+
+
+
 
 
         HBox controls = new HBox(10, switchMode, slowDownButton, pauseButton, speedUpButton, helpButton, graphicsButton);
