@@ -13,7 +13,7 @@ Marin :
 Florian : 
 	- Refonte graphique du menu de démarrage
 	- Ajout de configurations de test
-    - Ajout d’une fenêtre séparée pour afficher les graphiques
+    	- Ajout d’une fenêtre séparée pour afficher les graphiques
 	- Résolutions de bugs
 
 Eloi :
