@@ -84,19 +84,17 @@ public class EvolutionSteering implements Evolve {
 
     @Override
     public double getScore(ArrayList<Ennemy> ennemies) {
-        //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
         Ennemy e = ennemies.get(0);
 
-        //int bonus = e.getIsDead() ? -1000 : 1000;
         System.out.println("Survival time : "+(double)e.getSurvivalTime());
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Distance parcouru : "+e.getDistanceTraveled());
-        //TODO Rajouter la distance parcouru de l'ennemi (à la place du survival time ?)
         //TODO : Rajouter le nombre de hit que l'ennemi a pris
         //System.out.println("Bonus : "+bonus);
 
-       // return - ((double) e.getSurvivalTime()) - e.getDistanceToArrival()*10;
-        return - e.getDistanceTraveled();
+        //return - ((double) e.getSurvivalTime()) - e.getDistanceToArrival()*10;
+        int bonus = e.getIsDead() ? -1000 : 1000;
+        return bonus - e.getDistanceTraveled();
     }
 
     @Override
