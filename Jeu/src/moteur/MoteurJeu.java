@@ -307,7 +307,7 @@ public class MoteurJeu extends Application {
         );
 
         // Configuration de la scène
-        Scene dialogScene = new Scene(root, 550, 525);
+        Scene dialogScene = new Scene(root, 560, 525);
         dialogScene.setFill(Color.TRANSPARENT);
         dialogStage.setScene(dialogScene);
         dialogStage.initOwner(primaryStage);
