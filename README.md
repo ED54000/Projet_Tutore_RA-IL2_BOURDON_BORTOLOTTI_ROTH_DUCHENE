@@ -120,7 +120,7 @@ Afficher un graphique représantant l'évolution de la composition du groupe d'e
 
 
 ## Itération 6
-  - Tag :[iteration_6]()
+  - Tag :[iteration_6](https://github.com/ED54000/Projet_Tutore_RA-IL2_BOURDON_BORTOLOTTI_ROTH_DUCHENE/releases/tag/It%C3%A9ration_6)
 - Réalisations : 
 	- Amélioration fonction de score
 	- Première version de l’évolution de steering behaviors
