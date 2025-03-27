@@ -19,7 +19,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
-import laby.Observer;
 import laby.controllers.ControllerSimpleMode;
 import laby.views.*;
 
@@ -227,7 +226,7 @@ public class MoteurJeu extends Application {
                 nbEnnemiesToWinField.setDisable(true);
                 roundsField.setDisable(true);
                 avecAstarBox.setDisable(true);
-                switch (newValue){
+                switch (newValue) {
                     case "Chemin safe":
                         labyrinthComboBox.setValue("Large");
                         enemiesField.setText("15");
@@ -455,9 +454,6 @@ public class MoteurJeu extends Application {
                 graphicsWindow.hide();
             }
         });
-
-
-
 
 
         HBox controls = new HBox(10, switchMode, slowDownButton, pauseButton, speedUpButton, helpButton, graphicsButton);
