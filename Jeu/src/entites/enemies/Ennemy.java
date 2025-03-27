@@ -4,6 +4,7 @@ import entites.Entity;
 import javafx.scene.image.Image;
 import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
+import moteur.SimpleMode;
 import steering_astar.Astar.Astar;
 import steering_astar.Steering.AvoidBehavior;
 import steering_astar.Steering.Behavior;
@@ -18,6 +19,7 @@ public abstract class Ennemy extends Entity {
     private double speed;
     private int distanceToArrival;  //distanceToArrival sera calculé par A* dans le jeu
     private int distanceStartToArrival;
+    private double distanceTraveled;
     private String killerType;
     private static int timeSpawn = 0;
     private String behaviorString;
@@ -40,6 +42,7 @@ public abstract class Ennemy extends Entity {
         //this.positionReel = position.divide(ModeleLabyrinth.getTailleCase());
         this.distanceToArrival = distanceToArrival;
         this.distanceStartToArrival = distanceToArrival;
+        this.distanceTraveled = 0;
         this.killerType = null;
         this.isArrived = false;
         this.behaviorString = behavior;
@@ -71,7 +74,7 @@ public abstract class Ennemy extends Entity {
                 target.health += Math.abs(heal);
                 ModeleLabyrinth.setLogs(target.getName());
                 // Si le jeu est en mode simple et pas en simulation
-                if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()) {
+                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()) {
                     // On met à jour le sprite de l'ennemi (sa vie)
                     ModeleLabyrinth.updateSprite(target);
                 }else {
@@ -98,9 +101,13 @@ public abstract class Ennemy extends Entity {
             totalForce = totalForce.add(steeringForce);
         }
 
+        double distance = velocity.magnitude();
+        distanceTraveled += distance;
+
         velocity = velocity.add(totalForce).normalize().scale(speed);
 
         position = position.add(velocity);
+        //System.out.println("Position : " + position);
         positionReel = position.divide(ModeleLabyrinth.getTailleCase());
     }
 
@@ -165,7 +172,7 @@ public abstract class Ennemy extends Entity {
                 break;
             }
         }
-        this.listBehaviors.add(behavior);
+        this.listBehaviors.addFirst(behavior);
     }
 
     public String getBehaviorString() {
@@ -218,6 +225,10 @@ public abstract class Ennemy extends Entity {
 
     public Image getSpriteHeal() {
         return spriteHeal;
+    }
+
+    public double getDistanceTraveled() {
+        return this.distanceTraveled;
     }
 }
 

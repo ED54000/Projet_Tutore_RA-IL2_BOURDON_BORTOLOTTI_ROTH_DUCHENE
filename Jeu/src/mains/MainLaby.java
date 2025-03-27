@@ -2,6 +2,7 @@ package mains;
 
 import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
+import moteur.TimeManagement;
 
 
 public class MainLaby {
@@ -12,7 +13,7 @@ public class MainLaby {
         ModeleLabyrinth laby = new ModeleLabyrinth();
 
         // parametrage du moteur de jeu
-        MoteurJeu.setFPS(pFPS);
+        TimeManagement.setFPS(pFPS);
         MoteurJeu.setLaby(laby);
 
         // lancement du jeu

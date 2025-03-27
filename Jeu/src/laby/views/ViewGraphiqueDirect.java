@@ -61,7 +61,6 @@ public class ViewGraphiqueDirect implements Observer {
     @Override
     public void update(Subject s) {
         String log = laby.getLogs();
-
         if (PATTERN_MANCHE.matcher(log).matches()) {
             initialiserNouvelleManche();
         } else {

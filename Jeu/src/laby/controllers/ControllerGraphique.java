@@ -4,7 +4,6 @@ import entites.enemies.Ennemy;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import laby.ModeleLabyrinth;
-import laby.views.ViewGraphique;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,7 +64,7 @@ public class ControllerGraphique implements EventHandler<MouseEvent> {
         manche++;
 
         // Afficher la vue du graphique
-        laby.setGraphique(true);
+       // laby.setGraphique(true);
     }
 
     public void setScore(double bestScore) {

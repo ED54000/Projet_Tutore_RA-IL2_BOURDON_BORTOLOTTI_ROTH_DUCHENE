@@ -8,6 +8,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import laby.ModeleLabyrinth;
 import moteur.MoteurJeu;
+import moteur.SimpleMode;
 
 import java.io.IOException;
 
@@ -40,7 +41,7 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         ModeleLabyrinth.setLogs("Manche "+nbManches);
 
         // Si le jeu est en mode simple
-        if(MoteurJeu.getSimpleMode()) {
+        if(SimpleMode.getSimpleMode()) {
             for(Ennemy e: laby.enemies) {
                 ModeleLabyrinth.updateSprite(e);
             }

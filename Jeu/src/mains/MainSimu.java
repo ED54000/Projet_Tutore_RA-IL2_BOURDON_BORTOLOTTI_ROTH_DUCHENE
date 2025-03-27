@@ -1,10 +1,9 @@
 package mains;
 
 import entites.enemies.*;
-import evolution.Evolution;
+import evolution.EvolutionGroupe;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import steering_astar.Steering.Vector2D;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class MainSimu extends Application {
                 }
 
                 // On évolue
-                Evolution evolution = new Evolution();
+                EvolutionGroupe evolution = new EvolutionGroupe();
                 stats = evolution.evaluate(stats);
                 if (stats == null) {
                     System.out.println("Les ennemies ont gagné la partie");

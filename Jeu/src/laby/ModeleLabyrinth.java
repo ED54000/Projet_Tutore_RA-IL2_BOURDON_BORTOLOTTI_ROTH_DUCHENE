@@ -2,15 +2,18 @@ package laby;
 
 import entites.defenses.*;
 import entites.enemies.*;
-import evolution.Evolution;
+import evolution.EvolutionGroupe;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import jdk.swing.interop.SwingInterOpUtils;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
+import laby.views.ViewGraphique;
 import moteur.Jeu;
 import moteur.MoteurJeu;
+import moteur.SimpleMode;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.SeekBehavior;
 import steering_astar.Steering.Vector2D;
@@ -57,8 +60,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
     //si le jeu est avec le main simulation
     private static boolean simulation = false;
     private static boolean simulationEvolution = false;
-    private boolean showGraph = false;
-
+    //private boolean showGraph = false;
+    private boolean isEvolving = false;
 
     static Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -224,10 +227,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
 
         // On sauvegarde les statistiques des ennemis
-        Evolution.saveStartStats(ennemies);
+        EvolutionGroupe.saveStartStats(ennemies);
         //System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
-        Map<Ennemy, double[]> map = Evolution.startStats;
+        Map<Ennemy, double[]> map = EvolutionGroupe.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
             Ennemy enemy = entry.getKey();
             double[] values = entry.getValue();
@@ -267,10 +270,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
      */
     @Override
     public void update(double secondes) {
+        // On skip l'update si le jeu est en évolution
+        if (isEvolving) {
+            return;
+        }
+
         //Vérification de la fin du jeu
-        if (this.nbManches == this.limManches) {
+        if (this.nbManches == this.limManches && this.pauseManche) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
             this.end = true;
+            MoteurJeu.showEndGameScreen(MoteurJeu.primaryStage);
             return;
         }
         // Vérification de la fin d'une manche
@@ -320,7 +329,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void updateEnemyPositions() {
         Iterator<Ennemy> enemyIterator = enemies.iterator();
-        while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
+         while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
             Ennemy enemy = enemyIterator.next();
             if (hasReachedArrival(enemy)) {
                 handleEnemyArrival(enemy);
@@ -417,7 +426,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // On l'attaque
                 enemy.attack(defense, secondes);
                 // le berserker se suicide après avoir attaqué
-                enemy.takeDamage(1000);
+                enemy.takeDamage(Integer.MAX_VALUE);
                 // On met à jour le temps de survie
                 //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
             }
@@ -446,7 +455,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Quand il se fait attaquer normalement
                     setLogs(enemyTarget.getName());
                     // Si le jeu est en mode simple et non en simulation
-                    if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                    if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
                         // On met à jour le sprite de l'ennemi (sa vie)
                         updateSprite(enemyTarget);
                     }
@@ -507,7 +516,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 setLogs(e.getName());
                 // Si le jeu est en mode simple et pas en simulation
-                if(MoteurJeu.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
                     // On met à jour son sprite (sa vie)
                     updateSprite(e);
                 }
@@ -691,7 +700,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void towerIsDestroyed() {
-        System.out.println("La défense  est morte !");
+        System.out.println("La défense est morte !");
 
         for (Ennemy ennemy : enemies) {
             char[][] copyGrid = new char[cases.length][];
@@ -928,6 +937,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return YArrival;
     }
 
+    public static Vector2D getArrival() {
+        return new Vector2D(XArrival * getTailleCase(), YArrival * getTailleCase());
+    }
+
     public int getNbManches() {
         return nbManches;
     }
@@ -1052,26 +1065,20 @@ public class ModeleLabyrinth implements Jeu, Subject {
         System.out.println("Sprite update");
         switch (e.getBehaviorString()) {
             case "Normal":
-                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/gray.png")));
+                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/gray.png")));
                 break;
             case "Kamikaze":
-                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/red.png")));
+                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/red.png")));
                 break;
             case "Fugitive":
-                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/blue.png")));
+                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/blue.png")));
                 break;
             case "Healer":
-                e.setSprite(MoteurJeu.addTextToImage("" + (int) e.getHealth(), new Image("/green.png")));
+                e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/green.png")));
                 break;
         }
     }
 
-    public boolean getShowGraph() {
-        return showGraph;
-    }
-    public void setGraphique(boolean b) {
-        this.showGraph = b;
-    }
 
     public void setDonneesGraphique(HashMap<String, List<Double>> donnees) {
         this.donneesGraphique = donnees;
@@ -1080,4 +1087,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public Map<String, List<Double>> getDonneesGraphique() {
         return donneesGraphique;
     }
+
+    public boolean isEvolving() {
+        return isEvolving;
+    }
+
+    public void setEvolving(boolean evolving) {
+        isEvolving = evolving;
+    }
+
+
 }

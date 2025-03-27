@@ -1,0 +1,57 @@
+Bilan Itération 6 :
+
+Objectifs de l'itération : 
+	- Ajouter un bouton d'aide qui donne des informations sur le jeu
+	- Ajouter l’évolution de steering behavior
+	- Refactor
+
+
+
+Validation : 
+
+	- Nous avons fait une première version de l'évolution avec steering behavior, mais nous ne l'avons
+	pas encore intégré à l'interface graphique.
+
+
+Le(s) bug(s) restant :
+
+	- Bug lié à l'accélération du jeu, qui semble affecter différement la vitesse d'attaque
+	et la vitesse de déplacement.
+
+
+Conformité à l'étude préalable :
+
+	- La course à l'armement a été remplacée par l'évolution de steering behavior.
+
+
+Problèmes rencontrés :
+
+	- De nombreux bug, qui ont été résolu, ont été créé lors de l'ajouts de nouvelles fonctionnalités, en raison de sa mauvaise structure.
+
+
+Pour lancer l'application : 
+ 	- Lancer le fichier MainLaby.java situé dans le chemin suivant src/mains/MainLaby.java pour une version graphique.
+	- Lancer le fichier MainSimu.java situé dans le chemin suivant src/mains/MainSimu.java pour une version sans affichage.
+
+
+L'application permet de : 
+	- Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches,
+	  le nombre d'ennemies qui passe pour gagner, et la méthode de déplacement.
+	- Choisir parmi différentes configurations préfaites pour pouvoir observer différentes situations d'apprentissage.
+	- Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de
+	  leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites ou un mode simple si voulu.
+	- Faire accélerer, ralentir ou mettre en pause la manche pour une meilleure compréhension.
+	- Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués
+	  jusqu'à la fin du jeu à l'aide de graphique affichés en fin de manche.
+	- Pouvoir lancer l'application sans interface graphique ce qui accélère les vagues.
+	- Afficher un graphique représantant l'évolution de la composition du groupe d'ennemi au cours des manches.
+    - Afficher un graphique représantant la vie de chaque ennemi en temps réel au cours d'une manche.
+    - Afficher une fenêtre d'aide donnant des informations sur le jeu.
+
+
+Objectif itération 7 :
+
+    - Terminer l’évolution avec steering behaviors
+    - Intégrer l’évolution de steering behaviors à l’interface graphique
+
+

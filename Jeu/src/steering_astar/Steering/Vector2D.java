@@ -152,5 +152,9 @@ public class Vector2D {
         int[] coordCase = getCaseFromVector(this);
         return new Vector2D(coordCase[0] * ModeleLabyrinth.getTailleCase(), coordCase[1] * ModeleLabyrinth.getTailleCase());
     }
+
+    public Vector2D div(int i) {
+        return new Vector2D(this.x / i, this.y / i);
+    }
 }
 
