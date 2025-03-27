@@ -1,5 +1,4 @@
 Tristan :
-	- Refonte logs
 	- Amélioration fonction de score
 	- Première version de l’évolution de steering behaviors
 	- Résolution de bugs
