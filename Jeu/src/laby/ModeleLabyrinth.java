@@ -699,7 +699,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     public void towerIsDestroyed() {
-        System.out.println("La défense  est morte !");
+        System.out.println("La défense est morte !");
 
         for (Ennemy ennemy : enemies) {
             char[][] copyGrid = new char[cases.length][];
@@ -934,6 +934,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     public static double getYArrival() {
         return YArrival;
+    }
+
+    public static Vector2D getArrival() {
+        return new Vector2D(XArrival * getTailleCase(), YArrival * getTailleCase());
     }
 
     public int getNbManches() {

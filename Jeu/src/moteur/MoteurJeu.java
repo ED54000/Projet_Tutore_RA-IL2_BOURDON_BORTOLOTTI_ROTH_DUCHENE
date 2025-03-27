@@ -417,7 +417,6 @@ public class MoteurJeu extends Application {
 
 
         // MODIFICATION VITESSE JEU
-
         ToggleButton speedUpButton = new ToggleButton("Accélérer");
         ToggleButton slowDownButton = new ToggleButton("Ralentir");
         ToggleButton pauseButton = new ToggleButton("Pause");

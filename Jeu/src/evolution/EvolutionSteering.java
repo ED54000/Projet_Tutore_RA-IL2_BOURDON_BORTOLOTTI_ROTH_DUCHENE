@@ -16,6 +16,7 @@ import java.util.*;
 public class EvolutionSteering implements Evolve {
 
     public static final Map<Ennemy, double[]> startStats = Collections.synchronizedMap(new HashMap<>());
+    public int nbchekpoints = 3;
 
 
     @Override
@@ -29,16 +30,27 @@ public class EvolutionSteering implements Evolve {
             jeu.nbEnnemiesToWin = 2;
             //refreshEnnemies(ennemy, jeu);
             ArrayList<Ennemy> copieGroupe = new ArrayList<>(List.of(ennemy));
-            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, jeu.nbEnnemiesToWin);
+            jeu.creerLabyrinthe("Ressources/Laby_ouvert", copieGroupe, 1000, jeu.nbEnnemiesToWin);
 
             //Créer au hasard 3 checkpoints
             ArrayList<Vector2D> checkpoints = new ArrayList<>();
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < nbchekpoints; j++) {
                 //ajoute un checkpoint dans la limite du labyrinthe
                 int hauteur = jeu.getCases().length * jeu.getTailleCase();
                 int largeur = jeu.getCases()[0].length * jeu.getTailleCase();
-                checkpoints.add(new Vector2D((int) (Math.random() * largeur), (int) (Math.random() * hauteur)));
+
+                int x = (int) (Math.random() * largeur);
+                int y = (int) (Math.random() * hauteur);
+
+                //Vérifie que le checkpoint est sur une case vide
+                while (jeu.getCases()[y / jeu.getTailleCase()][x / jeu.getTailleCase()] != '.') {
+                    x = (int) (Math.random() * largeur);
+                    y = (int) (Math.random() * hauteur);
+                }
+                checkpoints.add(new Vector2D(x, y));
             }
+            //ajoute l'arrivée
+            checkpoints.add(jeu.getArrival());
             //créer PathFpllowingBehavior
             PathfollowingBehavior pathfollowingBehavior = new PathfollowingBehavior(checkpoints);
             ennemy.setBehavior(pathfollowingBehavior);
@@ -70,9 +82,6 @@ public class EvolutionSteering implements Evolve {
         return getScore(jeu.getEnnemyEndOfManche());
     }
 
-
-
-
     @Override
     public double getScore(ArrayList<Ennemy> ennemies) {
         //Ajoute 20 si l'ennemi est en vie et enleve 20 si l'ennemi est mort
@@ -81,10 +90,13 @@ public class EvolutionSteering implements Evolve {
         //int bonus = e.getIsDead() ? -1000 : 1000;
         System.out.println("Survival time : "+(double)e.getSurvivalTime());
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
+        System.out.println("Distance parcouru : "+e.getDistanceTraveled());
+        //TODO Rajouter la distance parcouru de l'ennemi (à la place du survival time ?)
         //TODO : Rajouter le nombre de hit que l'ennemi a pris
         //System.out.println("Bonus : "+bonus);
 
-        return - ((double) e.getSurvivalTime()) - e.getDistanceToArrival()*10;
+       // return - ((double) e.getSurvivalTime()) - e.getDistanceToArrival()*10;
+        return - e.getDistanceTraveled();
     }
 
     @Override
@@ -136,14 +148,16 @@ public class EvolutionSteering implements Evolve {
         ArrayList<Vector2D> waypoints2 = ((PathfollowingBehavior) e2.getListBehavior().get(0)).getCheckpoints();
         //On créer une nouvelle liste de waypoints pour l'enfant
         ArrayList<Vector2D> waypointsEnfant = new ArrayList<>();
-        //On ajoute le milieu des deux premiers waypoints
-        waypointsEnfant.add(new Vector2D((waypoints1.get(0).getX() + waypoints2.get(0).getX()) / 2, (waypoints1.get(0).getY() + waypoints2.get(0).getY()) / 2));
-        //On ajoute le milieu des deuxièmes waypoints
-        waypointsEnfant.add(new Vector2D((waypoints1.get(1).getX() + waypoints2.get(1).getX()) / 2, (waypoints1.get(1).getY() + waypoints2.get(1).getY()) / 2));
-        //On ajoute le milieu des troisièmes waypoints
-        waypointsEnfant.add(new Vector2D((waypoints1.get(2).getX() + waypoints2.get(2).getX()) / 2, (waypoints1.get(2).getY() + waypoints2.get(2).getY()) / 2));
+        for (int i = 0; i < nbchekpoints; i++) {
+            //On récupère les waypoints de chaque ennemi
+            Vector2D waypoint1 = waypoints1.get(i);
+            Vector2D waypoint2 = waypoints2.get(i);
+            //On ajoute le milieu des deux waypoints
+            waypointsEnfant.add(new Vector2D((waypoint1.getX() + waypoint2.getX()) / 2, (waypoint1.getY() + waypoint2.getY()) / 2));
+        }
+
         //On ajoute l'arrivé
-        waypointsEnfant.add(new Vector2D(ModeleLabyrinth.getYArrival(), ModeleLabyrinth.getXArrival()));
+        waypointsEnfant.add(ModeleLabyrinth.getArrival());
         //On créer un nouveau PathfollowingBehavior pour l'enfant
         PathfollowingBehavior pathfollowingBehavior = new PathfollowingBehavior(waypointsEnfant);
         //On créer un nouvel ennemi pour l'enfant
@@ -175,19 +189,12 @@ public class EvolutionSteering implements Evolve {
             Ennemy ennemy = groupe.get(0);
             // On récupère les waypoints de l'ennemi
             List<Vector2D> waypoints = ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints();
-            // On récupère les coordonnées de chaque waypoint
-            Vector2D waypoint1 = waypoints.get(0);
-            Vector2D waypoint2 = waypoints.get(1);
-            Vector2D waypoint3 = waypoints.get(2);
-            // On applique une mutation sur chaque coordonnée TODO : Tester avec des valeurs plus grandes
-            waypoint1.setX(waypoint1.getX() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
-            waypoint1.setY(waypoint1.getY() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
-            waypoint2.setX(waypoint2.getX() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
-            waypoint2.setY(waypoint2.getY() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
-            waypoint3.setX(waypoint3.getX() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
-            waypoint3.setY(waypoint3.getY() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
+            for (Vector2D waypoint : waypoints) {
+                // On applique une mutation sur chaque coordonnée TODO : Tester avec des valeurs plus grandes
+                waypoint.setX(waypoint.getX() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
+                waypoint.setY(waypoint.getY() + (new Random().nextBoolean() ? 1 : -1) * new Random().nextInt(15));
+            }
         }
-
         return nouvellePopulation;
     }
 
@@ -203,7 +210,7 @@ public class EvolutionSteering implements Evolve {
         // Réinitialisation des stats
         double[] statsStart = EvolutionSteering.startStats.get(ennemy);
         if (statsStart != null) {
-            ennemy.setHealth(1000000);
+            ennemy.setHealth(statsStart[0]);
             ennemy.setSpeed(statsStart[1]);
             ennemy.setDamages(statsStart[2]);
             ennemy.setAttackSpeed(statsStart[3]);

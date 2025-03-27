@@ -18,30 +18,34 @@ public class MainSimuSteering extends Application {
     public void start(Stage stage) throws Exception {
         // Initialisation avec une liste d'ennemis
         ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
-        for (int i = 0; i < 50; i++) { //50 groupes d'un géant
+        for (int i = 0; i < 40; i++) { //50 groupes d'un géant
             groupes.add(new ArrayList<>(List.of(new Giant(new Vector2D(0, 0), "Giant"+i))));
         }
 
         // Nombre de manches (itération d'évolution)
-        for (int i = 0; i < 10; i++) {
+        double distanceMin = 1000000;
+        for (int i = 0; i < 20; i++) {
             HashMap<ArrayList<Ennemy>, Double> stats = new HashMap<>();
             for (ArrayList<Ennemy> groupe : groupes) {
                 stats.put(groupe, 0.0);
             }
 
             EvolutionSteering evolution = new EvolutionSteering();
-            System.out.println("Yala");
+            evolution.nbchekpoints = 1;
             stats = evolution.evaluate(stats);
 
-            System.out.println("Avant l'évolution");
-            //parcours stats
-            for (ArrayList<Ennemy> groupe : stats.keySet()) {
-                Ennemy ennemy = groupe.get(0);
-                //Affiche les waypoints
-                System.out.println("Waypoints de " + ennemy.getName());
-                System.out.println(((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints());
-
-            }
+            //System.out.println("Avant l'évolution");
+            ////parcours stats
+            //for (ArrayList<Ennemy> groupe : stats.keySet()) {
+            //    Ennemy ennemy = groupe.get(0);
+            //    //Affiche les waypoints
+            //    System.out.println("Waypoints de " + ennemy.getName() + "(" + stats.get(groupe) + ")");
+            //    for (Vector2D waypoint : ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints()) {
+            //        //System.out.println(waypoint);
+            //        System.out.println(waypoint.div(41));
+            //    }
+//
+            //}
 
             if (stats == null) {
                 System.out.println("Les ennemies ont gagné la partie");
@@ -55,12 +59,19 @@ public class MainSimuSteering extends Application {
             for (ArrayList<Ennemy> groupe : groupes) {
                 Ennemy ennemy = groupe.get(0);
                 //Affiche les waypoints
-                System.out.println("Waypoints de " + ennemy.getName());
+                System.out.println("Waypoints de " + ennemy.getName() + "(" + stats.get(groupe) + ")");
                 for (Vector2D waypoint : ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints()) {
-                    System.out.println(waypoint);
+                    //System.out.println(waypoint);
+                    //Affiche les waypoints divisés par 2
+                    //System.out.println("Waypoints divisés par 41");
+                    System.out.println(waypoint.div(41));
+                    if (ennemy.getDistanceTraveled()<distanceMin && ennemy.getDistanceTraveled() != 0) {
+                        distanceMin = ennemy.getDistanceTraveled();
+                    }
                 }
             }
         }
+        System.out.println("Distance minimale parcourue : " + distanceMin);
         System.out.println("Fin bitch");
     }
 }
