@@ -23,6 +23,7 @@ https://trello.com/b/qyPhaAyy/ra-il2-2024-bortolotti-bourdon-roth-duchene
 	 - Courbe de Bézier
 	 - Tests de A*
      - Prototype de l'algorithme de A* avec la Javadoc associée
+
     
 ## Itération 2 
 - Tag : [iteration_2](https://github.com/ED54000/Projet_Tutore_RA-IL2_BOURDON_BORTOLOTTI_ROTH_DUCHENE/releases/tag/It%C3%A9ration_2)
@@ -39,7 +40,9 @@ https://trello.com/b/qyPhaAyy/ra-il2-2024-bortolotti-bourdon-roth-duchene
 	- Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, et le nombre d'ennemis qui passe pour gagner.
 	- Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement et se faisant attaquer par les défenses dans un labyrinthe bien modélisé à l'aide de sprites.
 	- Faire évoluer les vagues d'ennemis à la fin de chaque manche et observer les changements effectués jusqu'à la fin du jeu.
- 	- L'évolution n'est pas encore au point. Cela génère des ennemis avec un comportement qui peut ne pas être le leur. 
+ 	- L'évolution n'est pas encore au point. Cela génère des ennemis avec un comportement qui peut ne pas être le leur.
+
+ 
  ## Itération 3 
  - Tag :[iteration_3](https://github.com/ED54000/Projet_Tutore_RA-IL2_BOURDON_BORTOLOTTI_ROTH_DUCHENE/releases/tag/It%C3%A9ration_3)
 - Réalisations : 
@@ -87,7 +90,6 @@ au cours d'une manche. Voir le déroulement de la manche dans les logs (quel enn
 Faire évoluer les groupes d'ennemies à chaque manche pour essayer d'optimiser la composition des groupes afin de gagner la partie.
 
 
-
  ## Itération 5
   - Tag :[iteration_5](https://github.com/ED54000/Projet_Tutore_RA-IL2_BOURDON_BORTOLOTTI_ROTH_DUCHENE/releases/tag/It%C3%A9ration_5)
 - Réalisations : 
@@ -115,3 +117,33 @@ au cours d'une manche. Pouvoir choisir un mode simple qui simplifie l'affichage.
 Voir le déroulement de la manche dans les logs (les pv de chaque entité en temps réel, quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
 Faire évoluer les groupes d'ennemies à chaque manche pour essayer d'optimiser la composition des groupes afin de gagner la partie.
 Afficher un graphique représantant l'évolution de la composition du groupe d'ennemi au cours des manches.
+
+
+## Itération 6
+  - Tag :[iteration_6]()
+- Réalisations : 
+	- Amélioration fonction de score
+	- Première version de l’évolution de steering behaviors
+	- Ajout d’une fenêtre de chargement lors de l’évolution
+	- Ajout d’une fenêtre de fin de partie
+	- Refonte graphique du menu de démarrage
+	- Ajout de configurations de test
+    	- Ajout d’une fenêtre séparée pour afficher les graphiques
+	- Création d’un bouton "aide" qui donne des informations sur le jeu
+	- Résolution de bugs
+
+
+À la fin de cette itération, nous pouvons : 
+
+Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, le nombre d'ennemies qui doivent passer pour gagner 
+et si A* est utilisé ou non.
+Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement (si A* est utilisé) et se faisant attaquer 
+par les défenses dans un labyrinthe bien modélisé à l'aide de sprites. Les ennemis peuvent également attaquer les défenses afin de les détruire. 
+Lorsqu'une défense est détruite, si A* est utilisé, le chemin est recalculé pour chaque agent et ils s'adaptent donc aux changements de l'environnement 
+au cours d'une manche. Pouvoir choisir un mode simple qui simplifie l'affichage. Un graphique avec les points de vie de chaque ennemi est affiché en temps réel.
+Voir le déroulement de la manche dans les logs (les pv de chaque entité en temps réel, quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
+Faire évoluer les groupes d'ennemies à chaque manche pour essayer d'optimiser la composition des groupes afin de gagner la partie.
+Afficher un graphique représantant l'évolution de la composition du groupe d'ennemi au cours des manches.
+Afficher un graphique représantant la vie de chaque ennemi en temps réel au cours d'une manche.
+Afficher une fenêtre d'aide donnant des informations sur le jeu.
+Choisir parmi différentes configurations préfaites pour pouvoir observer différentes situations d'apprentissage.
