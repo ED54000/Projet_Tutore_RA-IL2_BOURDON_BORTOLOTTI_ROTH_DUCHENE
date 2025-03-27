@@ -276,9 +276,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
 
         //Vérification de la fin du jeu
-        if (this.nbManches == this.limManches) {
+        if (this.nbManches == this.limManches && this.pauseManche) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
             this.end = true;
+            MoteurJeu.showEndGameScreen(MoteurJeu.primaryStage);
             return;
         }
         // Vérification de la fin d'une manche
