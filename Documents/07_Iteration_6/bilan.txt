@@ -10,13 +10,13 @@ Objectifs de l'itération :
 Validation : 
 
 	- Nous avons fait une première version de l'évolution avec steering behavior, mais nous ne l'avons
-	pas encore intégré à l'interface graphique.
+	  pas encore intégré à l'interface graphique.
 
 
 Le(s) bug(s) restant :
 
 	- Bug lié à l'accélération du jeu, qui semble affecter différement la vitesse d'attaque
-	et la vitesse de déplacement.
+	  et la vitesse de déplacement.
 
 
 Conformité à l'étude préalable :
@@ -45,13 +45,13 @@ L'application permet de :
 	  jusqu'à la fin du jeu à l'aide de graphique affichés en fin de manche.
 	- Pouvoir lancer l'application sans interface graphique ce qui accélère les vagues.
 	- Afficher un graphique représantant l'évolution de la composition du groupe d'ennemi au cours des manches.
-    - Afficher un graphique représantant la vie de chaque ennemi en temps réel au cours d'une manche.
-    - Afficher une fenêtre d'aide donnant des informations sur le jeu.
+    	- Afficher un graphique représantant la vie de chaque ennemi en temps réel au cours d'une manche.
+    	- Afficher une fenêtre d'aide donnant des informations sur le jeu.
 
 
 Objectif itération 7 :
 
-    - Terminer l’évolution avec steering behaviors
-    - Intégrer l’évolution de steering behaviors à l’interface graphique
+    	- Terminer l’évolution avec steering behaviors
+    	- Intégrer l’évolution de steering behaviors à l’interface graphique
 
 
