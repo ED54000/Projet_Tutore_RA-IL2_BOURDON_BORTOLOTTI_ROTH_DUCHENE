@@ -18,13 +18,13 @@ public class MainSimuSteering extends Application {
     public void start(Stage stage) throws Exception {
         // Initialisation avec une liste d'ennemis
         ArrayList<ArrayList<Ennemy>> groupes = new ArrayList<>();
-        for (int i = 0; i < 40; i++) { //50 groupes d'un géant
+        for (int i = 0; i < 50; i++) { //50 groupes d'un géant
             groupes.add(new ArrayList<>(List.of(new Giant(new Vector2D(0, 0), "Giant"+i))));
         }
 
         // Nombre de manches (itération d'évolution)
         double distanceMin = 1000000;
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 25; i++) {
             HashMap<ArrayList<Ennemy>, Double> stats = new HashMap<>();
             for (ArrayList<Ennemy> groupe : groupes) {
                 stats.put(groupe, 0.0);
