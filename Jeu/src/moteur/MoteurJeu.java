@@ -511,9 +511,9 @@ public class MoteurJeu extends Application {
     public static void showEndGameScreen(Stage stage, Boolean victoire) {
         // Charger l'image
         ImageView Image;
-        if(victoire){
+        if (victoire) {
             Image = new ImageView(new Image("victory.png"));
-        } else{
+        } else {
             Image = new ImageView(new Image("gameover1.png"));
         }
         Image.setPreserveRatio(true);
@@ -543,7 +543,7 @@ public class MoteurJeu extends Application {
         restartButton.setOnAction(e -> restartApp());
 
         // Texte explicatif
-        Label messageLabel ;
+        Label messageLabel;
         if (victoire) {
             messageLabel = new Label("Les ennemis ont réussi à passer !");
         } else {
@@ -584,51 +584,22 @@ public class MoteurJeu extends Application {
             }
         });
     }
+
     private void updateObjectiveLabel() {
-
-
-
         int obj = laby.nbEnnemiesToWin - laby.ennemiesArrived.size();
-
-
         objectifLabel.setText("Il reste " + obj + " ennemis à passer sur " + laby.nbEnnemiesToWin);
-
-
         objectifLabel.setStyle(
-
-
                 "-fx-background-color: #f8f9fa;" +
-
-
                         "-fx-padding: 10px 20px;" +
-
-
                         "-fx-border-radius: 5px;" +
-
-
                         "-fx-background-radius: 5px;" +
-
-
                         "-fx-border-color: #dee2e6;" +
-
-
                         "-fx-font-weight: bold;" +
-
-
                         "-fx-font-size: 14px;" +
-
-
                         "-fx-text-fill: #2c3e50;" +
-
-
                         "-fx-margin-left: 20px"
-
-
         );
-
         // Ajout d'une marge à gauche dans le HBox
         HBox.setMargin(objectifLabel, new Insets(0, 0, 0, 20));
-
-
     }
 }
