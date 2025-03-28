@@ -504,12 +504,17 @@ public class MoteurJeu extends Application {
         helpWindow.show();
     }
 
-    public static void showEndGameScreen(Stage stage) {
+    public static void showEndGameScreen(Stage stage, Boolean victoire) {
         // Charger l'image
-        ImageView gameOverImage = new ImageView(new Image("gameover1.png"));
-        gameOverImage.setPreserveRatio(true);
-        gameOverImage.fitWidthProperty().bind(stage.widthProperty());
-        gameOverImage.fitHeightProperty().bind(stage.heightProperty());
+        ImageView Image;
+        if(victoire){
+            Image = new ImageView(new Image("victory.png"));
+        } else{
+            Image = new ImageView(new Image("gameover1.png"));
+        }
+        Image.setPreserveRatio(true);
+        Image.fitWidthProperty().bind(stage.widthProperty());
+        Image.fitHeightProperty().bind(stage.heightProperty());
 
         // Bouton Quitter
         Button quitButton = new Button("Quitter");
@@ -534,7 +539,14 @@ public class MoteurJeu extends Application {
         restartButton.setOnAction(e -> restartApp());
 
         // Texte explicatif
-        Label messageLabel = new Label("Le nombre max de manches est atteint.");
+        Label messageLabel ;
+        if (victoire) {
+            messageLabel = new Label("Les ennemis ont réussi à passer !");
+        } else {
+            messageLabel = new Label("Le nombre max de manches est atteint.");
+        }
+
+
         messageLabel.setStyle(
                 "-fx-text-fill: white;" +
                         "-fx-font-size: 16px;"
@@ -547,12 +559,12 @@ public class MoteurJeu extends Application {
 
         // Mise en page
         StackPane root = new StackPane();
-        root.getChildren().addAll(gameOverImage, buttonBox);
+        root.getChildren().addAll(Image, buttonBox);
         root.setStyle("-fx-background-color: black;");
         StackPane.setAlignment(buttonBox, Pos.BOTTOM_CENTER);
 
         // Remplacement de la scène actuelle
-        Scene endScene = new Scene(root, 800, 600);
+        Scene endScene = new Scene(root);
         stage.setScene(endScene);
         stage.show();
     }
