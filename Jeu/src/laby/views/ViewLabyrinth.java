@@ -33,7 +33,7 @@ public class ViewLabyrinth implements Observer {
 
         // Chargement des images
         images.put(ModeleLabyrinth.TREE, new Image("tree3.png"));
-        images.put(ModeleLabyrinth.ROAD, new Image("tiles3.png"));
+        images.put(ModeleLabyrinth.ROAD, new Image("tiles2.png"));
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ViewLabyrinth implements Observer {
             if (defense instanceof entites.defenses.Canon) {
                 gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
                 if (!defense.getIsDead()) {
-                    gc.drawImage(spriteDefense, x, y, getTailleCase(), getTailleCase());
+                    gc.drawImage(spriteDefense, x-17, y-25, getTailleCase()+50, getTailleCase()+50);
                 }
             }
             if (defense instanceof entites.defenses.Archer) {
@@ -205,12 +205,9 @@ public class ViewLabyrinth implements Observer {
         // ennemi
         gc.drawImage(image,
                 xCoordEnnemi -
-
                         getTailleCase() / 2.0,
                 yCoordEnnemi -
-
                         getTailleCase() / 2.0,
-
                 getTailleCase(), getTailleCase());
 
 
