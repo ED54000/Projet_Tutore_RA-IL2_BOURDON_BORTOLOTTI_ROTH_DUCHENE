@@ -402,6 +402,7 @@ public class MoteurJeu extends Application {
 
         // création des vues
         ViewGraphiqueDirect viewGraphiqueDirect = new ViewGraphiqueDirect(laby);
+        ViewGraphiqueObjectif viewGraphiqueObjectif = new ViewGraphiqueObjectif(laby);
         ViewLabyrinth viewLabyrinth = new ViewLabyrinth(laby, canvas);
         ViewLogs viewLogs = new ViewLogs(laby, ContainerLogs, viewGraphiqueDirect);
         ViewGraphique viewGraphique = new ViewGraphique(laby);
@@ -410,6 +411,7 @@ public class MoteurJeu extends Application {
         laby.registerObserver(viewLogs);
         laby.registerObserver(viewGraphique);
         laby.registerObserver(viewGraphiqueDirect);
+        laby.registerObserver(viewGraphiqueObjectif);
         laby.registerObserver(obj -> updateObjectiveLabel());
 
         final BorderPane root = new BorderPane();
@@ -448,7 +450,8 @@ public class MoteurJeu extends Application {
         helpButton.setOnAction(e -> openHelpWindow());
 
         ToggleButton graphicsButton = new ToggleButton("Graphiques");
-        ViewGraphicsWindow graphicsWindow = new ViewGraphicsWindow(laby, viewGraphiqueDirect, viewGraphique);
+
+        ViewGraphicsWindow graphicsWindow = new ViewGraphicsWindow(laby, viewGraphiqueDirect, viewGraphique, viewGraphiqueObjectif);
         laby.registerObserver(graphicsWindow);
 
         graphicsButton.setOnAction(e -> {

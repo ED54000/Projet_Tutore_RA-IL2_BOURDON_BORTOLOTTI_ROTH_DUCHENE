@@ -13,17 +13,20 @@ public class ViewGraphicsWindow implements Observer {
     private Stage stage = new Stage();
     private ViewGraphiqueDirect graphiqueDirect;
     private ViewGraphique graphiqueEvolution;
+    private ViewGraphiqueObjectif graphiqueObjectif;
     private TabPane tabPane = new TabPane();
     private VBox root = new VBox(10);
     private VBox VboxGraphiqueDirect = new VBox(10);
-    private VBox VBoxGraphiqueEvolution = new VBox(10);;
+    private VBox VBoxGraphiqueEvolution = new VBox(10);
+    private VBox VboxGraphiqueObjectif = new VBox(10);
     ModeleLabyrinth laby;
-    Tab tabDirect, tabEvolution;
+    Tab tabDirect, tabEvolution, tabObj;
 
-    public ViewGraphicsWindow(ModeleLabyrinth laby, ViewGraphiqueDirect graphiqueDirect, ViewGraphique graphiqueEvolution) {
+    public ViewGraphicsWindow(ModeleLabyrinth laby, ViewGraphiqueDirect graphiqueDirect, ViewGraphique graphiqueEvolution, ViewGraphiqueObjectif graphiqueObjectif) {
         stage.setTitle("Graphiques");
         this.graphiqueDirect = graphiqueDirect;
         this.graphiqueEvolution = graphiqueEvolution;
+        this.graphiqueObjectif = graphiqueObjectif;
         this.laby = laby;
 
         // Créer le premier onglet pour le graphique direct
@@ -37,7 +40,11 @@ public class ViewGraphicsWindow implements Observer {
         tabEvolution.setContent(VBoxGraphiqueEvolution);
 
         // Ajouter les onglets au TabPane
-        tabPane.getTabs().addAll(tabDirect, tabEvolution);
+        tabObj = new Tab("Objectif");
+        tabObj.setClosable(false);
+        tabObj.setContent(VboxGraphiqueObjectif);
+
+        tabPane.getTabs().addAll(tabDirect, tabEvolution, tabObj);
 
         root.getChildren().add(tabPane);
         Scene scene = new Scene(root, 1200, 400);
@@ -54,11 +61,15 @@ public class ViewGraphicsWindow implements Observer {
 
     @Override
     public void update(Subject s) {
-        if (!VboxGraphiqueDirect.getChildren().contains(graphiqueDirect.getGraphique())){
+        // Les graphiques ne sont ajoutés qu'une seule fois s'ils ne sont pas déjà présents
+        if (VboxGraphiqueDirect.getChildren().isEmpty()) {
             VboxGraphiqueDirect.getChildren().add(graphiqueDirect.getGraphique());
         }
-        if (!VBoxGraphiqueEvolution.getChildren().contains(graphiqueEvolution.getGraphique())){
+        if (VBoxGraphiqueEvolution.getChildren().isEmpty()) {
             VBoxGraphiqueEvolution.getChildren().add(graphiqueEvolution.getGraphique());
+        }
+        if (VboxGraphiqueObjectif.getChildren().isEmpty()) {
+            VboxGraphiqueObjectif.getChildren().add(graphiqueObjectif.getGraphiqueCombine());
         }
     }
 }
