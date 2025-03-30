@@ -164,11 +164,11 @@ public class MoteurJeu extends Application {
         TextField enemiesField = createStyledTextField("30", "enemiesField");
         VBox enemiesSection = createSection("Nombre d'ennemis", enemiesField);
 
-        TextField nbEnnemiesToWinField = createStyledTextField("70", "ennemiesToWinField");
+        TextField nbEnnemiesToWinField = createStyledTextField("28", "ennemiesToWinField");
         VBox objectifSection = createSection("Objectif d'ennemis à l'arrivée", nbEnnemiesToWinField);
 
         // Section nombre de manches
-        TextField roundsField = createStyledTextField("10", "roundsField");
+        TextField roundsField = createStyledTextField("20", "roundsField");
         VBox roundsSection = createSection("Nombre de manches", roundsField);
 
         // Section A*
@@ -317,6 +317,8 @@ public class MoteurJeu extends Application {
         dialogStage.setScene(dialogScene);
         dialogStage.initOwner(primaryStage);
         dialogStage.initModality(Modality.APPLICATION_MODAL);
+        Image icon = new Image("icon.png");
+        dialogStage.getIcons().add(icon);
         dialogStage.showAndWait();
     }
 
@@ -467,6 +469,9 @@ public class MoteurJeu extends Application {
         final Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
+        Image icon = new Image("icon.png");
+        primaryStage.getIcons().add(icon);
+        primaryStage.setTitle("Tower Defense");
         primaryStage.show();
 
         // lance la boucle de jeu
