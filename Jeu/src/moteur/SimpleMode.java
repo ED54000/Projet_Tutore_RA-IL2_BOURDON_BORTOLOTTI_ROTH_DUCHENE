@@ -68,7 +68,7 @@ public class SimpleMode {
         setSimpleMode(false);
         // On crée les sprites Images du jeu
         Image tree = new Image("/tree3.png");
-        Image tile = new Image("/tiles3.png");
+        Image tile = new Image("/tiles2.png");
 
         // On applique les sprites aux entités
         Map<Character, Image> newImages = new HashMap<>();
