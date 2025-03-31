@@ -279,7 +279,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         if (this.nbManches == this.limManches && this.pauseManche) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
             this.end = true;
-            MoteurJeu.showEndGameScreen(MoteurJeu.primaryStage,false);
+            MoteurJeu mJ = new MoteurJeu();
+            mJ.showEndGameScreen(MoteurJeu.primaryStage,false);
             return;
         }
 
@@ -287,7 +288,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         if(this.ennemiesArrived.size() == this.nbEnnemiesToWin){
             setLogs("Fin du jeu car le nombre limite d'ennemis a été atteint");
             this.end = true;
-            MoteurJeu.showEndGameScreen(MoteurJeu.primaryStage,true);
+            MoteurJeu mJ = new MoteurJeu();
+            mJ.showEndGameScreen(MoteurJeu.primaryStage,true);
             return;
         }
 
