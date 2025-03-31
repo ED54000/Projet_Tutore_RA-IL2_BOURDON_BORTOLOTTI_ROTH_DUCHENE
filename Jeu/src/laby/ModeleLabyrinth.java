@@ -39,6 +39,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     public int nbEnnemiesToWin;
     private int nbEnnemiesArrived;
     private long startTime;
+    public int nbchekpoints; //TEMPORAIRE
 
     private static boolean useAstar;
 

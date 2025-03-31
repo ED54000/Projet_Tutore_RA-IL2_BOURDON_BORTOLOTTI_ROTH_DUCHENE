@@ -6,6 +6,7 @@ import entites.defenses.Canon;
 import entites.defenses.Defense;
 import entites.enemies.*;
 import evolution.EnnemyEvolution;
+import evolution.EvolutionSteering;
 import javafx.application.Platform;
 import evolution.EvolutionGroupe;
 import javafx.event.EventHandler;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static evolution.EvolutionGroupe.refreshEnnemiesAndAdd;
+import static evolution.EvolutionSteering.refreshEnnemies;
 
 public class ControllerLearn implements EventHandler<MouseEvent> {
 
@@ -64,33 +66,46 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         VBox finalParentVBox1 = parentVBox;
         new Thread(() -> {
             // On fait évoluer les ennemis
-            EvolutionGroupe evolution = new EvolutionGroupe();
+            EvolutionSteering evolution = new EvolutionSteering();
             if (laby.getNbManches() < 2) {
-                // nombre de groupes
-                for (int i = 0; i < 45; i++) {
-                    groupes.add(ModeleLabyrinth.createEnnemies(laby.getEnnemyEndOfManche().size()));
+                for (int i = 0; i < 40; i++) { //50 groupes d'un géant
+                    groupes.add(new ArrayList<>(List.of(new Giant(new Vector2D(0, 0), "Giant"+i))));
                 }
             }
 
             // On ajoute les nouveaux groupes à la map
             stats = new HashMap<>();
-            for (ArrayList<Ennemy> groupe : groupes) {
+            System.out.println("Groupes : " + groupes);
+            //for (ArrayList<Ennemy> groupe : groupes) {
+            //    stats.put(groupe, 0.0);
+            //}
+            for (int i = 1; i < groupes.size(); i++) {
+                ArrayList<Ennemy> groupe = groupes.get(i);
                 stats.put(groupe, 0.0);
             }
 
+            System.out.println("Stats : " + stats);
+
             double score = evolution.getScore(laby.getEnnemyEndOfManche());
-            ArrayList<Ennemy> copieGroupe = new ArrayList<>();
             for (Ennemy ennemy : laby.getEnnemyEndOfManche()) {
-                refreshEnnemiesAndAdd(ennemy, laby, copieGroupe);
+                refreshEnnemies(ennemy, laby);
             }
 
             try {
                 laby.setSimulationEvolution(true);
                 stats = evolution.evaluate(stats);
-                stats.put(copieGroupe, score);
+                stats.put(new ArrayList<>(List.of(laby.getEnnemyEndOfManche().get(0))), score);
                 groupes = evolution.evolve(stats);
                 laby.setSimulationEvolution(false);
                 laby.enemies = groupes.get(0);
+                for (ArrayList<Ennemy> groupe : groupes) {
+                    Ennemy ennemy = groupe.get(0);
+                    //Affiche les waypoints
+                    System.out.println("Waypoints de " + ennemy.getName() + "(" + stats.get(groupe) + ")");
+                    for (Vector2D waypoint : ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints()) {
+                        System.out.println(waypoint.div(41));
+                    }
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -176,42 +191,44 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 }
                 laby.refreshDefenseEndOfManche();
 
-                // On va compter le nombre d'ennemis pour chaque comportement
-                int nbNinja = 0;
-                int nbGiant = 0;
-                int nbHealer = 0;
-                int nbBerserker = 0;
-                for (Ennemy e : laby.enemies) {
-                    e.setIsDead(false);
-                    if (e instanceof Ninja) {
-                        e.setBehaviorString("Fugitive");
-                        nbNinja++;
+                if (laby.getUseAstar()) {
+                    // On va compter le nombre d'ennemis pour chaque comportement
+                    int nbNinja = 0;
+                    int nbGiant = 0;
+                    int nbHealer = 0;
+                    int nbBerserker = 0;
+                    for (Ennemy e : laby.enemies) {
+                        e.setIsDead(false);
+                        if (e instanceof Ninja) {
+                            e.setBehaviorString("Fugitive");
+                            nbNinja++;
+                        }
+                        if (e instanceof Giant) {
+                            e.setBehaviorString("Normal");
+                            nbGiant++;
+                        }
+                        if (e instanceof Druide) {
+                            e.setBehaviorString("Healer");
+                            nbHealer++;
+                        }
+                        if (e instanceof Berserker) {
+                            e.setBehaviorString("Kamikaze");
+                            nbBerserker++;
+                        }
                     }
-                    if (e instanceof Giant) {
-                        e.setBehaviorString("Normal");
-                        nbGiant++;
-                    }
-                    if (e instanceof Druide) {
-                        e.setBehaviorString("Healer");
-                        nbHealer++;
-                    }
-                    if (e instanceof Berserker) {
-                        e.setBehaviorString("Kamikaze");
-                        nbBerserker++;
-                    }
-                }
-                System.out.println("Ninja : " + nbNinja + " Giant : " + nbGiant + " Healer : " + nbHealer + " Berserker : " + nbBerserker);
+                    System.out.println("Ninja : " + nbNinja + " Giant : " + nbGiant + " Healer : " + nbHealer + " Berserker : " + nbBerserker);
 
-                // Actualiser les comportements des ennemis
-                for (Ennemy e : laby.enemies) {
-                    ArrayList<Vector2D> newPathToFollow;
-                    if (e.getBehaviorString().equals("Healer")) {
-                        newPathToFollow = laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja);
-                    } else {
-                        newPathToFollow = e.calculerChemin(ModeleLabyrinth.getCases(), new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart()));
+                    // Actualiser les comportements des ennemis
+                    for (Ennemy e : laby.enemies) {
+                        ArrayList<Vector2D> newPathToFollow;
+                        if (e.getBehaviorString().equals("Healer")) {
+                            newPathToFollow = laby.getNewHealerAStar(nbGiant, nbBerserker, nbNinja);
+                        } else {
+                            newPathToFollow = e.calculerChemin(ModeleLabyrinth.getCases(), new Vector2D(ModeleLabyrinth.getYstart(), ModeleLabyrinth.getXstart()));
+                        }
+                        e.setBehavior(new PathfollowingBehavior(newPathToFollow));
+                        e.setArrived(false);
                     }
-                    e.setBehavior(new PathfollowingBehavior(newPathToFollow));
-                    e.setArrived(false);
                 }
 
                 for (Ennemy e : laby.enemies) {

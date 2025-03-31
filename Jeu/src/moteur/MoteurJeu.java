@@ -3,6 +3,7 @@ package moteur;
 //https://github.com/zarandok/megabounce/blob/master/MainCanvas.java
 
 import entites.enemies.Ennemy;
+import entites.enemies.Giant;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -21,11 +22,14 @@ import javafx.stage.Stage;
 import laby.ModeleLabyrinth;
 import laby.controllers.ControllerSimpleMode;
 import laby.views.*;
+import steering_astar.Steering.PathfollowingBehavior;
+import steering_astar.Steering.Vector2D;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static laby.ModeleLabyrinth.getScreenSize;
@@ -116,7 +120,8 @@ public class MoteurJeu extends Application {
                 "Aucun chemin safe",
                 "Une tour unique",
                 "Nombreuses tours centrales",
-                "Tours inaccessibles"
+                "Tours inaccessibles",
+                "Evolution Steering"
         );
         configPrefaiteComboBox.setValue("Aucune");
         configPrefaiteComboBox.setId("configPrefaiteComboBox");
@@ -137,6 +142,7 @@ public class MoteurJeu extends Application {
         labyrinthMap.put("Ligne", "Ressources/Ligne.txt");
         labyrinthMap.put("Nombreuses tours centrales", "Ressources/LignePlusieursTours.txt");
         labyrinthMap.put("Tours inaccessibles", "Ressources/ToursInaccessibles.txt");
+        labyrinthMap.put("Ouvert", "Ressources/Laby_ouvert");
 
         // Section de sélection du labyrinthe
         ComboBox<String> labyrinthComboBox = new ComboBox<>();
@@ -148,6 +154,7 @@ public class MoteurJeu extends Application {
                 "Ligne",
                 "Nombreuses tours centrales",
                 "Tours inaccessibles",
+                "Ouvert",
                 "Plus"
         );
         labyrinthComboBox.setValue("Large");
@@ -263,6 +270,12 @@ public class MoteurJeu extends Application {
                         roundsField.setText("10");
                         avecAstarBox.setSelected(true);
                         break;
+                    case "Evolution Steering":
+                        labyrinthComboBox.setValue("Ouvert");
+                        enemiesField.setText("1");
+                        nbEnnemiesToWinField.setText("2");
+                        roundsField.setText("20");
+                        avecAstarBox.setSelected(false);
                     default:
                         break;
                 }
@@ -283,15 +296,49 @@ public class MoteurJeu extends Application {
             dialogStage.close();
             try {
                 laby.setUseAstar(avecAstarBox.isSelected());
-                ArrayList<Ennemy> ennemies = ModeleLabyrinth.createEnnemies(
-                        Integer.parseInt(enemiesField.getText())
-                );
+                ArrayList<Ennemy> ennemies = new ArrayList<>();
+                laby.nbchekpoints = 2;
+                if (configPrefaiteComboBox.getValue().equals("Evolution Steering")){
+                    Ennemy ennemy = new Giant(new Vector2D(0, 0), "Giant");
+
+                    ennemies = new ArrayList<>(List.of(ennemy));
+                }
+                else {
+                    ennemies = ModeleLabyrinth.createEnnemies(
+                            Integer.parseInt(enemiesField.getText())
+                    );
+                }
                 laby.creerLabyrinthe(
                         labyrinthString,
                         ennemies,
                         Integer.parseInt(roundsField.getText()),
                         Integer.parseInt(nbEnnemiesToWinField.getText())
                 );
+                if (configPrefaiteComboBox.getValue().equals("Evolution Steering")) {
+                    //Créer au hasard x checkpoints
+                    ArrayList<Vector2D> checkpoints = new ArrayList<>();
+                    for (int j = 0; j < laby.nbchekpoints; j++) {
+                        //ajoute un checkpoint dans la limite du labyrinthe
+                        int hauteur = laby.getCases().length * laby.getTailleCase();
+                        int largeur = laby.getCases()[0].length * laby.getTailleCase();
+
+                        int x = (int) (Math.random() * largeur);
+                        int y = (int) (Math.random() * hauteur);
+
+                        //Vérifie que le checkpoint est sur une case vide
+                        while (laby.getCases()[y / laby.getTailleCase()][x / laby.getTailleCase()] != '.') {
+                            x = (int) (Math.random() * largeur);
+                            y = (int) (Math.random() * hauteur);
+                        }
+                        checkpoints.add(new Vector2D(x, y));
+                    }
+                    //ajoute l'arrivée
+                    checkpoints.add(laby.getArrival());
+                    //créer PathFpllowingBehavior
+                    PathfollowingBehavior pathfollowingBehavior = new PathfollowingBehavior(checkpoints);
+                    laby.enemies.get(0).setBehavior(pathfollowingBehavior);
+                }
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -23,6 +23,9 @@ public class EvolutionSteering implements Evolve {
     public HashMap<ArrayList<Ennemy>, Double> evaluate(HashMap<ArrayList<Ennemy>, Double> stats) throws IOException {
         // Créer une nouvelle map pour stocker les résultats
         HashMap<ArrayList<Ennemy>, Double> newStats = new HashMap<>();
+        //for (int i = 1; stats.keySet().size() < i; i++) {
+        //    ArrayList<Ennemy> groupe = new ArrayList<>(stats.keySet()).get(i);
+        //    Ennemy ennemy = groupe.get(0);
 
         for (ArrayList<Ennemy> groupe : stats.keySet()){
             Ennemy ennemy = groupe.get(0);
@@ -32,7 +35,7 @@ public class EvolutionSteering implements Evolve {
             ArrayList<Ennemy> copieGroupe = new ArrayList<>(List.of(ennemy));
             jeu.creerLabyrinthe("Ressources/Laby_ouvert", copieGroupe, 1000, jeu.nbEnnemiesToWin);
 
-            //Créer au hasard 3 checkpoints
+            //Créer au hasard x checkpoints
             ArrayList<Vector2D> checkpoints = new ArrayList<>();
             for (int j = 0; j < nbchekpoints; j++) {
                 //ajoute un checkpoint dans la limite du labyrinthe
@@ -84,17 +87,23 @@ public class EvolutionSteering implements Evolve {
 
     @Override
     public double getScore(ArrayList<Ennemy> ennemies) {
+        double total = 0;
         Ennemy e = ennemies.get(0);
 
         System.out.println("Survival time : "+(double)e.getSurvivalTime());
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Distance parcouru : "+e.getDistanceTraveled());
-        //TODO : Rajouter le nombre de hit que l'ennemi a pris
+        //TODO : Rajouter le nombre de hit que l'ennemi a pris, prednre la distance ToArrival quand il meurt
         //System.out.println("Bonus : "+bonus);
-
         //return - ((double) e.getSurvivalTime()) - e.getDistanceToArrival()*10;
-        int bonus = e.getIsDead() ? -1000 : 1000;
-        return bonus - e.getDistanceTraveled();
+        int bonus = e.getIsDead() ? -100000 : 100000;
+        if (bonus == -100000) {
+            total = bonus - e.getDistanceToArrival();
+        }
+        else {
+            total = bonus + e.getDistanceTraveled();
+        }
+        return total;
     }
 
     @Override
@@ -141,6 +150,8 @@ public class EvolutionSteering implements Evolve {
         //On récupère le premier ennemi de chaque groupe
         Ennemy e1 = g1.get(0);
         Ennemy e2 = g2.get(0);
+        System.out.println("Liste des behavoirs de e1 : "+e1.getListBehavior());
+        System.out.println("Liste des behavoirs de e2 : "+e2.getListBehavior());
         //On récupère la listes de waypoints de chaque ennemi
         ArrayList<Vector2D> waypoints1 = ((PathfollowingBehavior) e1.getListBehavior().get(0)).getCheckpoints();
         ArrayList<Vector2D> waypoints2 = ((PathfollowingBehavior) e2.getListBehavior().get(0)).getCheckpoints();
@@ -196,7 +207,7 @@ public class EvolutionSteering implements Evolve {
         return nouvellePopulation;
     }
 
-    private static void refreshEnnemies(Ennemy ennemy, ModeleLabyrinth jeu) {
+    public static void refreshEnnemies(Ennemy ennemy, ModeleLabyrinth jeu) {
         // Réinitialisation des attributs de base
         ennemy.setLastAttackCount(0);
         //ennemy.setSurvivalTime(0);

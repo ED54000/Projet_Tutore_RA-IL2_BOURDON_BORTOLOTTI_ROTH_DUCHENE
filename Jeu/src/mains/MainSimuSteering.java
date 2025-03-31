@@ -31,7 +31,7 @@ public class MainSimuSteering extends Application {
             }
 
             EvolutionSteering evolution = new EvolutionSteering();
-            evolution.nbchekpoints = 1;
+            evolution.nbchekpoints = 2;
             stats = evolution.evaluate(stats);
 
             //System.out.println("Avant l'évolution");
