@@ -440,6 +440,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 enemy.takeDamage(Integer.MAX_VALUE);
                 // On met à jour le temps de survie
                 //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
+                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                    // On met à jour le sprite de la defense (sa vie)
+                    updateDefenseSprite(defense);
+                }
             }
         }
     }
@@ -450,7 +454,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 // On l'attaque
                 enemy.attack(defense, secondes);
                 if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
-                    // On met à jour le sprite de l'ennemi (sa vie)
+                    // On met à jour le sprite de la defense (sa vie)
                     updateDefenseSprite(defense);
                 }
             }
@@ -1107,6 +1111,17 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
     }
 
+    public void resetStats() {
+        this.ennemiesArrived.clear();
+        this.enemies.clear();
+        this.startTime = 0;
+        this.nbManches = 1;
+        this.defenses.clear();
+        this.defensesEndOfManche.clear();
+        this.deadDefenses.clear();
+        this.deadEnemies.clear();
+        this.notifyObserver();
+    }
 
     public void setDonneesGraphique(HashMap<String, List<Double>> donnees) {
         this.donneesGraphique = donnees;
