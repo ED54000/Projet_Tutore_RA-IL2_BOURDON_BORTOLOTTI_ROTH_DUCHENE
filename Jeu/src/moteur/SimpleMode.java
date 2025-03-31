@@ -2,6 +2,7 @@ package moteur;
 
 import entites.defenses.Defense;
 import entites.enemies.Ennemy;
+import javafx.application.Platform;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -168,7 +169,9 @@ public class SimpleMode {
         // capture le canvas dans l'image
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
-        canvas.snapshot(params, writableImage);
+        Platform.runLater(() -> {
+            canvas.snapshot(params, writableImage);
+        });
         return writableImage;
     }
 
