@@ -447,6 +447,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (enemy.isInRange(defense)) {
                 // On l'attaque
                 enemy.attack(defense, secondes);
+                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                    // On met à jour le sprite de l'ennemi (sa vie)
+                    updateDefenseSprite(defense);
+                }
             }
         }
     }
@@ -1085,6 +1089,19 @@ public class ModeleLabyrinth implements Jeu, Subject {
             case "Healer":
                 e.setSprite(SimpleMode.addTextToImage("" + (int) e.getHealth(), new Image("/green.png")));
                 break;
+        }
+    }
+
+    /**
+     * Méthode permettant de mettre la vie à jour lorsqu'une défense voit sa vie changée
+     * @param d la defense en question
+     */
+    public static void updateDefenseSprite(Defense d){
+        System.out.println("Sprite update");
+        if (d.getName().contains("Archer")) {
+            d.setSprite(SimpleMode.addTextToImage("" + (int) d.getHealth(), new Image("/cross_purple.png")));
+        } else if(d.getName().contains("Canon")) {
+            d.setSprite(SimpleMode.addTextToImage("" + (int) d.getHealth(), new Image("/cross_yellow.png")));;
         }
     }
 
