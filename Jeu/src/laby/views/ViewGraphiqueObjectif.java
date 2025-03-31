@@ -1,11 +1,10 @@
 package laby.views;
 
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.layout.StackPane;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import laby.ModeleLabyrinth;
 import laby.Observer;
 import laby.Subject;
@@ -13,94 +12,137 @@ import laby.Subject;
 import java.util.*;
 
 public class ViewGraphiqueObjectif implements Observer {
-    ModeleLabyrinth laby;
+    private final ModeleLabyrinth laby;
     private int manche = 0;
 
-    private StackPane chartContainer;
-    private NumberAxis yAxis;
-    private CategoryAxis xAxis;
+    private final StackPane chartContainer;
+    private final NumberAxis yAxis;
+    private final NumberAxis xAxis;
 
-    private BarChart<String, Number> barChart;
-    private LineChart<String, Number> lineChart;
+    private final LineChart<Number, Number> lineChart;
 
-    private XYChart.Series<String, Number> serieEnnemisParManche;
-    private XYChart.Series<String, Number> serieObjectif;
+    private final XYChart.Series<Number, Number> serieEnnemisParManche;
+    private final XYChart.Series<Number, Number> serieObjectif;
 
-    private Map<Integer, Integer> historiqueEnnemisParManche = new HashMap<>();
-    private Map<Integer, Integer> historiqueObjectifs = new HashMap<>();
+    private final Map<Integer, Integer> historiqueEnnemisParManche = new HashMap<>();
+    private final Map<Integer, Integer> historiqueObjectifs = new HashMap<>();
 
-    private int totalEnnemisArrives = 0; // Variable pour cumuler le nombre d'ennemis arrivés
+    private int totalEnnemisArrives = 0;
 
     public ViewGraphiqueObjectif(ModeleLabyrinth laby) {
         this.laby = laby;
 
-        historiqueEnnemisParManche.put(0, 0); // Initialisation de l'historique des ennemis
-        historiqueObjectifs.put(0, laby.nbEnnemiesToWin); // Initialisation de l'historique des objectifs
+        // Initialiser les axes
+        xAxis = new NumberAxis(0, 1, 1);
+        xAxis.setLabel("Nombre de manches");
+        xAxis.setForceZeroInRange(true);
+        xAxis.setAutoRanging(false);
+        xAxis.setTickUnit(1);
 
-        // Création d'un axe X commun
-        xAxis = new CategoryAxis();
-        yAxis = new NumberAxis();
+        yAxis = new NumberAxis(0, laby.nbEnnemiesToWin + 3, 1);
         yAxis.setLabel("Nombre d'ennemis");
         yAxis.setAutoRanging(false);
-        yAxis.setLowerBound(0);
-        yAxis.setUpperBound(laby.nbEnnemiesToWin + 3);
-        yAxis.setTickUnit(1);
 
+        // Initialiser les séries
         serieEnnemisParManche = new XYChart.Series<>();
-        serieEnnemisParManche.setName("Ennemis Arrivés (par manche)");
+        serieEnnemisParManche.setName("Ennemis Arrivés");
 
         serieObjectif = new XYChart.Series<>();
         serieObjectif.setName("Objectif");
 
-        createCharts();
+        // Initialiser le graphique
+        lineChart = createLineChart();
+        lineChart.getData().addAll(serieEnnemisParManche, serieObjectif);
+
+        // Créer le conteneur pour le graphique
+        chartContainer = new StackPane();
+        StackPane.setAlignment(lineChart, Pos.CENTER);
+        chartContainer.getChildren().add(lineChart);
+
+        // Appliquer les couleurs personnalisées
+        applyCustomColors();
+
+        // Activer la légende
+        lineChart.setLegendVisible(true);
+
+        // Initialiser avec les données de départ
         updateDonneesGraphique();
     }
 
-    private void createCharts() {
-        // Bar chart pour les ennemis
-        barChart = new BarChart<>(xAxis, yAxis);
-        barChart.setTitle("Évolution du nombre d'ennemis par manche");
-        barChart.setAnimated(false);
-        barChart.setLegendVisible(true);
-        barChart.getData().add(serieEnnemisParManche);
-        barChart.setStyle("-fx-background-color: transparent;");
+    private LineChart<Number, Number> createLineChart() {
+        LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
+        chart.setAnimated(false);
+        chart.setCreateSymbols(true);
+        chart.setStyle("-fx-background-color: transparent;");
+        chart.setHorizontalGridLinesVisible(false);
 
-        // Line chart pour l'objectif
-        lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setAnimated(false);
-        lineChart.setCreateSymbols(true);
-        lineChart.setLegendVisible(false);
-        lineChart.getData().add(serieObjectif);
-        lineChart.setStyle("-fx-background-color: transparent;");
-
-        // Style des graphiques
         Platform.runLater(() -> {
-            Node lineChartPlotArea = lineChart.lookup(".chart-plot-background");
-            if (lineChartPlotArea != null) {
-                lineChartPlotArea.setStyle("-fx-background-color: transparent;");
-            }
-
-            Node yAxisLines = lineChart.lookup(".chart-horizontal-grid-lines");
-            if (yAxisLines != null) {
-                yAxisLines.setStyle("-fx-stroke: transparent;");
+            Node plotArea = chart.lookup(".chart-plot-background");
+            if (plotArea != null) {
+                plotArea.setStyle("-fx-background-color: transparent;");
             }
         });
 
-        // Container pour les graphiques
-        chartContainer = new StackPane();
-        chartContainer.getChildren().addAll(barChart, lineChart);
+        return chart;
+    }
+
+    private void applyCustomColors() {
+        Platform.runLater(() -> {
+            if (serieEnnemisParManche.getNode() != null) {
+                serieEnnemisParManche.getNode().setStyle("-fx-stroke: #e74c3c; -fx-stroke-width: 3px;");
+            }
+            for (XYChart.Data<Number, Number> data : serieEnnemisParManche.getData()) {
+                if (data.getNode() != null) {
+                    data.getNode().setStyle("-fx-background-color: #e74c3c, white; -fx-background-radius: 5px; -fx-padding: 5px;");
+                }
+            }
+
+            // Configurer la série de l'objectif (vert)
+            if (serieObjectif.getNode() != null) {
+                serieObjectif.getNode().setStyle("-fx-stroke: #2ecc71; -fx-stroke-width: 3px; -fx-stroke-dash-array: 5 5;");
+            }
+            for (XYChart.Data<Number, Number> data : serieObjectif.getData()) {
+                if (data.getNode() != null) {
+                    data.getNode().setStyle("-fx-background-color: #2ecc71, white; -fx-background-radius: 5px; -fx-padding: 5px;");
+                }
+            }
+            Node legend = lineChart.lookup(".chart-legend");
+            if (legend != null) {
+                for (Node legendItem : legend.lookupAll(".chart-legend-item")) {
+                    if (legendItem.toString().contains("Objectif")) {
+                        Node symbol = legendItem.lookup(".chart-legend-item-symbol");
+                        if (symbol != null) {
+                            symbol.setStyle("-fx-background-color: #2ecc71, white;");
+                        }
+                    } else if (legendItem.toString().contains("Ennemis Arrivés")) {
+                        Node symbol = legendItem.lookup(".chart-legend-item-symbol");
+                        if (symbol != null) {
+                            symbol.setStyle("-fx-background-color: #e74c3c, white;");
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    private void updateXAxisBounds() {
+        Platform.runLater(() -> {
+            xAxis.setUpperBound(Math.max(1, manche));
+        });
     }
 
     @Override
     public void update(Subject s) {
-        int mancheActuelle = laby.getNbManches();
+        int mancheActuelle = laby.getNbManches() - 1;
         if (mancheActuelle > manche) {
             totalEnnemisArrives = laby.ennemiesArrived.size();
             historiqueEnnemisParManche.put(mancheActuelle, totalEnnemisArrives);
             historiqueObjectifs.put(mancheActuelle, laby.nbEnnemiesToWin);
             manche = mancheActuelle;
+            updateXAxisBounds();
         } else {
-            totalEnnemisArrives = laby.ennemiesArrived.size(); // issues
+            totalEnnemisArrives = laby.ennemiesArrived.size();
             if (!laby.ennemiesArrived.isEmpty()) {
                 historiqueEnnemisParManche.put(manche, totalEnnemisArrives);
                 historiqueObjectifs.put(manche, laby.nbEnnemiesToWin);
@@ -111,19 +153,27 @@ public class ViewGraphiqueObjectif implements Observer {
 
     private void updateDonneesGraphique() {
         try {
-            // Mise à jour des données pour le bar chart
-            ObservableList<XYChart.Data<String, Number>> barChartData = FXCollections.observableArrayList();
-            for (Integer key : historiqueEnnemisParManche.keySet()) {
-                barChartData.add(new XYChart.Data<>(String.valueOf(key), historiqueEnnemisParManche.get(key)));
-            }
-            serieEnnemisParManche.getData().setAll(barChartData);
+            Platform.runLater(() -> {
+                // Effacer les données existantes
+                serieEnnemisParManche.getData().clear();
+                serieObjectif.getData().clear();
 
-            // Mise à jour des données pour le line chart
-            ObservableList<XYChart.Data<String, Number>> lineChartData = FXCollections.observableArrayList();
-            for (Integer key : historiqueObjectifs.keySet()) {
-                lineChartData.add(new XYChart.Data<>(String.valueOf(key), historiqueObjectifs.get(key)));
-            }
-            serieObjectif.getData().setAll(lineChartData);
+                // Ajouter les nouvelles données
+                for (Map.Entry<Integer, Integer> entry : historiqueEnnemisParManche.entrySet()) {
+                    serieEnnemisParManche.getData().add(
+                            new XYChart.Data<>(entry.getKey(), entry.getValue())
+                    );
+                }
+
+                for (Map.Entry<Integer, Integer> entry : historiqueObjectifs.entrySet()) {
+                    serieObjectif.getData().add(
+                            new XYChart.Data<>(entry.getKey(), entry.getValue())
+                    );
+                }
+
+                // Appliquer les couleurs personnalisées aux nouveaux points
+                applyCustomColors();
+            });
         } catch (Exception e) {
             System.err.println("Erreur dans updateDonneesGraphique: " + e.getMessage());
             e.printStackTrace();

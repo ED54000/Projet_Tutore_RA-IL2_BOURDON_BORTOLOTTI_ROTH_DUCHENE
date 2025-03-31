@@ -18,7 +18,7 @@ import java.io.FileNotFoundException;
 
 public class HelpWindow {
     // Constants
-    private static final int WINDOW_WIDTH = 800;
+    private static final int WINDOW_WIDTH = 950;
     private static final int WINDOW_HEIGHT = 500;
     private static final int PADDING = 20;
     private static final int SPACING = 15;
@@ -70,9 +70,10 @@ public class HelpWindow {
 
         Tab tabExplication = new Tab("Vue d'ensemble", createTextTab());
         Tab tabTableau = new Tab("Ennemis", createTableTab());
+        Tab tabTableauDefense = new Tab("Défenses", createDefenseTableTab());
         Tab tabImage = new Tab("Types", createImageTab("Ressources/Explication_types.png"));
 
-        tabPane.getTabs().addAll(tabExplication, tabTableau, tabImage);
+        tabPane.getTabs().addAll(tabExplication, tabTableau, tabTableauDefense, tabImage);
 
         // Ajouter un conteneur principal avec bordure
         BorderPane mainPane = new BorderPane();
@@ -169,8 +170,8 @@ public class HelpWindow {
         // Définition des colonnes
         ColumnConstraints col1 = new ColumnConstraints(120);
         ColumnConstraints col2 = new ColumnConstraints(140);
-        ColumnConstraints col3 = new ColumnConstraints(200);
-        ColumnConstraints col4 = new ColumnConstraints(200);
+        ColumnConstraints col3 = new ColumnConstraints(250);
+        ColumnConstraints col4 = new ColumnConstraints(250);
         grid.getColumnConstraints().addAll(col1, col2, col3, col4);
 
         // Données des ennemis avec alternance de couleurs
@@ -189,6 +190,9 @@ public class HelpWindow {
 
             HBox genreBox = createStyledCell(data[row][0], rowStyle);
             HBox comportementBox = createStyledCell(data[row][1], rowStyle);
+
+            genreBox.setAlignment(Pos.CENTER);
+            comportementBox.setAlignment(Pos.CENTER);
 
             grid.add(genreBox, 0, row + 1);
             grid.add(comportementBox, 1, row + 1);
@@ -226,6 +230,116 @@ public class HelpWindow {
 
         // Ajouter tout au conteneur principal
         container.getChildren().addAll(titleLabel, descriptionLabel, grid);
+
+        ScrollPane scrollPane = new ScrollPane(container);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setStyle("-fx-background-color: transparent;");
+
+        VBox wrapperBox = new VBox(scrollPane);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
+
+        return wrapperBox;
+    }
+
+    private VBox createDefenseTableTab() {
+        // Conteneur principal avec un dégradé de fond
+        VBox container = new VBox(SPACING);
+        container.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+        container.setPadding(new Insets(PADDING));
+
+        // Titre de la section
+        Label titleLabel = new Label("Types de défenses");
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, TITLE_FONT_SIZE));
+        titleLabel.setTextFill(Color.web(SECONDARY_COLOR));
+        titleLabel.setPadding(new Insets(0, 0, 15, 0));
+
+        // Tableau des ennemis avec une bordure et un fond
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(GRID_HGAP);
+        grid.setVgap(GRID_VGAP);
+        grid.setPadding(new Insets(PADDING));
+        grid.setStyle("-fx-background-color: white;" +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);" +
+                "-fx-background-radius: 5px;");
+
+        // En-têtes avec fond coloré
+        String[] headers = {"Genre", "Sprite en mode \"normal\"", "Sprite en mode \"simple\""};
+        for (int i = 0; i < headers.length; i++) {
+            Label headerLabel = new Label(headers[i]);
+            headerLabel.setFont(Font.font("System", FontWeight.BOLD, HEADER_FONT_SIZE));
+            headerLabel.setTextFill(Color.web(HEADER_TEXT_COLOR));
+            headerLabel.setPadding(new Insets(8, 10, 8, 10));
+            headerLabel.setMaxWidth(Double.MAX_VALUE);
+            headerLabel.setAlignment(Pos.CENTER);
+
+            // Conteneur pour l'en-tête avec style
+            StackPane headerContainer = new StackPane(headerLabel);
+            headerContainer.setStyle("-fx-background-color: " + HEADER_BG_COLOR + ";" +
+                    "-fx-background-radius: 4px;");
+
+            grid.add(headerContainer, i, 0);
+            GridPane.setFillWidth(headerContainer, true);
+        }
+
+        // Définition des colonnes
+        ColumnConstraints col1 = new ColumnConstraints(120);
+        ColumnConstraints col2 = new ColumnConstraints(250);
+        ColumnConstraints col3 = new ColumnConstraints(250);
+        grid.getColumnConstraints().addAll(col1, col2, col3);
+
+        // Données des ennemis avec alternance de couleurs
+        String[][] data = {
+                {"Archer", "/tower1.png", "/cross_purple.png"},
+                {"Canon", "/canon1.png", "/cross_yellow.png"}
+        };
+
+        for (int row = 0; row < data.length; row++) {
+            // Style d'alternance pour les lignes
+            String rowStyle = (row % 2 == 0) ?
+                    "-fx-background-color: #f8f9fa;" :
+                    "-fx-background-color: #e9ecef;";
+
+            HBox genreBox = createStyledCell(data[row][0], rowStyle);
+
+            genreBox.setAlignment(Pos.CENTER);
+
+            grid.add(genreBox, 0, row + 1);
+
+            try {
+                // Cellules pour les images avec fond
+                HBox normalBox = new HBox();
+                normalBox.setAlignment(Pos.CENTER);
+                normalBox.setStyle(rowStyle);
+                normalBox.setPadding(new Insets(5));
+
+                HBox simpleBox = new HBox();
+                simpleBox.setAlignment(Pos.CENTER);
+                simpleBox.setStyle(rowStyle);
+                simpleBox.setPadding(new Insets(5));
+
+                // Chargement des images avec effet
+                ImageView normalView = loadImageFromResource(data[row][1]);
+                normalView.setEffect(new javafx.scene.effect.DropShadow(10, Color.rgb(0, 0, 0, 0.2)));
+
+                ImageView simpleView = loadImageFromResource(data[row][2]);
+                simpleView.setEffect(new javafx.scene.effect.DropShadow(10, Color.rgb(0, 0, 0, 0.2)));
+
+                normalBox.getChildren().add(normalView);
+                simpleBox.getChildren().add(simpleView);
+
+                grid.add(normalBox, 1, row + 1);
+                grid.add(simpleBox, 2, row + 1);
+            } catch (Exception e) {
+                grid.add(createStyledCell("[Image non trouvée]", rowStyle), 1, row + 1);
+                grid.add(createStyledCell("[Image non trouvée]", rowStyle), 2, row + 1);
+                System.err.println("Erreur de chargement d'image: " + e.getMessage());
+            }
+        }
+
+        // Ajouter tout au conteneur principal
+        container.getChildren().addAll(titleLabel, grid);
 
         ScrollPane scrollPane = new ScrollPane(container);
         scrollPane.setFitToWidth(true);
