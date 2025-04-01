@@ -15,6 +15,8 @@ import laby.Subject;
 import moteur.MoteurJeu;
 import moteur.SimpleMode;
 import steering_astar.Steering.Behavior;
+import steering_astar.Steering.PathfollowingBehavior;
+import steering_astar.Steering.Vector2D;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -202,6 +204,21 @@ public class ViewLabyrinth implements Observer {
             }
 
         }
+        // Pour chaque ennemi, on affiche son current checkpoint
+        for (Behavior behavior : ennemi.getListBehavior()) {
+            gc.setFill(Color.BLUE);
+            if (behavior instanceof PathfollowingBehavior) {
+                for (Vector2D target : ((PathfollowingBehavior) behavior).getCheckpoints()) {
+                    double xCoord = target.getX();
+                    double yCoord = target.getY();
+                    gc.fillOval(xCoord - tCase / 2.0, yCoord - tCase / 2.0, tCase, tCase);
+                }
+                double xCoord = behavior.getTarget().getX();
+                double yCoord = behavior.getTarget().getY();
+                gc.fillOval(xCoord - tCase / 2.0, yCoord - tCase / 2.0, tCase, tCase);
+            }
+        }
+
         // ennemi
         gc.drawImage(image,
                 xCoordEnnemi -
