@@ -24,10 +24,7 @@ import laby.views.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static laby.ModeleLabyrinth.getScreenSize;
 import static moteur.TimeManagement.modifyFPS;
@@ -139,22 +136,58 @@ public class MoteurJeu extends Application {
         //ajout des logs
         root.setRight(ContainerLogs);
 
-        // Ajout du bouton simple mode
-        // Création d'un bouton radio au top
+        String buttonStyle = """
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+""";
+
+        String buttonSelectedStyle = """
+    -fx-background-color: #34495e;
+    -fx-text-fill: #ecf0f1;
+""";
+
+// Création des boutons avec style uniformisé
         ToggleButton switchMode = new ToggleButton("Mode simple");
+        ToggleButton speedUpButton = new ToggleButton("▶▶ x2");
+        ToggleButton slowDownButton = new ToggleButton("▶▶ x0.5");
+        ToggleButton pauseButton = new ToggleButton("️ || Pause");
+        ToggleButton helpButton = new ToggleButton("❔ Aide");
+        ToggleButton graphicsButton = new ToggleButton("📊 Graphiques");
+
+// Application du style de base
+        List<ToggleButton> buttons = Arrays.asList(
+                switchMode, speedUpButton, slowDownButton,
+                pauseButton, helpButton, graphicsButton
+        );
+
+        buttons.forEach(button -> {
+            button.setStyle(buttonStyle);
+            button.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+                button.setStyle(isSelected ? buttonStyle + buttonSelectedStyle : buttonStyle);
+            });
+        });
+
+// Configuration des contrôleurs
         ControllerSimpleMode controllerSimpleMode = new ControllerSimpleMode(laby, viewLabyrinth, switchMode, mode);
-        switchMode.setOnMouseClicked(controllerSimpleMode);
-
-
-        // MODIFICATION VITESSE JEU
-        ToggleButton speedUpButton = new ToggleButton("Accélérer");
-        ToggleButton slowDownButton = new ToggleButton("Ralentir");
-        ToggleButton pauseButton = new ToggleButton("Pause");
+        switchMode.setOnAction(e -> {
+            controllerSimpleMode.handle(null); // Gestion du mode
+            if (!switchMode.isSelected()) {
+                switchMode.setStyle(buttonStyle);
+            } else {
+                switchMode.setStyle(buttonStyle + buttonSelectedStyle);
+            }
+        });
 
         TimeManagement timeManagement = new TimeManagement(jeu, laby, speedUpButton, slowDownButton, pauseButton);
 
         speedUpButton.setOnAction(e -> {
-            TimeManagement.modifySpeed((BASE_FPS * 8), speedUpButton, slowDownButton);
+            TimeManagement.modifySpeed((BASE_FPS * 2), speedUpButton, slowDownButton);
         });
 
         slowDownButton.setOnAction(e -> {
@@ -165,11 +198,8 @@ public class MoteurJeu extends Application {
             TimeManagement.pause();
         });
 
-        ToggleButton helpButton = new ToggleButton("Aide");
-
         helpButton.setOnAction(e -> openHelpWindow());
 
-        ToggleButton graphicsButton = new ToggleButton("Graphiques");
 
         ViewGraphicsWindow graphicsWindow = new ViewGraphicsWindow(laby, viewGraphiqueDirect, viewGraphique, viewGraphiqueObjectif);
         laby.registerObserver(graphicsWindow);
