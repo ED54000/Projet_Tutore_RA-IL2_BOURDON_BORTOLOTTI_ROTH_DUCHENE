@@ -462,6 +462,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private void handleActiveDefenseCombat(ActiveDefense defense, double secondes) {
+        // Si le jeu est en pause
+        if(this.getPause() || this.getPauseManche()){
+            return;
+        }
         Ennemy enemyTarget = defense.getTarget();
         // Si la defense focus déja un ennemi
         if (enemyTarget != null) {
