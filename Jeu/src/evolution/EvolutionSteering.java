@@ -33,7 +33,7 @@ public class EvolutionSteering implements Evolve {
             jeu.nbEnnemiesToWin = 2;
             //refreshEnnemies(ennemy, jeu);
             ArrayList<Ennemy> copieGroupe = new ArrayList<>(List.of(ennemy));
-            jeu.creerLabyrinthe("Ressources/Labyrinthe3_bis.txt", copieGroupe, 1000, jeu.nbEnnemiesToWin);
+            jeu.creerLabyrinthe("Ressources/Labyrinthe3.txt", copieGroupe, 1000, jeu.nbEnnemiesToWin);
 
             //Créer au hasard x checkpoints
             ArrayList<Vector2D> checkpoints = new ArrayList<>();
