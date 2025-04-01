@@ -48,13 +48,13 @@ public class ViewGraphique implements Observer {
         if (laby.getNbManches() > manche) {
             updateDonneesGraphique();
             manche = laby.getNbManches();
-            updateXAxisBounds(); // Mettre à jour les bornes de l'axe X
+            updateXAxisBounds();
         }
     }
 
     private void updateXAxisBounds() {
         Platform.runLater(() -> {
-            axeX.setUpperBound(manche-1); // Mettre à jour la borne supérieure
+            axeX.setUpperBound(manche-1);
         });
     }
 
@@ -63,8 +63,6 @@ public class ViewGraphique implements Observer {
             // Grouper les ennemis par type
             Map<Class<? extends Ennemy>, List<Ennemy>> ennemisParType = laby.enemies.stream()
                     .collect(Collectors.groupingBy(Ennemy::getClass));
-
-            // Mettre à jour les données pour chaque type d'ennemi
             Platform.runLater(() -> {
                 for (String type : TYPES_ENNEMIS) {
                     // Compter les ennemis de ce type

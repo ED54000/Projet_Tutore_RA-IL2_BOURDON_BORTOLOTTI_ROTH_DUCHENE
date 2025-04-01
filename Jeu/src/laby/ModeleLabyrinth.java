@@ -280,7 +280,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         if (this.nbManches == this.limManches && this.pauseManche) {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
             this.end = true;
-            MoteurJeu.showEndGameScreen(MoteurJeu.primaryStage,false);
+            MoteurJeu mJ = new MoteurJeu();
+            mJ.showEndGameScreen(MoteurJeu.primaryStage,false);
             return;
         }
 
@@ -288,7 +289,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
         if(this.ennemiesArrived.size() == this.nbEnnemiesToWin){
             setLogs("Fin du jeu car le nombre limite d'ennemis a été atteint");
             this.end = true;
-            MoteurJeu.showEndGameScreen(MoteurJeu.primaryStage,true);
+            MoteurJeu mJ = new MoteurJeu();
+            mJ.showEndGameScreen(MoteurJeu.primaryStage,true);
             return;
         }
 
@@ -439,6 +441,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 enemy.takeDamage(Integer.MAX_VALUE);
                 // On met à jour le temps de survie
                 //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
+                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                    // On met à jour le sprite de la defense (sa vie)
+                    updateDefenseSprite(defense);
+                }
             }
         }
     }
@@ -448,6 +454,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (enemy.isInRange(defense)) {
                 // On l'attaque
                 enemy.attack(defense, secondes);
+                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                    // On met à jour le sprite de la defense (sa vie)
+                    updateDefenseSprite(defense);
+                }
             }
         }
     }
@@ -1089,6 +1099,30 @@ public class ModeleLabyrinth implements Jeu, Subject {
         }
     }
 
+    /**
+     * Méthode permettant de mettre la vie à jour lorsqu'une défense voit sa vie changée
+     * @param d la defense en question
+     */
+    public static void updateDefenseSprite(Defense d){
+        System.out.println("Sprite update");
+        if (d.getName().contains("Archer")) {
+            d.setSprite(SimpleMode.addTextToImage("" + (int) d.getHealth(), new Image("/cross_purple.png")));
+        } else if(d.getName().contains("Canon")) {
+            d.setSprite(SimpleMode.addTextToImage("" + (int) d.getHealth(), new Image("/cross_yellow.png")));;
+        }
+    }
+
+    public void resetStats() {
+        this.ennemiesArrived.clear();
+        this.enemies.clear();
+        this.startTime = 0;
+        this.nbManches = 1;
+        this.defenses.clear();
+        this.defensesEndOfManche.clear();
+        this.deadDefenses.clear();
+        this.deadEnemies.clear();
+        this.notifyObserver();
+    }
 
     public void setDonneesGraphique(HashMap<String, List<Double>> donnees) {
         this.donneesGraphique = donnees;
