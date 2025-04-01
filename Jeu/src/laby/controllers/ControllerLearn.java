@@ -79,7 +79,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             //for (ArrayList<Ennemy> groupe : groupes) {
             //    stats.put(groupe, 0.0);
             //}
-            for (int i = 1; i < groupes.size(); i++) {
+            for (int i = 0; i < groupes.size(); i++) {
                 ArrayList<Ennemy> groupe = groupes.get(i);
                 stats.put(groupe, 0.0);
             }
@@ -97,7 +97,10 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 stats.put(new ArrayList<>(List.of(laby.getEnnemyEndOfManche().get(0))), score);
                 groupes = evolution.evolve(stats);
                 laby.setSimulationEvolution(false);
-                laby.enemies = groupes.get(0);
+                //crée un copie de la première liste des ennemis de groupes
+                ArrayList<Ennemy> ennemies = new ArrayList<>(groupes.get(0));
+                laby.enemies = ennemies;
+
                 for (ArrayList<Ennemy> groupe : groupes) {
                     Ennemy ennemy = groupe.get(0);
                     //Affiche les waypoints
@@ -231,14 +234,14 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                     }
                 }
 
-                for (Ennemy e : laby.enemies) {
-                    if (e.getHealth() < 0) {
-                        e.setHealth(e.getHealth() * -1);
-                    }
-                }
+                //for (Ennemy e : laby.enemies) {
+                //    if (e.getHealth() < 0) {
+                //        e.setHealth(e.getHealth() * -1);
+                //    }
+                //}
 
                 // Sauvegarder les statistiques des ennemis
-                EnnemyEvolution.saveStartStats(laby.enemies);
+                //EnnemyEvolution.saveStartStats(laby.enemies);
 
 
                 if (!ModeleLabyrinth.getSimulation()) {

@@ -101,7 +101,7 @@ public class EvolutionSteering implements Evolve {
             total = bonus - e.getDistanceToArrival();
         }
         else {
-            total = bonus + e.getDistanceTraveled();
+            total = bonus - e.getDistanceTraveled();
         }
         return total;
     }

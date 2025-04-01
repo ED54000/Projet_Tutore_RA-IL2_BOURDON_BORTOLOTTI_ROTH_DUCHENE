@@ -193,7 +193,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     e.setDistanceStartToArrival(astarPath);
                 }
             } else {
-                e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender, YArrivalRender)));
+                //e.setBehavior(new SeekBehavior(new Vector2D(XArrivalRender, YArrivalRender)));
             }
         }
     }
