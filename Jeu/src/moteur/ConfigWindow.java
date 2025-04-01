@@ -227,7 +227,7 @@ public class ConfigWindow {
                             avecAstarBox.setSelected(true);
                             break;
                         case "Evolution Steering":
-                            labyrinthComboBox.setValue("Large");
+                            labyrinthComboBox.setValue("Large sans safe");
                             enemiesField.setText("1");
                             nbEnnemiesToWinField.setText("2");
                             roundsField.setText("30");

@@ -57,4 +57,8 @@ public class PathfollowingBehavior extends Behavior {
     public ArrayList<Vector2D> getCheckpoints() {
         return checkpoints;
     }
+
+    public void setCurrentCheckpoint(Vector2D currentCheckpoint) {
+        this.currentCheckpoint = currentCheckpoint;
+    }
 }

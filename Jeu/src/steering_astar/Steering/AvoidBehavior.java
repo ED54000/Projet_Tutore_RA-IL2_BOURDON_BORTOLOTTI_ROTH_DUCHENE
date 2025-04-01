@@ -6,7 +6,7 @@ import laby.ModeleLabyrinth;
 public class AvoidBehavior extends Behavior {
 
     private static final double MAX_SEE_AHEAD = 20;
-    private static final double BASE_AVOID_WEIGHT = 5.0;
+    private static final double BASE_AVOID_WEIGHT = 4;
     private static final int NUM_FEELERS = 7;
 
     public AvoidBehavior(Vector2D target) {
