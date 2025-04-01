@@ -1,6 +1,8 @@
 package moteur;
 
+import entites.defenses.Defense;
 import entites.enemies.Ennemy;
+import javafx.application.Platform;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -57,6 +59,18 @@ public class SimpleMode {
                     break;
             }
         }
+
+        // On applique les sprites aux defenses
+        ArrayList<Defense> allDefenses = new ArrayList<>();
+        allDefenses.addAll(laby.defenses);
+        allDefenses.addAll(laby.deadDefenses);
+        for (Defense defense : allDefenses) {
+            if (defense.getName().contains("Archer")) {
+                defense.setSprite(addTextToImage("" + (int) defense.getHealth(), new Image("/cross_purple.png")));
+            } else if(defense.getName().contains("Canon")) {
+                defense.setSprite(addTextToImage("" + (int) defense.getHealth(), new Image("/cross_yellow.png")));;
+            }
+        }
     }
 
     /**
@@ -68,7 +82,7 @@ public class SimpleMode {
         setSimpleMode(false);
         // On crée les sprites Images du jeu
         Image tree = new Image("/tree3.png");
-        Image tile = new Image("/tiles3.png");
+        Image tile = new Image("/tiles2.png");
 
         // On applique les sprites aux entités
         Map<Character, Image> newImages = new HashMap<>();
@@ -97,6 +111,18 @@ public class SimpleMode {
                 case "Fugitive":
                     ennemy.setSprite(new Image("/ninja.png"));
                     break;
+            }
+        }
+
+        // On applique les sprites aux defenses
+        ArrayList<Defense> allDefenses = new ArrayList<>();
+        allDefenses.addAll(laby.defenses);
+        allDefenses.addAll(laby.deadDefenses);
+        for (Defense defense : allDefenses) {
+            if (defense.getName().contains("Archer")) {
+                defense.setSprite(new Image("/tower1.png"));
+            } else if(defense.getName().contains("Canon")) {
+                defense.setSprite(new Image("/canon1.png"));
             }
         }
     }
@@ -143,7 +169,9 @@ public class SimpleMode {
         // capture le canvas dans l'image
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
-        canvas.snapshot(params, writableImage);
+        Platform.runLater(() -> {
+            canvas.snapshot(params, writableImage);
+        });
         return writableImage;
     }
 

@@ -67,6 +67,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         new Thread(() -> {
             // On fait évoluer les ennemis
             EvolutionSteering evolution = new EvolutionSteering();
+            evolution.nbchekpoints = 2;
             if (laby.getNbManches() < 2) {
                 for (int i = 0; i < 40; i++) { //50 groupes d'un géant
                     groupes.add(new ArrayList<>(List.of(new Giant(new Vector2D(0, 0), "Giant"+i))));
@@ -79,7 +80,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
             //for (ArrayList<Ennemy> groupe : groupes) {
             //    stats.put(groupe, 0.0);
             //}
-            for (int i = 1; i < groupes.size(); i++) {
+            for (int i = 0; i < groupes.size(); i++) {
                 ArrayList<Ennemy> groupe = groupes.get(i);
                 stats.put(groupe, 0.0);
             }
@@ -97,11 +98,14 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 stats.put(new ArrayList<>(List.of(laby.getEnnemyEndOfManche().get(0))), score);
                 groupes = evolution.evolve(stats);
                 laby.setSimulationEvolution(false);
-                laby.enemies = groupes.get(0);
+                //crée un copie de la première liste des ennemis de groupes
+                ArrayList<Ennemy> ennemies = new ArrayList<>(groupes.get(0));
+                laby.enemies = ennemies;
+
                 for (ArrayList<Ennemy> groupe : groupes) {
                     Ennemy ennemy = groupe.get(0);
                     //Affiche les waypoints
-                    System.out.println("Waypoints de " + ennemy.getName() + "(" + stats.get(groupe) + ")");
+                    System.out.println("Waypoints de " + ennemy + "(" + stats.get(groupe) + ")");
                     for (Vector2D waypoint : ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints()) {
                         System.out.println(waypoint.div(41));
                     }
@@ -231,14 +235,14 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                     }
                 }
 
-                for (Ennemy e : laby.enemies) {
-                    if (e.getHealth() < 0) {
-                        e.setHealth(e.getHealth() * -1);
-                    }
-                }
+                //for (Ennemy e : laby.enemies) {
+                //    if (e.getHealth() < 0) {
+                //        e.setHealth(e.getHealth() * -1);
+                //    }
+                //}
 
                 // Sauvegarder les statistiques des ennemis
-                EnnemyEvolution.saveStartStats(laby.enemies);
+                //EnnemyEvolution.saveStartStats(laby.enemies);
 
 
                 if (!ModeleLabyrinth.getSimulation()) {
