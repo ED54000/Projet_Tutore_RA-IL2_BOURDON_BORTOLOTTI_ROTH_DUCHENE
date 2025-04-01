@@ -67,6 +67,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
         new Thread(() -> {
             // On fait évoluer les ennemis
             EvolutionSteering evolution = new EvolutionSteering();
+            evolution.nbchekpoints = 2;
             if (laby.getNbManches() < 2) {
                 for (int i = 0; i < 40; i++) { //50 groupes d'un géant
                     groupes.add(new ArrayList<>(List.of(new Giant(new Vector2D(0, 0), "Giant"+i))));
@@ -104,7 +105,7 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                 for (ArrayList<Ennemy> groupe : groupes) {
                     Ennemy ennemy = groupe.get(0);
                     //Affiche les waypoints
-                    System.out.println("Waypoints de " + ennemy.getName() + "(" + stats.get(groupe) + ")");
+                    System.out.println("Waypoints de " + ennemy + "(" + stats.get(groupe) + ")");
                     for (Vector2D waypoint : ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints()) {
                         System.out.println(waypoint.div(41));
                     }
