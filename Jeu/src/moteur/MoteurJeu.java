@@ -271,10 +271,10 @@ public class MoteurJeu extends Application {
                         avecAstarBox.setSelected(true);
                         break;
                     case "Evolution Steering":
-                        labyrinthComboBox.setValue("Ouvert");
+                        labyrinthComboBox.setValue("Large");
                         enemiesField.setText("1");
                         nbEnnemiesToWinField.setText("2");
-                        roundsField.setText("20");
+                        roundsField.setText("30");
                         avecAstarBox.setSelected(false);
                     default:
                         break;
