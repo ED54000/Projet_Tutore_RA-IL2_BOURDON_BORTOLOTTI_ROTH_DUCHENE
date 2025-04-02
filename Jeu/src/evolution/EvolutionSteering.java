@@ -12,6 +12,7 @@ import steering_astar.Steering.Vector2D;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.locks.LockSupport;
 
 public class EvolutionSteering implements Evolve {
 
@@ -72,13 +73,26 @@ public class EvolutionSteering implements Evolve {
 
         saveStartStats(jeu.enemies);
 
+        long debutManche = System.currentTimeMillis();
+        final long TEMPS_MAX_MANCHE = 3_000;
         long lastUpdateTime = System.nanoTime();
+
         while (!jeu.getPause() && !jeu.getPauseManche()) {
             long currentTime = System.nanoTime();
             double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
 
             jeu.update(elapsedTimeInSeconds);
             lastUpdateTime = currentTime;
+
+            // Vérifier si la manche dure trop longtemps
+            if (System.currentTimeMillis() - debutManche > TEMPS_MAX_MANCHE) {
+                System.out.println(System.currentTimeMillis() - debutManche);
+                System.out.println("⏳ Manche trop longue ! Fin forcée.");
+                jeu.enemies.get(0).setHealth(0);
+                jeu.enemies.get(0).setIsDead(true);
+                jeu.update(elapsedTimeInSeconds);
+                jeu.setPauseManche(true);
+            }
         }
 
         System.out.println("Fin de la simulation");

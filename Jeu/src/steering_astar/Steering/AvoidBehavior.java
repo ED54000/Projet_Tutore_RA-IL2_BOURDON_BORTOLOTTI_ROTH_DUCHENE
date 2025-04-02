@@ -7,7 +7,7 @@ public class AvoidBehavior extends Behavior {
 
     private static final double MAX_SEE_AHEAD = 1.0;
     private static final double BASE_AVOID_WEIGHT = 2.0;
-    private static final int NUM_FEELERS = 5;
+    private static final int NUM_FEELERS = 7;
 
     public AvoidBehavior(Vector2D target) {
         this.setTarget(target);
