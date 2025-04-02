@@ -1,0 +1,37 @@
+@startuml
+participant "MoteurJeu" as MJ
+participant "ModeleLabyrinth" as ML
+participant "objectifLabel:Label" as OL
+
+MJ -> MJ : updateObjectiveLabel()
+activate MJ
+
+' Calcul du nombre d'ennemis restants
+MJ -> ML : nbEnnemiesToWin
+activate ML
+ML --> MJ : nombre total
+deactivate ML
+
+MJ -> ML : ennemiesArrived.size()
+activate ML
+ML --> MJ : nombre déjà passé
+deactivate ML
+
+' Mise à jour du label
+MJ -> OL : setText("Il reste " + obj + " ennemis à passer sur " + nbEnnemiesToWin)
+activate OL
+OL --> MJ 
+deactivate OL
+
+MJ -> OL : setStyle(style CSS)
+activate OL
+OL --> MJ 
+deactivate OL
+
+MJ -> OL : HBox.setMargin(objectifLabel, new Insets(0, 0, 0, 20))
+activate OL
+OL --> MJ
+deactivate OL
+
+deactivate MJ
+@enduml
