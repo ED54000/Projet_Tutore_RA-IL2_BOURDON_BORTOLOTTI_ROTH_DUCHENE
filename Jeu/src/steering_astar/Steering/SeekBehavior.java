@@ -42,6 +42,8 @@ public class SeekBehavior extends Behavior {
 
         // si on doit ralentir
         Vector2D arrviee = ModeleLabyrinth.getArrival();
+        System.out.println("Arrivee : " + arrviee);
+        System.out.println("Cible : " + this.getTarget());
         if (finalSpeed == baseSpeed && !(ModeleLabyrinth.getLabyrinth().getUseAstar()) && Objects.equals(this.getTarget(), arrviee)) {
             desired = desired.scale(BASE_ARRIVAL_WEIGHT);
         }

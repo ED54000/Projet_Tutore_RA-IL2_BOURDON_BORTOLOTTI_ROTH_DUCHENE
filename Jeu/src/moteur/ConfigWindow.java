@@ -98,7 +98,7 @@ public class ConfigWindow {
             labyrinthMap.put("Ligne", "Ressources/Ligne.txt");
             labyrinthMap.put("Nombreuses tours centrales", "Ressources/LignePlusieursTours.txt");
             labyrinthMap.put("Tours inaccessibles", "Ressources/ToursInaccessibles.txt");
-            labyrinthMap.put("Ouvert", "Ressources/Laby_ouvert");
+            labyrinthMap.put("Ouvert", "Ressources/Laby_ouvert.txt");
 
             // Section de sélection du labyrinthe
             ComboBox<String> labyrinthComboBox = new ComboBox<>();
@@ -227,7 +227,7 @@ public class ConfigWindow {
                             avecAstarBox.setSelected(true);
                             break;
                         case "Evolution Steering":
-                            labyrinthComboBox.setValue("Large");
+                            labyrinthComboBox.setValue("Ouvert");
                             enemiesField.setText("1");
                             nbEnnemiesToWinField.setText("2");
                             roundsField.setText("30");
