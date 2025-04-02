@@ -1,0 +1,30 @@
+@startuml
+
+class Ennemy {
+  - listBehaviors: List<Behavior>
+}
+
+abstract class Behavior {
+  - weight: double
+  - target: Vector2D
+  {abstract} + calculateForce(Ennemy ennemy) : Vector2D
+}
+
+class AvoidBehavior {
+  + calculateForce(Ennemy ennemy) : Vector2D
+}
+
+class PathfollowingBehavior {
+  + calculateForce(Ennemy ennemy) : Vector2D
+}
+
+class SeekBehavior {
+  + calculateForce(Ennemy ennemy) : Vector2D
+}
+
+Ennemy "1" *--> "listBehaviors\n*" Behavior
+Behavior --^  AvoidBehavior
+Behavior --^  PathfollowingBehavior
+Behavior --^  SeekBehavior
+
+@enduml
