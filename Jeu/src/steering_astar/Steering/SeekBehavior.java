@@ -3,6 +3,8 @@ package steering_astar.Steering;
 import entites.enemies.Ennemy;
 import laby.ModeleLabyrinth;
 
+import java.util.Objects;
+
 public class SeekBehavior extends Behavior {
 
     private static final double BASE_SEEK_WEIGHT = 0.5;
@@ -39,7 +41,8 @@ public class SeekBehavior extends Behavior {
         desired = desired.subtract(ennemy.getVelocity()).scale(ACCELERATION_DIVISER);
 
         // si on doit ralentir
-        if (finalSpeed == baseSpeed && !(ModeleLabyrinth.getLabyrinth().getUseAstar())){
+        Vector2D arrviee = ModeleLabyrinth.getArrival();
+        if (finalSpeed == baseSpeed && !(ModeleLabyrinth.getLabyrinth().getUseAstar()) && Objects.equals(this.getTarget(), arrviee)) {
             desired = desired.scale(BASE_ARRIVAL_WEIGHT);
         }
 
