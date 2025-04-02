@@ -7,21 +7,22 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import jdk.swing.interop.SwingInterOpUtils;
 import laby.controllers.ControllerLearn;
 import laby.controllers.ControllerNextManche;
-import laby.views.ViewGraphique;
 import moteur.Jeu;
 import moteur.MoteurJeu;
 import moteur.SimpleMode;
+import steering_astar.Astar.Astar;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.SeekBehavior;
 import steering_astar.Steering.Vector2D;
-import steering_astar.Astar.*;
+
 import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
+import java.util.*;
 
 public class ModeleLabyrinth implements Jeu, Subject {
 
@@ -154,12 +155,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         this.defenses.add(new Canon(colonne, numLigne, "Canon" + this.nbCanon));
                         this.nbCanon++;
                         break;
-                    case BOMB:
-                        //ajouter une bombe
-                        this.cases[numLigne][colonne] = BOMB;
-                        this.defenses.add(new Bomb(colonne, numLigne, "Bomb" + this.nbBomb));
-                        this.nbBomb++;
-                        break;
                     case ARCHER:
                         //ajouter un archer
                         this.cases[numLigne][colonne] = ARCHER;
@@ -187,7 +182,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     e.setBehavior(new PathfollowingBehavior(aStarHealerPath));
                     e.setDistanceStartToArrival(aStarHealerPath);
                 } else {
-                    ArrayList<Vector2D> astarPath = e.calculerChemin(cases,getStart());
+                    ArrayList<Vector2D> astarPath = e.calculerChemin(cases, getStart());
                     e.setBehavior(new PathfollowingBehavior(astarPath));
                     e.setDistanceStartToArrival(astarPath);
                 }
@@ -253,12 +248,12 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if ((classEnemyMax == nbGiant && enemy instanceof Giant) ||
                     (classEnemyMax == nbNinja && enemy instanceof Ninja) ||
                     (classEnemyMax == nbBerserker && enemy instanceof Berserker)) {
-                aStarHealer = new ArrayList<>(enemy.calculerChemin(cases,getStart()));
+                aStarHealer = new ArrayList<>(enemy.calculerChemin(cases, getStart()));
                 break;
             }
         }
         if (aStarHealer.isEmpty() && !enemies.isEmpty()) {
-            aStarHealer = enemies.getFirst().calculerChemin(cases,getStart());
+            aStarHealer = enemies.getFirst().calculerChemin(cases, getStart());
         }
         return aStarHealer;
     }
@@ -280,16 +275,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
             setLogs("Fin du jeu car le nombre limite de manches a été atteint");
             this.end = true;
             MoteurJeu mJ = new MoteurJeu();
-            mJ.showEndGameScreen(MoteurJeu.primaryStage,false);
+            mJ.showEndGameScreen(MoteurJeu.primaryStage, false);
             return;
         }
 
         //Vérification de la fin du jeu (victoire)
-        if(this.ennemiesArrived.size() == this.nbEnnemiesToWin){
+        if (this.ennemiesArrived.size() == this.nbEnnemiesToWin) {
             setLogs("Fin du jeu car le nombre limite d'ennemis a été atteint");
             this.end = true;
             MoteurJeu mJ = new MoteurJeu();
-            mJ.showEndGameScreen(MoteurJeu.primaryStage,true);
+            mJ.showEndGameScreen(MoteurJeu.primaryStage, true);
             return;
         }
 
@@ -340,7 +335,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void updateEnemyPositions() {
         Iterator<Ennemy> enemyIterator = enemies.iterator();
-         while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
+        while (enemyIterator.hasNext() && !this.pauseManche && !this.pause) {
             Ennemy enemy = enemyIterator.next();
             if (hasReachedArrival(enemy)) {
                 handleEnemyArrival(enemy);
@@ -412,7 +407,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 System.out.println("Liste des ennemis a la fin : " + enemies);
                 //On affiche le détail des ennemis
                 for (Ennemy en : enemies) {
-                    System.out.println("Ennemy : " + en.getName() + " type:" + en.getType() + " vie" + en.getHealth() + " vitesse :" + en.getSpeed() + " dégâts :" + en.getDamages() + " distance arrivée :" + en.getDistanceToArrival() + " behavior :" + en.getBehaviorString() + "survivalTime : " + en.getSurvivalTime()+"arrived : "+en.getIsArrived());
+                    System.out.println("Ennemy : " + en.getName() + " type:" + en.getType() + " vie" + en.getHealth() + " vitesse :" + en.getSpeed() + " dégâts :" + en.getDamages() + " distance arrivée :" + en.getDistanceToArrival() + " behavior :" + en.getBehaviorString() + "survivalTime : " + en.getSurvivalTime() + "arrived : " + en.getIsArrived());
                     //ses coordonnées
                     System.out.println("Position : " + en.getPositionReel());
                 }
@@ -423,7 +418,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
     private void handleDruideCombat(Ennemy enemy, double secondes) {
         for (Ennemy enemyTarget : enemies) {
             // Tous les ennemis a portée sont soignés
-            if (enemy.isInRange(enemyTarget) && !this.getPause() && this.getPauseManche()) {
+            if (enemy.isInRange(enemyTarget) && !this.getPause() && !this.getPauseManche()) {
                 enemy.healDamage(enemyTarget, enemy.getDamages(), secondes);
                 //Quand il se fait heal
                 //setLogs(enemyTarget.getName());
@@ -440,7 +435,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 enemy.takeDamage(Integer.MAX_VALUE);
                 // On met à jour le temps de survie
                 //enemy.setSurvivalTime(System.currentTimeMillis() - startTime);
-                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                if (SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()) {
                     // On met à jour le sprite de la defense (sa vie)
                     updateDefenseSprite(defense);
                 }
@@ -453,7 +448,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             if (enemy.isInRange(defense)) {
                 // On l'attaque
                 enemy.attack(defense, secondes);
-                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                if (SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()) {
                     // On met à jour le sprite de la defense (sa vie)
                     updateDefenseSprite(defense);
                 }
@@ -463,7 +458,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     private void handleActiveDefenseCombat(ActiveDefense defense, double secondes) {
         // Si le jeu est en pause
-        if(this.getPause() || this.getPauseManche()){
+        if (this.getPause() || this.getPauseManche()) {
             return;
         }
         Ennemy enemyTarget = defense.getTarget();
@@ -478,7 +473,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                     // Quand il se fait attaquer normalement
                     setLogs(enemyTarget.getName());
                     // Si le jeu est en mode simple et non en simulation
-                    if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                    if (SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()) {
                         // On met à jour le sprite de l'ennemi (sa vie)
                         updateSprite(enemyTarget);
                     }
@@ -539,7 +534,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 setLogs(e.getName());
                 // Si le jeu est en mode simple et pas en simulation
-                if(SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()){
+                if (SimpleMode.getSimpleMode() && !ModeleLabyrinth.getSimulationEvolution()) {
                     // On met à jour son sprite (sa vie)
                     updateSprite(e);
                 }
@@ -759,7 +754,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
                 }
                 copyGrid[ennemyPosY][ennemyPosX] = 'S';
                 if (!(ennemyPosY == YArrival && ennemyPosX == XArrival)) {
-                    ennemy.setBehavior(new PathfollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY,ennemyPosX))));
+                    ennemy.setBehavior(new PathfollowingBehavior(ennemy.calculerChemin(copyGrid, new Vector2D(ennemyPosY, ennemyPosX))));
                 }
             }
         }
@@ -822,12 +817,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
                         this.defenses.add(new Canon(colonne, numLigne, "Canon" + this.nbCanon));
                         this.nbCanon++;
                         break;
-                    case BOMB:
-                        //ajouter une bombe
-                        this.cases[numLigne][colonne] = BOMB;
-                        this.defenses.add(new Bomb(colonne, numLigne, "Bomb" + this.nbBomb));
-                        this.nbBomb++;
-                        break;
                     case ARCHER:
                         //ajouter un archer
                         this.cases[numLigne][colonne] = ARCHER;
@@ -849,13 +838,13 @@ public class ModeleLabyrinth implements Jeu, Subject {
         if (this.ennemiesEvolved.isEmpty()) {
             System.out.println("Liste des ennemies : " + this.enemies);
             Giant e = new Giant(new Vector2D(this.XstartRender + Math.random() * 1.5, this.YstartRender + Math.random() * 1.5), "Giant" + i);
-            e.calculerChemin(cases,getStart());
+            e.calculerChemin(cases, getStart());
             this.enemies.add(e);
         } else {
             Giant e = this.ennemiesEvolved.get(i);
             e.setName(e.getName() + i);
             e.setToStart(this);
-            e.calculerChemin(cases,getStart());
+            e.calculerChemin(cases, getStart());
 
             this.enemies.add(e);
 
@@ -1082,9 +1071,10 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     /**
      * Méthode permettant de mettre la vie à jour lorsqu'un ennemi voit sa vie changée
+     *
      * @param e l'ennemi en question
      */
-    public static void updateSprite(Ennemy e){
+    public static void updateSprite(Ennemy e) {
         System.out.println("Sprite update");
         switch (e.getBehaviorString()) {
             case "Normal":
@@ -1104,14 +1094,16 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
     /**
      * Méthode permettant de mettre la vie à jour lorsqu'une défense voit sa vie changée
+     *
      * @param d la defense en question
      */
-    public static void updateDefenseSprite(Defense d){
+    public static void updateDefenseSprite(Defense d) {
         System.out.println("Sprite update");
         if (d.getName().contains("Archer")) {
             d.setSprite(SimpleMode.addTextToImage("" + (int) d.getHealth(), new Image("/cross_purple.png")));
-        } else if(d.getName().contains("Canon")) {
-            d.setSprite(SimpleMode.addTextToImage("" + (int) d.getHealth(), new Image("/cross_yellow.png")));;
+        } else if (d.getName().contains("Canon")) {
+            d.setSprite(SimpleMode.addTextToImage("" + (int) d.getHealth(), new Image("/cross_yellow.png")));
+            ;
         }
     }
 

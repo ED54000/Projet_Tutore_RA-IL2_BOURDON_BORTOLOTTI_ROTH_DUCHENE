@@ -1,7 +1,6 @@
 package laby.controllers;
 
 import entites.defenses.Archer;
-import entites.defenses.Bomb;
 import entites.defenses.Canon;
 import entites.defenses.Defense;
 import entites.enemies.*;
@@ -166,9 +165,6 @@ public class ControllerLearn implements EventHandler<MouseEvent> {
                     d.setIsDead(false);
                     if (d instanceof Canon) {
                         d.setHealth(300);
-                    }
-                    if (d instanceof Bomb) {
-                        d.setHealth(1000);
                     }
                     if (d instanceof Archer) {
                         d.setHealth(200);

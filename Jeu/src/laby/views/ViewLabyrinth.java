@@ -62,11 +62,10 @@ public class ViewLabyrinth implements Observer {
             double x = defense.getPosition().getX() * getTailleCase() - getTailleCase() / 2.0;
             double y = defense.getPosition().getY() * getTailleCase() - getTailleCase() / 2.0;
 
-            if (defense instanceof entites.defenses.Bomb) {
-                gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-            } else {
+
+
                 gc.drawImage(images.get(ModeleLabyrinth.TREE), x, y, getTailleCase(), getTailleCase());
-            }
+
         }
 
         // Dessin des défenses
@@ -104,12 +103,7 @@ public class ViewLabyrinth implements Observer {
                     gc.drawImage(spriteDefense, x, y, getTailleCase(), getTailleCase());
                 }
             }
-            if (defense instanceof entites.defenses.Bomb) {
-                gc.drawImage(images.get(ModeleLabyrinth.ROAD), x, y, getTailleCase(), getTailleCase());
-                if (!defense.getIsDead()) {
-                    gc.drawImage(spriteDefense, x - 12, y - 12, getTailleCase() + 25, getTailleCase() + 25);
-                }
-            }
+
 
             // dessiner la range des défenses
             if (!defense.getIsDead()) {
