@@ -9,7 +9,7 @@ public class SeekBehavior extends Behavior {
 
     private static final double BASE_SEEK_WEIGHT = 0.5;
     private static final double SLOW_RADIUS = 75;
-    private static final double BASE_ARRIVAL_WEIGHT = 250;
+    private static final double BASE_ARRIVAL_WEIGHT = 5;
     /***
      * constructeur de la classe
      * @param target coordonnees de la cible du comportement

@@ -49,7 +49,7 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
             //Affiche ses waypoints
             System.out.println("Waypoints : ");
             for (Vector2D waypoint : ((PathfollowingBehavior) e.getListBehavior().get(0)).getCheckpoints()) {
-                System.out.println(waypoint.div(41));
+                System.out.println(waypoint.div(ModeleLabyrinth.getTailleCase()));
             }
         }
 
