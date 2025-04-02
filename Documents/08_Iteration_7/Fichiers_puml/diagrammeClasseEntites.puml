@@ -48,11 +48,11 @@ class PassiveDefense {
    attacked: boolean
 }
 
-Defense         ^--  Entity         
-ActiveDefense   ^--  Defense        
+Entity       ^--     Defense       
+Defense   ^--  ActiveDefense        
 ActiveDefense  "1" *--> "target\n1" Ennemy         
 ActiveDefense ^-- Archer          
-Ennemy         ^--  Entity         
+Entity      ^--  Ennemy            
 Ennemy          ^-- Berserker       
 ActiveDefense ^-- Canon           
 Ennemy          ^-- Druide          
