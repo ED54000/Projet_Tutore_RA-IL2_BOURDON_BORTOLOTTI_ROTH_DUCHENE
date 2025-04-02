@@ -965,6 +965,14 @@ public class ModeleLabyrinth implements Jeu, Subject {
         return new Vector2D(XArrival * getTailleCase(), YArrival * getTailleCase());
     }
 
+    public static Vector2D getArrivalReel() {
+        return new Vector2D(XArrival, YArrival);
+    }
+
+    public static boolean nearArrival(Vector2D position) {
+        return Math.abs(position.getX() - XArrival) <= 15 && Math.abs(position.getY() - YArrival) <= 15;
+    }
+
     public int getNbManches() {
         return nbManches;
     }

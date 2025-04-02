@@ -79,7 +79,7 @@ public class ConfigWindow {
                     "Tours inaccessibles",
                     "Evolution Steering"
             );
-            configPrefaiteComboBox.setValue("Aucune");
+            configPrefaiteComboBox.setValue("Evolution Steering");
             configPrefaiteComboBox.setId("configPrefaiteComboBox");
             configPrefaiteComboBox.setStyle("-fx-background-color: #f8f9fa; "
                     + "-fx-background-radius: 5; "
@@ -175,6 +175,12 @@ public class ConfigWindow {
                             + "-fx-background-radius: 5; "
                             + "-fx-cursor: hand;")
             );
+
+            labyrinthComboBox.setValue("Ouvert");
+            enemiesField.setText("1");
+            nbEnnemiesToWinField.setText("2");
+            roundsField.setText("30");
+            avecAstarBox.setSelected(false);
 
             configPrefaiteComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue == "Aucune") {

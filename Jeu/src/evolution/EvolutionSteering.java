@@ -7,6 +7,7 @@ import laby.ModeleLabyrinth;
 import laby.views.ViewLabyrinth;
 import mains.MainSimu;
 import mains.MainSimuSteering;
+import moteur.MoteurJeu;
 import steering_astar.Steering.PathfollowingBehavior;
 import steering_astar.Steering.Vector2D;
 
@@ -34,7 +35,7 @@ public class EvolutionSteering implements Evolve {
             jeu.nbEnnemiesToWin = 2;
             //refreshEnnemies(ennemy, jeu);
             ArrayList<Ennemy> copieGroupe = new ArrayList<>(List.of(ennemy));
-            jeu.creerLabyrinthe("Ressources/Laby_ouvert.txt", copieGroupe, 1000, jeu.nbEnnemiesToWin);
+            jeu.creerLabyrinthe(MoteurJeu.labyFile, copieGroupe, 1000, jeu.nbEnnemiesToWin);
 
             //Créer au hasard x checkpoints
             ArrayList<Vector2D> checkpoints = new ArrayList<>();

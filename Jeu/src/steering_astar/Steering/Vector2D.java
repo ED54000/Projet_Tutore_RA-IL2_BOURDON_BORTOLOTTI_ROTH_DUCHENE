@@ -145,7 +145,7 @@ public class Vector2D {
         }
 
         char theCase = m.getCase(y, x);
-        return theCase == '#' ;
+        return theCase == '#'  ;
     }
 
     public Vector2D getClosestCaseCenter(){

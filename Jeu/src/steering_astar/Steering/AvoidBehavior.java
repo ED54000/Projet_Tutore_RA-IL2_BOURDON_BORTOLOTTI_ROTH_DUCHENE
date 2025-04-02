@@ -7,12 +7,14 @@ public class AvoidBehavior extends Behavior {
     // Augmentation de la distance de détection
     private static final double MAX_SEE_AHEAD = 2.0;
     // Réduction du poids de base pour éviter la panique
-    private static final double BASE_AVOID_WEIGHT = 1.5;
+    private static final double BASE_AVOID_WEIGHT = 10;
     // Augmentation du nombre de feelers pour une meilleure détection
     private static final int NUM_FEELERS = 7;
+    private Vector2D arrivalPoint;
 
     public AvoidBehavior(Vector2D target) {
         this.setTarget(target);
+        this.arrivalPoint = target;
         if (ModeleLabyrinth.getLabyrinth().getUseAstar()) {
             this.setWeight(BASE_AVOID_WEIGHT / 2);
         } else {
@@ -55,11 +57,17 @@ public class AvoidBehavior extends Behavior {
         double dy = b.getY() - a.getY();
         return Math.sqrt(dx * dx + dy * dy);
     }
+
     private boolean isObstacleAtPoint(Vector2D point) {
-        if (point == null) {
+        if (point == null || isArrivalPoint(point)) {
             return false;
         }
         return point.isObstacle();
+    }
+
+    private boolean isArrivalPoint(Vector2D point) {
+        return Math.abs(point.getX() - arrivalPoint.getX()) < 0.5 &&
+               Math.abs(point.getY() - arrivalPoint.getY()) < 0.5;
     }
 
     private Vector2D[] createFeelers(Vector2D position, Vector2D velocity) {
@@ -70,37 +78,31 @@ public class AvoidBehavior extends Behavior {
         feelers[0] = position.add(normalized.scale(MAX_SEE_AHEAD));
 
         // Feelers latéraux plus courts mais plus nombreux
-        feelers[1] = position.add(rotateVector(normalized, Math.PI / 8).scale(MAX_SEE_AHEAD * 0.8));
-        feelers[2] = position.add(rotateVector(normalized, -Math.PI / 8).scale(MAX_SEE_AHEAD * 0.8));
-
-        feelers[3] = position.add(rotateVector(normalized, Math.PI / 4).scale(MAX_SEE_AHEAD * 0.6));
-        feelers[4] = position.add(rotateVector(normalized, -Math.PI / 4).scale(MAX_SEE_AHEAD * 0.6));
-
-        feelers[5] = position.add(rotateVector(normalized, Math.PI / 2.5).scale(MAX_SEE_AHEAD * 0.4));
-        feelers[6] = position.add(rotateVector(normalized, -Math.PI / 2.5).scale(MAX_SEE_AHEAD * 0.4));
+        feelers[1] = position.add(rotateVector(normalized, Math.PI / 6).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[2] = position.add(rotateVector(normalized, -Math.PI / 6).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[3] = position.add(rotateVector(normalized, Math.PI / 4).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[4] = position.add(rotateVector(normalized, -Math.PI / 4).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[5] = position.add(rotateVector(normalized, Math.PI / 3).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[6] = position.add(rotateVector(normalized, -Math.PI / 3).scale(MAX_SEE_AHEAD * 0.2));
 
         return feelers;
     }
 
     private Vector2D calculateAvoidanceForce(Vector2D position, Vector2D obstaclePoint, Vector2D velocity) {
+        // Calcul du vecteur perpendiculaire à l'obstacle
         Vector2D away = position.subtract(obstaclePoint).normalize();
-        Vector2D currentDirection = velocity.normalize();
 
-        Vector2D tangentUp = new Vector2D(-away.getY(), away.getX()).normalize();
-        Vector2D tangentDown = new Vector2D(away.getY(), -away.getX()).normalize();
+        // Calcul des deux directions perpendiculaires possibles
+        Vector2D perpRight = new Vector2D(-away.getY(), away.getX());
+        Vector2D perpLeft = new Vector2D(away.getY(), -away.getX());
 
-        // Calcul du produit scalaire
-        double dotUp = tangentUp.getX() * currentDirection.getX() + tangentUp.getY() * currentDirection.getY();
-        double dotDown = tangentDown.getX() * currentDirection.getX() + tangentDown.getY() * currentDirection.getY();
+        // Choix de la direction perpendiculaire en fonction de la vélocité actuelle
+        Vector2D currentDir = velocity.normalize();
+        double dotRight = perpRight.getX() * currentDir.getX() + perpRight.getY() * currentDir.getY();
+        double dotLeft = perpLeft.getX() * currentDir.getX() + perpLeft.getY() * currentDir.getY();
 
-        Vector2D chosenTangent = (dotUp > dotDown) ? tangentUp : tangentDown;
-
-        // Ajustement des poids pour une meilleure évitement
-        double distance = position.subtract(obstaclePoint).magnitude();
-        double weightAway = 0.7 * (1 / (distance + 0.1)); // Plus fort quand proche
-        double weightTangent = 0.3;
-
-        return away.scale(weightAway).add(chosenTangent.scale(weightTangent)).normalize();
+        // Retourne la direction perpendiculaire qui correspond le mieux à la direction actuelle
+        return (dotRight > dotLeft) ? perpRight.normalize() : perpLeft.normalize();
     }
 
     // Rotation d'un vecteur d'un angle donné
@@ -113,3 +115,4 @@ public class AvoidBehavior extends Behavior {
         );
     }
 }
+
