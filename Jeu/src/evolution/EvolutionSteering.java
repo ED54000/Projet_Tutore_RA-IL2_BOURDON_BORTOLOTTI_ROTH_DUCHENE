@@ -84,15 +84,16 @@ public class EvolutionSteering implements Evolve {
             jeu.update(elapsedTimeInSeconds);
             lastUpdateTime = currentTime;
 
-            //// Vérifier si la manche dure trop longtemps
-            //if (System.currentTimeMillis() - debutManche > TEMPS_MAX_MANCHE) {
-            //    System.out.println(System.currentTimeMillis() - debutManche);
-            //    System.out.println("⏳ Manche trop longue ! Fin forcée.");
-            //    jeu.enemies.get(0).setHealth(0);
-            //    jeu.enemies.get(0).setIsDead(true);
-            //    jeu.update(elapsedTimeInSeconds);
-            //    jeu.setPauseManche(true);
-            //}
+            // Vérifier si la manche dure trop longtemps
+            if (System.currentTimeMillis() - debutManche > TEMPS_MAX_MANCHE) {
+                System.out.println("⏳ Manche trop longue ! Fin forcée.");
+                jeu.enemies.get(0).setHealth(0);
+                jeu.enemies.get(0).setIsDead(true);
+                jeu.update(elapsedTimeInSeconds);
+                jeu.update(elapsedTimeInSeconds);
+                jeu.setPauseManche(true);
+                jeu.setPause(true);
+            }
         }
 
         System.out.println("Fin de la simulation");
