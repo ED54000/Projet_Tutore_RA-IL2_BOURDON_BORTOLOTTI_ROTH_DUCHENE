@@ -1,0 +1,122 @@
+@startuml
+
+
+class ControllerGraphique {
+  + ControllerGraphique(ModeleLabyrinth): 
+  ~ score: double
+  + handle(MouseEvent): void
+   score: double
+}
+class ControllerLearn {
+  + ControllerLearn(ModeleLabyrinth): 
+  - stats: HashMap<ArrayList<Ennemy>, Double>
+  + handle(MouseEvent): void
+   stats: HashMap<ArrayList<Ennemy>, Double>
+}
+class ControllerNextManche {
+  + ControllerNextManche(ModeleLabyrinth): 
+  + handle(MouseEvent): void
+}
+class ControllerSimpleMode {
+  + ControllerSimpleMode(ModeleLabyrinth, ViewLabyrinth, ToggleButton, SimpleMode): 
+  + handle(MouseEvent): void
+}
+class ModeleLabyrinth { 
+}
+
+interface Observer << interface >> {
+  + update(Subject): void
+}
+interface Subject << interface >> {
+  + registerObserver(Observer): void
+  + notifyObserver(): void
+  + deleteObserver(Observer): void
+}
+class ViewGraphicsWindow {
+  + ViewGraphicsWindow(ModeleLabyrinth, ViewGraphiqueDirect, ViewGraphique, <color:green>ViewGraphiqueObjectif</color>): 
+  + update(Subject): void
+  + show(): void
+  + hide(): void
+}
+
+class ViewGraphique  {
+  + ViewGraphique(ModeleLabyrinth): 
+  - mancheTerminee: boolean
+  - graphique: LineChart<Number, Number>
+  - updateDonneesGraphique(): void
+  - updateXAxisBounds(): void
+  - createEmptyGraph(): LineChart<Number, Number>
+  + update(Subject): void
+   graphique: LineChart<Number, Number>
+   mancheTerminee: boolean
+}
+
+class ViewGraphiqueDirect {
+  + ViewGraphiqueDirect(ModeleLabyrinth): 
+  - graphique: BarChart<String, Number>
+  - appliquerCouleur(Ennemy, Data<String, Number>): void
+  + update(Subject): void
+  - initialiserNouvelleManche(): void
+  + mettreAJourGraphique(String): void
+   graphique: BarChart<String, Number>
+}
+class ViewGraphiqueObjectif  #00FF00{
+  + ViewGraphiqueObjectif(ModeleLabyrinth): 
+  - applyCustomColors(): void
+  + update(Subject): void
+  - createLineChart(): LineChart<Number, Number>
+  - updateDonneesGraphique(): void
+  - updateXAxisBounds(): void
+   graphiqueCombine: Node
+}
+class ViewLabyrinth {
+  + ViewLabyrinth(ModeleLabyrinth, Canvas): 
+  - images: Map<Character, Image>
+  - dessinerCase(GraphicsContext, char, int, int): void
+  - renderEnnemi(GraphicsContext, Ennemy): void
+  - dessinerJeu(ModeleLabyrinth, Canvas): void
+  + update(Subject): void
+   images: Map<Character, Image>
+}
+class ViewLoading {
+  + ViewLoading(Stage): 
+  + show(): void
+  + close(): void
+}
+class ViewLogs {
+  + ViewLogs(ModeleLabyrinth, VBox, ViewGraphiqueDirect): 
+  + update(Subject): void
+  - formatterEnnemy(Ennemy): String
+  - mettreAJourEnnemies(String): void
+}
+
+ControllerGraphique   "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ControllerLearn        -[#595959,dashed]->  ControllerNextManche  : "«create»"
+ControllerLearn       "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ControllerLearn        -[#595959,dashed]->  ViewLoading           : "«create»"
+ControllerNextManche  "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ControllerSimpleMode  "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ControllerSimpleMode  "1" *-[#595959,plain]-> "viewLabyrinth\n1" ViewLabyrinth         
+ModeleLabyrinth        -[#595959,dashed]->  ControllerLearn       : "«create»"
+ModeleLabyrinth        -[#595959,dashed]->  ControllerNextManche  : "«create»"
+ModeleLabyrinth       "1" *-[#595959,plain]-> "observateurs\n*" Observer              
+ModeleLabyrinth        -[#008200,dashed]-^  Subject               
+ViewGraphicsWindow    "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ViewGraphicsWindow     -[#008200,dashed]-^  Observer              
+ViewGraphicsWindow    "1" *-[#595959,plain]-> "graphiqueEvolution\n1" ViewGraphique         
+ViewGraphicsWindow    "1" *-[#595959,plain]-> "graphiqueDirect\n1" ViewGraphiqueDirect   
+ViewGraphicsWindow    "1" *-[#595959,plain]-> "graphiqueObjectif\n1" ViewGraphiqueObjectif 
+ViewGraphique         "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ViewGraphique          -[#008200,dashed]-^  Observer              
+ViewGraphiqueDirect   "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ViewGraphiqueDirect    -[#008200,dashed]-^  Observer              
+ViewGraphiqueObjectif "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ViewGraphiqueObjectif  -[#008200,dashed]-^  Observer              
+ViewLabyrinth         "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ViewLabyrinth          -[#008200,dashed]-^  Observer              
+ViewLogs              "1" *-[#595959,plain]-> "controllerLearn\n1" ControllerLearn       
+ViewLogs               -[#595959,dashed]->  ControllerLearn       : "«create»"
+ViewLogs              "1" *-[#595959,plain]-> "laby\n1" ModeleLabyrinth       
+ViewLogs               -[#008200,dashed]-^  Observer              
+ViewLogs              "1" *-[#595959,plain]-> "graphique\n1" ViewGraphiqueDirect   
+@enduml

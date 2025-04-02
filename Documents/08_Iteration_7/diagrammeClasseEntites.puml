@@ -1,0 +1,62 @@
+@startuml
+
+
+class ActiveDefense {
+  + ActiveDefense(double, double, double, int, double, long, String, String): 
+  - target: Ennemy
+   target: Ennemy
+}
+class Archer {
+  + Archer(double, double, String): 
+}
+class Berserker {
+  + Berserker(Vector2D, String): 
+}
+class Canon {
+  + Canon(double, double, String): 
+}
+class Defense {
+  + Defense(double, double, int, double, double, String, String, double): 
+}
+class Druide {
+  + Druide(Vector2D, String): 
+}
+class Ennemy {
+  + Ennemy(Vector2D, double, double, double, double, double, int, String, String, String): 
+  + healDamage(Ennemy, double, double): void
+  + calculerChemin(char[][], Vector2D): ArrayList<Vector2D>
+  + setArrived(boolean): void
+  + update(): void
+}
+class Entity {
+  + Entity(Vector2D, double, double, String, double, String, double): 
+  + isInRange(Entity): boolean
+  + takeDamage(double): void
+  + attack(Entity, double): void
+  + getBonus(String, String): double
+
+}
+class Giant {
+  + Giant(Vector2D, String): 
+}
+class Ninja {
+  + Ninja(Vector2D, String): 
+}
+class PassiveDefense {
+  + PassiveDefense(double, double, int, double, double, String, String): 
+  - attacked: boolean
+   attacked: boolean
+}
+
+Defense         ^--  Entity         
+ActiveDefense   ^--  Defense        
+ActiveDefense  "1" *--> "target\n1" Ennemy         
+ActiveDefense ^-- Archer          
+Ennemy         ^--  Entity         
+Ennemy          ^-- Berserker       
+ActiveDefense ^-- Canon           
+Ennemy          ^-- Druide          
+Ennemy          ^-- Giant           
+Ennemy          ^-- Ninja           
+Defense         ^-- PassiveDefense  
+@enduml
