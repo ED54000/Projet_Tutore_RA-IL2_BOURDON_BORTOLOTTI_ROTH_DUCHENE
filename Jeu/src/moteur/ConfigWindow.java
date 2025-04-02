@@ -72,7 +72,9 @@ public class ConfigWindow {
                     "Aucun chemin safe",
                     "Une tour unique",
                     "Nombreuses tours centrales",
-                    "Tours inaccessibles"
+                    "Tours inaccessibles",
+                    "Steering vide",
+                    "Steering avec défenses"
             );
             configPrefaiteComboBox.setValue("Aucune");
             configPrefaiteComboBox.setId("configPrefaiteComboBox");
@@ -93,6 +95,8 @@ public class ConfigWindow {
             labyrinthMap.put("Ligne", "Ressources/Ligne.txt");
             labyrinthMap.put("Nombreuses tours centrales", "Ressources/LignePlusieursTours.txt");
             labyrinthMap.put("Tours inaccessibles", "Ressources/ToursInaccessibles.txt");
+            labyrinthMap.put("Steering vide", "Ressources/Laby_ouvert.txt");
+            labyrinthMap.put("Steering avec défenses", "Ressources/Laby_ouvert_avec_def.txt");
 
             // Section de sélection du labyrinthe
             ComboBox<String> labyrinthComboBox = new ComboBox<>();
@@ -104,6 +108,8 @@ public class ConfigWindow {
                     "Ligne",
                     "Nombreuses tours centrales",
                     "Tours inaccessibles",
+                    "Steering vide",
+                    "Steering avec défenses",
                     "Plus"
             );
             labyrinthComboBox.setValue("Large");
@@ -218,6 +224,20 @@ public class ConfigWindow {
                             nbEnnemiesToWinField.setText("15");
                             roundsField.setText("10");
                             avecAstarBox.setSelected(true);
+                            break;
+                        case "Steering vide":
+                            labyrinthComboBox.setValue("Steering vide");
+                            enemiesField.setText("1");
+                            nbEnnemiesToWinField.setText("2");
+                            roundsField.setText("10");
+                            avecAstarBox.setSelected(false);
+                            break;
+                        case "Steering avec défenses":
+                            labyrinthComboBox.setValue("Steering avec défenses");
+                            enemiesField.setText("1");
+                            nbEnnemiesToWinField.setText("2");
+                            roundsField.setText("10");
+                            avecAstarBox.setSelected(false);
                             break;
                         default:
                             break;
