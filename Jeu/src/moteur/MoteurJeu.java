@@ -311,8 +311,10 @@ public class MoteurJeu extends Application {
 
         // Remplacement de la scène actuelle
         Scene endScene = new Scene(root);
-        stage.setScene(endScene);
-        stage.show();
+        Platform.runLater(() -> {
+            stage.setScene(endScene);
+            stage.show();
+        });
     }
 
     public void restartApp() {

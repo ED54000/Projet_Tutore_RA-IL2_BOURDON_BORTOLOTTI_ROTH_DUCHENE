@@ -186,15 +186,15 @@ public class ConfigWindow {
                     switch (newValue) {
                         case "Chemin safe":
                             labyrinthComboBox.setValue("Large");
-                            enemiesField.setText("15");
-                            nbEnnemiesToWinField.setText("12");
+                            enemiesField.setText("10");
+                            nbEnnemiesToWinField.setText("11");
                             roundsField.setText("10");
                             avecAstarBox.setSelected(true);
                             break;
                         case "Aucun chemin safe":
                             labyrinthComboBox.setValue("Large sans safe");
-                            enemiesField.setText("50");
-                            nbEnnemiesToWinField.setText("35");
+                            enemiesField.setText("40");
+                            nbEnnemiesToWinField.setText("37");
                             roundsField.setText("20");
                             avecAstarBox.setSelected(true);
                             break;
