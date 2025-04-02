@@ -325,13 +325,23 @@ public class Astar {
             for (int i = 0; i < grid.length; i++) {
                 for (int j = 0; j < grid[i].length; j++) {
                     if (grid[i][j] == c) {
+                        Vector2D towerPos = new Vector2D(i, j);
+                        
+                        // Vérifier si la tour a au moins une case accessible adjacente
+                        boolean hasAccessibleNeighbor = false;
+                        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+                        for (int[] dir : directions) {
+                            Vector2D neighbor = new Vector2D(i + dir[0], j + dir[1]);
+                            if (isValid(grid, neighbor) && isUnblocked(grid, neighbor)) {
+                                hasAccessibleNeighbor = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!hasAccessibleNeighbor) {
+                            continue;  // Passer à la tour suivante si celle-ci n'est pas accessible
+                        }
 
-//                        Vector2D towerPos = new Vector2D(i, j);
-//
-//                        // Vérifier si la tour est accessible
-//                        if (!isUnblocked(grid, towerPos)) {
-//                            continue;
-//                        }
                         // Calcul de la distance entre la position actuelle et la position de l'ennemi
                         double currentDistance = Math.sqrt(
                                 Math.pow(i - posEnnemi.getX(), 2) + Math.pow(j - posEnnemi.getY(), 2)
@@ -340,7 +350,7 @@ public class Astar {
                         // Mettre à jour si la tour est plus proche
                         if (currentDistance < nearestDistance) {
                             nearestDistance = currentDistance;
-                            nearest = new Vector2D(i, j);
+                            nearest = towerPos;
                         }
                     }
                 }
@@ -391,3 +401,4 @@ public class Astar {
     }
 
 }
+

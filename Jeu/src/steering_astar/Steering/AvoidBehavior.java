@@ -5,9 +5,9 @@ import laby.ModeleLabyrinth;
 
 public class AvoidBehavior extends Behavior {
 
-    private static final double MAX_SEE_AHEAD = 20;
-    private static final double BASE_AVOID_WEIGHT = 10;
-    private static final int NUM_FEELERS = 7;
+    private static final double MAX_SEE_AHEAD = 1.0;
+    private static final double BASE_AVOID_WEIGHT = 2.0;
+    private static final int NUM_FEELERS = 5;
 
     public AvoidBehavior(Vector2D target) {
         this.setTarget(target);
@@ -32,8 +32,7 @@ public class AvoidBehavior extends Behavior {
         double closestDist = Double.MAX_VALUE;
 
         for (Vector2D feeler : feelers) {
-            // Un obstacle est dans la trajectoire du feeler
-            if (isObstacleInPath(ennemy)) {
+            if (isObstacleAtPoint(feeler)) {
                 double dist = calculateDistance(position, feeler);
                 if (dist < closestDist) {
                     closestDist = dist;
@@ -61,20 +60,17 @@ public class AvoidBehavior extends Behavior {
 
         feelers[0] = position.add(normalized.scale(MAX_SEE_AHEAD));
 
-        double angleOffset = Math.PI / 4;
-        feelers[1] = position.add(rotateVector(normalized, Math.PI / 4).scale(MAX_SEE_AHEAD* 0.75));
-        feelers[2] = position.add(rotateVector(normalized, -Math.PI / 4).scale(MAX_SEE_AHEAD* 0.75));
+        feelers[1] = position.add(rotateVector(normalized, Math.PI / 6).scale(MAX_SEE_AHEAD* 0.75));
+        feelers[2] = position.add(rotateVector(normalized, -Math.PI / 6).scale(MAX_SEE_AHEAD* 0.75));
 
-        // Feelers supplémentaires
-        feelers[3] = position.add(rotateVector(normalized, Math.PI / 2).scale(MAX_SEE_AHEAD * 0.75));
-        feelers[4] = position.add(rotateVector(normalized, -Math.PI / 2 ).scale(MAX_SEE_AHEAD * 0.75));
 
-        feelers[5] = position.add(rotateVector(normalized, Math.PI / 3 ).scale(MAX_SEE_AHEAD * 0.25));
-        feelers[6] = position.add(rotateVector(normalized, -Math.PI / 3 ).scale(MAX_SEE_AHEAD * 0.25));
+        feelers[3] = position.add(rotateVector(normalized, Math.PI / 3 ).scale(MAX_SEE_AHEAD * 0.25));
+        feelers[4] = position.add(rotateVector(normalized, -Math.PI / 3 ).scale(MAX_SEE_AHEAD * 0.25));
 
         return feelers;
     }
 
+    // Rotation d'un vecteur d'un angle donné
     private Vector2D rotateVector(Vector2D v, double angle) {
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
@@ -84,14 +80,30 @@ public class AvoidBehavior extends Behavior {
         );
     }
 
-    private boolean isObstacleInPath(Ennemy ennemy) {
-        return ennemy.getPosition().add(ennemy.getVelocity().normalize().scale(MAX_SEE_AHEAD)).isObstacle();
+
+    private boolean isObstacleAtPoint(Vector2D point) {
+        if (point == null) {
+            return false;
+        }
+
+        // Utilisation de la méthode isObstacle() sur le point
+        boolean isObs = point.isObstacle();
+
+        return isObs;
     }
 
+
+    // Calcul de la force d'évitement combinant éloignement de l'obstacle et suivi du mur
     private Vector2D calculateAvoidanceForce(Vector2D position, Vector2D obstaclePoint, Vector2D velocity) {
-        // Calcul d'une force qui pousse perpendiculairement à l'obstacle
-        Vector2D awayFromObstacle = position.subtract(obstaclePoint);
-        Vector2D perpendicularVector = new Vector2D(-velocity.getY(), velocity.getX()).normalize();
-        return awayFromObstacle.normalize().add(perpendicularVector).normalize();
+        // Force dirigée vers l'opposé de l'obstacle
+        Vector2D away = position.subtract(obstaclePoint).normalize();
+        // Force tangentielle permettant de "suivre" le mur plutôt que de se heurter directement
+        Vector2D tangent = new Vector2D(-away.getY(), away.getX()).normalize();
+
+        // Pondération ajustable des deux composantes
+        double weightAway = 0.7;
+        double weightTangent = 0.3;
+
+        return away.scale(weightAway).add(tangent.scale(weightTangent)).normalize();
     }
 }

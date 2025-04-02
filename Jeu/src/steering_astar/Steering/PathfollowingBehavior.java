@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class PathfollowingBehavior extends Behavior {
 
-    private static final double BASE_PATHFOLLOWING_WEIGHT = 1;
+    private static final double BASE_PATHFOLLOWING_WEIGHT = 5.0;
     private ArrayList<Vector2D> checkpoints;
     private Vector2D currentCheckpoint;
     private int currentCheckpointIndex;
