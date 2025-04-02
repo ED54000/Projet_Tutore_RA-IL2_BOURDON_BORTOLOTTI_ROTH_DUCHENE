@@ -1,0 +1,51 @@
+@startuml
+
+
+class AvoidBehavior {
+  - MAX_SEE_AHEAD: double
+  - NUM_FEELERS: int
+  - arrivalPoint: Vector2D
+  - BASE_AVOID_WEIGHT: double
+}
+class Behavior {
+  - TARGET_RADIUS: double
+  - weight: double
+  # ACCELERATION_DIVISER: double
+  - target: Vector2D
+}
+class Ennemy {
+  - distanceStartToArrival: int
+  - spriteHeal: Image
+  - speed: double
+  - killerType: String
+  - distanceToArrival: int
+  - isHeal: boolean
+  - distanceTraveled: double
+  - positionReel: Vector2D
+  - isArrived: boolean
+  - listBehaviors: List<Behavior>
+  - behaviorString: String
+  - healthBase: double
+  - velocity: Vector2D
+  - timeSpawn: int
+  - survivalTime: long
+}
+class PathfollowingBehavior {
+  - checkpoints: ArrayList<Vector2D>
+  - currentCheckpoint: Vector2D
+  - currentCheckpointIndex: int
+  - BASE_PATHFOLLOWING_WEIGHT: double
+}
+class SeekBehavior {
+  - BASE_SEEK_WEIGHT: double
+  - BASE_ARRIVAL_WEIGHT: double
+  - SLOW_RADIUS: double
+}
+
+AvoidBehavior          -[#000082,plain]-^  Behavior              
+Ennemy                 -[#595959,dashed]->  AvoidBehavior         : "«create»"
+Ennemy                "1" *-[#595959,plain]-> "listBehaviors\n*" Behavior              
+PathfollowingBehavior  -[#000082,plain]-^  Behavior              
+PathfollowingBehavior  -[#595959,dashed]->  SeekBehavior          : "«create»"
+SeekBehavior           -[#000082,plain]-^  Behavior              
+@enduml
