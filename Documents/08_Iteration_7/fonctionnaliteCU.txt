@@ -1,26 +1,20 @@
 Tristan :
-	- Refonte logs
-	- Amélioration fonction de score
-	- Première version de l’évolution de steering behaviors
+	- Évolution de steering behaviors
 	- Résolution de bugs
 
 Marin : 
-	- Ajout d’une fenêtre de chargement lors de l’évolution
-	- Ajout d’une fenêtre de fin de partie
-	- Première version de l’évolution de steering behaviors
+	- Ajout de la possibilité de recommencer la partie
 	- Résolution de bugs
 
 Florian : 
-	- Refonte graphique du menu de démarrage
-	- Ajout de configurations de test
-    - Ajout d’une fenêtre séparée pour afficher les graphiques
+	- Ajout des sprites des défenses en mode simple
 	- Résolutions de bugs
 
 Eloi :
-	- Création d’un bouton "aide" qui donne des informations sur le jeu
-	- Refonte graphique du menu de démarrage
-	- Ajout d’une fenêtre séparée pour afficher les graphiques
-	- Ajout de configurations de test
+	- Modification des sprites des défenses
+	- Ajout des sprites des défenses en mode simple
+	- Affichage en temps réel du nombre d’ennemis restant pour atteindre l’objectif
+	- Ajout d’un graphique pour afficher le nombre d’ennemis qui arrivent
 	- Résolution de bugs
 
 
@@ -34,7 +28,10 @@ Lorsqu'une défense est détruite, si A* est utilisé, le chemin est recalculé 
 au cours d'une manche. Pouvoir choisir un mode simple qui simplifie l'affichage. Un graphique avec les points de vie de chaque ennemi est affiché en temps réel.
 Voir le déroulement de la manche dans les logs (les pv de chaque entité en temps réel, quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
 Faire évoluer les groupes d'ennemies à chaque manche pour essayer d'optimiser la composition des groupes afin de gagner la partie.
-Afficher un graphique représantant l'évolution de la composition du groupe d'ennemi au cours des manches.
-Afficher un graphique représantant la vie de chaque ennemi en temps réel au cours d'une manche.
+Afficher un graphique représentant l'évolution de la composition du groupe d'ennemi au cours des manches.
+Afficher un graphique représentant la vie de chaque ennemi en temps réel au cours d'une manche.
 Afficher une fenêtre d'aide donnant des informations sur le jeu.
 Choisir parmi différentes configurations préfaites pour pouvoir observer différentes situations d'apprentissage.
+Afficher un graphique représentant le nombre d'ennemis qui arrivent en temps réel au cours d'une manche, ainsi que l'objectif.
+Recommencer la partie depuis un écran de fin de partie.
+Faire évoluer un ennnemi au cours des manches en cherchant à obtenir le meilleur chemin possible, en plaçant des points de passage.

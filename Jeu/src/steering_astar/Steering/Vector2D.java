@@ -128,8 +128,8 @@ public class Vector2D {
     }
 
     public int[] getCaseFromVector(Vector2D vector) {
-        int x = (int) round(vector.x / ModeleLabyrinth.getTailleCase());
-        int y = (int) round(vector.y / ModeleLabyrinth.getTailleCase());
+        int x = (int) round(vector.x);
+        int y = (int) round(vector.y);
         return new int[]{x, y};
     }
 
@@ -145,7 +145,7 @@ public class Vector2D {
         }
 
         char theCase = m.getCase(y, x);
-        return theCase == '#' || theCase == 'A' || theCase == 'C';
+        return theCase == '#' ;
     }
 
     public Vector2D getClosestCaseCenter(){

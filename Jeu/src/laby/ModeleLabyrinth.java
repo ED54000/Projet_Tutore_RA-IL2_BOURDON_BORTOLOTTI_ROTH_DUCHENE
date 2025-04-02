@@ -360,8 +360,8 @@ public class ModeleLabyrinth implements Jeu, Subject {
     }
 
     private boolean hasReachedArrival(Ennemy enemy) {
-        return Math.abs(enemy.getPosition().getX() - XArrivalRender) <= 10 &&
-                Math.abs(enemy.getPosition().getY() - YArrivalRender) <= 10 &&
+        return Math.abs(enemy.getPosition().getX() - XArrivalRender) <= 20 &&
+                Math.abs(enemy.getPosition().getY() - YArrivalRender) <= 20 &&
                 !enemy.getIsArrived() &&
                 !deadEnemies.contains(enemy);
     }

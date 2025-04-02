@@ -4,15 +4,19 @@ import entites.enemies.Ennemy;
 import laby.ModeleLabyrinth;
 
 public class AvoidBehavior extends Behavior {
-
-    private static final double MAX_SEE_AHEAD = 1.25;
-    private static final double BASE_AVOID_WEIGHT = 4;
-    private static final int NUM_FEELERS = 3;
+    // Augmentation de la distance de détection
+    private static final double MAX_SEE_AHEAD = 2.0;
+    // Réduction du poids de base pour éviter la panique
+    private static final double BASE_AVOID_WEIGHT = 10;
+    // Augmentation du nombre de feelers pour une meilleure détection
+    private static final int NUM_FEELERS = 7;
+    private Vector2D arrivalPoint;
 
     public AvoidBehavior(Vector2D target) {
         this.setTarget(target);
-        if (ModeleLabyrinth.getLabyrinth().getUseAstar()){
-            this.setWeight(BASE_AVOID_WEIGHT/2);
+        this.arrivalPoint = target;
+        if (ModeleLabyrinth.getLabyrinth().getUseAstar()) {
+            this.setWeight(BASE_AVOID_WEIGHT / 2);
         } else {
             this.setWeight(BASE_AVOID_WEIGHT);
         }
@@ -23,23 +27,16 @@ public class AvoidBehavior extends Behavior {
         Vector2D position = ennemy.getPositionReel();
         Vector2D velocity = ennemy.getVelocity();
 
-
-        // Si la longueur est petit
         if (velocity.magnitude() < 0.0001) {
             return new Vector2D(0, 0);
         }
 
-        //creation des feelers
         Vector2D[] feelers = createFeelers(position, velocity);
-
-        double closestDist = Double.MAX_VALUE;
         Vector2D closestPoint = null;
+        double closestDist = Double.MAX_VALUE;
 
-
-        //Pour chaque feeler
         for (Vector2D feeler : feelers) {
-            // Un obstacle est dans la trajectoire du feeler
-            if (isObstacleInPath(ennemy)) {
+            if (isObstacleAtPoint(feeler)) {
                 double dist = calculateDistance(position, feeler);
                 if (dist < closestDist) {
                     closestDist = dist;
@@ -52,7 +49,6 @@ public class AvoidBehavior extends Behavior {
             return new Vector2D(0, 0);
         }
 
-        // Calcul de la force d'évitement
         return calculateAvoidanceForce(position, closestPoint, velocity);
     }
 
@@ -62,19 +58,54 @@ public class AvoidBehavior extends Behavior {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    private boolean isObstacleAtPoint(Vector2D point) {
+        if (point == null || isArrivalPoint(point)) {
+            return false;
+        }
+        return point.isObstacle();
+    }
+
+    private boolean isArrivalPoint(Vector2D point) {
+        return Math.abs(point.getX() - arrivalPoint.getX()) < 0.5 &&
+                Math.abs(point.getY() - arrivalPoint.getY()) < 0.5;
+    }
+
     private Vector2D[] createFeelers(Vector2D position, Vector2D velocity) {
         Vector2D[] feelers = new Vector2D[NUM_FEELERS];
         Vector2D normalized = velocity.normalize();
 
+        // Feeler central plus long pour voir plus loin devant
         feelers[0] = position.add(normalized.scale(MAX_SEE_AHEAD));
 
-        double angleOffset = Math.PI / 4;
-        feelers[1] = position.add(rotateVector(normalized, angleOffset).scale(MAX_SEE_AHEAD));
-        feelers[2] = position.add(rotateVector(normalized, -angleOffset).scale(MAX_SEE_AHEAD));
+        // Feelers latéraux plus courts mais plus nombreux
+        feelers[1] = position.add(rotateVector(normalized, Math.PI / 6).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[2] = position.add(rotateVector(normalized, -Math.PI / 6).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[3] = position.add(rotateVector(normalized, Math.PI / 4).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[4] = position.add(rotateVector(normalized, -Math.PI / 4).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[5] = position.add(rotateVector(normalized, Math.PI / 3).scale(MAX_SEE_AHEAD * 0.2));
+        feelers[6] = position.add(rotateVector(normalized, -Math.PI / 3).scale(MAX_SEE_AHEAD * 0.2));
 
         return feelers;
     }
 
+    private Vector2D calculateAvoidanceForce(Vector2D position, Vector2D obstaclePoint, Vector2D velocity) {
+        // Calcul du vecteur perpendiculaire à l'obstacle
+        Vector2D away = position.subtract(obstaclePoint).normalize();
+
+        // Calcul des deux directions perpendiculaires possibles
+        Vector2D perpRight = new Vector2D(-away.getY(), away.getX());
+        Vector2D perpLeft = new Vector2D(away.getY(), -away.getX());
+
+        // Choix de la direction perpendiculaire en fonction de la vélocité actuelle
+        Vector2D currentDir = velocity.normalize();
+        double dotRight = perpRight.getX() * currentDir.getX() + perpRight.getY() * currentDir.getY();
+        double dotLeft = perpLeft.getX() * currentDir.getX() + perpLeft.getY() * currentDir.getY();
+
+        // Retourne la direction perpendiculaire qui correspond le mieux à la direction actuelle
+        return (dotRight > dotLeft) ? perpRight.normalize() : perpLeft.normalize();
+    }
+
+    // Rotation d'un vecteur d'un angle donné
     private Vector2D rotateVector(Vector2D v, double angle) {
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
@@ -83,14 +114,5 @@ public class AvoidBehavior extends Behavior {
                 v.getX() * sin + v.getY() * cos
         );
     }
-
-    private boolean isObstacleInPath(Ennemy ennemy) {
-        return ennemy.getPosition().add(ennemy.getVelocity().normalize().scale(MAX_SEE_AHEAD)).isObstacle();
-    }
-
-    private Vector2D calculateAvoidanceForce(Vector2D position, Vector2D obstaclePoint, Vector2D velocity) {
-        Vector2D awayFromObstacle = position.subtract(obstaclePoint);
-        Vector2D perpendicularVector = new Vector2D(-velocity.getY(), velocity.getX()).normalize();
-        return awayFromObstacle.normalize().add(perpendicularVector).normalize();
-    }
 }
+
