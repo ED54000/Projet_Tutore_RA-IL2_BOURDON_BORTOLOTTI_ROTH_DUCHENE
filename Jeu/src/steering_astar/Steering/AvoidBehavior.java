@@ -11,8 +11,8 @@ public class AvoidBehavior extends Behavior {
 
     public AvoidBehavior(Vector2D target) {
         this.setTarget(target);
-        if (ModeleLabyrinth.getLabyrinth().getUseAstar()){
-            this.setWeight(BASE_AVOID_WEIGHT/2);
+        if (ModeleLabyrinth.getLabyrinth().getUseAstar()) {
+            this.setWeight(BASE_AVOID_WEIGHT / 2);
         } else {
             this.setWeight(BASE_AVOID_WEIGHT);
         }
@@ -60,12 +60,12 @@ public class AvoidBehavior extends Behavior {
 
         feelers[0] = position.add(normalized.scale(MAX_SEE_AHEAD));
 
-        feelers[1] = position.add(rotateVector(normalized, Math.PI / 6).scale(MAX_SEE_AHEAD* 0.75));
-        feelers[2] = position.add(rotateVector(normalized, -Math.PI / 6).scale(MAX_SEE_AHEAD* 0.75));
+        feelers[1] = position.add(rotateVector(normalized, Math.PI / 6).scale(MAX_SEE_AHEAD * 0.75));
+        feelers[2] = position.add(rotateVector(normalized, -Math.PI / 6).scale(MAX_SEE_AHEAD * 0.75));
 
 
-        feelers[3] = position.add(rotateVector(normalized, Math.PI / 3 ).scale(MAX_SEE_AHEAD * 0.25));
-        feelers[4] = position.add(rotateVector(normalized, -Math.PI / 3 ).scale(MAX_SEE_AHEAD * 0.25));
+        feelers[3] = position.add(rotateVector(normalized, Math.PI / 3).scale(MAX_SEE_AHEAD * 0.25));
+        feelers[4] = position.add(rotateVector(normalized, -Math.PI / 3).scale(MAX_SEE_AHEAD * 0.25));
 
         return feelers;
     }
@@ -87,23 +87,34 @@ public class AvoidBehavior extends Behavior {
         }
 
         // Utilisation de la méthode isObstacle() sur le point
-        boolean isObs = point.isObstacle();
 
-        return isObs;
+        return point.isObstacle();
     }
 
 
     // Calcul de la force d'évitement combinant éloignement de l'obstacle et suivi du mur
     private Vector2D calculateAvoidanceForce(Vector2D position, Vector2D obstaclePoint, Vector2D velocity) {
-        // Force dirigée vers l'opposé de l'obstacle
         Vector2D away = position.subtract(obstaclePoint).normalize();
-        // Force tangentielle permettant de "suivre" le mur plutôt que de se heurter directement
-        Vector2D tangent = new Vector2D(-away.getY(), away.getX()).normalize();
+        Vector2D currentDirection = velocity.normalize();
 
-        // Pondération ajustable des deux composantes
-        double weightAway = 0.7;
-        double weightTangent = 0.3;
+        // Calcul des deux tangentes possibles (haut et bas)
+        Vector2D tangentUp = new Vector2D(-away.getY(), away.getX()).normalize();
+        Vector2D tangentDown = new Vector2D(away.getY(), -away.getX()).normalize();
 
-        return away.scale(weightAway).add(tangent.scale(weightTangent)).normalize();
+        // Calcul du produit scalaire
+        double dotUp = tangentUp.getX() * currentDirection.getX() + tangentUp.getY() * currentDirection.getY();
+        double dotDown = tangentDown.getX() * currentDirection.getX() + tangentDown.getY() * currentDirection.getY();
+
+        // Choisir la tangente qui s'aligne le mieux avec la direction actuelle
+        Vector2D chosenTangent = (dotUp > dotDown) ? tangentUp : tangentDown;
+
+        // Calcul de l'angle avec le produit scalaire manuel
+        double dotProduct = currentDirection.getX() * away.getX() + currentDirection.getY() * away.getY();
+        double angle = Math.abs(Math.acos(Math.max(-1, Math.min(1, dotProduct))));
+
+        double weightAway = 0.4 * (1 - Math.cos(angle));
+        double weightTangent = 0.6;
+
+        return away.scale(weightAway).add(chosenTangent.scale(weightTangent)).normalize();
     }
 }
