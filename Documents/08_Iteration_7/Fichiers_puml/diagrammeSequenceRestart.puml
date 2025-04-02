@@ -1,0 +1,78 @@
+@startuml
+participant "MoteurJeu" as MJ
+participant "Platform" as P
+participant "Stage" as S
+participant "ModeleLabyrinth" as ML
+participant "Canvas" as C
+participant "ViewLabyrinth" as VL
+participant "ConfigWindow" as CW
+
+MJ -> MJ : restartApp()
+activate MJ
+
+MJ -> P : runLater(lambda)
+activate P
+
+' Fermeture de l'ancienne fenêtre
+P -> S : close()
+activate S
+deactivate S
+
+' Création des nouveaux composants
+P -> S ** : new Stage()
+
+P -> ML ** : new ModeleLabyrinth()
+P -> MJ : setLaby(newLaby)
+MJ --> P
+
+P -> C ** : new Canvas()
+P -> C : setWidth()
+activate C
+C --> P 
+deactivate C
+P -> C : bind(widthProperty)
+activate C
+C --> P 
+deactivate C
+P -> C : bind(heightProperty)
+activate C
+C --> P 
+deactivate C
+P -> VL ** : new ViewLabyrinth(newLaby, newCanvas)
+P -> ML : registerObserver(newViewLabyrinth)
+activate ML
+ML --> P
+deactivate ML
+' Nettoyage et ajout du canvas
+P -> MJ : canvasContainer.clear()
+MJ --> P
+P -> MJ : canvasContainer.add(newCanvas)
+MJ --> P
+' Réinitialisation
+P -> MJ : FPS = BASE_FPS
+MJ --> P
+P -> CW ** : new ConfigWindow(newLaby, newStage, newCanvas, this)
+P -> ML : resetStats()
+activate ML
+ML --> P
+deactivate ML
+
+' Configuration de la nouvelle fenêtre
+P -> S : getIcons().add(icon)
+activate S
+S --> P 
+deactivate S
+P -> S : setTitle("Tower Defense")
+activate S
+S --> P
+deactivate S
+' Affichage de la configuration
+P -> CW : show(newStage)
+activate CW
+CW --> P 
+deactivate CW
+
+P --> MJ
+deactivate P
+deactivate MJ
+@enduml
