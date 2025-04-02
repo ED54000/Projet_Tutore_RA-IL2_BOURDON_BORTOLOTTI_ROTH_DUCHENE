@@ -175,7 +175,7 @@ public class ViewLogs implements Observer {
             }
         }
         else {
-            System.out.println("[logs] L'ennemie est introuvable");
+            //System.out.println("[logs] L'ennemie est introuvable");
         }
     }
 

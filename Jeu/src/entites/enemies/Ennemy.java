@@ -80,11 +80,6 @@ public abstract class Ennemy extends Entity {
                 }else {
                     target.setIsHeal(true);
                 }
-                System.out.println("Soin de " + this.getName() + " sur " + target.getName());
-                System.out.println("Montant de soin : " + Math.abs(heal));
-                System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
-                System.out.println("Vie de base de " + target.getName() + " : " + target.healthBase);
-                System.out.println("=====================================");
             }
         }
     }
@@ -188,7 +183,7 @@ public abstract class Ennemy extends Entity {
     }
 
     public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
-        //     System.out.println(vector2DS.size());
+        System.out.println(vector2DS.size());
         this.distanceStartToArrival = vector2DS.size();
     }
 

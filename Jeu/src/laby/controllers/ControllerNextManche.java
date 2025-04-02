@@ -35,9 +35,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         }
         int nbManches = laby.getNbManches()+1;
         laby.setNbManches(nbManches);
-        System.out.println("===========================================");
-        System.out.println("Fin de la manche");
-        System.out.println("Nouvelle manche : " + nbManches);
         ModeleLabyrinth.setLogs("Manche "+nbManches);
 
         // Si le jeu est en mode simple
