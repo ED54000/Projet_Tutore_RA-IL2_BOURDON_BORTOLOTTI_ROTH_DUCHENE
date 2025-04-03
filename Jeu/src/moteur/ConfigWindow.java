@@ -193,7 +193,7 @@ public class ConfigWindow {
                         case "Chemin safe":
                             labyrinthComboBox.setValue("Large");
                             enemiesField.setText("10");
-                            nbEnnemiesToWinField.setText("11");
+                            nbEnnemiesToWinField.setText("10");
                             roundsField.setText("10");
                             avecAstarBox.setSelected(true);
                             break;
