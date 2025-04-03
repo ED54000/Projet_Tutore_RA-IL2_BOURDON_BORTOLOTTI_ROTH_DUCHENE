@@ -31,7 +31,7 @@ Faire évoluer les groupes d'ennemies à chaque manche pour essayer d'optimiser 
 Afficher un graphique représentant l'évolution de la composition du groupe d'ennemi au cours des manches.
 Afficher un graphique représentant la vie de chaque ennemi en temps réel au cours d'une manche.
 Afficher une fenêtre d'aide donnant des informations sur le jeu.
-Choisir parmi différentes configurations préfaites pour pouvoir observer différentes situations d'apprentissage.
+Choisir parmi différentes configurations pré faites pour pouvoir observer différentes situations d'apprentissage.
 Afficher un graphique représentant le nombre d'ennemis qui arrivent en temps réel au cours d'une manche, ainsi que l'objectif.
 Recommencer la partie depuis un écran de fin de partie.
-Faire évoluer un ennnemi au cours des manches en cherchant à obtenir le meilleur chemin possible, en plaçant des points de passage.
+Faire évoluer un ennemi au cours des manches en cherchant à obtenir le meilleur chemin possible, en plaçant des points de passage.
