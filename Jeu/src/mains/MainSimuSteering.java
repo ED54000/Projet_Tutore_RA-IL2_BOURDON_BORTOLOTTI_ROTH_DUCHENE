@@ -34,19 +34,6 @@ public class MainSimuSteering extends Application {
             evolution.nbchekpoints = 1;
             stats = evolution.evaluate(stats);
 
-            //System.out.println("Avant l'évolution");
-            ////parcours stats
-            //for (ArrayList<Ennemy> groupe : stats.keySet()) {
-            //    Ennemy ennemy = groupe.get(0);
-            //    //Affiche les waypoints
-            //    System.out.println("Waypoints de " + ennemy.getName() + "(" + stats.get(groupe) + ")");
-            //    for (Vector2D waypoint : ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints()) {
-            //        //System.out.println(waypoint);
-            //        System.out.println(waypoint.div(41));
-            //    }
-//
-            //}
-
             if (stats == null) {
                 System.out.println("Les ennemies ont gagné la partie");
                 break;
@@ -61,10 +48,6 @@ public class MainSimuSteering extends Application {
                 //Affiche les waypoints
                 System.out.println("Waypoints de " + ennemy.getName() + "(" + stats.get(groupe) + ")");
                 for (Vector2D waypoint : ((PathfollowingBehavior) ennemy.getListBehavior().get(0)).getCheckpoints()) {
-                    //System.out.println(waypoint);
-                    //Affiche les waypoints divisés par 2
-                    //System.out.println("Waypoints divisés par 41");
-                    System.out.println(waypoint.div(41));
                     if (ennemy.getDistanceTraveled()<distanceMin && ennemy.getDistanceTraveled() != 0) {
                         distanceMin = ennemy.getDistanceTraveled();
                     }

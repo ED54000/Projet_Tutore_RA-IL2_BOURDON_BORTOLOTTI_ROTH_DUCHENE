@@ -104,8 +104,6 @@ public class Astar {
             row = nextNode.getX();
             col = nextNode.getY();
         } while (cellDetails[(int) row][(int) col].parent != nextNode);
-
-        //System.out.println(pathArray);
         return pathArray;
     }
 
@@ -197,7 +195,6 @@ public class Astar {
 
                     if (isDestination(neighbour, dest)) {
                         cellDetails[(int) neighbour.getX()][(int) neighbour.getY()].parent = new Vector2D(i, j);
-                        //System.out.println("The destination cell is found");
                         return tracePath(cellDetails, dest);
                     } else if (!closedList[(int) neighbour.getX()][(int) neighbour.getY()]
                             && isUnblocked(grid, neighbour)) {

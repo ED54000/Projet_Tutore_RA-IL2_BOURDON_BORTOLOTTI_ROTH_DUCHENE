@@ -102,7 +102,6 @@ public abstract class Ennemy extends Entity {
         velocity = velocity.add(totalForce).normalize().scale(speed);
 
         position = position.add(velocity);
-        //System.out.println("Position : " + position);
         positionReel = position.divide(ModeleLabyrinth.getTailleCase());
     }
 
@@ -183,7 +182,6 @@ public abstract class Ennemy extends Entity {
     }
 
     public void setDistanceStartToArrival(ArrayList<Vector2D> vector2DS) {
-        System.out.println(vector2DS.size());
         this.distanceStartToArrival = vector2DS.size();
     }
 

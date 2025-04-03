@@ -37,7 +37,7 @@ public class EnnemyEvolution {
                     if(e.getIsArrived()){
                         score += 1500;
                     }
-                    //System.out.println("score fuyard: "+score);
+
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestFugitiveScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -62,7 +62,6 @@ public class EnnemyEvolution {
                     if(e.getIsArrived()){
                         score += 1500;
                     }
-                    //System.out.println("score normal: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestNormalScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -87,7 +86,6 @@ public class EnnemyEvolution {
                     if(e.getIsArrived()){
                         score += 1500;
                     }
-                  //  System.out.println("score healer: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestHealerScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -113,7 +111,6 @@ public class EnnemyEvolution {
                     if(e.getIsArrived()){
                         score += 1500;
                     }
-                   // System.out.println("score kamikaze: "+score);
                     // Si le score est meilleur que le score du second meilleur ennemi actuel
                     if(score > bestKamikazeScores[1]){
                         // Si le score est meilleur que le score du meilleur ennemi actuel
@@ -152,11 +149,9 @@ public class EnnemyEvolution {
     public static double[][] getAverageStats(List<Ennemy> ennemies) {
         // On récupère les meilleurs couples
         Ennemy[][] bestCouples = getBestCouples(ennemies);
-      //  System.out.println("bestcouples : Ninja : "+bestCouples[0][0]+" "+bestCouples[0][1]+" Géants :"+bestCouples[1][0]+" "+bestCouples[1][1]+" Druide : "+bestCouples[2][0]+" "+bestCouples[2][1]+" Berserker vitesses : "+bestCouples[3][0].getSpeed());
 
         // On créee un tableau pour les statistiques moyennes
         double[][] averageStats = new double[4][3]; // [0] : fuyarts, [1] : normaux, [2] : soigneurs, [3] : kamikazes
-        // [][0] : vie, [][1] : vitesse, [][2] : dégats, [][3] : vitesse d'attaque, [][4] : portée
 
         // On parcourt les couples de meilleurs ennemis
         for (int i = 0; i < bestCouples.length; i++) {
@@ -182,9 +177,6 @@ public class EnnemyEvolution {
                         speedSum += startStatsArray[1];
                         damagesSum += startStatsArray[2];
 
-                    } else {
-                        // Si l'ennemi n'a pas d'entrées dans startStats, on affiche une erreur
-                      //  System.err.println("Aucune statistique de départ trouvée pour l'ennemi: " + e);
                     }
                 }
             }
@@ -224,12 +216,7 @@ public class EnnemyEvolution {
         if(averageStats[3][0] < 1){
             averageStats[3][0] = 50;
         }
-
-//        System.out.println("Fugitive : "+averageStats[0][0]+" "+averageStats[0][1]+" "+averageStats[0][2]+" "+averageStats[0][3]+" "+averageStats[0][4]+"" +
-//                "Normal : vie : "+averageStats[1][0]+" vitesse : "+averageStats[1][1]+" degats : "+averageStats[1][2]+" attackspeed : "+averageStats[1][3]+" range : "+averageStats[1][4]+"" +
-//                "Healer : "+averageStats[2][0]+" "+averageStats[2][1]+" "+averageStats[2][2]+" "+averageStats[2][3]+" "+averageStats[2][4]+"" +
-//                "Kamikaze : "+averageStats[3][0]+" "+averageStats[3][1]+" "+averageStats[3][2]+" "+averageStats[3][3]+" "+averageStats[3][4]);
-           return averageStats;
+         return averageStats;
     }
 
     /**
@@ -345,16 +332,6 @@ public class EnnemyEvolution {
     public static ArrayList<Ennemy> evoluer(ArrayList<Ennemy> ennemies){
         // On affecte les statistiques moyennes des meilleurs ennemis aux ennemis morts (pour chaque comportement)
         ennemies = affectStatsToDeadEnnemies(ennemies);
-      //  System.out.println("Stats ennemies après affectation : ");
-        for (Ennemy e : ennemies) {
-      //      System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
-        }
-
-     //   System.out.println("Stats ennemies après mutation : ");
-        ArrayList<Ennemy> ennemiesMutated = addRandomStats(ennemies);
-        for (Ennemy e : ennemiesMutated) {
-      //      System.out.println("Ennemy : " + e.getName() + " type : " + e.getType() + " vie : " + e.getHealth() + " vitesse : " + e.getSpeed() + " dégâts : " + e.getDamages() + " distance arrivée : " + e.getDistanceToArrival() + " Is arrived : " + e.isItArrived() + " survivaltime: " + e.getSurvivalTime());
-        }
 
         // On ajoute des statistiques aléatoires aux ennemis (mutation)
         return addRandomStats(ennemies);

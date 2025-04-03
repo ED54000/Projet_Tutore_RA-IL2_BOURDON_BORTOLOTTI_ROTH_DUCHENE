@@ -223,7 +223,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
 
         // On sauvegarde les statistiques des ennemis
         EvolutionGroupe.saveStartStats(ennemies);
-        //System.out.println("on a sauvegardé les stats au start de la liste d'ennemis suivante : " + this.enemies + "on les affiche");
         // On parcourt la map pour afficher chaque couple clé valeur
         Map<Ennemy, double[]> map = EvolutionGroupe.startStats;
         for (Map.Entry<Ennemy, double[]> entry : map.entrySet()) {
@@ -235,7 +234,6 @@ public class ModeleLabyrinth implements Jeu, Subject {
             for (double value : values) {
                 System.out.print(value + " ");
             }
-            System.out.println();
         }
         return ennemies;
     }
@@ -589,16 +587,7 @@ public class ModeleLabyrinth implements Jeu, Subject {
             );
             new ControllerLearn(this).handle(fakeClickEvent);
             new ControllerNextManche(this).handle(fakeClickEvent);
-        } /*else if (simulationEvolution) {
-            EnnemyEvolutionv2 evolution = new EnnemyEvolutionv2();
-            double score = evolution.getScore(ennemiesEndOfManche.get(0));
-            this.defenses = this.getDefenseEndOfManche();
-            System.out.println("Defenses toutes neuve : " + this.defenses);
-            // On sauvegarde les score de l'ennemi dans une map avec l'ennemi comme clé et le score comme valeur
-            ennemyScore.put((Giant) ennemiesEndOfManche.get(0), score);
-            this.end = true;
         }
-        */
     }
 
     private void calculateFinalDistances() {

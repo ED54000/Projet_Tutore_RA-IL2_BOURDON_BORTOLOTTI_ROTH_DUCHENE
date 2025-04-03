@@ -22,7 +22,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent mouseEvent) {
-        //System.out.println("Clique manche suivante");
         // On met à jour le time de départ de la manche
         laby.setStartTime();
         laby.setPauseManche(false);

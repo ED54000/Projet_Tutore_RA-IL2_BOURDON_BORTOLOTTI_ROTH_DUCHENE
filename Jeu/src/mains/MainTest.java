@@ -24,7 +24,6 @@ public class MainTest extends Application {
                 System.out.println("Start Time : "+jeu.getStartTime());
 
                 long lastUpdateTime = System.nanoTime();
-                //System.out.println("Jeu fini : " + jeu.etreFini());
                 while (!jeu.etreFini()) {
                     long currentTime = System.nanoTime();
                     double elapsedTimeInSeconds = (currentTime - lastUpdateTime) / 1_000_000_000.0;
