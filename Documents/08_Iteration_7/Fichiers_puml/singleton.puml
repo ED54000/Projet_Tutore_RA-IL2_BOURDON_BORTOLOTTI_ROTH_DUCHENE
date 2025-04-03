@@ -1,0 +1,10 @@
+@startuml
+
+
+
+class Astar {
+  - instance: Astar
+  + getAStar(): Astar
+}
+
+@enduml
