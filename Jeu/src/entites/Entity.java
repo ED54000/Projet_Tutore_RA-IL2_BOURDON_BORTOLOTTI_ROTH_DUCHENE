@@ -143,13 +143,7 @@ public abstract class Entity {
             // On met à jour le temps de la dernière attaque
             lastAttackCount = 0;
             // On attaque la défense
-            System.out.println("=====================================");
             target.takeDamage(this.getDamages() * getBonus(getType(), target.getType()) + this.getDamages());
-            System.out.println("Attaque de " + this.getName() + " de type : " + this.getType() + " sur " + target.getName() + " de type : " + target.getType());
-            System.out.println("Dégâts infligés : " + (this.getDamages() * getBonus(getType(), target.getType()) + this.getDamages()));
-            System.out.println("Vie de " + target.getName() + " : " + target.getHealth());
-            System.out.println("Target mort : " + target.getIsDead());
-            System.out.println("=====================================");
         }
         // Sinon, on ne fait rien
     }

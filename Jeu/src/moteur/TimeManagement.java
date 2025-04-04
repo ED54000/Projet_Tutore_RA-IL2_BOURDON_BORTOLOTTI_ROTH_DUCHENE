@@ -24,23 +24,61 @@ public class TimeManagement {
         this.slowButton = slowButton;
         this.pauseButton = pauseButton;
     }
+    private static final String BUTTON_STYLE = """
+            -fx-background-color: #4CAF50;
+            -fx-text-fill: white;
+            -fx-font-size: 14px;
+            -fx-padding: 8px 16px;
+            -fx-background-radius: 5px;
+            -fx-cursor: hand;
+            -fx-font-weight: bold;
+            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+            """;
+
+    private static final String BUTTON_SELECTED_STYLE = """
+            -fx-background-color: #34495e;
+            -fx-text-fill: #ecf0f1;
+            -fx-font-size: 14px;
+            -fx-padding: 8px 16px;
+            -fx-background-radius: 5px;
+            -fx-cursor: hand;
+            -fx-font-weight: bold;
+            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+            """;
 
     public static void modifySpeed(int speed, ToggleButton buttonSelected, ToggleButton toggleButton) {
         if (buttonSelected.isSelected()) {
             modifyFPS(speed);
-            buttonSelected.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+            buttonSelected.setStyle(BUTTON_SELECTED_STYLE);
 
             toggleButton.setSelected(false);
             pauseButton.setSelected(false);
 
-            toggleButton.setStyle("");
-            pauseButton.setStyle("");
+            toggleButton.setStyle(BUTTON_STYLE);
+            pauseButton.setStyle(BUTTON_STYLE);
 
             modeleLabyrinth.setPause(false);
         } else {
             modifyFPS(BASE_FPS);
-            buttonSelected.setStyle("");
+            buttonSelected.setStyle(BUTTON_STYLE);
         }
+    }
+
+    public static void pause() {
+        if (pauseButton.isSelected()) {
+            modeleLabyrinth.setPause(true);
+            pauseButton.setStyle(BUTTON_SELECTED_STYLE);
+
+            speedButton.setSelected(false);
+            slowButton.setSelected(false);
+
+            speedButton.setStyle(BUTTON_STYLE);
+            slowButton.setStyle(BUTTON_STYLE);
+        } else {
+            modeleLabyrinth.setPause(false);
+            pauseButton.setStyle(BUTTON_STYLE);
+        }
+        setFPS(BASE_FPS);
     }
 
     public static void modifyFPS(double newFPS) {
@@ -74,22 +112,6 @@ public class TimeManagement {
         timeline.play();
     }
 
-    public static void pause() {
-        if (pauseButton.isSelected()) {
-            modeleLabyrinth.setPause(true);
-            pauseButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-
-            speedButton.setSelected(false);
-            slowButton.setSelected(false);
-
-            speedButton.setStyle("");
-            slowButton.setStyle("");
-        } else {
-            modeleLabyrinth.setPause(false);
-            pauseButton.setStyle("");
-        }
-        setFPS(BASE_FPS);
-    }
 
     /**
      * frame par secondes

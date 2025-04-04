@@ -22,7 +22,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent mouseEvent) {
-        //System.out.println("Clique manche suivante");
         // On met à jour le time de départ de la manche
         laby.setStartTime();
         laby.setPauseManche(false);
@@ -35,9 +34,6 @@ public class ControllerNextManche implements EventHandler<MouseEvent> {
         }
         int nbManches = laby.getNbManches()+1;
         laby.setNbManches(nbManches);
-        System.out.println("===========================================");
-        System.out.println("Fin de la manche");
-        System.out.println("Nouvelle manche : " + nbManches);
         ModeleLabyrinth.setLogs("Manche "+nbManches);
 
         // Si le jeu est en mode simple

@@ -25,7 +25,7 @@ public class EvolutionGroupe implements Evolve{
             }
 
             ModeleLabyrinth jeu = new ModeleLabyrinth();
-            jeu.nbEnnemiesToWin = groupe.size(); //Fixe le nombre d'ennemis qui doivent passer pour gagner au npmbre de base
+            jeu.nbEnnemiesToWin = groupe.size()+1; //Fixe le nombre d'ennemis qui doivent passer pour gagner au npmbre de base
             //crée une copie de groupe
             ArrayList<Ennemy> copieGroupe = new ArrayList<>();
             for (Ennemy ennemy : groupe) {

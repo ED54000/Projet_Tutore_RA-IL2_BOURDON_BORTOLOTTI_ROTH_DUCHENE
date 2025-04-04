@@ -147,3 +147,36 @@ Afficher un graphique représantant l'évolution de la composition du groupe d'e
 Afficher un graphique représantant la vie de chaque ennemi en temps réel au cours d'une manche.
 Afficher une fenêtre d'aide donnant des informations sur le jeu.
 Choisir parmi différentes configurations préfaites pour pouvoir observer différentes situations d'apprentissage.
+
+
+## Itération 7
+  - Tag :[iteration_7](https://github.com/ED54000/Projet_Tutore_RA-IL2_BOURDON_BORTOLOTTI_ROTH_DUCHENE/releases/tag/It%C3%A9ration_7)
+- Réalisations : 
+
+	- Évolution de steering behaviors
+	- Ajout de la possibilité de recommencer la partie
+	- Modification des sprites des défenses
+	- Ajout des sprites des défenses en mode simple
+	- Affichage en temps réel du nombre d’ennemis restant pour atteindre l’objectif
+	- Ajout d’un graphique pour afficher le nombre d’ennemis qui arrivent
+	- Résolution de bugs
+
+
+
+À la fin de cette itération, nous pouvons : 
+
+Lancer une partie en choisissant son labyrinthe, le nombre d'ennemis, le nombre de manches, le nombre d'ennemies qui doivent passer pour gagner 
+et si A* est utilisé ou non.
+Observer ensuite le déroulement d'une partie avec des ennemis se déplaçant en fonction de leur comportement (si A* est utilisé) et se faisant attaquer 
+par les défenses dans un labyrinthe bien modélisé à l'aide de sprites. Les ennemis peuvent également attaquer les défenses afin de les détruire. 
+Lorsqu'une défense est détruite, si A* est utilisé, le chemin est recalculé pour chaque agent et ils s'adaptent donc aux changements de l'environnement 
+au cours d'une manche. Pouvoir choisir un mode simple qui simplifie l'affichage. Un graphique avec les points de vie de chaque ennemi est affiché en temps réel.
+Voir le déroulement de la manche dans les logs (les pv de chaque entité en temps réel, quel ennemi/défense meurt quand, quel ennemi arrive à la fin). 
+Faire évoluer les groupes d'ennemies à chaque manche pour essayer d'optimiser la composition des groupes afin de gagner la partie.
+Afficher un graphique représentant l'évolution de la composition du groupe d'ennemi au cours des manches.
+Afficher un graphique représentant la vie de chaque ennemi en temps réel au cours d'une manche.
+Afficher une fenêtre d'aide donnant des informations sur le jeu.
+Choisir parmi différentes configurations pré faites pour pouvoir observer différentes situations d'apprentissage.
+Afficher un graphique représentant le nombre d'ennemis qui arrivent en temps réel au cours d'une manche, ainsi que l'objectif.
+Recommencer la partie depuis un écran de fin de partie.
+Faire évoluer un ennemi au cours des manches en cherchant à obtenir le meilleur chemin possible, en plaçant des points de passage.

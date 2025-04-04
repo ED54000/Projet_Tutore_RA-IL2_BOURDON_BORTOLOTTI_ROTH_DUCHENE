@@ -90,9 +90,7 @@ public class EvolutionSteering implements Evolve {
         System.out.println("Distance to arrival: "+e.getDistanceToArrival());
         System.out.println("Distance parcouru : "+e.getDistanceTraveled());
         //TODO : Rajouter le nombre de hit que l'ennemi a pris
-        //System.out.println("Bonus : "+bonus);
 
-        //return - ((double) e.getSurvivalTime()) - e.getDistanceToArrival()*10;
         int bonus = e.getIsDead() ? -1000 : 1000;
         return bonus - e.getDistanceTraveled();
     }
